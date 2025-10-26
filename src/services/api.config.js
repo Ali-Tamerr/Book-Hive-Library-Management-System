@@ -35,15 +35,25 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
+    // Log the full error for debugging
+    console.error('Full error object:', error);
+    
     if (error.response) {
       // Server responded with error
-      const message = error.response.data?.message || error.message;
-      console.error('API Error:', message);
-      return Promise.reject(new Error(message));
+      const message = error.response.data?.message || error.response.data?.errors || error.message || `Server error: ${error.response.status}`;
+      console.error('API Error Response:', error.response.status, error.response.data);
+      
+      // Preserve the full error object
+      const errorWithDetails = new Error(message);
+      errorWithDetails.response = error.response;
+      errorWithDetails.status = error.response.status;
+      return Promise.reject(errorWithDetails);
     } else if (error.request) {
       // Request made but no response
-      console.error('Network Error:', error.message);
-      return Promise.reject(new Error('Network error. Please check your connection.'));
+      console.error('Network Error - No response received:', error.message);
+      const networkError = new Error('Network error. Please check your connection.');
+      networkError.request = error.request;
+      return Promise.reject(networkError);
     } else {
       // Something else happened
       console.error('Error:', error.message);

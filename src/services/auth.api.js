@@ -36,14 +36,24 @@ export const login = async (username, password) => {
 // Signup - create a new user
 export const signup = async (userData) => {
   try {
-    const user = await createUser({
+    console.log('Signup - Preparing user data:', userData);
+    
+    const userPayload = {
       first_name: userData.firstName,
       last_name: userData.lastName,
       email: userData.email,
       phone_number: userData.contact,
       password_hash: userData.password, // In production, this should be hashed
-      role: 'User' // Default role
-    });
+      role: 'Student',
+      booksBought:[],
+      booksReserved:[],
+    };
+    
+    console.log('Signup - Sending user data to API:', userPayload);
+    
+    const user = await createUser(userPayload);
+    
+    console.log('Signup - Response from API:', user);
 
     // Store the user info
     localStorage.setItem('authToken', JSON.stringify(user));
@@ -52,6 +62,8 @@ export const signup = async (userData) => {
     return user;
   } catch (error) {
     console.error('Signup error:', error);
+    console.error('Error details:', error.response);
+    console.error('Error message:', error.message);
     throw error;
   }
 };

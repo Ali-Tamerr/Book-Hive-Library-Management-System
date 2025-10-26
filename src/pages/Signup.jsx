@@ -9,7 +9,6 @@ function Signup() {
     lastName: '',
     contact: '',
     email: '',
-    username: '',
     password: ''
   });
   const [error, setError] = useState('');
@@ -28,10 +27,15 @@ function Signup() {
     setLoading(true);
 
     try {
+      console.log('Signup form submitted with:', formData);
       await signup(formData);
+      console.log('Signup successful, navigating to dashboard');
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Signup failed. Please try again.');
+      console.error('Signup failed with error:', err);
+      const errorMessage = err?.response?.data?.message || err?.message || 'Signup failed. Please try again.';
+      console.error('Error message:', errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -103,16 +107,7 @@ function Signup() {
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#0a0f33]"
                 />
               </div>
-              <div className="flex gap-2 mb-4">
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="Username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#0a0f33]"
-                />
+              <div className="mb-4">
                 <input
                   type="password"
                   name="password"
@@ -120,7 +115,7 @@ function Signup() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#0a0f33]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#0a0f33]"
                 />
               </div>
               {error && (
