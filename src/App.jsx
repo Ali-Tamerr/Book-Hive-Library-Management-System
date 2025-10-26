@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import BorrowedBooks from './pages/BorrowedBooks';
 import Overdue from './pages/Overdue';
 import UserManagement from './pages/UserManagement';
+import TestAPI from './pages/TestAPI';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/borrowed-books" element={<BorrowedBooks />} />
         <Route path="/overdue" element={<Overdue />} />
         <Route path="/user-management" element={<UserManagement />} />
+        <Route path="/test-api" element={<TestAPI />} />
       </Routes>
     </Router>
   );

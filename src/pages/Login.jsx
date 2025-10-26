@@ -34,8 +34,8 @@ function Login() {
 
             <form onSubmit={handleSubmit}>
               <input
-                type="text"
-                placeholder="Username"
+                type="email"
+                placeholder="Email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required

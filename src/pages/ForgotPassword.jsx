@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 function ForgotPassword() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,14 +36,14 @@ function ForgotPassword() {
           <div className="text-center w-[80%] max-w-[300px]">
             <img src="/assets/logo.svg" alt="Small Logo" className="w-16 mb-4 mx-auto" />
             <h2 className="text-xl font-semibold text-[#0a0f33] mb-2">Forgot Password</h2>
-            <p className="text-gray-700 text-sm mb-5">Please enter your username</p>
+            <p className="text-gray-700 text-sm mb-5">Please enter your email</p>
 
             <form onSubmit={handleSubmit}>
               <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-3 py-2 mb-5 rounded-lg border border-gray-300 outline-none focus:border-[#0a0f33] text-sm"
               />
