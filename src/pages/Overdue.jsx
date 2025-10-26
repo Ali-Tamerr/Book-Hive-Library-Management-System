@@ -1,17 +1,35 @@
 import DashboardLayout from '../layouts/DashboardLayout';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getAllReservations } from '../services/bookReservations.api';
 
 function Overdue() {
   const navigate = useNavigate();
   const [selectedData, setSelectedData] = useState(null);
-  const overdueBooks = [
-    { id: '001', userId: '1', amount: '002 Books', dueDate: '22 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-    { id: '002', userId: '2', amount: '004 Books', dueDate: '14 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-    { id: '003', userId: '1', amount: '002 Books', dueDate: '22 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-    { id: '004', userId: '2', amount: '004 Books', dueDate: '14 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-    { id: '005', userId: '1', amount: '002 Books', dueDate: '22 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-  ];
+  const [overdueBooks, setOverdueBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadOverdueBooks = async () => {
+      try {
+        setLoading(true);
+        const reservations = await getAllReservations();
+        
+        // Filter for overdue books (past due date)
+        const overdue = (reservations || []).filter(r => {
+          if (!r.dueDate) return false;
+          return new Date(r.dueDate) < new Date();
+        });
+        
+        setOverdueBooks(overdue);
+      } catch (error) {
+        console.error('Error loading overdue books:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadOverdueBooks();
+  }, []);
 
   const openPopup = (data) => {
     setSelectedData(data);
@@ -70,30 +88,40 @@ function Overdue() {
               <tr>
                 <th className="p-3 border-b border-gray-300 font-semibold">ID</th>
                 <th className="p-3 border-b border-gray-300 font-semibold">User ID</th>
-                <th className="p-3 border-b border-gray-300 font-semibold">Amount</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Book ID</th>
                 <th className="p-3 border-b border-gray-300 font-semibold">Due Date</th>
-                <th className="p-3 border-b border-gray-300 font-semibold">Date & Time</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Reservation Date</th>
                 <th className="p-3 border-b border-gray-300 font-semibold">Action</th>
               </tr>
             </thead>
             <tbody>
-              {overdueBooks.map((book) => (
-                <tr key={book.id} className="border-b border-gray-200">
-                  <td className="p-3">{book.id}</td>
-                  <td className="p-3">{book.userId}</td>
-                  <td className="p-3">{book.amount}</td>
-                  <td className="p-3">{book.dueDate}</td>
-                  <td className="p-3">{book.datetime}</td>
-                  <td className="p-3">
-                    <button
-                      onClick={() => openPopup(book)}
-                      className="text-xl hover:scale-110 transition-transform"
-                    >
-                      📘
-                    </button>
-                  </td>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="p-3 text-center text-gray-500">Loading...</td>
                 </tr>
-              ))}
+              ) : overdueBooks.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="p-3 text-center text-gray-500">No overdue books found</td>
+                </tr>
+              ) : (
+                overdueBooks.map((book, index) => (
+                  <tr key={book.id || index} className="border-b border-gray-200">
+                    <td className="p-3">{book.id || index + 1}</td>
+                    <td className="p-3">{book.userId || 'N/A'}</td>
+                    <td className="p-3">{book.bookId || 'N/A'}</td>
+                    <td className="p-3">{book.dueDate ? new Date(book.dueDate).toLocaleDateString() : 'N/A'}</td>
+                    <td className="p-3">{book.reservationDate ? new Date(book.reservationDate).toLocaleString() : 'N/A'}</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => openPopup(book)}
+                        className="text-xl hover:scale-110 transition-transform"
+                      >
+                        📘
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </section>
@@ -122,9 +150,9 @@ function Overdue() {
             </table>
             <div className="bg-[#f8f9ff] flex justify-between items-center rounded-lg p-3 border border-gray-300">
               <div>
-                <p className="text-sm font-medium mb-1"><strong>ID:</strong> {selectedData.id}</p>
-                <p className="text-sm font-medium mb-1"><strong>Total Books:</strong> {selectedData.amount}</p>
-                <p className="text-sm font-medium"><strong>Due Date:</strong> {selectedData.dueDate}</p>
+                <p className="text-sm font-medium mb-1"><strong>ID:</strong> {selectedData?.id || 'N/A'}</p>
+                <p className="text-sm font-medium mb-1"><strong>User ID:</strong> {selectedData?.userId || 'N/A'}</p>
+                <p className="text-sm font-medium"><strong>Due Date:</strong> {selectedData?.dueDate ? new Date(selectedData.dueDate).toLocaleDateString() : 'N/A'}</p>
               </div>
               <button
                 onClick={closePopup}

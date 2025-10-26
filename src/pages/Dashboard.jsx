@@ -1,16 +1,47 @@
 import DashboardLayout from '../layouts/DashboardLayout';
 import { useState } from 'react';
+import { useUsers } from '../hooks/useUsers';
+import { useBooks } from '../hooks/useBooks';
+import { useReservations } from '../hooks/useReservations';
+import { getCurrentUser } from '../services/auth.api';
 
 function Dashboard() {
   const [showPopup, setShowPopup] = useState(false);
+  const [currentUser] = useState(getCurrentUser());
+
+  // Use React Query hooks - much cleaner!
+  const { data: users = [], isLoading: usersLoading } = useUsers();
+  const { data: books = [], isLoading: booksLoading } = useBooks();
+  const { data: reservations = [], isLoading: reservationsLoading } = useReservations();
+
+  // Calculate stats from data
+  const loading = usersLoading || booksLoading || reservationsLoading;
+  
+  const stats = {
+    totalUsers: users?.length || 0,
+    totalBooks: books?.length || 0,
+    totalBorrowed: reservations?.length || 0,
+    overdueCount: reservations?.filter(r => {
+      if (!r.dueDate) return false;
+      return new Date(r.dueDate) < new Date();
+    }).length || 0
+  };
+
+  // Get overdue books
+  const overdueBooks = reservations?.filter(r => {
+    if (!r.dueDate) return false;
+    return new Date(r.dueDate) < new Date();
+  }).slice(0, 3) || [];
 
   return (
     <DashboardLayout activeTab="dashboard">
       <div className="p-6 flex-1 overflow-y-auto">
         <header className="flex justify-between items-center mb-6">
           <div>
-            <h3 className="text-lg font-semibold">Abdelmohymen</h3>
-            <p className="text-sm text-gray-600">Admin</p>
+            <h3 className="text-lg font-semibold">
+              {currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Loading...'}
+            </h3>
+            <p className="text-sm text-gray-600">{currentUser?.role || 'User'}</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
@@ -45,16 +76,22 @@ function Dashboard() {
           <div className="flex flex-col gap-6">
             <div className="flex justify-between">
               <div className="bg-white rounded-lg flex-1 p-5 text-center mx-1 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <h3 className="text-3xl font-semibold text-[#0a0f33] mb-1">0150</h3>
+                <h3 className="text-3xl font-semibold text-[#0a0f33] mb-1">
+                  {loading ? '...' : String(stats.totalUsers).padStart(4, '0')}
+                </h3>
                 <p className="text-xs text-[#6f7390]">Total User Base</p>
               </div>
               <div className="bg-white rounded-lg flex-1 p-5 text-center mx-1 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <h3 className="text-3xl font-semibold text-[#0a0f33] mb-1">01500</h3>
+                <h3 className="text-3xl font-semibold text-[#0a0f33] mb-1">
+                  {loading ? '...' : String(stats.totalBooks).padStart(4, '0')}
+                </h3>
                 <p className="text-xs text-[#6f7390]">Total Book Count</p>
               </div>
               <div className="bg-white rounded-lg flex-1 p-5 text-center mx-1 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <h3 className="text-3xl font-semibold text-[#0a0f33] mb-1">0010</h3>
-                <p className="text-xs text-[#6f7390]">Branch Count</p>
+                <h3 className="text-3xl font-semibold text-[#0a0f33] mb-1">
+                  {loading ? '...' : String(stats.totalBorrowed).padStart(4, '0')}
+                </h3>
+                <p className="text-xs text-[#6f7390]">Total Borrowed</p>
               </div>
             </div>
 
@@ -62,9 +99,17 @@ function Dashboard() {
               <div className="bg-white rounded-lg p-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <h4 className="text-sm font-medium text-[#0a0f33] mb-3">Overdue Borrowers</h4>
                 <ul className="space-y-1">
-                  <li className="text-xs bg-[#f5f7fb] p-2 rounded-lg">Ahmed Mohammed — Borrowed ID: 10</li>
-                  <li className="text-xs bg-[#f5f7fb] p-2 rounded-lg">Ahmed Mohammed — Borrowed ID: 10</li>
-                  <li className="text-xs bg-[#f5f7fb] p-2 rounded-lg">Ahmed Mohammed — Borrowed ID: 10</li>
+                  {loading ? (
+                    <li className="text-xs bg-[#f5f7fb] p-2 rounded-lg">Loading...</li>
+                  ) : overdueBooks.length > 0 ? (
+                    overdueBooks.map((item, idx) => (
+                      <li key={idx} className="text-xs bg-[#f5f7fb] p-2 rounded-lg">
+                        User ID: {item.userId} — Due: {new Date(item.dueDate).toLocaleDateString()}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-xs bg-[#f5f7fb] p-2 rounded-lg text-gray-500">No overdue books</li>
+                  )}
                 </ul>
               </div>
 

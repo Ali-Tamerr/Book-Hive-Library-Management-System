@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signup } from '../services/auth.api';
 
 function Signup() {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ function Signup() {
     username: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -19,10 +22,19 @@ function Signup() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Signup data:', formData);
-    navigate('/login');
+    setError('');
+    setLoading(true);
+
+    try {
+      await signup(formData);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Signup failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -111,11 +123,15 @@ function Signup() {
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#0a0f33]"
                 />
               </div>
+              {error && (
+                <p className="text-red-500 text-xs mb-2">{error}</p>
+              )}
               <button
                 type="submit"
-                className="w-full py-2 bg-[#0a0f33] text-white rounded-[20px] hover:bg-[#192261] transition-colors font-medium"
+                disabled={loading}
+                className="w-full py-2 bg-[#0a0f33] text-white rounded-[20px] hover:bg-[#192261] transition-colors font-medium disabled:opacity-50"
               >
-                SIGN UP
+                {loading ? 'SIGNING UP...' : 'SIGN UP'}
               </button>
             </form>
           </div>

@@ -1,14 +1,27 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../services/auth.api';
 
 function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/dashboard');
+    setError('');
+    setLoading(true);
+
+    try {
+      await login(username, password);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,6 +50,10 @@ function Login() {
                 className="w-full px-3 py-2 mb-4 rounded-lg border border-gray-300 outline-none focus:border-[#1e255e] text-sm"
               />
 
+              {error && (
+                <p className="text-red-500 text-xs mb-2">{error}</p>
+              )}
+
               <a
                 href="#"
                 onClick={() => navigate('/forgot-password')}
@@ -46,9 +63,10 @@ function Login() {
               </a>
               <button
                 type="submit"
-                className="w-full py-2 bg-[#0a0f33] text-white rounded-[20px] hover:bg-[#192261] transition-colors"
+                disabled={loading}
+                className="w-full py-2 bg-[#0a0f33] text-white rounded-[20px] hover:bg-[#192261] transition-colors disabled:opacity-50"
               >
-                SIGN IN
+                {loading ? 'LOGGING IN...' : 'SIGN IN'}
               </button>
             </form>
           </div>
