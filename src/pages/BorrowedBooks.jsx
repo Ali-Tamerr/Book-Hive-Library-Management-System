@@ -1,17 +1,28 @@
 import DashboardLayout from '../layouts/DashboardLayout';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getAllReservations } from '../services/bookReservations.api';
 
 function BorrowedBooks() {
   const navigate = useNavigate();
   const [selectedData, setSelectedData] = useState(null);
-  const borrowedBooks = [
-    { id: '001', userId: '001', amount: '002 Books', dueDate: '22 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-    { id: '002', userId: '002', amount: '004 Books', dueDate: '15 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-    { id: '003', userId: '001', amount: '002 Books', dueDate: '22 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-    { id: '004', userId: '002', amount: '004 Books', dueDate: '14 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-    { id: '005', userId: '001', amount: '002 Books', dueDate: '22 - 09 - 2025', datetime: '22-08-2025 10:39:34' },
-  ];
+  const [borrowedBooks, setBorrowedBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadReservations = async () => {
+      try {
+        setLoading(true);
+        const reservations = await getAllReservations();
+        setBorrowedBooks(reservations || []);
+      } catch (error) {
+        console.error('Error loading reservations:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadReservations();
+  }, []);
 
   const openPopup = (data) => {
     setSelectedData(data);
@@ -70,30 +81,40 @@ function BorrowedBooks() {
               <tr>
                 <th className="p-3 border-b border-gray-300 font-semibold">ID</th>
                 <th className="p-3 border-b border-gray-300 font-semibold">User ID</th>
-                <th className="p-3 border-b border-gray-300 font-semibold">Amount</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Book ID</th>
                 <th className="p-3 border-b border-gray-300 font-semibold">Due Date</th>
-                <th className="p-3 border-b border-gray-300 font-semibold">Date & Time</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Reservation Date</th>
                 <th className="p-3 border-b border-gray-300 font-semibold">Action</th>
               </tr>
             </thead>
             <tbody>
-              {borrowedBooks.map((book) => (
-                <tr key={book.id} className="border-b border-gray-200">
-                  <td className="p-3">{book.id}</td>
-                  <td className="p-3">{book.userId}</td>
-                  <td className="p-3">{book.amount}</td>
-                  <td className="p-3">{book.dueDate}</td>
-                  <td className="p-3">{book.datetime}</td>
-                  <td className="p-3">
-                    <button
-                      onClick={() => openPopup(book)}
-                      className="text-xl hover:scale-110 transition-transform"
-                    >
-                      📘
-                    </button>
-                  </td>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="p-3 text-center text-gray-500">Loading...</td>
                 </tr>
-              ))}
+              ) : borrowedBooks.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="p-3 text-center text-gray-500">No borrowed books found</td>
+                </tr>
+              ) : (
+                borrowedBooks.map((book, index) => (
+                  <tr key={book.id || index} className="border-b border-gray-200">
+                    <td className="p-3">{book.id || index + 1}</td>
+                    <td className="p-3">{book.userId || 'N/A'}</td>
+                    <td className="p-3">{book.bookId || 'N/A'}</td>
+                    <td className="p-3">{book.dueDate ? new Date(book.dueDate).toLocaleDateString() : 'N/A'}</td>
+                    <td className="p-3">{book.reservationDate ? new Date(book.reservationDate).toLocaleString() : 'N/A'}</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => openPopup(book)}
+                        className="text-xl hover:scale-110 transition-transform"
+                      >
+                        📘
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </section>
@@ -125,9 +146,9 @@ function BorrowedBooks() {
             </div>
             <div className="bg-[#f9f9f9] flex justify-between items-center p-4 border-t-2 border-[#0b0c2a]">
               <div>
-                <p className="text-sm mb-1"><strong>ID:</strong> <span>{selectedData.id}</span></p>
-                <p className="text-sm mb-1"><strong>Total Books:</strong> <span>{selectedData.amount}</span></p>
-                <p className="text-sm"><strong>Due Date:</strong> <span>{selectedData.dueDate}</span></p>
+                <p className="text-sm mb-1"><strong>ID:</strong> <span>{selectedData?.id || 'N/A'}</span></p>
+                <p className="text-sm mb-1"><strong>User ID:</strong> <span>{selectedData?.userId || 'N/A'}</span></p>
+                <p className="text-sm"><strong>Due Date:</strong> <span>{selectedData?.dueDate ? new Date(selectedData.dueDate).toLocaleDateString() : 'N/A'}</span></p>
               </div>
               <button
                 onClick={closePopup}

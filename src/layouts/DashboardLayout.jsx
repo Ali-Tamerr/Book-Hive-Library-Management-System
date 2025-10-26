@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../services/auth.api';
 
 function DashboardLayout({ children, activeTab }) {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="flex h-screen bg-[#f5f7fb] text-[#0a0f33]">
@@ -55,7 +61,7 @@ function DashboardLayout({ children, activeTab }) {
 
         <div className="pl-8">
           <button
-            onClick={() => navigate('/login')}
+            onClick={handleLogout}
             className="text-[#b5b8d1] text-sm hover:text-white transition-colors"
           >
             🚪 Log Out
