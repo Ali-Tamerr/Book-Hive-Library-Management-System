@@ -36,7 +36,7 @@ export const login = async (username, password) => {
 // Signup - create a new user
 export const signup = async (userData) => {
   try {
-    console.log('Signup - Preparing user data:', userData);
+    // console.log('Signup - Preparing user data:', userData);
     
     const userPayload = {
       first_name: userData.firstName,
@@ -49,11 +49,11 @@ export const signup = async (userData) => {
       booksReserved:[],
     };
     
-    console.log('Signup - Sending user data to API:', userPayload);
+    // console.log('Signup - Sending user data to API:', userPayload);
     
     const user = await createUser(userPayload);
     
-    console.log('Signup - Response from API:', user);
+    // console.log('Signup - Response from API:', user);
 
     // Store the user info
     localStorage.setItem('authToken', JSON.stringify(user));
