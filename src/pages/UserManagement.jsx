@@ -6,18 +6,22 @@ import {
   useUpdateUser, 
   useDeleteUser 
 } from '../hooks/useUsers';
+import { getCurrentUser } from '../services/auth.api';
+
 
 function UserManagement() {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [currentUser] = useState(getCurrentUser());
   
   const [formData, setFormData] = useState({ 
     first_name: '', 
     last_name: '', 
     email: '', 
     phone_number: '',
-    role: 'User'
+    role: 'Student',
+    password: ''
   });
 
   // Use React Query hooks - automatic caching, refetching, and error handling!
@@ -32,12 +36,14 @@ function UserManagement() {
       if (editMode && formData.id) {
         await updateUserMutation.mutateAsync({ id: formData.id, data: formData });
       } else {
-        await createUserMutation.mutateAsync(formData);
+        const { password, ...userData } = formData;
+        await createUserMutation.mutateAsync({ ...userData, password_hash: password });
       }
-      setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User' });
+      setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'Student', password: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
+      console.error("Failed to save user:", error);
       alert('Failed to save user. Please try again.');
     }
   };
@@ -49,7 +55,8 @@ function UserManagement() {
       last_name: user.last_name || '',
       email: user.email || '',
       phone_number: user.phone_number || '',
-      role: user.role || 'User'
+      role: user.role || 'Student',
+      password: ''
     });
     setEditMode(true);
     setShowPopup(true);
@@ -79,14 +86,20 @@ function UserManagement() {
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
             <div>
-              <h3 className="text-sm font-semibold">Abdelmohymen</h3>
-              <p className="text-xs text-gray-600">Admin</p>
-            </div>
+            <h3 className="text-lg font-semibold">
+              {currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Loading...'}
+            </h3>
+            <p className="text-sm text-gray-600">{currentUser?.role || 'User'}</p>
+          </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <span className="text-xs font-semibold">12:29 PM</span>
-              <p className="text-xs text-gray-600">Sep 27, 2025</p>
+              <span className="text-xs font-semibold">
+                {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+              <p className="text-xs text-gray-600">
+                {new Date().toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
+              </p>
             </div>
             <div className="relative">
               <input
@@ -95,7 +108,7 @@ function UserManagement() {
                 placeholder="Search by ID or Name"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                className="px-3 py-1 pr-8 rounded border border-gray-300 outline-none text-xs"
+                className="px-3 h-auto pr-8 rounded border border-gray-300 outline-none text-xs"
               />
               <button className="absolute right-2 top-1 text-base">🔍</button>
             </div>
@@ -108,7 +121,7 @@ function UserManagement() {
             <h2 className="text-xl font-semibold">User Management</h2>
             <button
               onClick={() => {
-                setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User' });
+                setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'Student', password: '' });
                 setEditMode(false);
                 setShowPopup(true);
               }}
@@ -146,7 +159,7 @@ function UserManagement() {
                       <td className="p-3">{`${user.first_name || ''} ${user.last_name || ''}`.trim() || 'N/A'}</td>
                       <td className="p-3">{user.email || 'N/A'}</td>
                       <td className="p-3">{user.phone_number || 'N/A'}</td>
-                      <td className="p-3">{user.role || 'User'}</td>
+                      <td className="p-3">{user.role || 'Student'}</td>
                       <td className="p-3">
                         <button 
                           onClick={() => handleEdit(user)}
@@ -170,10 +183,12 @@ function UserManagement() {
       </div>
 
       {showPopup && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={() => {
-          setShowPopup(false);
-          setEditMode(false);
-        }}>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" 
+        // onClick={() => {
+        //   setShowPopup(false);
+        //   setEditMode(false);
+        // }}
+        >
           <div className="bg-white w-11/12 max-w-[400px] rounded-lg p-5 border-2 border-[#0b0b3b]" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-center mb-5 text-lg text-[#0b0b3b]">{editMode ? 'Edit User' : 'Add New User'}</h3>
             <form onSubmit={handleAddUser} className="space-y-3">
@@ -212,13 +227,26 @@ function UserManagement() {
                 placeholder="Enter phone number"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
               />
+              {!editMode && (
+                <>
+                  <label className="text-sm font-medium block">Password</label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Enter password"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                </>
+              )}
               <label className="text-sm font-medium block">Role</label>
               <select
                 value={formData.role}
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
               >
-                <option value="User">User</option>
+                <option value="Student">Student</option>
                 <option value="Admin">Admin</option>
               </select>
               <div className="flex justify-between mt-5">

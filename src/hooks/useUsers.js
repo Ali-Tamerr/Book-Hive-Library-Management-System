@@ -15,7 +15,7 @@ export const useUsers = () => {
   return useQuery({
     queryKey: userKeys.lists(),
     queryFn: getAllUsers,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000, 
   });
 };
 
@@ -35,7 +35,6 @@ export const useCreateUser = () => {
   return useMutation({
     mutationFn: createUser,
     onSuccess: () => {
-      // Invalidate and refetch users list
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
   });
