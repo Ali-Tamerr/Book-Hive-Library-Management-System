@@ -6,14 +6,11 @@ import {
   useUpdateUser, 
   useDeleteUser 
 } from '../hooks/useUsers';
-import { getCurrentUser } from '../services/auth.api';
+import UserFormPopup from '../components/UserFormPopup.jsx';
 
-
-function UserManagement() {
+function UserManagement({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  const [currentUser] = useState(getCurrentUser());
   
   const [formData, setFormData] = useState({ 
     first_name: '', 
@@ -24,7 +21,6 @@ function UserManagement() {
     password: ''
   });
 
-  // Use React Query hooks - automatic caching, refetching, and error handling!
   const { data: users = [], isLoading } = useUsers();
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
@@ -72,50 +68,20 @@ function UserManagement() {
     }
   };
 
-  const filteredUsers = users.filter(
-    user =>
-      `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase().includes(searchValue.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
-      user.id?.toString().includes(searchValue)
-  );
+  const filteredUsers = searchValue
+    ? users.filter(
+        (user) =>
+          `${user.first_name || ""} ${user.last_name || ""}`
+            .toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          user.id?.toString().includes(searchValue)
+      )
+    : users;
 
   return (
-    <DashboardLayout activeTab="users">
-      <div className="flex flex-col h-screen">
-        <header className="bg-white flex justify-between items-center px-6 py-3 border-b-2 border-gray-300">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
-            <div>
-            <h3 className="text-lg font-semibold">
-              {currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Loading...'}
-            </h3>
-            <p className="text-sm text-gray-600">{currentUser?.role || 'User'}</p>
-          </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <span className="text-xs font-semibold">
-                {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
-              <p className="text-xs text-gray-600">
-                {new Date().toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
-              </p>
-            </div>
-            <div className="relative">
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Search by ID or Name"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                className="px-3 h-auto pr-8 rounded border border-gray-300 outline-none text-xs"
-              />
-              <button className="absolute right-2 top-1 text-base">🔍</button>
-            </div>
-            <button className="text-2xl">⚙️</button>
-          </div>
-        </header>
-
+    <>
+      <DashboardLayout activeTab="users">
         <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] overflow-auto">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">User Management</h2>
@@ -180,98 +146,17 @@ function UserManagement() {
             </table>
           </div>
         </section>
-      </div>
-
-      {showPopup && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" 
-        // onClick={() => {
-        //   setShowPopup(false);
-        //   setEditMode(false);
-        // }}
-        >
-          <div className="bg-white w-11/12 max-w-[400px] rounded-lg p-5 border-2 border-[#0b0b3b]" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-center mb-5 text-lg text-[#0b0b3b]">{editMode ? 'Edit User' : 'Add New User'}</h3>
-            <form onSubmit={handleAddUser} className="space-y-3">
-              <label className="text-sm font-medium block">First Name</label>
-              <input
-                type="text"
-                value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                placeholder="Enter first name"
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-              <label className="text-sm font-medium block">Last Name</label>
-              <input
-                type="text"
-                value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                placeholder="Enter last name"
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-              <label className="text-sm font-medium block">Email</label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="Enter email"
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-              <label className="text-sm font-medium block">Phone Number</label>
-              <input
-                type="text"
-                value={formData.phone_number}
-                onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-                placeholder="Enter phone number"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-              {!editMode && (
-                <>
-                  <label className="text-sm font-medium block">Password</label>
-                  <input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Enter password"
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                  />
-                </>
-              )}
-              <label className="text-sm font-medium block">Role</label>
-              <select
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              >
-                <option value="Student">Student</option>
-                <option value="Admin">Admin</option>
-              </select>
-              <div className="flex justify-between mt-5">
-                <button
-                  type="submit"
-                  className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors font-semibold"
-                >
-                  {editMode ? 'Update' : 'Add'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowPopup(false);
-                    setEditMode(false);
-                  }}
-                  className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </DashboardLayout>
+      </DashboardLayout>
+      <UserFormPopup 
+        showPopup={showPopup} 
+        editMode={editMode} 
+        formData={formData} 
+        setFormData={setFormData} 
+        handleAddUser={handleAddUser} 
+        setShowPopup={setShowPopup} 
+        setEditMode={setEditMode} 
+      />
+    </>
   );
 }
 
