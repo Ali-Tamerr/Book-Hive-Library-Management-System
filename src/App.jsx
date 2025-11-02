@@ -5,10 +5,13 @@ import ForgotPassword from './pages/ForgotPassword';
 import OTP from './pages/OTP';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
-import BorrowedBooks from './pages/BorrowedBooks';
 import Overdue from './pages/Overdue';
 import UserManagement from './pages/UserManagement';
 import TestAPI from './pages/TestAPI';
+import Catalog from './pages/Catalog';
+import Books from './pages/Books';
+import Categories from './pages/Categories';
+import Reports from './pages/Reports';
 
 function App() {
   return (
@@ -21,10 +24,14 @@ function App() {
         <Route path="/otp" element={<OTP />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/borrowed-books" element={<BorrowedBooks />} />
+
         <Route path="/overdue" element={<Overdue />} />
         <Route path="/user-management" element={<UserManagement />} />
         <Route path="/test-api" element={<TestAPI />} />
+        <Route path="/catalog" element={<Catalog />} />
+        <Route path="/books" element={<Books />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/reports" element={<Reports />} />
       </Routes>
     </Router>
   );

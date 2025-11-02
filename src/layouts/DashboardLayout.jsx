@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../services/auth.api';
+import Navbar from '../components/Navbar';
+import React from 'react';
 
 function DashboardLayout({ children, activeTab }) {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   const handleLogout = () => {
     logout();
@@ -33,13 +36,18 @@ function DashboardLayout({ children, activeTab }) {
               🏠 Dashboard
             </button>
             <button
-              className="px-8 py-3 text-left text-[#b5b8d1] hover:bg-white/10 transition-colors"
-              onClick={() => navigate('/borrowed-books')}
+              onClick={() => navigate('/catalog')}
+              className={`px-8 py-3 text-left transition-colors ${
+                activeTab === 'catalog' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
+              }`}
             >
               📚 Catalog
             </button>
             <button
-              className="px-8 py-3 text-left text-[#b5b8d1] hover:bg-white/10 transition-colors"
+              onClick={() => navigate('/books')}
+              className={`px-8 py-3 text-left transition-colors ${
+                activeTab === 'books' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
+              }`}
             >
               📖 Books
             </button>
@@ -52,9 +60,20 @@ function DashboardLayout({ children, activeTab }) {
               👤 Users
             </button>
             <button
-              className="px-8 py-3 text-left text-[#b5b8d1] hover:bg-white/10 transition-colors"
+              onClick={() => navigate('/reports')}
+              className={`px-8 py-3 text-left transition-colors ${
+                activeTab === 'reports' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
+              }`}
             >
-              🏢 Branches
+              📈 Reports
+            </button>
+            <button
+              onClick={() => navigate('/categories')}
+              className={`px-8 py-3 text-left transition-colors ${
+                activeTab === 'categories' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
+              }`}
+            >
+              📂 Categories
             </button>
           </nav>
         </div>
@@ -70,7 +89,10 @@ function DashboardLayout({ children, activeTab }) {
       </aside>
 
       <main className="flex-1 flex flex-col">
-        {children}
+        <Navbar searchValue={searchValue} setSearchValue={setSearchValue} />
+        {React.Children.map(children, child =>
+          child ? React.cloneElement(child, { searchValue }) : null
+        )}  
 
         {showPopup && (
           <div className="fixed inset-0 bg-[rgba(10,15,51,0.5)] flex items-center justify-center z-50">
