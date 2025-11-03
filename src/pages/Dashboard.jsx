@@ -72,7 +72,7 @@ function Dashboard() {
     // If no data, show full circle in gray
     if (totalForChart === 0 || (currentlyBorrowed === 0 && returnedBooks === 0)) {
       return (
-        <div className="w-[300px] h-[300px] mb-6 flex items-center justify-center">
+        <div className="xl:w-[300px] xl:h-[300px] 2xl:h-[90%] 2xl:w-[90%] mb-6 flex items-center justify-center">
           <svg width={size} height={size} className="block">
             <circle cx={center} cy={center} r={radius} fill="#4b5563" />
           </svg>
@@ -137,9 +137,9 @@ function Dashboard() {
   return (
     <DashboardLayout activeTab="dashboard">
       <div className="p-6 flex-1 overflow-y-auto h-screen relative">
-        <section className="grid grid-cols-[40%_60%] gap-6 ">
+        <section className="max-lg:grid max-lg:grid-cols-[40%_60%] gap-6 ">
           {/* Left Column - Pie Chart */}
-          <div className="bg-white rounded-lg p-6 max-h-[500px] flex flex-col items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+          <div className="max-xl:bg-white rounded-lg p-6 xl:max-h-[500px] w-[600px] 2xl:max-h-screen 2xl:h-[850px] flex flex-col items-center justify-center max-xl:shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <PieChart />
             <div className="flex gap-8 items-center w-full">
               <div className="flex items-center gap-2">
@@ -155,10 +155,10 @@ function Dashboard() {
                 <p className="text-sm text-[#6f7390]">Total Returned Books</p>
               </div>
             </div>
-            <div className='flex flex-col gap-5 w-[200px] absolute top-10 left-[450px]'>
+            <div className='flex flex-col gap-5 w-[200px] absolute xl:top-10 xl:left-[450px] 2xl:left-[800px] 2xl:w-[300px]'>
 
               <div className="flex flex-col gap-4 w-full">
-                <div className="bg-white rounded-lg p-5 flex items-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                <div className="bg-white rounded-lg p-5 flex border border-[#0a0f3373] items-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                   <div className="w-12 h-12 bg-[#f5f7fb] rounded-lg flex items-center justify-center shrink-0">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#0a0f33]">
                       <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="#0a0f33" />
@@ -172,8 +172,8 @@ function Dashboard() {
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg p-5 w-full flex items-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-                <div className="w-12 h-12 bg-[#f5f7fb] rounded-lg flex items-center justify-center shrink-0">
+              <div className="bg-white rounded-lg p-5 border border-[#0a0f3373] w-full flex items-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+                <div className="w-12 h-12 bg-[#f5f7fb] rounded-lg  flex items-center justify-center shrink-0">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#0a0f33]">
                     <path d="M18 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V4C20 2.9 19.1 2 18 2ZM18 20H6V4H18V20ZM7 9H9V7H7V9ZM15 9H17V7H15V9ZM7 13H9V11H7V13ZM15 13H17V11H15V13ZM7 17H9V15H7V17ZM15 17H17V15H15V17Z" fill="#0a0f33" />
                   </svg>
@@ -186,7 +186,7 @@ function Dashboard() {
                 </div>
               </div>
 
-              <div className="bg-white w-full rounded-lg p-5 flex items-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+              <div className="bg-white w-full border border-[#0a0f3373] rounded-lg p-5 flex items-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="w-12 h-12 bg-[#f5f7fb] rounded-lg flex items-center justify-center shrink-0">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#0a0f33]">
                     <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#0a0f33" />
@@ -202,7 +202,7 @@ function Dashboard() {
             </div>
           </div>
               
-              <div className='absolute left-[250px] bottom-7'>
+              <div className='absolute xl:left-[250px] xl:bottom-7 2xl:left-[650px]'>
                 <DashboardCard title="Admins">
                 {loading ? (
                   <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
@@ -234,7 +234,7 @@ function Dashboard() {
               </div>
 
             {/* Overdue Borrowers */}
-            <div className='absolute top-5 right-4'>
+            <div className='absolute xl:top-5 xl:right-10'>
             <DashboardCard title="Overdue Borrowers">
               {loading ? (
                 <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
@@ -261,8 +261,7 @@ function Dashboard() {
               </DashboardCard>
             </div>
 
-            {/* Bottom Row - Branch Network */}
-            <div className="absolute bottom-14 right-12">
+            <div className="absolute xl:bottom-14 xl:right-12 2xl:right-20">
             <DashboardCard title="Books Sold">
                 {loading ? (
                   <li className="text-xs bg-[#f5f7fb] p-2 rounded-lg">Loading...</li>
