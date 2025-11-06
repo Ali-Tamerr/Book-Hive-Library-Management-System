@@ -38,7 +38,7 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
           />
         </div>
         <div>
-          <label className="text-sm font-medium block">Phone Number</label>
+          <label className="text-sm font-medium block">Phone Number (optional)</label>
           <input
             type="text"
             value={formData.phone_number}
