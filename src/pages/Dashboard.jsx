@@ -8,10 +8,15 @@ import { useBookSales } from '../hooks/useBookSales';
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
 import { getCurrentUser } from '../services/auth.api';
 import DashboardCard from '../components/DashboardCard';
+import { useUserActivity } from '../hooks/useUserActivity';
+import { isUserOnline } from '../services/userActivity.api';
 
 function Dashboard() {
   const [showPopup, setShowPopup] = useState(false);
   const [currentUser] = useState(getCurrentUser());
+
+  // Track user activity for online status
+  useUserActivity();
 
   // Use React Query hooks - much cleaner!
   const { data: users = [], isLoading: usersLoading } = useUsers();
@@ -51,11 +56,12 @@ function Dashboard() {
     };
   }) || [];
 
-  // Get admin users for display
+  // Get admin users for display with online status
   const displayAdmins = adminUsers.slice(0, 4).map(user => ({
     id: user.id,
     name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Unknown',
-    adminId: user.id
+    adminId: user.id,
+    isOnline: isUserOnline(user)
   }));
 
   // Pie Chart Component
@@ -218,8 +224,8 @@ function Dashboard() {
                         <p className="text-sm font-medium text-[#0a0f33]">{admin.name}</p>
                         <p className="text-xs text-[#6f7390]">Admin ID: {admin.adminId}</p>
                         <div className="flex items-center gap-1 mt-1">
-                          <span className="w-2 h-2 bg-[#0a0f33] rounded-full"></span>
-                          <span className="text-xs text-[#6f7390]">Active</span>
+                          <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                          <span className="text-xs text-[#6f7390]">{admin.isOnline ? 'Online' : 'Offline'}</span>
                         </div>
                       </div>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-[#0a0f33] cursor-pointer">
