@@ -1,5 +1,6 @@
 import DashboardLayout from '../layouts/DashboardLayout';
 import { useState } from 'react';
+import { Plus, FilePenLine, Trash2, BookUser } from 'lucide-react';
 import { 
   useUsers, 
   useCreateUser, 
@@ -17,8 +18,10 @@ function UserManagement({ searchValue }) {
     last_name: '', 
     email: '', 
     phone_number: '',
-    role: 'Student',
-    password: ''
+    role: 'User',
+    password: '',
+    booksBought: [],
+    booksReserved: []
   });
 
   const { data: users = [], isLoading } = useUsers();
@@ -30,12 +33,13 @@ function UserManagement({ searchValue }) {
     e.preventDefault();
     try {
       if (editMode && formData.id) {
-        await updateUserMutation.mutateAsync({ id: formData.id, data: formData });
+        const { password, ...updatedData } = formData;
+        await updateUserMutation.mutateAsync({ id: formData.id, data: updatedData });
       } else {
         const { password, ...userData } = formData;
         await createUserMutation.mutateAsync({ ...userData, password_hash: password });
       }
-      setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'Student', password: '' });
+      setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '', booksBought: [], booksReserved: [] });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -51,7 +55,7 @@ function UserManagement({ searchValue }) {
       last_name: user.last_name || '',
       email: user.email || '',
       phone_number: user.phone_number || '',
-      role: user.role || 'Student',
+      role: user.role || 'User',
       password: ''
     });
     setEditMode(true);
@@ -87,13 +91,13 @@ function UserManagement({ searchValue }) {
             <h2 className="text-xl font-semibold">User Management</h2>
             <button
               onClick={() => {
-                setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'Student', password: '' });
+                setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '', booksBought: [], booksReserved: [] });
                 setEditMode(false);
                 setShowPopup(true);
               }}
-              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium"
+              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
             >
-              ➕ Add User
+              <Plus size={15}/> Add User
             </button>
           </div>
 
@@ -125,19 +129,19 @@ function UserManagement({ searchValue }) {
                       <td className="p-3">{`${user.first_name || ''} ${user.last_name || ''}`.trim() || 'N/A'}</td>
                       <td className="p-3">{user.email || 'N/A'}</td>
                       <td className="p-3">{user.phone_number || 'N/A'}</td>
-                      <td className="p-3">{user.role || 'Student'}</td>
+                      <td className="p-3">{user.role || 'User'}</td>
                       <td className="p-3">
                         <button 
                           onClick={() => handleEdit(user)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Edit">✏️</button>
+                          title="Edit"><FilePenLine size={20}/></button>
                         <button 
                           onClick={() => handleDelete(user.id)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Delete">🗑️</button>
+                          title="Delete"><Trash2 size={20}/></button>
                         <button 
                           className="text-lg hover:scale-125 transition-transform" 
-                          title="View">📘</button>
+                          title="View"><BookUser size={20}/></button>
                       </td>
                     </tr>
                   ))

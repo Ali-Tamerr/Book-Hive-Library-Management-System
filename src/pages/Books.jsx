@@ -1,11 +1,13 @@
 import DashboardLayout from '../layouts/DashboardLayout';
 import { useState } from 'react';
+import { Plus, FilePenLine, Trash2 } from 'lucide-react';
 import { 
   useBooks, 
   useCreateBook, 
   useUpdateBook, 
   useDeleteBook 
 } from '../hooks/useBooks';
+import { useCategories } from '../hooks/useCategories';
 import BookFormPopup from '../components/BookFormPopup.jsx';
 
 function Books({ searchValue }) {
@@ -27,6 +29,7 @@ function Books({ searchValue }) {
   });
 
   const { data: books = [], isLoading } = useBooks();
+  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
   const createBookMutation = useCreateBook();
   const updateBookMutation = useUpdateBook();
   const deleteBookMutation = useDeleteBook();
@@ -34,34 +37,61 @@ function Books({ searchValue }) {
   const handleAddBook = async (e) => {
     e.preventDefault();
     try {
+      // Transform form data to API format (PascalCase) and handle potential NaN values
+      const publicationYear = parseInt(formData.publicationYear, 10);
+      const categoryId = parseInt(formData.categoryId, 10);
+      const totalCopies = parseInt(formData.totalCopies, 10);
+      const availableCopies = parseInt(formData.availableCopies, 10);
+      const salePrice = parseFloat(formData.salePrice);
+
+      const apiData = {
+        title: formData.title,
+        author: formData.author,
+        isbn: formData.isbn,
+        publisher: formData.publisher,
+        publication_year: isNaN(publicationYear) ? null : publicationYear,
+        category_id: isNaN(categoryId) ? null : categoryId,
+        total_copies: isNaN(totalCopies) ? 1 : totalCopies,
+        available_copies: isNaN(availableCopies) ? 1 : availableCopies,
+        sale_price: isNaN(salePrice) ? null : salePrice,
+        digital_url: formData.digitalUrl || null,
+        description: formData.description || null
+      };
+      
       if (editMode && formData.id) {
-        await updateBookMutation.mutateAsync({ id: formData.id, data: formData });
+        await updateBookMutation.mutateAsync({ id: formData.id, data: apiData });
       } else {
-        await createBookMutation.mutateAsync(formData);
+        await createBookMutation.mutateAsync(apiData);
       }
       setFormData({ title: '', author: '', isbn: '', publisher: '', publicationYear: '', categoryId: '', totalCopies: 1, availableCopies: 1, salePrice: '', digitalUrl: '', description: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
       console.error("Failed to save book:", error);
-      alert('Failed to save book. Please try again.');
+      if (error.status === 405) {
+        alert('Book creation/update is not supported by the API. The Books endpoint may be read-only.');
+      } else if (error.status === 400) {
+        alert(`Validation error: ${error.message || 'Please check your input fields.'}`);
+      } else {
+        alert(`Failed to save book: ${error.message || 'Please try again.'}`);
+      }
     }
   };
 
   const handleEdit = (book) => {
     setFormData({
       id: book.id,
-      title: book.title || '',
-      author: book.author || '',
-      isbn: book.isbn || '',
-      publisher: book.publisher || '',
-      publicationYear: book.publicationYear || '',
-      categoryId: book.categoryId || '',
-      totalCopies: book.totalCopies || 1,
-      availableCopies: book.availableCopies || 1,
-      salePrice: book.salePrice || '',
-      digitalUrl: book.digitalUrl || '',
-      description: book.description || ''
+      title: book.Title || book.title || '',
+      author: book.Author || book.author || '',
+      isbn: book.ISBN || book.isbn || '',
+      publisher: book.Publisher || book.publisher || '',
+      publicationYear: book.PublicationYear || book.publicationYear || '',
+      categoryId: book.CategoryId || book.categoryId || '',
+      totalCopies: book.TotalCopies || book.totalCopies || 1,
+      availableCopies: book.AvailableCopies || book.availableCopies || 1,
+      salePrice: book.SalePrice || book.salePrice || '',
+      digitalUrl: book.DigitalUrl || book.digitalUrl || '',
+      description: book.Description || book.description || ''
     });
     setEditMode(true);
     setShowPopup(true);
@@ -72,17 +102,25 @@ function Books({ searchValue }) {
       try {
         await deleteBookMutation.mutateAsync(id);
       } catch (error) {
-        alert('Failed to delete book. Please try again.');
+        if (error.status === 405) {
+          alert('Book deletion is not supported by the API. The Books endpoint may be read-only.');
+        } else {
+          alert(`Failed to delete book: ${error.message || 'Please try again.'}`);
+        }
       }
     }
   };
 
   const filteredBooks = searchValue
     ? books.filter(
-        (book) =>
-          book.title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          book.author?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          book.isbn?.toString().includes(searchValue)
+        (book) => {
+          const title = book.Title || book.title || '';
+          const author = book.Author || book.author || '';
+          const isbn = book.ISBN || book.isbn || '';
+          return title.toLowerCase().includes(searchValue.toLowerCase()) ||
+                 author.toLowerCase().includes(searchValue.toLowerCase()) ||
+                 isbn.toString().includes(searchValue);
+        }
       )
     : books;
 
@@ -98,9 +136,9 @@ function Books({ searchValue }) {
                 setEditMode(false);
                 setShowPopup(true);
               }}
-              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium"
+              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
             >
-              ➕ Add Book
+              <Plus size={15}/> Add Book
             </button>
           </div>
 
@@ -132,24 +170,24 @@ function Books({ searchValue }) {
                 ) : (
                   filteredBooks.map((book) => (
                     <tr key={book.id} className="border-b border-gray-200">
-                      <td className="p-3">{book.isbn}</td>
-                      <td className="p-3">{book.title}</td>
-                      <td className="p-3">{book.author}</td>
-                      <td className="p-3">{book.publisher}</td>
-                      <td className="p-3">{book.publicationYear}</td>
-                      <td className="p-3">{book.categoryId}</td>
-                      <td className="p-3">{book.totalCopies}</td>
-                      <td className="p-3">{book.availableCopies}</td>
-                      <td className="p-3">{book.salePrice}</td>
+                      <td className="p-3">{book.ISBN || book.isbn || ''}</td>
+                      <td className="p-3">{book.Title || book.title || ''}</td>
+                      <td className="p-3">{book.Author || book.author || ''}</td>
+                      <td className="p-3">{book.Publisher || book.publisher || ''}</td>
+                      <td className="p-3">{book.PublicationYear || book.publicationYear || ''}</td>
+                      <td className="p-3">{book.CategoryId || book.categoryId || ''}</td>
+                      <td className="p-3">{book.TotalCopies || book.totalCopies || ''}</td>
+                      <td className="p-3">{book.AvailableCopies || book.availableCopies || ''}</td>
+                      <td className="p-3">{book.SalePrice || book.salePrice || ''}</td>
                       <td className="p-3">
                         <button 
                           onClick={() => handleEdit(book)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Edit">✏️</button>
+                          title="Edit"><FilePenLine size={20}/></button>
                         <button 
                           onClick={() => handleDelete(book.id)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Delete">🗑️</button>
+                          title="Delete"><Trash2 size={20}/></button>
                       </td>
                     </tr>
                   ))
@@ -167,6 +205,7 @@ function Books({ searchValue }) {
         handleAddBook={handleAddBook} 
         setShowPopup={setShowPopup} 
         setEditMode={setEditMode} 
+        categories={categories}
       />
     </>
   );

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Search, Settings } from 'lucide-react';
 
 import { useState } from 'react';
 import { getCurrentUser } from '../services/auth.api';
@@ -39,9 +40,9 @@ const Navbar = () => {
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="px-3 py-1 bg-transparent outline-none text-xs"
               />
-              <button className="bg-[#0b0c2a] text-white px-2 py-1">🔍</button>
+              <button className="bg-[#0b0c2a] text-white px-2 py-1"><Search size={15}/></button>
             </div>
-            <button className="text-2xl">⚙️</button>
+            <button className="text-2xl"><Settings/></button>
             
           </div> 
         </header>

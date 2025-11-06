@@ -91,7 +91,7 @@ function DashboardLayout({ children, activeTab }) {
       <main className="flex-1 flex flex-col">
         <Navbar searchValue={searchValue} setSearchValue={setSearchValue} />
         {React.Children.map(children, child =>
-          child ? React.cloneElement(child, { searchValue }) : null
+          React.isValidElement(child) ? React.cloneElement(child, { searchValue }) : child
         )}  
 
         {showPopup && (

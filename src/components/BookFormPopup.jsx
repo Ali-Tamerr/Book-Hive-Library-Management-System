@@ -1,6 +1,6 @@
 import Popup from './Popup.jsx';
 
-function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBook, setShowPopup, setEditMode }) {
+function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBook, setShowPopup, setEditMode, categories }) {
   return (
     <Popup show={showPopup} onClose={() => { setShowPopup(false); setEditMode(false); }} title={editMode ? 'Edit Book' : 'Add New Book'} maxWidthClass="max-w-[700px]">
       <form onSubmit={handleAddBook} className="grid grid-cols-2 gap-4">
@@ -58,14 +58,19 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           />
         </div>
         <div>
-          <label className="text-sm font-medium block">Category ID</label>
-          <input
-            type="number"
+          <label className="text-sm font-medium block">Category</label>
+          <select
             value={formData.categoryId}
             onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-            placeholder="Enter category ID"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-          />
+          >
+            <option value="">Select Category</option>
+            {categories && categories.map(category => (
+              <option key={category.category_id} value={category.category_id}>
+                {category.category_name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="text-sm font-medium block">Total Copies</label>

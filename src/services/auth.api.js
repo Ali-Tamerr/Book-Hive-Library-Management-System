@@ -44,7 +44,7 @@ export const signup = async (userData) => {
       email: userData.email,
       phone_number: userData.contact,
       password_hash: userData.password, // In production, this should be hashed
-      role: 'Student',
+      role: 'User',
       booksBought:[],
       booksReserved:[],
     };
