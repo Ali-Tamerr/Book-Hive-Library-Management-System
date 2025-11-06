@@ -8,6 +8,7 @@ import { getCurrentUser } from '../services/auth.api';
  */
 export const useUserActivity = () => {
   const intervalRef = useRef(null);
+  const lastActivityUpdateRef = useRef(Date.now());
   const [currentUser] = useState(() => getCurrentUser());
 
   useEffect(() => {
@@ -32,22 +33,27 @@ export const useUserActivity = () => {
     };
 
     // Listen to various user activity events
-    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    const events = [
+      { name: 'mousedown', options: undefined },
+      { name: 'keydown', options: undefined },
+      { name: 'scroll', options: { passive: true } },
+      { name: 'touchstart', options: { passive: true } },
+      { name: 'click', options: undefined }
+    ];
     
     // Throttle activity updates to avoid too many API calls
-    let lastActivityUpdate = Date.now();
     const THROTTLE_MS = 60 * 1000; // 1 minute throttle
 
     const throttledHandler = () => {
       const now = Date.now();
-      if (now - lastActivityUpdate > THROTTLE_MS) {
-        lastActivityUpdate = now;
+      if (now - lastActivityUpdateRef.current > THROTTLE_MS) {
+        lastActivityUpdateRef.current = now;
         handleUserActivity();
       }
     };
 
-    events.forEach(event => {
-      window.addEventListener(event, throttledHandler);
+    events.forEach(({ name, options }) => {
+      window.addEventListener(name, throttledHandler, options);
     });
 
     // Cleanup
@@ -55,8 +61,8 @@ export const useUserActivity = () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
-      events.forEach(event => {
-        window.removeEventListener(event, throttledHandler);
+      events.forEach(({ name, options }) => {
+        window.removeEventListener(name, throttledHandler, options);
       });
     };
   }, [currentUser]);
