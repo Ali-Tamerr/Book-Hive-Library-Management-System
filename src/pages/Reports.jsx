@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
+import { Plus, Trash2 } from 'lucide-react';
 import { 
   useReports, 
   useCreateReport, 
   useDeleteReport 
 } from '../hooks/useReports';
 import ReportFormPopup from '../components/ReportFormPopup.jsx';
+import { getCurrentUser } from '../services/auth.api';
 
 function Reports({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);
@@ -21,7 +23,14 @@ function Reports({ searchValue }) {
   const handleAddReport = async (e) => {
     e.preventDefault();
     try {
-      await createReportMutation.mutateAsync(formData);
+      // Get current user for generated_by field
+      const currentUser = getCurrentUser();
+      const apiData = {
+        ...formData,
+        generated_by: currentUser?.id || null
+      };
+      
+      await createReportMutation.mutateAsync(apiData);
       setFormData({ report_name: '', report_type: '' });
       setShowPopup(false);
     } catch (error) {
@@ -57,9 +66,9 @@ function Reports({ searchValue }) {
                 setFormData({ report_name: '', report_type: '' });
                 setShowPopup(true);
               }}
-              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium"
+              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
             >
-              ➕ Generate Report
+              <Plus size={15}/> Generate Report
             </button>
           </div>
 
@@ -96,7 +105,7 @@ function Reports({ searchValue }) {
                         <button 
                           onClick={() => handleDelete(report.id)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Delete">🗑️</button>
+                          title="Delete"><Trash2 size={20}/></button>
                       </td>
                     </tr>
                   ))

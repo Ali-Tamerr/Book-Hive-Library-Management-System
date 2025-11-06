@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Plus, FilePenLine, Trash2 } from 'lucide-react';
 import { 
   useBookSales, 
   useCreateBookSale, 
@@ -79,9 +80,9 @@ function BoughtBooks({ searchValue }) {
             setEditMode(false);
             setShowPopup(true);
           }}
-          className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium"
+          className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
         >
-          ➕ Add Book Sale
+          <Plus size={15}/> Add Book Sale
         </button>
       </div>
       <div className="overflow-x-auto">
@@ -115,11 +116,11 @@ function BoughtBooks({ searchValue }) {
                     <button 
                       onClick={() => handleEdit(sale)}
                       className="mr-2 text-lg hover:scale-125 transition-transform" 
-                      title="Edit">✏️</button>
+                      title="Edit"><FilePenLine size={20}/></button>
                     <button 
                       onClick={() => handleDelete(sale.id)}
                       className="mr-2 text-lg hover:scale-125 transition-transform" 
-                      title="Delete">🗑️</button>
+                      title="Delete"><Trash2 size={20}/></button>
                   </td>
                 </tr>
               ))

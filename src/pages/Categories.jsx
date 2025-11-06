@@ -1,5 +1,6 @@
 import DashboardLayout from '../layouts/DashboardLayout';
 import { useState } from 'react';
+import { Plus, FilePenLine, Trash2 } from 'lucide-react';
 import { 
   useCategories, 
   useCreateCategory, 
@@ -25,10 +26,16 @@ function Categories({ searchValue }) {
   const handleAddCategory = async (e) => {
     e.preventDefault();
     try {
+      // Transform form data to API format (snake_case)
+      const apiData = {
+        category_name: formData.name,
+        category_description: formData.description
+      };
+      
       if (editMode && formData.id) {
-        await updateCategoryMutation.mutateAsync({ id: formData.id, data: formData });
+        await updateCategoryMutation.mutateAsync({ id: formData.id, data: apiData });
       } else {
-        await createCategoryMutation.mutateAsync(formData);
+        await createCategoryMutation.mutateAsync(apiData);
       }
       setFormData({ name: '', description: '' });
       setShowPopup(false);
@@ -41,9 +48,9 @@ function Categories({ searchValue }) {
 
   const handleEdit = (category) => {
     setFormData({
-      id: category.id,
-      name: category.name || '',
-      description: category.description || ''
+      id: category.category_id || category.id,
+      name: category.category_name || category.name || '',
+      description: category.category_description || category.description || ''
     });
     setEditMode(true);
     setShowPopup(true);
@@ -54,16 +61,19 @@ function Categories({ searchValue }) {
       try {
         await deleteCategoryMutation.mutateAsync(id);
       } catch (error) {
-        alert('Failed to delete category. Please try again.');
+        alert(`Failed to delete category: ${error.message || 'Unknown error'}. Please try again.`);
       }
     }
   };
 
   const filteredCategories = searchValue
     ? categories.filter(
-        (category) =>
-          category.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          category.description?.toLowerCase().includes(searchValue.toLowerCase())
+        (category) => {
+          const name = category.category_name || category.name || '';
+          const description = category.category_description || category.description || '';
+          return name.toLowerCase().includes(searchValue.toLowerCase()) ||
+                 description.toLowerCase().includes(searchValue.toLowerCase());
+        }
       )
     : categories;
 
@@ -79,9 +89,9 @@ function Categories({ searchValue }) {
                 setEditMode(false);
                 setShowPopup(true);
               }}
-              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium"
+              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
             >
-              ➕ Add Category
+              <Plus size={15}/> Add Category
             </button>
           </div>
 
@@ -106,19 +116,19 @@ function Categories({ searchValue }) {
                   </tr>
                 ) : (
                   filteredCategories.map((category) => (
-                    <tr key={category.id} className="border-b border-gray-200">
-                      <td className="p-3">{category.id}</td>
-                      <td className="p-3">{category.name}</td>
-                      <td className="p-3">{category.description}</td>
+                    <tr key={category.category_id || category.id} className="border-b border-gray-200">
+                      <td className="p-3">{category.category_id || category.id}</td>
+                      <td className="p-3">{category.category_name || category.name || ''}</td>
+                      <td className="p-3">{category.category_description || category.description || ''}</td>
                       <td className="p-3">
                         <button 
                           onClick={() => handleEdit(category)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Edit">✏️</button>
+                          title="Edit"><FilePenLine size={20}/></button>
                         <button 
-                          onClick={() => handleDelete(category.id)}
+                          onClick={() => handleDelete(category.category_id || category.id)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Delete">🗑️</button>
+                          title="Delete"><Trash2 size={20}/></button>
                       </td>
                     </tr>
                   ))

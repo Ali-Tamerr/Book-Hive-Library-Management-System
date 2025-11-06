@@ -67,7 +67,7 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
           >
-            <option value="Student">Student</option>
+            <option value="User">User</option>
             <option value="Admin">Admin</option>
           </select>
         </div>

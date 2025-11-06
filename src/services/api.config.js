@@ -40,7 +40,7 @@ axiosInstance.interceptors.response.use(
     
     if (error.response) {
       // Server responded with error
-      const message = error.response.data?.message || error.response.data?.errors || error.message || `Server error: ${error.response.status}`;
+      const message = error.response.data?.message || (typeof error.response.data?.errors === 'object' ? JSON.stringify(error.response.data.errors) : error.response.data?.errors) || error.message || `Server error: ${error.response.status}`;
       console.error('API Error Response:', error.response.status, error.response.data);
       
       // Preserve the full error object
