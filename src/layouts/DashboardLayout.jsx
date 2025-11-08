@@ -1,93 +1,28 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../services/auth.api';
 import Navbar from '../components/Navbar';
 import React from 'react';
+import Sidebar from '../components/Sidebar';
 
 function DashboardLayout({ children, activeTab }) {
   const navigate = useNavigate();
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);  
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const handleMouseEnter = () => setIsExpanded(true);
+  const handleMouseLeave = () => setIsExpanded(false);
 
   return (
     <div className="flex h-screen bg-[#f5f7fb] text-[#0a0f33]">
-      <aside className="w-60 bg-[#0a0f33] text-white flex flex-col justify-between py-6">
-        <div>
-          <div className="text-center">
-            <img src="/assets/logo.svg" alt="BookHive Logo" className="w-16 mx-auto mb-2" />
-            <h2 className="text-xl leading-tight">
-              BookHive<br />
-              <span className="font-light text-[#b5b8d1]">Library</span>
-            </h2>
-          </div>
-
-          <nav className="mt-10 flex flex-col">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className={`px-8 py-3 text-left transition-colors ${
-                activeTab === 'dashboard' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
-              }`}
-            >
-              🏠 Dashboard
-            </button>
-            <button
-              onClick={() => navigate('/catalog')}
-              className={`px-8 py-3 text-left transition-colors ${
-                activeTab === 'catalog' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
-              }`}
-            >
-              📚 Catalog
-            </button>
-            <button
-              onClick={() => navigate('/books')}
-              className={`px-8 py-3 text-left transition-colors ${
-                activeTab === 'books' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
-              }`}
-            >
-              📖 Books
-            </button>
-            <button
-              onClick={() => navigate('/user-management')}
-              className={`px-8 py-3 text-left transition-colors ${
-                activeTab === 'users' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
-              }`}
-            >
-              👤 Users
-            </button>
-            <button
-              onClick={() => navigate('/reports')}
-              className={`px-8 py-3 text-left transition-colors ${
-                activeTab === 'reports' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
-              }`}
-            >
-              📈 Reports
-            </button>
-            <button
-              onClick={() => navigate('/categories')}
-              className={`px-8 py-3 text-left transition-colors ${
-                activeTab === 'categories' ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium' : 'text-[#b5b8d1] hover:bg-white/10'
-              }`}
-            >
-              📂 Categories
-            </button>
-          </nav>
-        </div>
-
-        <div className="pl-8">
-          <button
-            onClick={handleLogout}
-            className="text-[#b5b8d1] text-sm hover:text-white transition-colors"
-          >
-            🚪 Log Out
-          </button>
-        </div>
-      </aside>
-
+      
+      <Sidebar
+        activeTab={activeTab}
+        isExpanded={isExpanded}
+        handleMouseEnter={handleMouseEnter}
+        handleMouseLeave={handleMouseLeave}
+      />
       <main className="flex-1 flex flex-col">
         <Navbar searchValue={searchValue} setSearchValue={setSearchValue} />
         {React.Children.map(children, child =>
@@ -142,4 +77,3 @@ function DashboardLayout({ children, activeTab }) {
 }
 
 export default DashboardLayout;
-
