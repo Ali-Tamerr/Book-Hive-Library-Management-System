@@ -11,7 +11,7 @@ import DashboardCard from '../components/DashboardCard';
 import DashboardInfoCard from '../components/DashboardInfoCard';
 import { useUserActivity } from '../hooks/useUserActivity';
 import { isUserOnline } from '../services/userActivity.api';
-import LogoIcon from "../assets/logo/logo.svg?react";
+import LogoIcon from "../assets/logo.svg?react";
 import PieChart from '../components/PieChart';
 
 function Dashboard() {
@@ -73,105 +73,111 @@ function Dashboard() {
   }));
 
   return (
-      <div className="py-5 pr-10 max-[1540px]:pl-10 flex-1 overflow-y-auto h-screen relative">
-        <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-8">
-          {/* Left Column - Pie Chart */}
-          <div className='flex h-full max-[1540px]:h-50 max-[1541px]:mt-10 justify-center items-center flex-1 xl:ml-20 ml-10'>
-            <div className=" rounded-lg w-full flex flex-col items-center justify-center mb-15">
-              <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center [1540px]:-mr-8 w-full h-full">
-                <div className="gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg hidden max-[1540px]:flex ">
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#4b5563" />
-                      </svg>
-                      <p className="text-sm text-[#6f7390]">Total Borrowed Books</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#0a0f33" />
-                      </svg>
-                      <p className="text-sm text-[#6f7390]">Total Returned Books</p>
-                    </div>
+    <div className="py-5 px-10 max-[1080px]:px-2 flex-1 overflow-y-auto h-screen relative">
+      <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-8">
+        {/* Left Column - Pie Chart */}
+        <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20'>
+          <div className=" rounded-lg w-full flex flex-col items-center justify-center [1200px]:mb-15">
+            <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center [1540px]:-mr-8 w-full h-full max-[1080px]:h-min">
+              <div className="gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-80">
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                      <circle cx="8" cy="8" r="6" fill="#4b5563" />
+                    </svg>
+                    <p className="text-sm text-[#6f7390]">Total Borrowed Books</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                      <circle cx="8" cy="8" r="6" fill="#0a0f33" />
+                    </svg>
+                    <p className="text-sm text-[#6f7390]">Total Returned Books</p>
                   </div>
                 </div>
-                <div className='w-[120%] max-[1541px]:w-[180px] max-[1540px]:h-[180px]'>
-                  <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
-                </div>  
-                <div className="max-[1541px]:hidden  flex gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg">
-                  <div className='max-[1650px]:hidden block'>
-                    <LogoIcon className="w-16 h-16 text-[#0a0f33]" />
+              </div>
+              <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[120px] max-[1080px]:h-[120px]'>
+                <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
+              </div>
+              <div className="max-[1540px]:hidden  flex gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg scale-110">
+                <div className='max-[1650px]:hidden block'>
+                  <LogoIcon className="w-16 h-16 text-[#0a0f33]" />
+                </div>
+                <div className='h-16 bg-[#0a0f33] w-1 rounded-full block max-[1650px]:hidden'></div>
+                <div className="flex flex-col gap-6">
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                      <circle cx="8" cy="8" r="6" fill="#4b5563" />
+                    </svg>
+                    <p className="text-sm text-[#6f7390]">Total Borrowed Books</p>
                   </div>
-                  <div className='h-16 bg-[#0a0f33] w-1 rounded-full block max-[1650px]:hidden'></div>
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#4b5563" />
-                      </svg>
-                      <p className="text-sm text-[#6f7390]">Total Borrowed Books</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#0a0f33" />
-                      </svg>
-                      <p className="text-sm text-[#6f7390]">Total Returned Books</p>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                      <circle cx="8" cy="8" r="6" fill="#0a0f33" />
+                    </svg>
+                    <p className="text-sm text-[#6f7390]">Total Returned Books</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className='flex flex-col gap-8 h-full py-5 justify-between items-end max-[1540px]:items-center w-[450px] max-[1540px]:w-full flex-1'>
-            <div className='flex max-[1540px]:flex-row flex-col gap-5 [1540px]:mt-5 [1540px]:mr-8  w-[230px] max-[1540px]:w-[90%]'>
-              <DashboardInfoCard
-                icon={<User size={24} className="text-[#0a0f33]" />}
-                title="Total User Base"
-                value={stats.totalUsers}
-                loading={loading} />
-              <DashboardInfoCard
-                icon={<Book size={24} className="text-[#0a0f33]" />}
-                title="Total Book Count"
-                value={stats.totalBooks}
-                loading={loading} />
+        <div className='flex flex-col gap-8 h-full [1200px]:py-5 justify-between items-end max-[1540px]:items-center w-[450px] max-[1540px]:w-full flex-1'>
+          <div className='flex max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row flex-col gap-5 max-[1080px]:gap-2 [1540px]:mt-5 [1540px]:mr-8  w-[230px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[856px]:w-[90%] max-[1200px]:mx-auto'>
+
+            <div className="flex-1 self-center max-[1200px]:w-full"><DashboardInfoCard
+              icon={<User size={24} className="text-[#0a0f33]" />}
+              title="Total User Base"
+              value={stats.totalUsers}
+              loading={loading} />
+            </div>
+            <div className="flex-1 max-[1200px]:w-full"> <DashboardInfoCard
+              icon={<Book size={24} className="text-[#0a0f33]" />}
+              title="Total Book Count"
+              value={stats.totalBooks}
+              loading={loading} />
+            </div>
+            <div className="flex-1 max-[1200px]:w-full max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
                 icon={<MapPin size={24} className="text-[#0a0f33]" />}
                 title="Branch Count"
                 value={stats.branchCount}
                 loading={loading} />
             </div>
-            <div className='-mt-20 h-[380px] w-[400px] block max-[1541px]:hidden'>
-              <DashboardCard title="Admins">
-                {loading ? (
-                  <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
-                ) : displayAdmins.length > 0 ? (
-                  displayAdmins.map((admin) => (
-                    <li key={admin.id} className="text-xs bg-[#f5f7fb]  p-1 rounded-lg flex items-center justify-between gap-3 mb-2 border border-[#0a0f33]">
-                      <div className="bg-[#C7C7C77A] flex gap-3 items-center flex-1 p-2 rounded-lg px-2 py-1">
-                        <div className="w-8 h-8 bg-[#0a0f33] rounded-lg flex items-center justify-center shrink-0 ">
-                          <ShieldCheck size={16} className="text-white" />
-                        </div>
-                        <div className="flex-1 overflow-hidden whitespace-nowrap truncate">
-                          <p className="text-sm font-medium text-[#0a0f33]">{admin.name}</p>
-                          <p className="text-xs text-[#6f7390]">Admin ID: {admin.adminId}</p>
-                          <div className="flex items-center gap-1 mt-1">
-                            <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-                            <span className="text-xs text-[#6f7390]">{admin.isOnline ? 'Online' : 'Offline'}</span>
-                          </div>
+          </div>
+          <div className='-mt-20 h-[380px] w-[400px] block max-[1540px]:hidden'>
+            <DashboardCard title="Admins">
+              {loading ? (
+                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
+              ) : displayAdmins.length > 0 ? (
+                displayAdmins.map((admin) => (
+                  <li key={admin.id} className="text-xs bg-[#f5f7fb]  p-1 rounded-lg flex items-center justify-between gap-3 mb-2 border border-[#0a0f33]">
+                    <div className="bg-[#C7C7C77A] flex gap-3 items-center flex-1 p-2 rounded-lg px-2 py-1">
+                      <div className="w-8 h-8 bg-[#0a0f33] rounded-lg flex items-center justify-center shrink-0 ">
+                        <ShieldCheck size={16} className="text-white" />
+                      </div>
+                      <div className="flex-1 overflow-hidden whitespace-nowrap truncate">
+                        <p className="text-sm font-medium text-[#0a0f33]">{admin.name}</p>
+                        <p className="text-xs text-[#6f7390]">Admin ID: {admin.adminId}</p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                          <span className="text-xs text-[#6f7390]">{admin.isOnline ? 'Online' : 'Offline'}</span>
                         </div>
                       </div>
-                      <RefreshCw onClick={() => handleRefreshAdmins(admin.id)} className={`mr-2 h-15 w-10 px-2 text-[#0a0f33] cursor-pointer ${loadingAdmins[admin.id] ? 'animate-spin' : ''}`} />
-                    </li>
-                  ))
-                ) : (
-                  <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg text-gray-500">No admins found</li>
-                )}
-              </DashboardCard>
-            </div>
+                    </div>
+                    <RefreshCw onClick={() => handleRefreshAdmins(admin.id)} className={`mr-2 h-15 w-10 px-2 text-[#0a0f33] cursor-pointer ${loadingAdmins[admin.id] ? 'animate-spin' : ''}`} />
+                  </li>
+                ))
+              ) : (
+                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg text-gray-500">No admins found</li>
+              )}
+            </DashboardCard>
           </div>
+        </div>
 
-          <div className='flex max-[1540px]:flex-row flex-col w-full min-w-[200px] max-w-[450px] max-[1540px]:w-auto max-[1540px]:min-w-[1050px] max-[1540px]:max-w-full  gap-8 h-full max-[1540px]:flex-20 py-5 overflow-x-scroll'>
-            <div className='flex-1'>
+        <div className='flex max-[1540px]:flex-row flex-col w-full min-w-[200px] max-w-[450px] max-[1540px]:min-w-full [1540px]:my-5 overflow-x-auto max-[1540px]:flex-20 align-end mb-5 max-[1540px]:max-h-[400px] max-[1540px]:rounded-lg gap-8 max-[1540px]:gap-4 max-[1400px]:border-r border-[#0a0f3373] noBorderBox max-[856px]:scale-90'>
+
+            <div className='flex-1 flex flex-col justify-end '>
               <DashboardCard title="Overdue Borrowers">
                 {loading ? (
                   <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
@@ -194,7 +200,7 @@ function Dashboard() {
               </DashboardCard>
             </div>
 
-            <div className="flex-1">
+            <div className="flex-1 flex flex-col justify-end  ">
               <DashboardCard title="Books Sold">
                 {loading ? (
                   <li className="text-xs bg-[#f5f7fb] p-2 rounded-lg">Loading...</li>
@@ -209,7 +215,8 @@ function Dashboard() {
                 )}
               </DashboardCard>
             </div>
-            <div className=' [1540px]:h-[380px] [1540px]:w-[400px] max-[1540px]:flex-1 max-[1540px]:block hidden'>
+
+            <div className=' [1540px]:h-[380px] [1540px]:w-[400px] max-[1540px]:flex-1 max-[1540px]:flex hidden  flex-col justify-end  '>
               <DashboardCard title="Admins">
                 {loading ? (
                   <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
@@ -237,9 +244,10 @@ function Dashboard() {
                 )}
               </DashboardCard>
             </div>
-          </div>
-        </section>
-      </div>
+
+        </div>
+      </section>
+    </div>
   );
 }
 

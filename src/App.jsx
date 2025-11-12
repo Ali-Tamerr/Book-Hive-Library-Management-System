@@ -1,28 +1,34 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import ForgotPassword from './pages/ForgotPassword';
-import OTP from './pages/OTP';
-import ResetPassword from './pages/ResetPassword';
-import Dashboard from './pages/Dashboard';
-import Overdue from './pages/Overdue';
-import UserManagement from './pages/UserManagement';
-import TestAPI from './pages/TestAPI';
-import Catalog from './pages/Catalog';
-import Books from './pages/Books';
-import Categories from './pages/Categories';
-import Reports from './pages/Reports';
+import React, { useState, useEffect,lazy } from 'react';
+
+const Login = lazy(() => import('./pages/Login'));
+const Signup = lazy(() => import('./pages/Signup'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const OTP = lazy(() => import('./pages/OTP'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Overdue = lazy(() => import('./pages/Overdue'));
+const UserManagement = lazy(() => import('./pages/UserManagement'));
+const TestAPI = lazy(() => import('./pages/TestAPI'));
+const Catalog = lazy(() => import('./pages/Catalog'));
+const Books = lazy(() => import('./pages/Books'));
+const Categories = lazy(() => import('./pages/Categories'));
+const Reports = lazy(() => import('./pages/Reports'));
+const Settings = lazy(() => import('./pages/Settings'));
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import React, { useState, useEffect } from 'react';
 
 
 function AppContent() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('');
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
 
   useEffect(() => {
-    // Extracts path like "dashboard" from "/dashboard"
     setActiveTab(location.pathname.substring(1));
   }, [location.pathname]);
 
@@ -41,9 +47,11 @@ function AppContent() {
         isExpanded={isExpanded}
         handleMouseEnter={handleMouseEnter}
         handleMouseLeave={handleMouseLeave}
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
       />
       <main className="flex-1 flex flex-col">
-        <Navbar searchValue={searchValue} setSearchValue={setSearchValue} />
+        <Navbar searchValue={searchValue} setSearchValue={setSearchValue} toggleSidebar={toggleSidebar} />
 
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
@@ -61,6 +69,7 @@ function AppContent() {
             <Route path="/books" element={<Books />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
 
         {showPopup && (

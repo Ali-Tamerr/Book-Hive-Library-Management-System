@@ -15,8 +15,8 @@ const PieChart = ({totalBorrowed,currentlyBorrowed, returnedBooks}) => {
     // If no data, show full circle in gray
     if (totalForChart === 0 || (currentlyBorrowed === 0 && returnedBooks === 0)) {
       return (
-        <div className="w-full h-full flex items-center justify-center">
-          <svg  viewBox={`0 0 ${size} ${size}`} className="block w-full h-full">
+        <div className="w-full h-full  flex items-center justify-center">
+          <svg  viewBox={`0 0 ${size} ${size}`} className="block w-full h-full max-h-[600px]">
             <circle cx={center} cy={center} r={radius} fill="#4b5563" />
           </svg>
         </div>
@@ -56,7 +56,7 @@ const PieChart = ({totalBorrowed,currentlyBorrowed, returnedBooks}) => {
     const returnedEnd = returnedStart + returnedDegrees;
 
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full max-h-[600px] flex items-center justify-center">
         <svg  viewBox={`0 0 ${size} ${size}`} className="block w-full h-full">
           {/* Borrowed segment - dark gray (larger segment) */}
           {borrowedDegrees > 0 && (
