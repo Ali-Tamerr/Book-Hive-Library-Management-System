@@ -12,7 +12,7 @@ import {
     Settings
 } from "lucide-react";
 import { logout } from '../services/auth.api';
-import NavLink from './Navlink';
+import NavLink from './NavLink';
 
 
 const Sidebar = ({ activeTab, isSidebarOpen, toggleSidebar }) => {
