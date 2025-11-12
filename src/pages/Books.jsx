@@ -125,7 +125,7 @@ function Books({ searchValue }) {
 
   return (
     <>
-        <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] overflow-auto">
+        <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Book Management</h2>
             <button
@@ -140,8 +140,8 @@ function Books({ searchValue }) {
             </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="overflow-x-auto flex-1">
+            <table className="w-full border-collapse text-left text-sm min-w-max">
               <thead>
                 <tr>
                   <th className="p-3 border-b border-gray-300 font-semibold">ISBN</th>

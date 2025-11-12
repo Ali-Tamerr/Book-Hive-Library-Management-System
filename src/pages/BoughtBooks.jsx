@@ -71,7 +71,7 @@ function BoughtBooks({ searchValue }) {
     : bookSales;
 
   return (
-    <>
+<div className="flex flex-col h-full">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Bought Books</h2>
         <button
@@ -85,8 +85,8 @@ function BoughtBooks({ searchValue }) {
           <Plus size={15}/> Add Book Sale
         </button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm">
+      <div className="overflow-x-auto flex-1">
+        <table className="w-full border-collapse text-left text-sm min-w-max">
           <thead>
             <tr>
               <th className="p-3 border-b border-gray-300 font-semibold">Book Title</th>
@@ -137,7 +137,7 @@ function BoughtBooks({ searchValue }) {
         setShowPopup={setShowPopup} 
         setEditMode={setEditMode} 
       />
-    </>
+    </div>
   );
 }
 

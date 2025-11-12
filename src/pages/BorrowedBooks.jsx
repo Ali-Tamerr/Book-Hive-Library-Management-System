@@ -73,8 +73,8 @@ function BorrowedBooks({ searchValue }) {
     : borrowedBooks;
 
   return (
-    <>
-      <div className="flex justify-between items-center mb-4">
+<div className="flex flex-col h-full">
+      <div className="flex justify-between items-center mb-4 w-full">
         <h2 className="text-xl font-semibold">Borrowed Books</h2>
         <button
           onClick={() => {
@@ -87,8 +87,8 @@ function BorrowedBooks({ searchValue }) {
           <Plus size={15}/> Add Borrowed Book
         </button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm">
+      <div className="w-full overflow-x-auto flex-1">
+        <table className="min-w-max w-full border-collapse text-left text-sm">
           <thead>
             <tr>
               <th className="p-3 border-b border-gray-300 font-semibold">Book Title</th>
@@ -143,7 +143,7 @@ function BorrowedBooks({ searchValue }) {
         setShowPopup={setShowPopup} 
         setEditMode={setEditMode} 
       />
-    </>
+    </div>
   );
 }
 
