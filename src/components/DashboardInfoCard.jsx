@@ -2,7 +2,7 @@ import React from 'react';
 
 const DashboardInfoCard = ({ icon, title, value, loading }) => {
   return (
-    <div className="bg-white max-[1540px]:flex-1 max-2xl:scale-90 [1540px]:scale-110 rounded-lg p-5 flex border border-[#0a0f3373] items-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+    <div className="bg-white max-w-[400px] w-full max-[1540px]:flex-1 max-[1540px]:scale-90 [1540px]:scale-110 max-[1080px]:min-w-[230px] rounded-lg p-5 flex border border-[#0a0f3373] items-center gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
       <div className="w-12 h-12 bg-[#f5f7fb] rounded-lg flex items-center justify-center shrink-0">
         {icon}
       </div>
