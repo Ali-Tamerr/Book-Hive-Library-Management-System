@@ -12,8 +12,9 @@ function Overdue({ searchValue }) {
     : overdueBooks;
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-left text-sm">
+    <div className="flex flex-col h-full">
+    <div className="overflow-x-auto flex-1">
+      <table className="w-full border-collapse text-left text-sm min-w-max">
         <thead>
           <tr>
             <th className="p-3 border-b border-gray-300 font-semibold">Book Title</th>
@@ -41,6 +42,7 @@ function Overdue({ searchValue }) {
           )}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }

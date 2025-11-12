@@ -9,7 +9,7 @@ function Catalog({ searchValue }) {
 
   return (
       <div className="flex flex-col h-screen">
-        <div className="flex gap-2 px-6 py-3 bg-[#f8f8fb] border-b border-[#0b0b3b28]">
+        <div className="flex gap-2 px-6 py-3 bg-[#f8f8fb] border-b border-[#0b0b3b28] max-[650px]:grid max-[650px]:grid-cols-1">
           <button
             onClick={() => setActiveTab('borrowed')}
             className={`px-4 py-2 rounded-md text-sm font-medium border ${
@@ -44,7 +44,7 @@ function Catalog({ searchValue }) {
           </button>
         </div>
 
-        <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 shadow-[0_2px_6px_rgba(0,0,0,0.05)] overflow-auto">
+        <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 shadow-[0_2px_6px_rgba(0,0,0,0.05)] flex flex-col">
           {activeTab === 'borrowed' && <BorrowedBooks searchValue={searchValue} />}
           {activeTab === 'bought' && <BoughtBooks searchValue={searchValue} />}
           {activeTab === 'reserved' && <ReservedBooks searchValue={searchValue} />}
