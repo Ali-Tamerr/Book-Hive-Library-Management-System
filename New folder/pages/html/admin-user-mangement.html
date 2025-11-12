@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | User Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin-user-mangement.css">
+</head>
+<body>
+
+  <!-- ===== Top Header ===== -->
+  <header class="top-header">
+    <div class="admin-info">
+      <img src="images/icons/admin.svg" alt="Admin">
+      <div>
+        <h3>Abdelmohymen</h3>
+        <p>Admin</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="datetime">
+        <span>12:29 PM</span>
+        <p>Sep 27, 2025</p>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search by ID or Name">
+        <button>🔍</button>
+      </div>
+      <button class="settings-btn">⚙️</button>
+    </div>
+  </header>
+
+  <!-- ===== User Management ===== -->
+  <section class="user-management">
+    <div class="header-bar">
+      <h2>User Management</h2>
+      <div class="actions">
+        <button class="add-user-btn" onclick="openAddUserPopup()">➕ Add User</button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Ahmed Mohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+            <tr>
+            <td>1</td>
+            <td>Ahmedmohammed</td>
+            <td>Ahmedmohammed@gmail.com</td>
+            <td>prabathjay</td>
+            <td>
+              <button class="icon-btn edit" title="Edit">✏️</button>
+              <button class="icon-btn delete" title="Delete">🗑️</button>
+              <button class="icon-btn view" title="View">📘</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== Add User Popup ===== -->
+  <div class="popup-overlay" id="addUserPopup">
+    <div class="popup">
+      <h3>Add New User</h3>
+      <form id="addUserForm">
+        <label>Name</label>
+        <input type="text" id="name" placeholder="Enter full name" required>
+
+        <label>Email</label>
+        <input type="email" id="email" placeholder="Enter email" required>
+
+        <label>Username</label>
+        <input type="text" id="username" placeholder="Enter username" required>
+
+        <div class="popup-actions">
+          <button type="submit" class="submit-btn">Add</button>
+          <button type="button" class="close-btn" onclick="closeAddUserPopup()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="user-management.js"></script>
+</body>
+</html>

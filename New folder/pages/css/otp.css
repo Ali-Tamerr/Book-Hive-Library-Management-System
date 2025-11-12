@@ -1,0 +1,152 @@
+/* ===== Import Google Fonts ===== */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Caveat:wght@500&display=swap");
+
+/* ===== Reset and Global ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f7fb;
+}
+
+/* ===== Main Layout ===== */
+.otp-container {
+  display: flex;
+  width: 900px;
+  height: 500px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Left Side ===== */
+.otp-left {
+  width: 50%;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  border: 1px solid #0a0f33;
+  border-radius: 20px;
+  padding: 5px 15px;
+  font-size: 12px;
+  text-decoration: none;
+  color: #0a0f33;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background: #0a0f33;
+  color: white;
+}
+
+.otp-box {
+  text-align: center;
+  width: 80%;
+  max-width: 300px;
+}
+
+.small-logo {
+  width: 60px;
+  margin-bottom: 15px;
+}
+
+.otp-box h2 {
+  font-size: 22px;
+  color: #0a0f33;
+  margin-bottom: 10px;
+}
+
+.otp-box p {
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.otp-box input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  outline: none;
+  font-size: 14px;
+}
+
+.otp-box input:focus {
+  border-color: #0a0f33;
+}
+
+.otp-box button {
+  width: 100%;
+  padding: 10px;
+  background: #0a0f33;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.otp-box button:hover {
+  background: #192261;
+}
+
+/* ===== Right Side ===== */
+.otp-right {
+  width: 50%;
+  background: #0a0f33;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+}
+
+.otp-right .logo {
+  width: 90px;
+  margin-bottom: 20px;
+}
+
+.otp-right h1 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Handwritten "Library" text */
+.otp-right h1 span {
+  display: block;
+  font-family: "Caveat", cursive;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.otp-right p {
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.6;
+  color: #d9defa;
+}

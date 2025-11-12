@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookHive | Overdue Borrowers</title>
+  <link rel="stylesheet" href="../css admin/admin-borrowed-books.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===== Top Header ===== -->
+  <header class="top-header">
+    <div class="admin-info">
+      <img src="images/icons/admin.svg" alt="Admin">
+      <div>
+        <h3>Abdelmohymen</h3>
+        <p>Admin</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="datetime">
+        <span>12:29 PM</span>
+        <p>Sep 27, 2025</p>
+      </div>
+      <div class="search-box">
+        <input type="text" placeholder="Search by ID">
+        <button>🔍</button>
+      </div>
+      <button class="settings-btn">⚙️</button>
+    </div>
+  </header>
+
+  <!-- ===== Tabs ===== -->
+  <div class="tabs">
+    <button class="tab" onclick="window.location.href='admin-borrowed-books.html'">Borrowed books</button>
+    <button class="tab active">Overdue Borrowers</button>
+  </div>
+
+  <!-- ===== Overdue Borrowers Table ===== -->
+  <section class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User ID</th>
+          <th>Amount</th>
+          <th>Due Date</th>
+          <th>Date & Time</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+ <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+          
+          <td><button class="view-btn" onclick="openPopup('001', '002 Books', '15 - 09 - 2025')">📘</button></td>
+        </tr>
+        <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+         
+          <td><button class="view-btn" onclick="openPopup('002', '004 Books', '14 - 09 - 2025')">📘</button></td>
+        </tr>
+         <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+       
+          <td><button class="view-btn" onclick="openPopup('001', '002 Books', '15 - 09 - 2025')">📘</button></td>
+        </tr>
+        <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+       
+          <td><button class="view-btn" onclick="openPopup('002', '004 Books', '14 - 09 - 2025')">📘</button></td>
+        </tr>
+         <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+    
+          <td><button class="view-btn" onclick="openPopup('001', '002 Books', '15 - 09 - 2025')">📘</button></td>
+        </tr>
+        <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+    
+          <td><button class="view-btn" onclick="openPopup('002', '004 Books', '14 - 09 - 2025')">📘</button></td>
+        </tr>
+         <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+      
+          <td><button class="view-btn" onclick="openPopup('001', '002 Books', '15 - 09 - 2025')">📘</button></td>
+        </tr>
+        <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+
+          <td><button class="view-btn" onclick="openPopup('002', '004 Books', '14 - 09 - 2025')">📘</button></td>
+        </tr>
+         <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+         
+          <td><button class="view-btn" onclick="openPopup('001', '002 Books', '15 - 09 - 2025')">📘</button></td>
+        </tr>
+        <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+ 
+          <td><button class="view-btn" onclick="openPopup('002', '004 Books', '14 - 09 - 2025')">📘</button></td>
+        </tr>
+         <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+       
+          <td><button class="view-btn" onclick="openPopup('001', '002 Books', '15 - 09 - 2025')">📘</button></td>
+        </tr>
+        <tr>
+          <td>001</td><td>001</td><td>002 Books</td><td>22 - 09 - 2025</td><td>22-08-2025 10:39:34</td>
+   
+          <td><button class="view-btn" onclick="openPopup('002', '004 Books', '14 - 09 - 2025')">📘</button></td>
+           </tbody>
+    </table>
+  </section>
+
+</body>
+</html>
+<!-- ===== Popup ===== -->
+  <div id="popup" class="popup-container">
+    <div class="popup-box">
+      <h2>Borrowed Books Details</h2>
+      <div class="popup-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Book ID</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Language</th>
+            </tr>
+          </thead>
+          <tbody id="popupTableBody">
+            <!-- Filled dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="popup-footer">
+        <div class="info-box">
+          <p><strong>ID:</strong> <span id="popupID"></span></p>
+          <p><strong>Total Books:</strong> <span id="popupBooks"></span></p>
+          <p><strong>Due Date:</strong> <span id="popupDate"></span></p>
+        </div>
+        <button class="close-btn" onclick="closePopup()">CLOSE</button>
+      </div>
+    </div>
+  </div>
