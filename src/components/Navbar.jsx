@@ -28,7 +28,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
       <div className="flex items-center gap-3 flex-1">
         <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
         <div>
-          <h3 className="text-lg font-semibold">
+          <h3 className="text-lg font-semibold max-[480px]:text-sm">
             {currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Loading...'}
           </h3>
           <p className="text-sm text-gray-600">{currentUser?.role || 'User'}</p>

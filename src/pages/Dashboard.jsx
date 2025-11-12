@@ -73,29 +73,29 @@ function Dashboard() {
   }));
 
   return (
-    <div className="py-5 px-10 max-[1080px]:px-2 flex-1 overflow-y-auto h-screen relative">
+    <div className="py-5 px-10 max-[1080px]:px-2 max-[430px]:px-0 flex-1 overflow-y-auto h-screen relative max-[430px]:w-dvw ">
       <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-8">
         {/* Left Column - Pie Chart */}
-        <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20'>
+        <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 '>
           <div className=" rounded-lg w-full flex flex-col items-center justify-center [1200px]:mb-15">
-            <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center [1540px]:-mr-8 w-full h-full max-[1080px]:h-min">
-              <div className="gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-80">
+            <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center [1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 max-[430px]:-ml-4 max-[380px]:w-[110%]">
+              <div className="gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-80 max-[340px]:scale-70 ">
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
                       <circle cx="8" cy="8" r="6" fill="#4b5563" />
                     </svg>
-                    <p className="text-sm text-[#6f7390]">Total Borrowed Books</p>
+                    <p className="text-sm text-[#6f7390] max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
                       <circle cx="8" cy="8" r="6" fill="#0a0f33" />
-                    </svg>
-                    <p className="text-sm text-[#6f7390]">Total Returned Books</p>
+                    </svg> 
+                    <p className="text-sm text-[#6f7390] max-[340px]:whitespace-nowrap">Total Returned Books</p>
                   </div>
                 </div>
               </div>
-              <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[120px] max-[1080px]:h-[120px]'>
+              <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[120px] max-[1080px]:h-[120px] max-[340px]:-ml-10'>
                 <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
               </div>
               <div className="max-[1540px]:hidden  flex gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg scale-110">
@@ -123,21 +123,21 @@ function Dashboard() {
         </div>
 
         <div className='flex flex-col gap-8 h-full [1200px]:py-5 justify-between items-end max-[1540px]:items-center w-[450px] max-[1540px]:w-full flex-1'>
-          <div className='flex max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-5 max-[1080px]:gap-2 [1540px]:mt-5 [1540px]:mr-8  w-[230px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[1080px]:w-[110%]'>
+          <div className='flex max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-5 max-[1080px]:gap-2 [1540px]:mt-5 [1540px]:mr-8  w-[230px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[1080px]:w-[110%]  max-[380px]:scale-80 max-[340px]:scale-70 max-[340px]:w-[120%]'>
 
-            <div className="flex-1 max-[1200px]:w-full max-[1200px]:flex max-[1200px]:justify-center"><DashboardInfoCard
+            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center"><DashboardInfoCard
               icon={<User size={24} className="text-[#0a0f33]" />}
               title="Total User Base"
               value={stats.totalUsers}
               loading={loading} />
             </div>
-            <div className="flex-1 max-[1200px]:w-full max-[1200px]:flex max-[1200px]:justify-center"> <DashboardInfoCard
+            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center"> <DashboardInfoCard
               icon={<Book size={24} className="text-[#0a0f33]" />}
               title="Total Book Count"
               value={stats.totalBooks}
               loading={loading} />
             </div>
-            <div className="flex-1 max-[1200px]:w-full max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
+            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
                 icon={<MapPin size={24} className="text-[#0a0f33]" />}
                 title="Branch Count"
@@ -175,9 +175,9 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex max-[1540px]:flex-row flex-col w-full min-w-[200px] max-w-[450px] max-[1540px]:min-w-full [1540px]:my-5 overflow-x-auto max-[1540px]:flex-20 align-center mb-5 max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg gap-8 max-[1540px]:gap-4 max-[1400px]:border-r border-[#0a0f3373] noBorderBox max-[856px]:scale-90'>
+        <div className='flex max-[1540px]:flex-row flex-col w-full min-w-[200px] max-w-[450px] max-[1540px]:min-w-full [1540px]:my-5 overflow-x-auto max-[1540px]:flex-20 align-center mb-5 max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg gap-8 max-[1540px]:gap-4 max-[1400px]:border-r border-[#0a0f3373] noBorderBox max-[856px]:scale-90 snap-x snap-mandatory'>
 
-            <div className='flex-1 flex flex-col justify-end '>
+            <div className='flex-1 flex flex-col justify-end snap-start'>
               <DashboardCard title="Overdue Borrowers">
                 {loading ? (
                   <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
@@ -200,7 +200,7 @@ function Dashboard() {
               </DashboardCard>
             </div>
 
-            <div className="flex-1 flex flex-col justify-end  ">
+            <div className="flex-1 flex flex-col justify-end  snap-center">
               <DashboardCard title="Books Sold">
                 {loading ? (
                   <li className="text-xs bg-[#f5f7fb] p-2 rounded-lg">Loading...</li>
@@ -216,7 +216,7 @@ function Dashboard() {
               </DashboardCard>
             </div>
 
-            <div className=' [1540px]:h-[380px] [1540px]:w-[400px] max-[1540px]:flex-1 max-[1540px]:flex hidden  flex-col justify-end  '>
+            <div className=' [1540px]:h-[380px] [1540px]:w-[400px] max-[1540px]:flex-1 max-[1540px]:flex hidden  flex-col justify-end snap-end '>
               <DashboardCard title="Admins">
                 {loading ? (
                   <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
