@@ -78,8 +78,8 @@ function Dashboard() {
         {/* Left Column - Pie Chart */}
         <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 '>
           <div className=" rounded-lg w-full flex flex-col items-center justify-center [1200px]:mb-15">
-            <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center [1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 max-[430px]:-ml-4 max-[380px]:w-[110%]">
-              <div className="gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-80 max-[340px]:scale-70 ">
+            <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
+              <div className="gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
@@ -95,7 +95,7 @@ function Dashboard() {
                   </div>
                 </div>
               </div>
-              <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[120px] max-[1080px]:h-[120px] max-[340px]:-ml-10'>
+              <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[140px] max-[1080px]:h-[140px] max-[340px]:-ml-10'>
                 <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
               </div>
               <div className="max-[1540px]:hidden  flex gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg scale-110">
@@ -122,8 +122,8 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex flex-col gap-8 h-full [1200px]:py-5 justify-between items-end max-[1540px]:items-center w-[450px] max-[1540px]:w-full flex-1'>
-          <div className='flex max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-5 max-[1080px]:gap-2 [1540px]:mt-5 [1540px]:mr-8  w-[230px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[1080px]:w-[110%]  max-[380px]:scale-80 max-[340px]:scale-70 max-[340px]:w-[120%]'>
+        <div className='flex flex-col gap-8 h-full max-h-[1000px] [1200px]:py-5 justify-between items-end max-[1540px]:items-center w-[450px] max-[1540px]:w-full flex-1'>
+          <div className='flex max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-5 max-[1080px]:gap-2 max-[1540px]:my-0 mt-12 [1540px]:mr-8  w-[230px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[1080px]:w-[110%]  max-[380px]:scale-80 max-[340px]:scale-70 max-[340px]:w-[120%]'>
 
             <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center"><DashboardInfoCard
               icon={<User size={24} className="text-[#0a0f33]" />}

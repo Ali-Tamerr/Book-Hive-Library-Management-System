@@ -53,7 +53,7 @@ const Sidebar = ({ activeTab, isSidebarOpen, toggleSidebar }) => {
                
                     <h2 className={`text-xl text-center leading-tight transition-all duration-300 mt-2 ${isExpanded ? 'opacity-100 scale-100 max-w-full' : 'opacity-0 scale-50 overflow-hidden max-w-0'} max-[1080px]:text-center max-[1080px]:mt-2 max-[1080px]:opacity-100 max-[1080px]:scale-100 max-[1080px]:max-w-full whitespace-nowrap`}>
                         BookHive<br />
-                        <span className="font-light text-center text-[#b5b8d1]">Library</span>
+                        <span className="font-light text-center font-['Caveat',cursive] text-[#b5b8d1]">Library</span>
                     </h2>
                
             </div>

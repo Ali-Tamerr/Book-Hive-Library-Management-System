@@ -25,9 +25,9 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f4f6fb] p-4">
-      <div className="flex w-full max-w-[900px] h-[550px] bg-white rounded-[10px] overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
-        <div className="w-1/2 bg-white flex items-center justify-center p-10">
+    <div className="min-h-screen flex  items-center justify-center bg-[#f4f6fb] p-4">
+      <div className="flex max-[1080px]:flex-col justify-stretch w-full max-w-[900px] h-[550px] max-[1080px]:h-full bg-white rounded-[10px] overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
+        <div className="max-[1080px]:w-full w-1/2 max-[1080px]:h-full [1080px]:flex-1 bg-white flex items-center justify-center p-10">
           <div className="w-full max-w-[300px]">
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome Back !!</h2>
             <p className="text-gray-600 text-sm mb-8">Please enter your credentials to log in</p>
@@ -72,7 +72,7 @@ function Login() {
           </div>
         </div>
 
-        <div className="w-1/2 bg-[#0a0f33] text-white flex flex-col items-center justify-center rounded-tl-[60px] rounded-bl-[60px]">
+        <div className="max-[1080px]:w-full max-[1080px]:h-full w-1/2 [1080px]:flex-1 bg-[#0a0f33] text-white flex flex-col items-center justify-center max-[1080px]:rounded-none rounded-tl-[60px] rounded-bl-[60px]">
           <img src="/assets/logo.svg" alt="BookHive Logo" className="w-20 mb-5" />
           <h1 className="text-3xl text-center mb-3">
             BookHive
