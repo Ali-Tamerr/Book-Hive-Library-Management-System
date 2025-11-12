@@ -1,0 +1,1 @@
+import{c as i,j as t}from"./index-CMlsgeoD.js";const c=()=>{const s=i.c(1);let e;return s[0]===Symbol.for("react.memo_cache_sentinel")?(e=t.jsxs("div",{className:"p-6",children:[t.jsx("h1",{className:"text-2xl font-bold",children:"Settings"}),t.jsx("p",{children:"This is the settings page."})]}),s[0]=e):e=s[0],e};export{c as default};
