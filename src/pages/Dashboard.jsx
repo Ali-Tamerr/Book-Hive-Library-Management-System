@@ -123,15 +123,15 @@ function Dashboard() {
         </div>
 
         <div className='flex flex-col gap-8 h-full [1200px]:py-5 justify-between items-end max-[1540px]:items-center w-[450px] max-[1540px]:w-full flex-1'>
-          <div className='flex max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row flex-col gap-5 max-[1080px]:gap-2 [1540px]:mt-5 [1540px]:mr-8  w-[230px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[856px]:w-[90%] max-[1200px]:mx-auto'>
+          <div className='flex max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-5 max-[1080px]:gap-2 [1540px]:mt-5 [1540px]:mr-8  w-[230px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[1080px]:w-[110%]'>
 
-            <div className="flex-1 self-center max-[1200px]:w-full"><DashboardInfoCard
+            <div className="flex-1 max-[1200px]:w-full max-[1200px]:flex max-[1200px]:justify-center"><DashboardInfoCard
               icon={<User size={24} className="text-[#0a0f33]" />}
               title="Total User Base"
               value={stats.totalUsers}
               loading={loading} />
             </div>
-            <div className="flex-1 max-[1200px]:w-full"> <DashboardInfoCard
+            <div className="flex-1 max-[1200px]:w-full max-[1200px]:flex max-[1200px]:justify-center"> <DashboardInfoCard
               icon={<Book size={24} className="text-[#0a0f33]" />}
               title="Total Book Count"
               value={stats.totalBooks}
@@ -175,7 +175,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex max-[1540px]:flex-row flex-col w-full min-w-[200px] max-w-[450px] max-[1540px]:min-w-full [1540px]:my-5 overflow-x-auto max-[1540px]:flex-20 align-end mb-5 max-[1540px]:max-h-[400px] max-[1540px]:rounded-lg gap-8 max-[1540px]:gap-4 max-[1400px]:border-r border-[#0a0f3373] noBorderBox max-[856px]:scale-90'>
+        <div className='flex max-[1540px]:flex-row flex-col w-full min-w-[200px] max-w-[450px] max-[1540px]:min-w-full [1540px]:my-5 overflow-x-auto max-[1540px]:flex-20 align-center mb-5 max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg gap-8 max-[1540px]:gap-4 max-[1400px]:border-r border-[#0a0f3373] noBorderBox max-[856px]:scale-90'>
 
             <div className='flex-1 flex flex-col justify-end '>
               <DashboardCard title="Overdue Borrowers">
