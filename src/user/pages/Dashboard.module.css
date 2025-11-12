@@ -1,0 +1,225 @@
+/* =====================
+   DASHBOARD LAYOUT
+===================== */
+.dashboardContainer {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* =====================
+   MAIN CONTENT
+===================== */
+.mainContent {
+  flex: 1;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* =====================
+   HEADER
+===================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.userAvatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userInfo h4 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.userInfo p {
+  font-size: 13px;
+  color: gray;
+}
+
+.dateTime {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dateTime strong {
+  color: #0b0c28;
+}
+
+.dateTime span {
+  color: #555;
+  font-size: 12px;
+}
+
+.dateTime .settings {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* =====================
+   DASHBOARD BODY
+===================== */
+.dashboardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* =====================
+   CARDS SECTION
+===================== */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card.wide {
+  flex: 1 1 100%;
+}
+
+.iconBox {
+  background-color: #c8cbd4;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 30px;
+}
+
+.card h3 {
+  color: #0b0c28;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* =====================
+   MIDDLE SECTION
+===================== */
+.middleSection {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+/* Chart container */
+.chartContainer {
+  flex: 1;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Pie chart styling */
+.chart {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #0b0c28 0deg 140deg,
+    #3a3a3a 140deg 360deg
+  );
+  border: 2px solid #0b61ff;
+}
+
+/* Legend */
+.legend {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.legend img {
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+.legend p {
+  font-size: 14px;
+  color: #0b0c28;
+}
+
+.grayDot, .blueDot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.grayDot {
+  background-color: #3a3a3a;
+}
+
+.blueDot {
+  background-color: #0b0c28;
+}
+
+/* =====================
+   QUOTE BOX
+===================== */
+.quote {
+  flex: 1;
+  background-color: white;
+  border-radius: 10px;
+  padding: 25px;
+  font-size: 15px;
+  color: #0b0c28;
+  line-height: 1.6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.quote span {
+  text-align: right;
+  color: #444;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+/* =====================
+   RESPONSIVE DESIGN
+===================== */
+@media (max-width: 1000px) {
+  .middleSection {
+    flex-direction: column;
+  }
+}

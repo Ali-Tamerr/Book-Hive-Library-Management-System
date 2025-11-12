@@ -1,0 +1,272 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Layout */
+body {
+  display: flex;
+  background: #f5f7fb;
+  color: #0a0f33;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background: #0a0f33;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 25px 0;
+}
+
+.logo-section {
+  text-align: center;
+}
+
+.logo {
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+.logo-section h2 {
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.logo-section span {
+  font-weight: 300;
+  color: #b5b8d1;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  margin-top: 40px;
+}
+
+.menu a {
+  color: #b5b8d1;
+  padding: 12px 30px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.menu a.active,
+.menu a:hover {
+  background: #fff;
+  color: #0a0f33;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  font-weight: 500;
+}
+
+.logout {
+  margin-left: 30px;
+}
+
+.logout a {
+  color: #b5b8d1;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Main */
+.dashboard {
+  flex: 1;
+  padding: 25px 35px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.dashboard-time {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#settings-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Dashboard Grid */
+.dashboard-body {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 25px;
+  height: 100%;
+}
+
+/* Chart Section */
+.chart-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.chart {
+  width: 300px;
+  height: 300px;
+  background: conic-gradient(#0a0f33 0deg 220deg, #333 220deg 360deg);
+  border-radius: 50%;
+  margin-bottom: 25px;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 30px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.blue { background: #0a0f33; }
+.dark { background: #333; }
+
+/* Info Section */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat {
+  background: #fff;
+  border-radius: 10px;
+  flex: 1;
+  margin: 0 5px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.stat h3 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #0a0f33;
+}
+
+.stat p {
+  font-size: 13px;
+  color: #6f7390;
+}
+
+/* Lists */
+.lists {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.list {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.list h4 {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #0a0f33;
+}
+
+.list li {
+  font-size: 13px;
+  background: #f5f7fb;
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+/* Popup */
+.popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 51, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.popup {
+  background: #fff;
+  width: 400px;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+}
+
+.popup h3 {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.popup input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 13px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cancel {
+  width: 48%;
+  background: #ccc;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.confirm {
+  width: 48%;
+  background: #0a0f33;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.confirm:hover {
+  background: #192261;
+}
