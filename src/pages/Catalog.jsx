@@ -1,4 +1,3 @@
-import DashboardLayout from '../layouts/DashboardLayout';
 import { useState } from 'react';
 import BorrowedBooks from './BorrowedBooks';
 import Overdue from './Overdue';
@@ -9,7 +8,6 @@ function Catalog({ searchValue }) {
   const [activeTab, setActiveTab] = useState('borrowed');
 
   return (
-    <DashboardLayout activeTab="catalog">
       <div className="flex flex-col h-screen">
         <div className="flex gap-2 px-6 py-3 bg-[#f8f8fb] border-b border-[#0b0b3b28]">
           <button
@@ -53,7 +51,6 @@ function Catalog({ searchValue }) {
           {activeTab === 'overdue' && <Overdue searchValue={searchValue} />}
         </section>
       </div>
-    </DashboardLayout>
   );
 }
 

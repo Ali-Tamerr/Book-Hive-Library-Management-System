@@ -1,18 +1,31 @@
 import React from 'react'
 import { Search, Settings } from 'lucide-react';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getCurrentUser } from '../services/auth.api';
 
 const Navbar = () => {
     const [searchValue, setSearchValue] = useState('');
     const [currentUser] = useState(getCurrentUser());
+    const [navVisibilty, setNavVisibilty] = useState(true);
+    const location = useLocation();
+
+    useEffect(() => {
+        const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
+        if (authRoutes.includes(location.pathname)) {
+            setNavVisibilty(false);
+        } else {
+            setNavVisibilty(true);
+        }
+    }, [location.pathname]);
+
     // Hide search bar if on dashboard route
-    const isDashboard = window.location.pathname === '/dashboard';
+    const isDashboard = location.pathname === '/dashboard';
     const showSearchInput = !isDashboard;
+    
   return (
     
-        <header className="bg-white flex justify-between items-center px-6 py-3 border-b-2 border-gray-300">
+        <header className={`${navVisibilty ? '' : 'hidden'} bg-white text-black flex items-center justify-between h-16 px-6 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]`}>
           <div className="flex items-center gap-3 flex-1">
             <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
             <div>

@@ -1,4 +1,3 @@
-import DashboardLayout from '../layouts/DashboardLayout';
 import { useState } from 'react';
 import { User, Book, MapPin, ShieldCheck, RefreshCw } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
@@ -74,7 +73,6 @@ function Dashboard() {
   }));
 
   return (
-    <DashboardLayout activeTab="dashboard">
       <div className="py-5 pr-10 max-[1540px]:pl-10 flex-1 overflow-y-auto h-screen relative">
         <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-8">
           {/* Left Column - Pie Chart */}
@@ -240,12 +238,8 @@ function Dashboard() {
               </DashboardCard>
             </div>
           </div>
-
         </section>
-
-
       </div>
-    </DashboardLayout>
   );
 }
 

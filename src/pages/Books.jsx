@@ -1,4 +1,3 @@
-import DashboardLayout from '../layouts/DashboardLayout';
 import { useState } from 'react';
 import { Plus, FilePenLine, Trash2 } from 'lucide-react';
 import { 
@@ -126,7 +125,6 @@ function Books({ searchValue }) {
 
   return (
     <>
-      <DashboardLayout activeTab="books">
         <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] overflow-auto">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Book Management</h2>
@@ -196,7 +194,6 @@ function Books({ searchValue }) {
             </table>
           </div>
         </section>
-      </DashboardLayout>
       <BookFormPopup 
         showPopup={showPopup} 
         editMode={editMode} 

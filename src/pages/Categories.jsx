@@ -1,4 +1,3 @@
-import DashboardLayout from '../layouts/DashboardLayout';
 import { useState } from 'react';
 import { Plus, FilePenLine, Trash2 } from 'lucide-react';
 import { 
@@ -79,7 +78,6 @@ function Categories({ searchValue }) {
 
   return (
     <>
-      <DashboardLayout activeTab="categories">
         <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] overflow-auto">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Category Management</h2>
@@ -137,7 +135,6 @@ function Categories({ searchValue }) {
             </table>
           </div>
         </section>
-      </DashboardLayout>
       <CategoryFormPopup 
         showPopup={showPopup} 
         editMode={editMode} 

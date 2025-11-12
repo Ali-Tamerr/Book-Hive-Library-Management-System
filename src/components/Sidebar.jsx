@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LogoIcon from "../assets/logo/logo.svg?react";
 import {
     Home,
@@ -13,18 +13,31 @@ import {
 import { logout } from '../services/auth.api';
 import NavLink from './Navlink';
 
+
 const Sidebar = ({ activeTab }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const navigate = useNavigate();
+    const [sidebarVisibilty, setSidebarVisibilty] = useState(true);
+    const location = useLocation();
+
 
     const handleLogout = () => {
         logout();
         navigate('/login');
     };
 
+    useEffect(() => {
+        const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
+        if (authRoutes.includes(location.pathname)) {
+            setSidebarVisibilty(false);
+        } else {
+            setSidebarVisibilty(true);
+        }
+    }, [location.pathname]);
+
     return (
         <aside
-            className={`bg-[#0a0f33] text-white justify-start flex flex-col items-start py-6 transition-all duration-300 ${isExpanded ? 'w-55' : 'w-24'}`}
+            className={`bg-[#0a0f33] text-white justify-start flex flex-col items-start py-6 transition-all duration-300 ${isExpanded ? 'w-55' : 'w-24'} ${sidebarVisibilty ? '' : 'hidden'}`}
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => setIsExpanded(false)}
         >
@@ -62,7 +75,7 @@ const Sidebar = ({ activeTab }) => {
                 />
                 <NavLink
                     isExpanded={isExpanded}
-                    active={activeTab === 'users'}
+                    active={activeTab === 'user-management'}
                     onClick={() => navigate('/user-management')}
                     icon={<Users size={18} strokeWidth={2.3} />}
                     text="Users"
