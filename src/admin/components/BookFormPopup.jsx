@@ -1,29 +1,72 @@
 import Popup from './Popup.jsx';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBook, setShowPopup, setEditMode, categories }) {
 
   const [nfcTagId, setNfcTagId] = useState('');
+  const [isConnected, setIsConnected] = useState(false);
+  const portRef = useRef(null);
+  const readerRef = useRef(null);
+
+  useEffect(() => {
+    if (nfcTagId) {
+      setFormData({ ...formData, isbn: nfcTagId });
+    }
+  }, [nfcTagId, setFormData]);
+
+  // This useEffect hook handles the cleanup of the serial port connection.
+  // It runs when the component unmounts to prevent leaving the port in a busy state.
+  useEffect(() => {
+    return () => {
+      if (readerRef.current) {
+        readerRef.current.cancel().catch(e => console.error("Error cancelling reader on unmount:", e));
+      }
+      if (portRef.current) {
+        portRef.current.close().catch(e => console.error("Error closing port on unmount:", e));
+        portRef.current = null;
+      }
+    };
+  }, []);
+
   const connectToArduino = async () => {
     try {
       const port = await navigator.serial.requestPort();
+      portRef.current = port;
       await port.open({ baudRate: 9600 });
-      const textDecoder = new TextDecoderStream();
-      const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-      const reader = textDecoder.readable.getReader();
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) {
-          reader.releaseLock();
-          break;
-        }
-        console.log(value);
-        setNfcTagId(value.trim());
-      }
+      setIsConnected(true);
 
+      const textDecoder = new TextDecoderStream();
+      port.readable.pipeTo(textDecoder.writable);
+      const reader = textDecoder.readable.getReader();
+      readerRef.current = reader;
+
+      // Asynchronously read from the serial port until the component unmounts or an error occurs
+      (async () => {
+        try {
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+              break;
+            }
+            console.log('NFC Tag ID:', value);
+            setNfcTagId(value.trim());
+          }
+        } catch (error) {
+          console.log("Read loop was cancelled or an error occurred:", error);
+        } finally {
+          reader.releaseLock();
+          setIsConnected(false);
+          if (portRef.current) {
+            await portRef.current.close();
+            portRef.current = null;
+          }
+          readerRef.current = null;
+        }
+      })();
     } catch (error) {
-      console.error("Error with Web Serial:", error);
+      console.error("Failed to connect to the serial device:", error);
+      setIsConnected(false);
     }
   };
 
@@ -66,22 +109,20 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           <label className="text-sm font-medium block">ISBN</label>
           <div className="flex gap-2">
             <button
+              type="button"
               onClick={connectToArduino}
               className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${
-                nfcTagId
+                isConnected
                   ? 'bg-green-200 text-green-900 hover:bg-green-300'
                   : 'bg-gray-300 hover:bg-gray-400'
               }`}
             >
-              {nfcTagId ? "Connected to NFC Reader" : "Connect to NFC Reader"}
+              {isConnected ? "Connected to NFC Reader" : "Connect to NFC Reader"}
             </button>
           <input
             type="text"
-            value={nfcTagId}
-            onChange={(e) => {
-              formData.isbn = nfcTagId;
-              setFormData({ ...formData, isbn: e.target.value })
-            }}
+            value={formData.isbn}
+            onChange={(e) => setFormData({ ...formData, isbn: e.target.value })}
             placeholder="Enter ISBN"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
