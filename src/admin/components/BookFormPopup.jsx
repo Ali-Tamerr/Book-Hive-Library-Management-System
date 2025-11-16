@@ -8,12 +8,9 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
   const [isConnected, setIsConnected] = useState(false);
   const portRef = useRef(null);
   const readerRef = useRef(null);
+  const isbnInputRef = useRef(null);
 
-  useEffect(() => {
-    if (nfcTagId) {
-      setFormData({ ...formData, isbn: nfcTagId });
-    }
-  }, [nfcTagId, setFormData]);
+
 
   // This useEffect hook handles the cleanup of the serial port connection.
   // It runs when the component unmounts to prevent leaving the port in a busy state.
@@ -29,12 +26,39 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
     };
   }, []);
 
+  const disconnectFromArduino = async () => {
+    if (readerRef.current) {
+      await readerRef.current.cancel().catch(e => console.error("Error cancelling reader on disconnect:", e));
+      // The read loop's finally block will do the rest.
+    } else if (portRef.current) {
+      // Fallback if reader isn't set up but port is.
+      await portRef.current.close().catch(e => console.error("Error closing port:", e));
+      setIsConnected(false);
+      portRef.current = null;
+    }
+  };
+
   const connectToArduino = async () => {
+    if (portRef.current) {
+      console.warn("A port is already selected. Disconnect first.");
+      return;
+    }
+
     try {
       const port = await navigator.serial.requestPort();
       portRef.current = port;
       await port.open({ baudRate: 9600 });
       setIsConnected(true);
+      if (isbnInputRef.current) {
+        isbnInputRef.current.focus();
+      }
+
+      port.ondisconnect = (event) => {
+        console.log("Serial port disconnected:", event);
+        setIsConnected(false);
+        portRef.current = null;
+        readerRef.current = null;
+      };
 
       const textDecoder = new TextDecoderStream();
       port.readable.pipeTo(textDecoder.writable);
@@ -57,6 +81,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
               if (completeLine) {
                 console.log('NFC Tag ID:', completeLine);
                 setNfcTagId(completeLine);
+                setFormData(prevData => ({ ...prevData, isbn: completeLine }));
               }
               buffer = lines.join('\n');
             }
@@ -76,6 +101,17 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
     } catch (error) {
       console.error("Failed to connect to the serial device:", error);
       setIsConnected(false);
+      if (portRef.current) {
+        portRef.current = null;
+      }
+    }
+  };
+
+  const handleConnectClick = async () => {
+    if (isConnected) {
+      await disconnectFromArduino();
+    } else {
+      await connectToArduino();
     }
   };
 
@@ -119,14 +155,14 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={connectToArduino}
+              onClick={handleConnectClick}
               className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${
                 isConnected
-                  ? 'bg-green-200 text-green-900 hover:bg-green-300'
+                  ? 'bg-red-200 text-red-900 hover:bg-red-300'
                   : 'bg-gray-300 hover:bg-gray-400'
               }`}
             >
-              {isConnected ? "Connected to NFC Reader" : "Connect to NFC Reader"}
+              {isConnected ? "Disconnect" : "Connect to NFC Reader"}
             </button>
           <input
             type="text"
@@ -135,6 +171,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
             placeholder="Enter ISBN"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            ref={isbnInputRef}
           />
           </div>
           
