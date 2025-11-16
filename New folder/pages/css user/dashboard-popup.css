@@ -1,0 +1,157 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #1e1e1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup {
+  background: #fff;
+  width: 450px;
+  border-radius: 12px;
+  padding: 20px 30px 30px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.popup h2 {
+  font-size: 14px;
+  color: #6a6a6a;
+  margin-bottom: 10px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-box .gear {
+  font-size: 20px;
+  background: #000a3d;
+  color: #fff;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.icon-box h3 {
+  font-size: 16px;
+  color: #000;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #555;
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+  color: #000;
+}
+
+.divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 15px 0 20px;
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  font-size: 13px;
+  color: #333;
+  width: 50%;
+}
+
+.input-group input {
+  width: 50%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #000a3d;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+button {
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.cancel {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.cancel:hover {
+  background: #cfcfcf;
+}
+
+.confirm {
+  background: #000a3d;
+  color: #fff;
+}
+
+.confirm:hover {
+  background: #001e73;
+}
+
+@media (max-width: 500px) {
+  .popup {
+    width: 90%;
+  }
+
+  .input-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .input-group label,
+  .input-group input {
+    width: 100%;
+  }
+}

@@ -1,0 +1,148 @@
+/* ===== Google Fonts Import ===== */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Caveat:wght@500&display=swap");
+
+/* ===== Reset & Base ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f4f6fb;
+}
+
+/* ===== Container Split Layout ===== */
+.login-container {
+  display: flex;
+  width: 900px;
+  height: 550px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Left Side ===== */
+.login-left {
+  width: 50%;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.form-box {
+  width: 100%;
+  max-width: 300px;
+}
+
+.form-box h2 {
+  font-size: 24px;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.form-box p {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.form-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+}
+
+.form-box input:focus {
+  border-color: #1e255e;
+}
+
+.form-box .forgot {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 13px;
+  color: #333;
+  text-decoration: none;
+}
+
+.form-box button {
+  width: 100%;
+  padding: 10px;
+  background: #0a0f33;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.form-box button:hover {
+  background: #192261;
+}
+
+/* ===== Right Side ===== */
+.login-right {
+  width: 50%;
+  background: #0a0f33;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+}
+
+.logo {
+  width: 80px;
+  margin-bottom: 20px;
+}
+
+.login-right h1 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 10px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Handwritten "Library" style */
+.login-right h1 span {
+  display: block;
+  font-family: "Caveat", cursive;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.login-right p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #d9defa;
+}
+
+.signup-btn {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.signup-btn:hover {
+  background: white;
+  color: #0a0f33;
+}
+
