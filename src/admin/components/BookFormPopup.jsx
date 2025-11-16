@@ -1,0 +1,201 @@
+import Popup from './Popup.jsx';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBook, setShowPopup, setEditMode, categories }) {
+
+  const [nfcTagId, setNfcTagId] = useState('');
+  const connectToArduino = async () => {
+    try {
+      const port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 9600 });
+      const textDecoder = new TextDecoderStream();
+      const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+      const reader = textDecoder.readable.getReader();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          reader.releaseLock();
+          break;
+        }
+        console.log(value);
+        setNfcTagId(value.trim());
+      }
+
+    } catch (error) {
+      console.error("Error with Web Serial:", error);
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState('books');
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/admin/books')) {
+      setActiveTab('books');
+    }
+  }, [location.pathname]);
+
+  return (
+    <Popup show={showPopup} onClose={() => { setShowPopup(false); setEditMode(false); }} title={editMode ? 'Edit Book' : 'Add New Book'} maxWidthClass="max-w-[700px]">
+      <form onSubmit={handleAddBook} className="grid grid-cols-2 gap-4">
+        <div>
+       
+          <label className="text-sm font-medium block">Title</label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            placeholder="Enter title"
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium block">Author</label>
+          <input
+            type="text"
+            value={formData.author}
+            onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+            placeholder="Enter author"
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium block">ISBN</label>
+          <div className="flex gap-2">
+            <button
+              onClick={connectToArduino}
+              className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${
+                nfcTagId
+                  ? 'bg-green-200 text-green-900 hover:bg-green-300'
+                  : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+            >
+              {nfcTagId ? "Connected to NFC Reader" : "Connect to NFC Reader"}
+            </button>
+          <input
+            type="text"
+            value={nfcTagId}
+            onChange={(e) => {
+              formData.isbn = nfcTagId;
+              setFormData({ ...formData, isbn: e.target.value })
+            }}
+            placeholder="Enter ISBN"
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+          </div>
+          
+        </div>
+        <div className='flex flex-col'>
+          <label className="text-sm font-medium block">Publisher</label>
+          <input
+            type="text"
+            value={formData.publisher}
+            onChange={(e) => setFormData({ ...formData, publisher: e.target.value })}
+            placeholder="Enter publisher"
+            className="w-full flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium block">Publication Year</label>
+          <input
+            type="number"
+            value={formData.publicationYear}
+            onChange={(e) => setFormData({ ...formData, publicationYear: e.target.value })}
+            placeholder="Enter publication year"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium block">Category</label>
+          <select
+            value={formData.categoryId}
+            onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          >
+            <option value="">Select Category</option>
+            {categories && categories.map(category => (
+              <option key={category.category_id} value={category.category_id}>
+                {category.category_name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="text-sm font-medium block">Total Copies</label>
+          <input
+            type="number"
+            value={formData.totalCopies}
+            onChange={(e) => setFormData({ ...formData, totalCopies: e.target.value })}
+            placeholder="Enter total copies"
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium block">Available Copies</label>
+          <input
+            type="number"
+            value={formData.availableCopies}
+            onChange={(e) => setFormData({ ...formData, availableCopies: e.target.value })}
+            placeholder="Enter available copies"
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium block">Sale Price</label>
+          <input
+            type="number"
+            value={formData.salePrice}
+            onChange={(e) => setFormData({ ...formData, salePrice: e.target.value })}
+            placeholder="Enter sale price"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium block">Digital URL</label>
+          <input
+            type="text"
+            value={formData.digitalUrl}
+            onChange={(e) => setFormData({ ...formData, digitalUrl: e.target.value })}
+            placeholder="Enter digital URL"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div className="col-span-2">
+          <label className="text-sm font-medium block">Description</label>
+          <textarea
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Enter description"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+          />
+        </div>
+        <div className="col-span-2 flex justify-between mt-5">
+          <button
+            type="submit"
+            className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors font-semibold"
+          >
+            {editMode ? 'Update' : 'Add'}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setShowPopup(false);
+              setEditMode(false);
+            }}
+            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition-colors font-semibold"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </Popup>
+  );
+}
+
+export default BookFormPopup;
