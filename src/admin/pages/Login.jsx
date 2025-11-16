@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, logout } from '../services/auth.api';
+import LogoIcon from '../../assets/logo.svg?react'
 
 function Login() {
   const navigate = useNavigate();
@@ -84,8 +85,8 @@ function Login() {
         </div>
 
         <div className="max-[1080px]:w-full max-[1080px]:h-full w-1/2 [1080px]:flex-1 bg-[#0a0f33] text-white flex flex-col items-center justify-center max-[1080px]:rounded-none rounded-tl-[60px] rounded-bl-[60px]">
-          <img src="/assets/logo.svg" alt="BookHive Logo" className="w-20 mb-5" />
-          <h1 className="text-3xl text-center mb-3">
+<LogoIcon width="120"/> 
+         <h1 className="text-3xl text-center mb-3">
             BookHive
             <br />
             <span className="block font-['Caveat',cursive] text-3xl font-medium">Library</span>
