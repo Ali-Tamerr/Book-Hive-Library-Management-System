@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../services/auth.api';
+import LogoIcon from '../../assets/logo.svg?react'
+
 
 function Signup() {
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ function Signup() {
       <div className="flex max-[1080px]:flex-col w-full max-w-[900px] h-[520px] bg-white max-[1080px]:h-full rounded-[10px] overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
       <div className="w-[55%] max-[1080px]:flex hidden max-[1080px]:w-full max-[1080px]:h-full  [1080px]:flex-1  bg-white  items-center justify-center ">
           <div className="text-center w-[85%] max-w-[400px]">
-            <img src="/assets/logo.svg" alt="Small Logo" className="w-16 mb-4 mx-auto" />
+          <LogoIcon width="120"/>
             <h2 className="text-2xl font-semibold text-[#0a0f33] mb-2">Sign Up</h2>
             <p className="text-gray-700 text-sm mb-6">Please provide your information to sign up.</p>
 
