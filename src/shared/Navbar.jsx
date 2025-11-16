@@ -2,14 +2,17 @@ import React from 'react'
 import { Search, Settings, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getCurrentUser } from '../services/auth.api';
+import { getCurrentUser } from '../admin/services/auth.api';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
-  const [currentUser] = useState(getCurrentUser());
+  const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [navVisibilty, setNavVisibilty] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
+    // Update the user whenever the route changes
+    setCurrentUser(getCurrentUser());
+
     const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
     if (authRoutes.includes(location.pathname)) {
       setNavVisibilty(false);

@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
 
-import AdminLayout from './AdminLayout';
-import UserLayout from './UserLayout';
+// import AdminLayout from './AdminLayout';
+// import UserLayout from './UserLayout';
 
 const Login = lazy(() => import('./admin/pages/Login'));
 const Signup = lazy(() => import('./admin/pages/Signup'));
@@ -25,40 +25,69 @@ const UserBorrowedBooks = lazy(() => import('./user/pages/UserBorrowedBooks'));
 const UserReturnedBooks = lazy(() => import('./user/pages/UserReturnedBooks'));
 const UserLibraryLane = lazy(() => import('./user/pages/UserLibraryLane'));
 
+import Sidebar from './shared/Sidebar';
+import Navbar from './shared/Navbar';
+
 function App() {
+  const [activeTab, setActiveTab] = React.useState('');
+  const [isSidebarOpen, setSidebarOpen] = React.useState(false);
+  const [searchValue, setSearchValue] = React.useState('');
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <Router>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/otp" element={<OTP />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+    <div className="flex h-screen bg-[#f5f7fb] text-[#0a0f33]">
 
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="overdue" element={<Overdue />} />
-            <Route path="user-management" element={<UserManagement />} />
-            <Route path="test-api" element={<TestAPI />} />
-            <Route path="catalog" element={<Catalog />} />
-            <Route path="books" element={<Books />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
+      <Router>
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isSidebarOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
+        />
 
-          <Route path="/user" element={<UserLayout />}>
-            <Route path="dashboard" element={<UserDashboard />} />
-            <Route path="borrowed" element={<UserBorrowedBooks />} />
-            <Route path="returned" element={<UserReturnedBooks />} />
-            <Route path="library" element={<UserLibraryLane />} />
-          </Route>
+        <main className="flex-1 h-full flex flex-col overflow-hidden">
+          <Navbar searchValue={searchValue} setSearchValue={setSearchValue} toggleSidebar={toggleSidebar} />
+          <div className="flex-1 h-full">
 
-          <Route path="/" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </Suspense>
+            {/* <Suspense fallback={
+              <div className="h-screen w-screen flex gap-4 items-center justify-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-l-2 border-[#0a0f33] border-r-transparent" />
+                <p className="text-center text-xl font-medium text-[#0a0f33]">Loading...</p>
+              </div>
+            }> */}
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/otp" element={<OTP />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+
+              <Route path="admin/dashboard" element={<AdminDashboard />} />
+              <Route path="admin/overdue" element={<Overdue />} />
+              <Route path="admin/user-management" element={<UserManagement />} />
+              <Route path="admin/test-api" element={<TestAPI />} />
+              <Route path="admin/catalog" element={<Catalog />} />
+              <Route path="admin/books" element={<Books />} />
+              <Route path="admin/categories" element={<Categories />} />
+              <Route path="admin/reports" element={<Reports />} />
+              <Route path="admin/settings" element={<Settings />} />
+
+              <Route path="/user/dashboard" element={<UserDashboard />} />
+              <Route path="/user/borrowed" element={<UserBorrowedBooks />} />
+              <Route path="/user/returned" element={<UserReturnedBooks />} />
+              <Route path="/user/library" element={<UserLibraryLane />} />
+
+              <Route path="/" element={<Navigate to="/login" replace />} />
+            </Routes>
+          {/* </Suspense> */}
+        </div>
+      </main>
     </Router>
+    </div >
+
+
   );
 }
 

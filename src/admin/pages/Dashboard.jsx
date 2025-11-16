@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { User, Book, MapPin, ShieldCheck, RefreshCw } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useBooks } from '../hooks/useBooks';
@@ -15,9 +16,19 @@ import LogoIcon from "../../assets/logo.svg?react";
 import PieChart from '../components/PieChart';
 
 function Dashboard() {
+  const location = useLocation();
   const [loadingAdmins, setLoadingAdmins] = useState({});
   const [currentUser] = useState(getCurrentUser());
   useUserActivity();
+
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/admin/dashboard')) {
+      setActiveTab('dashboard');
+    }
+  }, [location.pathname]);
 
   // Use React Query hooks - much cleaner!
   const { data: users = [], isLoading: usersLoading, refetch: refetchUsers } = useUsers();
@@ -73,7 +84,7 @@ function Dashboard() {
   }));
 
   return (
-    <div className="max-[1540px]:py-5 px-10 max-[1080px]:px-2 max-[430px]:px-0 flex-1 overflow-y-auto h-screen relative max-[430px]:w-dvw ">
+    <div className="max-[1540px]:py-5 px-10 max-[1080px]:px-2 max-[430px]:px-0 flex-1 overflow-y-auto -mt-3 h-full relative max-[430px]:w-dvw ">
       <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-8">
         {/* Left Column - Pie Chart */}
         <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 '>

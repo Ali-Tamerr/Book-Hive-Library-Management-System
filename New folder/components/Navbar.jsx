@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, Settings, Menu } from 'lucide-react';
-import { getCurrentUser } from '../../admin/services/auth.api';
+import { getCurrentUser } from '../../src/admin/services/auth.api';
 
 const UserNavbar = ({ toggleSidebar }) => {
   const currentUser = getCurrentUser();

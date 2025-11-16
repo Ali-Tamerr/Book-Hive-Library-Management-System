@@ -1,10 +1,9 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Sidebar from './admin/components/Sidebar';
-import Navbar from './admin/components/Navbar';
+import Sidebar from './shared/Sidebar';
+import Navbar from './shared/Navbar';
 
 function AdminLayout() {
-  const [activeTab, setActiveTab] = React.useState('');
   const [isSidebarOpen, setSidebarOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState('');
 
@@ -13,18 +12,12 @@ function AdminLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f5f7fb] text-[#0a0f33]">
-      <Sidebar
-        activeTab={activeTab}
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-      />
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <Navbar searchValue={searchValue} setSearchValue={setSearchValue} toggleSidebar={toggleSidebar} />
-        <div className="flex-1 overflow-y-auto">
-          <Outlet context={{ setActiveTab, setSearchValue }} />
-        </div>
-      </main>
+    <div className="flex h-screen bg-[#f5f7fb]">
+      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <Navbar toggleSidebar={toggleSidebar} setSearchValue={setSearchValue} />
+        <Outlet context={{ setSearchValue }} />
+      </div>
     </div>
   );
 }
