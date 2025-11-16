@@ -21,6 +21,11 @@ export const login = async (username, password) => {
       throw new Error('User not found');
     }
 
+    // Validate password (assuming password_hash is plain text for now, as per API behavior)
+    if (user.password_hash !== password) {
+      throw new Error('Invalid Email or Password');
+    }
+
     // In a real application, you would hash the password and compare with password_hash
     // For now, we'll store the user info in localStorage
     localStorage.setItem('authToken', JSON.stringify(user));
