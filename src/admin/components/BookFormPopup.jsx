@@ -1,10 +1,46 @@
 import Popup from './Popup.jsx';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBook, setShowPopup, setEditMode, categories }) {
+
+  const [nfcTagId, setNfcTagId] = useState('');
+  const connectToArduino = async () => {
+    try {
+      const port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 9600 });
+      const textDecoder = new TextDecoderStream();
+      const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+      const reader = textDecoder.readable.getReader();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          reader.releaseLock();
+          break;
+        }
+        console.log(value);
+        setNfcTagId(value.trim());
+      }
+
+    } catch (error) {
+      console.error("Error with Web Serial:", error);
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState('books');
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/admin/books')) {
+      setActiveTab('books');
+    }
+  }, [location.pathname]);
+
   return (
     <Popup show={showPopup} onClose={() => { setShowPopup(false); setEditMode(false); }} title={editMode ? 'Edit Book' : 'Add New Book'} maxWidthClass="max-w-[700px]">
       <form onSubmit={handleAddBook} className="grid grid-cols-2 gap-4">
         <div>
+       
           <label className="text-sm font-medium block">Title</label>
           <input
             type="text"
@@ -28,23 +64,39 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
         </div>
         <div>
           <label className="text-sm font-medium block">ISBN</label>
+          <div className="flex gap-2">
+            <button
+              onClick={connectToArduino}
+              className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${
+                nfcTagId
+                  ? 'bg-green-200 text-green-900 hover:bg-green-300'
+                  : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+            >
+              {nfcTagId ? "Connected to NFC Reader" : "Connect to NFC Reader"}
+            </button>
           <input
             type="text"
-            value={formData.isbn}
-            onChange={(e) => setFormData({ ...formData, isbn: e.target.value })}
+            value={nfcTagId}
+            onChange={(e) => {
+              formData.isbn = nfcTagId;
+              setFormData({ ...formData, isbn: e.target.value })
+            }}
             placeholder="Enter ISBN"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
           />
+          </div>
+          
         </div>
-        <div>
+        <div className='flex flex-col'>
           <label className="text-sm font-medium block">Publisher</label>
           <input
             type="text"
             value={formData.publisher}
             onChange={(e) => setFormData({ ...formData, publisher: e.target.value })}
             placeholder="Enter publisher"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            className="w-full flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
           />
         </div>
         <div>

@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, Book, RotateCcw, LogOut } from 'lucide-react';
 import NavLink from './NavLink';
-import { logout } from '../../admin/services/auth.api';
+import { logout, getCurrentUser } from '../../src/admin/services/auth.api';
+
 
 const UserSidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
+  
 
   const handleLogout = () => {
     logout();

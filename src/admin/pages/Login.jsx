@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../services/auth.api';
+import { login, logout } from '../services/auth.api';
 
 function Login() {
   const navigate = useNavigate();
@@ -8,6 +8,11 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Clear any existing user session when the login page loads
+    logout();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

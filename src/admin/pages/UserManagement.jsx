@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Plus, FilePenLine, Trash2, BookUser } from 'lucide-react';
 import { 
   useUsers, 
@@ -9,6 +10,7 @@ import {
 import UserFormPopup from '../components/UserFormPopup.jsx';
 
 function UserManagement({ searchValue }) {
+  const location = useLocation();
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   
@@ -22,6 +24,15 @@ function UserManagement({ searchValue }) {
     booksBought: [],
     booksReserved: []
   });
+
+  const [activeTab, setActiveTab] = useState('user-management');
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/admin/user-management')) {
+      setActiveTab('user-management');
+    }
+  }, [location.pathname]);
 
   const { data: users = [], isLoading } = useUsers();
   const createUserMutation = useCreateUser();
@@ -84,7 +95,7 @@ function UserManagement({ searchValue }) {
 
   return (
     <>
-        <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] flex flex-col">
+        <section className="flex-1 h-full bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">User Management</h2>
             <button
@@ -99,7 +110,7 @@ function UserManagement({ searchValue }) {
             </button>
           </div>
 
-          <div className="overflow-x-auto flex-1">
+          <div className="overflow-x-auto flex-1 h-full">
             <table className="w-full border-collapse text-left text-sm min-w-max">
               <thead>
                 <tr>

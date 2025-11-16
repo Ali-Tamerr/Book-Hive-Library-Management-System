@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, FilePenLine, Trash2 } from 'lucide-react';
 import { 
   useCategories, 
@@ -8,7 +8,7 @@ import {
 } from '../hooks/useCategories';
 import CategoryFormPopup from '../components/CategoryFormPopup.jsx';
 
-function Categories({ searchValue }) {
+function Categories({ searchValue, setActiveTab }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   
@@ -16,6 +16,8 @@ function Categories({ searchValue }) {
     name: '', 
     description: ''
   });
+
+
 
   const { data: categories = [], isLoading } = useCategories();
   const createCategoryMutation = useCreateCategory();
@@ -78,7 +80,7 @@ function Categories({ searchValue }) {
 
   return (
     <>
-        <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] flex flex-col">
+        <section className="flex-1 h-full bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Category Management</h2>
             <button
@@ -93,7 +95,7 @@ function Categories({ searchValue }) {
             </button>
           </div>
 
-          <div className="overflow-x-auto flex-1">
+          <div className="overflow-x-auto flex-1 h-full">
             <table className="w-full border-collapse text-left text-sm min-w-max">
               <thead>
                 <tr>

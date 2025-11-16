@@ -1,43 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import BorrowedBooks from './BorrowedBooks';
 import Overdue from './Overdue';
 import BoughtBooks from './BoughtBooks';
 import ReservedBooks from './ReservedBooks';
 
 function Catalog({ searchValue }) {
-  const [activeTab, setActiveTab] = useState('borrowed');
+  const location = useLocation();
+  const [localActiveTab, setLocalActiveTab] = useState('borrowed');
+
+  const [activeTab, setActiveTab] = useState('catalog');
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/admin/catalog')) {
+      setActiveTab('catalog');
+    }
+  }, [location.pathname]);
 
   return (
       <div className="flex flex-col h-screen">
         <div className="flex gap-2 px-6 py-3 bg-[#f8f8fb] border-b border-[#0b0b3b28] max-[650px]:grid max-[650px]:grid-cols-1">
           <button
-            onClick={() => setActiveTab('borrowed')}
+            onClick={() => setLocalActiveTab('borrowed')}
             className={`px-4 py-2 rounded-md text-sm font-medium border ${
-              activeTab === 'borrowed' ? 'bg-white text-[#0b0b3b] border-[#0b0b3b8f]' : 'bg-[#001b961a] border-transparent'
+              localActiveTab === 'borrowed' ? 'bg-white text-[#0b0b3b] border-[#0b0b3b8f]' : 'bg-[#001b961a] border-transparent'
             }`}
           >
             Borrowed Books
           </button>
           <button
-            onClick={() => setActiveTab('bought')}
+            onClick={() => setLocalActiveTab('bought')}
             className={`px-4 py-2 rounded-md text-sm font-medium border ${
-              activeTab === 'bought' ? 'bg-white text-[#0b0b3b] border-[#0b0b3b8f]' : 'bg-[#001b961a] border-transparent'
+              localActiveTab === 'bought' ? 'bg-white text-[#0b0b3b] border-[#0b0b3b8f]' : 'bg-[#001b961a] border-transparent'
             }`}
           >
             Bought Books
           </button>
           <button
-            onClick={() => setActiveTab('reserved')}
+            onClick={() => setLocalActiveTab('reserved')}
             className={`px-4 py-2 rounded-md text-sm font-medium border ${
-              activeTab === 'reserved' ? 'bg-white text-[#0b0b3b] border-[#0b0b3b8f]' : 'bg-[#001b961a] border-transparent'
+              localActiveTab === 'reserved' ? 'bg-white text-[#0b0b3b] border-[#0b0b3b8f]' : 'bg-[#001b961a] border-transparent'
             }`}
           >
             Reserved Books
           </button>
           <button
-            onClick={() => setActiveTab('overdue')}
+            onClick={() => setLocalActiveTab('overdue')}
             className={`px-4 py-2 rounded-md text-sm font-medium border ${
-              activeTab === 'overdue' ? 'bg-white text-[#0b0b3b] border-[#0b0b3b8f]' : 'bg-[#001b961a] border-transparent'
+              localActiveTab === 'overdue' ? 'bg-white text-[#0b0b3b] border-[#0b0b3b8f]' : 'bg-[#001b961a] border-transparent'
             }`}
           >
             Overdue Borrowers
@@ -45,10 +56,10 @@ function Catalog({ searchValue }) {
         </div>
 
         <section className="flex-1 bg-white mx-6 my-5 rounded-lg p-5 shadow-[0_2px_6px_rgba(0,0,0,0.05)] flex flex-col">
-          {activeTab === 'borrowed' && <BorrowedBooks searchValue={searchValue} />}
-          {activeTab === 'bought' && <BoughtBooks searchValue={searchValue} />}
-          {activeTab === 'reserved' && <ReservedBooks searchValue={searchValue} />}
-          {activeTab === 'overdue' && <Overdue searchValue={searchValue} />}
+          {localActiveTab === 'borrowed' && <BorrowedBooks searchValue={searchValue} />}
+          {localActiveTab === 'bought' && <BoughtBooks searchValue={searchValue} />}
+          {localActiveTab === 'reserved' && <ReservedBooks searchValue={searchValue} />}
+          {localActiveTab === 'overdue' && <Overdue searchValue={searchValue} />}
         </section>
       </div>
   );
