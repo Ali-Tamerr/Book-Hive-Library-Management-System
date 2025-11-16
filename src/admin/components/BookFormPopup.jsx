@@ -43,14 +43,23 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
 
       // Asynchronously read from the serial port until the component unmounts or an error occurs
       (async () => {
+        let buffer = '';
         try {
           while (true) {
             const { value, done } = await reader.read();
             if (done) {
               break;
             }
-            console.log('NFC Tag ID:', value);
-            setNfcTagId(value.trim());
+            buffer += value;
+            const lines = buffer.split('\n');
+            if (lines.length > 1) {
+              const completeLine = lines.shift().trim();
+              if (completeLine) {
+                console.log('NFC Tag ID:', completeLine);
+                setNfcTagId(completeLine);
+              }
+              buffer = lines.join('\n');
+            }
           }
         } catch (error) {
           console.log("Read loop was cancelled or an error occurred:", error);
