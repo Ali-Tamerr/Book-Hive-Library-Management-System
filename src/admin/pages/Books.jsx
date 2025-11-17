@@ -83,7 +83,7 @@ function Books({ searchValue }) {
 
   const handleEdit = (book) => {
     setFormData({
-      id: book.id,
+      id: book.ISBN,
       title: book.Title || book.title || '',
       author: book.Author || book.author || '',
       isbn: book.ISBN || book.isbn || '',
@@ -107,6 +107,8 @@ function Books({ searchValue }) {
       } catch (error) {
         if (error.status === 405) {
           alert('Book deletion is not supported by the API. The Books endpoint may be read-only.');
+        } else if (error.status === 400) {
+          alert('This book cannot be deleted because it has related reservations, sales, or transactions.');
         } else {
           alert(`Failed to delete book: ${error.message || 'Please try again.'}`);
         }
@@ -131,14 +133,14 @@ function Books({ searchValue }) {
     <>
         <section className="flex-1 h-full bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] flex flex-col">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Book Management</h2>
+            <h2 className="text-xl max-[856px]:text-sm font-semibold">Book Management</h2>
             <button
               onClick={() => {
                 setFormData({ title: '', author: '', isbn: '', publisher: '', publicationYear: '', categoryId: '', totalCopies: 1, availableCopies: 1, salePrice: '', digitalUrl: '', description: '' });
                 setEditMode(false);
                 setShowPopup(true);
               }}
-              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
+              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2 max-[856px]:scale-90"
             >
               <Plus size={15}/> Add Book
             </button>
@@ -171,7 +173,7 @@ function Books({ searchValue }) {
                   </tr>
                 ) : (
                   filteredBooks.map((book) => (
-                    <tr key={book.id} className="border-b border-gray-200">
+                    <tr key={book.ISBN} className="border-b border-gray-200">
                       <td className="p-3">{book.ISBN || book.isbn || ''}</td>
                       <td className="p-3">{book.Title || book.title || ''}</td>
                       <td className="p-3">{book.Author || book.author || ''}</td>
@@ -187,7 +189,7 @@ function Books({ searchValue }) {
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
                           title="Edit"><FilePenLine size={20}/></button>
                         <button 
-                          onClick={() => handleDelete(book.id)}
+                          onClick={() => handleDelete(book.ISBN)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
                           title="Delete"><Trash2 size={20}/></button>
                       </td>

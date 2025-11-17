@@ -37,21 +37,22 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex  items-center justify-center bg-[#f4f6fb] p-4">
-      <div className="flex max-[1080px]:flex-col justify-stretch w-full max-w-[900px] h-[550px] max-[1080px]:h-full bg-white rounded-[10px] overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
-        <div className="max-[1080px]:w-full w-1/2 max-[1080px]:h-full [1080px]:flex-1 bg-white flex items-center justify-center p-10">
-          <div className="w-full max-w-[300px]">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome Back !!</h2>
-            <p className="text-gray-600 text-sm mb-8">Please enter your credentials to log in</p>
+    <div className="min-h-screen flex max-[1080px]:min-w-screen items-center justify-center bg-[#f4f6fb] [1080px]:p-4">
+      <div className="flex max-[1080px]:flex-col justify-stretch w-full max-w-[900px] h-[550px] max-[1080px]:h-full bg-white rounded-[10px] overflow max-[1080px]:min-w-screen shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
+        <div className="max-[1080px]:w-full w-1/2 max-[1080px]:h-screen [1080px]:flex-1 bg-white flex items-center justify-center p-10">
+          <div className="w-full max-w-[300px] max-[1080px]:flex max-[1080px]:flex-col max-[1080px]:items-center max-[1080px]:justify-center flex flex-col items-center justify-center gap-4">
+          <LogoIcon width="120" className="hidden max-[1080px]:block"/> 
+            <h2 className="text-2xl font-semibold text-gray-900">Welcome Back !!</h2>
+            <p className="text-gray-600 text-sm text-center">Please enter your credentials to log in</p>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='w-full flex flex-col gap-4'>
               <input
                 type="email"
                 placeholder="Email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="w-full px-3 py-2 mb-4 rounded-lg border border-gray-300 outline-none focus:border-[#1e255e] text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 outline-none focus:border-[#1e255e] text-sm"
               />
               <input
                 type="password"
@@ -59,7 +60,7 @@ function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-3 py-2 mb-4 rounded-lg border border-gray-300 outline-none focus:border-[#1e255e] text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 outline-none focus:border-[#1e255e] text-sm"
               />
 
               {error && (
@@ -81,10 +82,12 @@ function Login() {
                 {loading ? 'LOGGING IN...' : 'SIGN IN'}
               </button>
             </form>
+            <p className="text-sm text-gray-400 mb-5">New to our platform? <button onClick={() => navigate('/signup')} className='underline text-gray-900'>Sign Up now.</button></p>
+
           </div>
         </div>
 
-        <div className="max-[1080px]:w-full max-[1080px]:h-full w-1/2 [1080px]:flex-1 bg-[#0a0f33] text-white flex flex-col items-center justify-center max-[1080px]:rounded-none rounded-tl-[60px] rounded-bl-[60px]">
+        <div className="max-[1080px]:hidden max-[1080px]:h-full w-1/2 [1080px]:flex-1 bg-[#0a0f33] text-white flex flex-col items-center justify-center max-[1080px]:rounded-none rounded-tl-[60px] rounded-bl-[60px]">
 <LogoIcon width="120"/> 
          <h1 className="text-3xl text-center mb-3">
             BookHive

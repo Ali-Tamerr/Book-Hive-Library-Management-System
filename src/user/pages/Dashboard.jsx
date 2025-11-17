@@ -55,7 +55,7 @@ function Dashboard() {
               <div className={styles.card}>
                 <div className="h-full w-1 rounded-full bg-[#0b0c28]"></div>
                 <div className={styles.iconBox}><Book /></div>
-                <h3 className={`text-[30px]`}>Your Borrowed Book List</h3>
+                <h3 className={`text-[30px] `}>Your Borrowed Book List</h3>
               </div>
 
               <div className={`${styles.card}`}>
