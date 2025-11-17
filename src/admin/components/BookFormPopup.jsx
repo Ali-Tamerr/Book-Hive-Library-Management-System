@@ -6,11 +6,17 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
 
   const [nfcTagId, setNfcTagId] = useState('');
   const [isConnected, setIsConnected] = useState(false);
+  const [isWebSerialSupported, setIsWebSerialSupported] = useState(false);
   const portRef = useRef(null);
   const readerRef = useRef(null);
   const isbnInputRef = useRef(null);
 
-
+  // Check for Web Serial API support on component mount
+  useEffect(() => {
+    if ("serial" in navigator) {
+      setIsWebSerialSupported(true);
+    }
+  }, []);
 
   // This useEffect hook handles the cleanup of the serial port connection.
   // It runs when the component unmounts to prevent leaving the port in a busy state.
@@ -39,6 +45,10 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
   };
 
   const connectToArduino = async () => {
+    if (!isWebSerialSupported) {
+      alert("Your browser does not support the Web Serial API. Please use a compatible browser like Chrome or Edge.");
+      return;
+    }
     if (portRef.current) {
       console.warn("A port is already selected. Disconnect first.");
       return;
@@ -99,7 +109,13 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
         }
       })();
     } catch (error) {
-      console.error("Failed to connect to the serial device:", error);
+      if (error.name === 'NotFoundError') {
+        // Silently ignore the error if the user cancels the port selection dialog.
+        console.log("User cancelled port selection.");
+      } else {
+        console.error("Failed to connect to the serial device:", error);
+        alert(`An error occurred while connecting to the NFC reader: ${error.message}`);
+      }
       setIsConnected(false);
       if (portRef.current) {
         portRef.current = null;
@@ -108,6 +124,11 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
   };
 
   const handleConnectClick = async () => {
+    if (!("serial" in navigator)) {
+      alert("Error: Your browser does not support the Web Serial API.\nPlease use Google Chrome, Microsoft Edge, or Opera for this feature.");
+      return;
+    }
+
     if (isConnected) {
       await disconnectFromArduino();
     } else {

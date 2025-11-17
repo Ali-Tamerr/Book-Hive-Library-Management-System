@@ -82,14 +82,14 @@ function Categories({ searchValue, setActiveTab }) {
     <>
         <section className="flex-1 h-full bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] flex flex-col">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Category Management</h2>
+            <h2 className="text-xl font-semibold max-[856px]:text-sm ">Category Management</h2>
             <button
               onClick={() => {
                 setFormData({ name: '', description: '' });
                 setEditMode(false);
                 setShowPopup(true);
               }}
-              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
+              className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2 max-[856px]:scale-90"
             >
               <Plus size={15}/> Add Category
             </button>

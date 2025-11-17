@@ -50,7 +50,7 @@ function Signup() {
           <div className="flex flex-col gap-2 justify-center p-4 items-center max-[1080px]:h-screen w-[85%] max-[1080px]:w-full max-w-[400px]">
             <LogoIcon className="w-22 text-[#0a0f33]" />
             <h2 className="text-2xl font-semibold text-[#0a0f33] mb-2">Sign Up</h2>
-            <p className="text-gray-700 text-sm mb-6">Please provide your information to sign up.</p>
+            <p className="text-gray-700 text-sm mb-6 text-center">Please provide your information to sign up.</p>
             <form onSubmit={handleSubmit} className='w-full flex flex-col gap-6'>
               <div className="flex gap-2">
                 <input
