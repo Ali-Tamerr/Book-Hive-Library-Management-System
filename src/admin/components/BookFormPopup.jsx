@@ -146,7 +146,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
   }, [location.pathname]);
 
   return (
-    <Popup show={showPopup} onClose={() => { setShowPopup(false); setEditMode(false); }} title={editMode ? 'Edit Book' : 'Add New Book'} maxWidthClass="max-w-[700px]">
+    <Popup show={showPopup} onClose={() => { setShowPopup(false); setEditMode(false); disconnectFromArduino(); }} title={editMode ? 'Edit Book' : 'Add New Book'} maxWidthClass="max-w-[700px]">
       <form onSubmit={handleAddBook} className="grid grid-cols-2 gap-4">
         <div>
        
