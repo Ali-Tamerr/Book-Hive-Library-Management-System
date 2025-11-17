@@ -16,6 +16,7 @@ function Books({ searchValue }) {
   const [editMode, setEditMode] = useState(false);
   
   const [formData, setFormData] = useState({ 
+    id: 0,
     title: '', 
     author: '', 
     isbn: '', 
@@ -48,6 +49,7 @@ function Books({ searchValue }) {
       const salePrice = parseFloat(formData.salePrice);
 
       const apiData = {
+        id: formData.id,
         title: formData.title,
         author: formData.author,
         isbn: formData.isbn,
@@ -83,7 +85,8 @@ function Books({ searchValue }) {
 
   const handleEdit = (book) => {
     setFormData({
-      id: book.ISBN,
+      id: book.Id,
+      ISBN: book.ISBN,
       title: book.Title || book.title || '',
       author: book.Author || book.author || '',
       isbn: book.ISBN || book.isbn || '',
@@ -150,6 +153,7 @@ function Books({ searchValue }) {
             <table className="w-full border-collapse text-left text-sm min-w-max">
               <thead>
                 <tr>
+                <th className="p-3 border-b border-gray-300 font-semibold">ID</th>
                   <th className="p-3 border-b border-gray-300 font-semibold">ISBN</th>
                   <th className="p-3 border-b border-gray-300 font-semibold">Title</th>
                   <th className="p-3 border-b border-gray-300 font-semibold">Author</th>
@@ -174,6 +178,7 @@ function Books({ searchValue }) {
                 ) : (
                   filteredBooks.map((book) => (
                     <tr key={book.ISBN} className="border-b border-gray-200">
+                        <td className="p-3">{book.Id || book.id}</td>
                       <td className="p-3">{book.ISBN || book.isbn || ''}</td>
                       <td className="p-3">{book.Title || book.title || ''}</td>
                       <td className="p-3">{book.Author || book.author || ''}</td>
@@ -189,7 +194,7 @@ function Books({ searchValue }) {
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
                           title="Edit"><FilePenLine size={20}/></button>
                         <button 
-                          onClick={() => handleDelete(book.ISBN)}
+                          onClick={() => handleDelete(book.Id)}
                           className="mr-2 text-lg hover:scale-125 transition-transform" 
                           title="Delete"><Trash2 size={20}/></button>
                       </td>
