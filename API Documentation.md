@@ -10,6 +10,38 @@ Notes
 - Some controllers map entities to DTOs (e.g. `UsersController`, `BooksController`).
 - Sensitive fields: `password_hash` is currently returned by `Users` DTOs — remove in production.
 
+Breaking change: BookDTO property renames
+- The `BookDTO` used by `BooksController` has been changed to use the same property names as the `Book` model (snake_case) to avoid confusion and ensure the frontend can reliably reference the numeric primary key.
+- New `BookDTO` fields (match `Models/Book`):
+  - `book_id` (int)
+  - `isbn` (string)
+  - `title` (string)
+  - `author` (string)
+  - `publisher` (string)
+  - `publication_year` (int?)
+  - `category_id` (int)
+  - `total_copies` (int)
+  - `available_copies` (int)
+  - `sale_price` (decimal?)
+  - `digital_url` (string)
+
+- DTO-only fields remain (snake_case):
+  - `description` (string)
+  - `user_names` (array[string])
+
+Why this change
+- The frontend needs the integer primary key (`book_id`) to call `PUT /api/Books/{id:int}` and `DELETE /api/Books/{id:int}`. Returning `book_id` in the DTO fixes edit/delete route usage and avoids sending ISBN strings where an integer is required.
+
+Frontend impact
+- The JSON returned from `GET /api/Books` and `GET /api/Books/{id}` now uses snake_case keys as listed above. Update the frontend to read/write those keys or add a client-side mapping layer.
+
+Recommendations
+- Prefer accepting a dedicated input DTO for POST/PUT (e.g., `BookInputDTO`) instead of binding the EF `Book` entity directly. This prevents clients from sending navigation properties that could attach or conflict with tracked entities.
+- Consider using `AutoMapper` to map between entity models and DTOs, keeping controller code concise and preventing accidental model binding of navigation properties.
+- Keep API documentation and frontend code in sync after making field-name changes.
+
+(Other sections remain unchanged — see below for existing endpoint docs.)
+
 Users
 
 Base route: `/api/Users`
@@ -65,7 +97,7 @@ Base route: `/api/Books`
 
 - GET `/api/Books`
   - Description: Returns list of books mapped to `BookDTO`.
-  - `BookDTO` fields (as used by controller): `Title`, `Author`, `ISBN`, `Publisher`, `PublicationYear` (int), `CategoryId` (int), `TotalCopies`, `AvailableCopies`, `SalePrice` (decimal), `DigitalUrl`, `Description` (string), `UserNames` (array[string]).
+  - `BookDTO` fields (as used by controller): use the snake_case names documented above.
 
 - GET `/api/Books/{id:int}`
   - Description: Get book by numeric id. Returns `BookDTO`.
@@ -82,13 +114,13 @@ Base route: `/api/Books`
     - `total_copies` and `available_copies` must be non-negative.
     - `available_copies` cannot be greater than `total_copies`.
     - Duplicate ISBN results in 409 Conflict.
-  - Behavior: On success, controller persists the book, reloads related collections (`BookReservations`, `BookSales`, `BookTransactions`) to build a `BookDTO.UserNames` list and returns 201 Created with the DTO and Location header (CreatedAtAction).
+  - Behavior: On success, controller persists the book, reloads related collections (`BookReservations`, `BookSales`, `BookTransactions`) to build a `BookDTO.user_names` list and returns 201 Created with the DTO and Location header (CreatedAtAction).
   - Responses: 201 Created (DTO), 400 BadRequest (validation), 409 Conflict (duplicate ISBN).
 
 - PUT `/api/Books/{id:int}`
   - Description: Update an existing book. Controller validates payload similarly to POST.
   - Validations: same as POST plus ensure the ISBN is not used by another book.
-  - Behavior: Applies changes, saves, and returns the updated `BookDTO` (200 OK) constructed via the controller's `ToDTO` helper which populates `UserNames` from related collections.
+  - Behavior: Applies changes, saves, and returns the updated `BookDTO` (200 OK) constructed via the controller's `ToDTO` helper which populates `user_names` from related collections.
   - Responses: 200 OK (updated DTO), 400 BadRequest (validation), 404 NotFound, 409 Conflict.
 
 - DELETE `/api/Books/{id:int}`
@@ -97,8 +129,8 @@ Base route: `/api/Books`
   - Responses: 204 NoContent, 404 NotFound, 400 BadRequest (has related records).
 
 Notes on `BooksController` implementation
-- The controller includes a private `ToDTO(Book book)` helper used to construct `BookDTO`s and populate `UserNames` by concatenating names from related reservations, sales and transactions.
-- POST and PUT actions reload related collections (via `Include`/`ThenInclude`) before returning a DTO so that `UserNames` contains accurate values.
+- The controller includes a private `ToDTO(Book book)` helper used to construct `BookDTO`s and populate `user_names` by concatenating names from related reservations, sales and transactions.
+- POST and PUT actions reload related collections (via `Include`/`ThenInclude`) before returning a DTO so that `user_names` contains accurate values.
 
 RFID Tag
 
@@ -122,53 +154,23 @@ Base route: `/api/RFID_Tag`
 
 BookReservations
 
-Base route: `/api/BookReservations`
-
-- GET `/api/BookReservations` — list all reservations (entities).
-- GET `/api/BookReservations/{id}` — single reservation or 404.
-- POST `/api/BookReservations` — create reservation; body is `BookReservation` entity.
-- PUT `/api/BookReservations/{id}` — update reservation; responses: 204, 400, 404.
-- DELETE `/api/BookReservations/{id}` — delete reservation; 204 or 404.
+Base route: `/api/BookReservations` — list, get, create, update, delete.
 
 BookSales
 
-Base route: `/api/BookSales`
-
-- GET `/api/BookSales` — list all sales.
-- GET `/api/BookSales/{id}` — single sale or 404.
-- POST `/api/BookSales` — create sale; body `BookSale`.
-- PUT `/api/BookSales/{id}` — update sale; 204 or 400/404.
-- DELETE `/api/BookSales/{id}` — delete sale; 204 or 404.
+Base route: `/api/BookSales` — list, get, create, update, delete.
 
 BookTransactions
 
-Base route: `/api/BookTransactions`
-
-- GET `/api/BookTransactions` — list all transactions.
-- GET `/api/BookTransactions/{id}` — single transaction or 404.
-- POST `/api/BookTransactions` — create transaction; body is `BookTransaction`.
-- PUT `/api/BookTransactions/{id}` — update transaction; 204 or 400/404.
-- DELETE `/api/BookTransactions/{id}` — delete transaction; 204 or 404.
+Base route: `/api/BookTransactions` — list, get, create, update, delete.
 
 Categories
 
-Base route: `/api/Categories`
-
-- GET `/api/Categories` — list categories.
-- GET `/api/Categories/{id}` — single category or 404.
-- POST `/api/Categories` — create category; body is `Category`.
-- PUT `/api/Categories/{id}` — update category; 204 or 400/404.
-- DELETE `/api/Categories/{id}` — delete category; 204 or 404.
+Base route: `/api/Categories` — list, get, create, update, delete.
 
 Reports
 
-Base route: `/api/Reports`
-
-- GET `/api/Reports` — list reports (entities).
-- GET `/api/Reports/{id}` — single report or 404.
-- POST `/api/Reports` — create report; body `Report` (fields: `report_name`, `generated_by` (user id), `report_type`, optional `generated_at`, `file_path`).
-- PUT `/api/Reports/{id}` — update report; 204 or 400/404.
-- DELETE `/api/Reports/{id}` — delete; 204 or 404.
+Base route: `/api/Reports` — list, get, create, update, delete.
 
 Common Patterns and Status Codes
 

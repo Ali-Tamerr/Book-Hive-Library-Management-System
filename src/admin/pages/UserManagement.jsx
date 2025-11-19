@@ -7,14 +7,17 @@ import {
   useUpdateUser, 
   useDeleteUser 
 } from '../hooks/useUsers';
+import { getUserById } from '../services/users.api';
 import UserFormPopup from '../components/UserFormPopup.jsx';
 
 function UserManagement({ searchValue }) {
   const location = useLocation();
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
   
   const [formData, setFormData] = useState({ 
+    id: Math.floor(10000000 + Math.random() * 90000000),
     first_name: '', 
     last_name: '', 
     email: '', 
@@ -43,33 +46,50 @@ function UserManagement({ searchValue }) {
     e.preventDefault();
     try {
       if (editMode && formData.id) {
-        const { password, ...updatedData } = formData;
-        await updateUserMutation.mutateAsync({ id: formData.id, data: updatedData });
+        // Merge the original user data with the form data
+        const dataToUpdate = { ...editingUser, ...formData };
+
+        // If a new password is provided, use it. Otherwise, the existing password_hash is preserved from editingUser.
+        if (formData.password) {
+          dataToUpdate.password_hash = formData.password;
+        }
+        
+        // Remove the temporary 'password' field from the payload
+        delete dataToUpdate.password;
+
+        await updateUserMutation.mutateAsync({ id: formData.id, data: dataToUpdate });
       } else {
         const { password, ...userData } = formData;
+        if (!password) {
+          alert("Password is required for new users.");
+          return;
+        }
         await createUserMutation.mutateAsync({ ...userData, password_hash: password });
       }
       setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '', booksBought: [], booksReserved: [] });
       setShowPopup(false);
       setEditMode(false);
+      setEditingUser(null);
     } catch (error) {
       console.error("Failed to save user:", error);
       alert('Failed to save user. Please try again.');
     }
   };
 
-  const handleEdit = (user) => {
-    setFormData({
-      id: user.id,
-      first_name: user.first_name || '',
-      last_name: user.last_name || '',
-      email: user.email || '',
-      phone_number: user.phone_number || '',
-      role: user.role || 'User',
-      password: ''
-    });
-    setEditMode(true);
-    setShowPopup(true);
+  const handleEdit = async (user) => {
+    try {
+      const fullUserData = await getUserById(user.id);
+      setEditingUser(fullUserData); // Store the original full user data
+      setFormData({
+        ...fullUserData,
+        password: '', // Keep password field blank in UI
+      });
+      setEditMode(true);
+      setShowPopup(true);
+    } catch (error) {
+      console.error("Failed to fetch user details:", error);
+      alert("Failed to fetch user details. Please try again.");
+    }
   };
 
   const handleDelete = async (id) => {
