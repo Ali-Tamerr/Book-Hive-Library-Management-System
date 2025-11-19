@@ -150,7 +150,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
       <form onSubmit={handleAddBook} className="grid grid-cols-2 gap-4">
         <div>
        
-          <label className="text-sm font-medium block">Title</label>
+          <label className="text-sm font-medium block">title</label>
           <input
             type="text"
             value={formData.title}
@@ -161,7 +161,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           />
         </div>
         <div>
-          <label className="text-sm font-medium block">Author</label>
+          <label className="text-sm font-medium block">author</label>
           <input
             type="text"
             value={formData.author}
@@ -172,7 +172,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           />
         </div>
         <div>
-          <label className="text-sm font-medium block">ISBN</label>
+          <label className="text-sm font-medium block">isbn</label>
           <div className="flex gap-2">
             <button
               type="button"
@@ -189,7 +189,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
             type="text"
             value={formData.isbn}
             onChange={(e) => setFormData({ ...formData, isbn: e.target.value })}
-            placeholder="Enter ISBN"
+            placeholder="Enter isbn"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             ref={isbnInputRef}
@@ -198,7 +198,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           
         </div>
         <div className='flex flex-col'>
-          <label className="text-sm font-medium block">Publisher</label>
+          <label className="text-sm font-medium block">publisher</label>
           <input
             type="text"
             value={formData.publisher}
@@ -211,8 +211,8 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           <label className="text-sm font-medium block">Publication Year</label>
           <input
             type="number"
-            value={formData.publicationYear}
-            onChange={(e) => setFormData({ ...formData, publicationYear: e.target.value })}
+            value={formData.publication_year}
+            onChange={(e) => setFormData({ ...formData, publication_year: e.target.value })}
             placeholder="Enter publication year"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
           />
@@ -220,8 +220,8 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
         <div>
           <label className="text-sm font-medium block">Category</label>
           <select
-            value={formData.categoryId}
-            onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+            value={formData.category_id}
+            onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
           >
             <option value="">Select Category</option>
@@ -236,8 +236,8 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           <label className="text-sm font-medium block">Total Copies</label>
           <input
             type="number"
-            value={formData.totalCopies}
-            onChange={(e) => setFormData({ ...formData, totalCopies: e.target.value })}
+            value={formData.total_copies}
+            onChange={(e) => setFormData({ ...formData, total_copies: e.target.value })}
             placeholder="Enter total copies"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
@@ -247,8 +247,8 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           <label className="text-sm font-medium block">Available Copies</label>
           <input
             type="number"
-            value={formData.availableCopies}
-            onChange={(e) => setFormData({ ...formData, availableCopies: e.target.value })}
+            value={formData.available_copies}
+            onChange={(e) => setFormData({ ...formData, available_copies: e.target.value })}
             placeholder="Enter available copies"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
@@ -258,8 +258,8 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           <label className="text-sm font-medium block">Sale Price</label>
           <input
             type="number"
-            value={formData.salePrice}
-            onChange={(e) => setFormData({ ...formData, salePrice: e.target.value })}
+            value={formData.sale_price}
+            onChange={(e) => setFormData({ ...formData, sale_price: e.target.value })}
             placeholder="Enter sale price"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
           />
@@ -268,14 +268,14 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
           <label className="text-sm font-medium block">Digital URL</label>
           <input
             type="text"
-            value={formData.digitalUrl}
-            onChange={(e) => setFormData({ ...formData, digitalUrl: e.target.value })}
+            value={formData.digital_url}
+            onChange={(e) => setFormData({ ...formData, digital_url: e.target.value })}
             placeholder="Enter digital URL"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
           />
         </div>
         <div className="col-span-2">
-          <label className="text-sm font-medium block">Description</label>
+          <label className="text-sm font-medium block">description</label>
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}

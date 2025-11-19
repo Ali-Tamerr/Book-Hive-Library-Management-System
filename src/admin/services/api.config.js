@@ -66,6 +66,7 @@ axiosInstance.interceptors.response.use(
 export const apiGet = (endpoint, config = {}) => axiosInstance.get(endpoint, config);
 export const apiPost = (endpoint, data, config = {}) => axiosInstance.post(endpoint, data, config);
 export const apiPut = (endpoint, data, config = {}) => axiosInstance.put(endpoint, data, config);
+export const apiPatch = (endpoint, data, config = {}) => axiosInstance.patch(endpoint, data, config);
 export const apiDelete = (endpoint, config = {}) => axiosInstance.delete(endpoint, config);
 
 // Export the instance for custom use

@@ -161,10 +161,9 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
           </button>
           <input
             type="text"
-            value={formData.first_name}
+            value={formData.id}
             onChange={(e) => setFormData({ ...formData, id: e.target.value })}
-            placeholder="Enter ID"
-            required
+            placeholder="Enter ID (auto-generated if empty)"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
           />
         </div>
@@ -210,19 +209,18 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
         />
       </div>
-      {!editMode && (
+      
         <div>
           <label className="text-sm font-medium block">Password</label>
           <input
             type="password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            placeholder="Enter password"
-            required
+            placeholder={editMode ? "Leave blank to keep current password" : "Enter password"}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
           />
         </div>
-      )}
+    
       <div>
         <label className="text-sm font-medium block">Role</label>
         <select
