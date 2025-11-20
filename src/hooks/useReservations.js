@@ -5,7 +5,7 @@ import {
   createReservation, 
   updateReservation, 
   deleteReservation 
-} from '../services/bookReservations.api';
+} from '../../services/bookReservations.api';
 
 // Query Key Factory
 export const reservationKeys = {

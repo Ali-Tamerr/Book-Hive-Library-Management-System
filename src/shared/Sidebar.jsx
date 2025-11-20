@@ -12,7 +12,7 @@ import {
     Settings, Book, RotateCcw,
 
 } from "lucide-react";
-import { logout, getCurrentUser } from '../admin/services/auth.api';
+import { logout, getCurrentUser } from '../services/auth.api';
 
 import NavLink from './NavLink';
 
@@ -161,6 +161,17 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                         }}
                         icon={<Folder size={18} strokeWidth={2.3} />}
                         text="Categories"
+                        toggleSidebar={toggleSidebar}
+                    />
+                    <NavLink
+                        isExpanded={isExpanded}
+                        active={location.pathname === '/admin/branches'}
+                        onClick={() => {
+                            setActiveTab('/admin/branches');
+                            navigate('/admin/branches');
+                        }}
+                        icon={<Library size={18} strokeWidth={2.3} />}
+                        text="Branches"
                         toggleSidebar={toggleSidebar}
                     />
 

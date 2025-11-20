@@ -4,26 +4,27 @@ import React, { Suspense, lazy } from 'react';
 // import AdminLayout from './AdminLayout';
 // import UserLayout from './UserLayout';
 
-const Login = lazy(() => import('./admin/pages/Login'));
-const Signup = lazy(() => import('./admin/pages/Signup'));
-const ForgotPassword = lazy(() => import('./admin/pages/ForgotPassword'));
-const OTP = lazy(() => import('./admin/pages/OTP'));
-const ResetPassword = lazy(() => import('./admin/pages/ResetPassword'));
+const Login = lazy(() => import('./Admin pages/Login'));
+const Signup = lazy(() => import('./Admin pages/Signup'));
+const ForgotPassword = lazy(() => import('./Admin pages/ForgotPassword'));
+const OTP = lazy(() => import('./Admin pages/OTP'));
+const ResetPassword = lazy(() => import('./Admin pages/ResetPassword'));
 
-const AdminDashboard = lazy(() => import('./admin/pages/Dashboard'));
-const Overdue = lazy(() => import('./admin/pages/Overdue'));
-const UserManagement = lazy(() => import('./admin/pages/UserManagement'));
-const TestAPI = lazy(() => import('./admin/pages/TestAPI'));
-const Catalog = lazy(() => import('./admin/pages/Catalog'));
-const Books = lazy(() => import('./admin/pages/Books'));
-const Categories = lazy(() => import('./admin/pages/Categories'));
-const Reports = lazy(() => import('./admin/pages/Reports'));
-const Settings = lazy(() => import('./admin/pages/Settings'));
+const AdminDashboard = lazy(() => import('./Admin pages/Dashboard'));
+const Overdue = lazy(() => import('./Admin pages/Overdue'));
+const UserManagement = lazy(() => import('./Admin pages/UserManagement'));
+const TestAPI = lazy(() => import('./Admin pages/TestAPI'));
+const Catalog = lazy(() => import('./Admin pages/Catalog'));
+const Books = lazy(() => import('./Admin pages/Books'));
+const Categories = lazy(() => import('./Admin pages/Categories'));
+const Reports = lazy(() => import('./Admin pages/Reports'));
+const Settings = lazy(() => import('./Admin pages/Settings'));
+const Branches = lazy(() => import('./Admin pages/Branches'));
 
-const UserDashboard = lazy(() => import('./user/pages/Dashboard'));
-const UserBorrowedBooks = lazy(() => import('./user/pages/UserBorrowedBooks'));
-const UserReturnedBooks = lazy(() => import('./user/pages/UserReturnedBooks'));
-const UserLibraryLane = lazy(() => import('./user/pages/UserLibraryLane'));
+const UserDashboard = lazy(() => import('./User pages/Dashboard'));
+const UserBorrowedBooks = lazy(() => import('./User pages/UserBorrowedBooks'));
+const UserReturnedBooks = lazy(() => import('./User pages/UserReturnedBooks'));
+const UserLibraryLane = lazy(() => import('./User pages/UserLibraryLane'));
 
 import Sidebar from './shared/Sidebar';
 import Navbar from './shared/Navbar';
@@ -65,6 +66,7 @@ function App() {
               <Route path="admin/categories" element={<Categories />} />
               <Route path="admin/reports" element={<Reports />} />
               <Route path="admin/settings" element={<Settings />} />
+              <Route path="admin/branches" element={<Branches />} />
 
               <Route path="/user/dashboard" element={<UserDashboard />} />
               <Route path="/user/borrowed" element={<UserBorrowedBooks />} />

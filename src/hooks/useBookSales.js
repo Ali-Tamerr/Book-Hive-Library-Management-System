@@ -5,7 +5,7 @@ import {
   createBookSale, 
   updateBookSale, 
   deleteBookSale 
-} from '../services/bookSales.api';
+} from '../../services/bookSales.api';
 
 // Query Key Factory
 export const bookSalesKeys = {

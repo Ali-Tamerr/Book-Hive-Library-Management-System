@@ -4,7 +4,7 @@ import {
   getReportById, 
   createReport, 
   deleteReport 
-} from '../services/reports.api';
+} from '../../services/reports.api';
 
 // Query Key Factory
 export const reportKeys = {

@@ -2,7 +2,7 @@ import React from 'react'
 import { Settings, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getCurrentUser } from '../admin/services/auth.api';
+import { getCurrentUser } from '../services/auth.api';
 import SearchBar from '../components/SearchBar';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {

@@ -1,11 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  getAllBooks,
-  getBookById,
-  createBook,
-  updateBook,
+import { 
+  getAllBooks, 
+  getBookById, 
+  searchBooksByTitle,
+  createBook, 
+  updateBook, 
   deleteBook 
-} from '../../admin/services/books.api';
+} from '../../services/books.api';
+
 // Query Key Factory
 export const bookKeys = {
   all: ['books'],
