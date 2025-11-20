@@ -6,7 +6,7 @@ import {
   useCreateReport, 
   useDeleteReport 
 } from '../hooks/useReports';
-import ReportFormPopup from '../components/ReportFormPopup.jsx';
+import ReportFormPopup from '../../components/ReportFormPopup.js';
 import { getCurrentUser } from '../services/auth.api';
 
 function Reports({ searchValue }) {

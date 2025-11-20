@@ -6,7 +6,7 @@ import {
   useUpdateCategory, 
   useDeleteCategory 
 } from '../hooks/useCategories';
-import CategoryFormPopup from '../components/CategoryFormPopup.jsx';
+import CategoryFormPopup from '../../components/CategoryFormPopup.js';
 
 function Categories({ searchValue, setActiveTab }) {
   const [showPopup, setShowPopup] = useState(false);

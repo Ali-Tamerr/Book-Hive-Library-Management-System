@@ -6,7 +6,7 @@ import {
   useUpdateBorrowedBook, 
   useDeleteBorrowedBook 
 } from '../hooks/useBorrowedBooks';
-import BorrowedBookFormPopup from '../components/BorrowedBookFormPopup.jsx';
+import BorrowedBookFormPopup from '../../components/BorrowedBookFormPopup.js';
 
 function BorrowedBooks({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);
