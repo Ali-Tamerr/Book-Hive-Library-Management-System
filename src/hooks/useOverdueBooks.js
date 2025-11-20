@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAllOverdueBooks } from '../services/overdueBooks.api';
+import { getAllOverdueBooks } from '../../services/overdueBooks.api';
 
 // Query Key Factory
 export const overdueBooksKeys = {

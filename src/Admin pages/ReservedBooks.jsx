@@ -5,8 +5,8 @@ import {
   useCreateReservation, 
   useUpdateReservation, 
   useDeleteReservation 
-} from '../hooks/useReservations';
-import ReservedBookFormPopup from '../../components/ReservedBookFormPopup.js';
+} from '../hooks/useReservations.js';
+import ReservedBookFormPopup from '../components/ReservedBookFormPopup.jsx';
 
 function ReservedBooks({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);

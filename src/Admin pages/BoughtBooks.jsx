@@ -5,8 +5,8 @@ import {
   useCreateBookSale, 
   useUpdateBookSale, 
   useDeleteBookSale 
-} from '../hooks/useBookSales';
-import BoughtBookFormPopup from '../../components/BoughtBookFormPopup.js';
+} from '../hooks/useBookSales.js';
+import BoughtBookFormPopup from '../components/BoughtBookFormPopup.jsx';
 
 function BoughtBooks({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);

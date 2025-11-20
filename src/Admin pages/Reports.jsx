@@ -5,9 +5,9 @@ import {
   useReports, 
   useCreateReport, 
   useDeleteReport 
-} from '../hooks/useReports';
-import ReportFormPopup from '../../components/ReportFormPopup.js';
-import { getCurrentUser } from '../services/auth.api';
+} from '../hooks/useReports.js';
+import ReportFormPopup from '../components/ReportFormPopup.jsx';
+import { getCurrentUser } from '../services/auth.api.js';
 
 function Reports({ searchValue }) {
   const location = useLocation();

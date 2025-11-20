@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from '../services/users.api';
+import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from '../../services/users.api';
 
 // Query Key Factory
 export const userKeys = {

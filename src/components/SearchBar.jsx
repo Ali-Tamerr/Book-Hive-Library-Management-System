@@ -1,5 +1,5 @@
 import React from 'react'
-import { getCurrentUser } from '../admin/services/auth.api';
+import { getCurrentUser } from '../services/auth.api';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
@@ -29,7 +29,7 @@ const SearchBar = ({ searchValue }) => {
   const isDashboard = location.pathname === '/dashboard';
   const showSearchInput = !isDashboard;
   return (
-    <div className='flex bg-zinc-200 border h-full border-zinc-400 rounded-2xl'>
+    <div className='flex bg-white border h-full border-zinc-400 rounded-2xl'>
       <button className="h-full text-grey-500 px-2 py-1 cursor-pointer"><Search size={15} /></button>
       <input
         type="text"
