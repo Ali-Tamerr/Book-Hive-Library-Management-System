@@ -1,8 +1,9 @@
 import React from 'react'
-import { Search, Settings, Menu } from 'lucide-react';
+import { Settings, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getCurrentUser } from '../admin/services/auth.api';
+import SearchBar from '../components/SearchBar';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
@@ -46,17 +47,6 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             {new Date().toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
           </p>
         </div>
-        {showSearchInput && <div className={`bg-gray-100 h-9 flex-1 min-w-20 rounded flex justify-between items-center overflow-hidden max-[1080px]:hidden`}>
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Search by ID or Name"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            className="px-3 py-1 w-full h-full bg-transparent outline-none text-xs"
-          />
-          <button className="bg-[#0b0c2a] h-full text-white px-2 py-1"><Search size={15} /></button>
-        </div>}
         <button className="text-2xl max-[1080px]:hidden"><Settings /></button>
         <button onClick={toggleSidebar} className="text-2xl hidden max-[1080px]:block"><Menu /></button>
       </div>

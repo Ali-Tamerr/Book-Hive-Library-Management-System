@@ -8,12 +8,12 @@ import { useBranches } from '../hooks/useBranches';
 import { useBookSales } from '../hooks/useBookSales';
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
 import { getCurrentUser } from '../services/auth.api';
-import DashboardCard from '../components/DashboardCard';
-import DashboardInfoCard from '../components/DashboardInfoCard';
+import DashboardCard from '../../components/DashboardCard';
+import DashboardInfoCard from '../../components/DashboardInfoCard';
 import { useUserActivity } from '../hooks/useUserActivity';
 import { isUserOnline } from '../services/userActivity.api';
 import LogoIcon from "../../assets/logo.svg?react";
-import PieChart from '../components/PieChart';
+import PieChart from '../../components/PieChart';
 
 function Dashboard() {
   const location = useLocation();

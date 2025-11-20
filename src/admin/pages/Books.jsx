@@ -8,7 +8,7 @@ import {
   useDeleteBook 
 } from '../hooks/useBooks';
 import { useCategories } from '../hooks/useCategories';
-import BookFormPopup from '../components/BookFormPopup.jsx';
+import BookFormPopup from '../../components/BookFormPopup.js';
 
 function Books({ searchValue }) {
   const location = useLocation();

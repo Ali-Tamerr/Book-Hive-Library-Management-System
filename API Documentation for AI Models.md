@@ -19,6 +19,7 @@ DbContext (LibraryManagementSystemContext)
 - DbSet<Report> Reports
 - DbSet<SystemLog> SystemLogs
 - DbSet<User> Users
+- DbSet<Branch> Branches
 
 Models (properties exactly as in code)
 
@@ -130,6 +131,12 @@ SystemLog
 - DateTime? created_at
 - User user (navigation; FK: user_id)
 
+Branch
+- int branch_id
+- string name
+- string location
+- string contact_number
+
 DTOs (as used by controllers)
 
 BookDTO (current controller mapping)
@@ -199,6 +206,13 @@ Controllers and routes (summary)
 - ReportsController (base route: /api/Reports)
   - CRUD for reports, binds Report entity
 
+- BranchesController (base route: /api/Branches)
+  - GET /api/Branches -> returns list of Branch entities
+  - GET /api/Branches/{id} -> returns single Branch entity
+  - POST /api/Branches -> create Branch (binds Branch entity)
+  - PUT /api/Branches/{id} -> update Branch (binds Branch entity)
+  - DELETE /api/Branches/{id} -> delete Branch
+
 Field name casing and JSON
 - The server returns JSON using the C# property names. Currently many model properties use snake_case identifiers (e.g., `book_id`, `category_id`). BookDTO returns snake_case fields. UserDTO uses `id` and `LastActivityAt` (note the mixed casing).
 - If a client expects a different casing (e.g., camelCase), either update serialization settings or handle mapping client-side.
@@ -265,13 +279,21 @@ UserDTO (returned by GET)
   "LastActivityAt": "2025-11-18T...Z"
 }
 
+Branch (entity shape expected by POST/PUT)
+{
+  "branch_id": 0,
+  "name": "Central Library",
+  "location": "123 Main St, City",
+  "contact_number": "0123456789"
+}
+
 Validation and common errors
 - FK constraint violations (Postgres 23503) happen when `category_id` or other FK value doesn't exist. Validate existence server-side before SaveChanges.
 - Do not send navigation properties (e.g., `category`, `BookReservations`) in POST/PUT bodies; send only primitive FK ids.
 - `405 Method Not Allowed` for PATCH means server doesn't accept PATCH; either use PUT or implement PATCH support server-side with JSON Patch and AddNewtonsoftJson.
 
 Tips for AI models / automated agents
-- Use the DbContext DbSet names to discover available collections: `Books`, `Users`, `Categories`, `BookReservations`, `BookSales`, `BookTransactions`, `RFID_Tags`, `Reports`, `SystemLogs`.
+- Use the DbContext DbSet names to discover available collections: `Books`, `Users`, `Categories`, `BookReservations`, `BookSales`, `BookTransactions`, `RFID_Tags`, `Reports`, `SystemLogs`, `Branches`.
 - Use model property lists above as canonical field names for building queries and payloads.
 - For updates, prefer using `PUT /api/Books/{id}` with full entity or implement a dedicated input DTO on server to accept partial updates safely.
 - When creating/updating Books, check `Categories` for existence of `category_id` first to avoid FK errors.

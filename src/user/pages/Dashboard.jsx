@@ -2,7 +2,7 @@ import React from 'react';
 import { Book, RotateCcw, Library, Settings } from 'lucide-react';
 import styles from './Dashboard.module.css';
 import LogoIcon from '../../assets/logo.svg?react';
-import PieChart from '../../admin/components/PieChart';
+import PieChart from '../../components/PieChart';
 import { useUsers } from '../../admin/hooks/useUsers';
 import { useBooks } from '../../admin/hooks/useBooks';
 import { useReservations } from '../../admin/hooks/useReservations';

@@ -8,7 +8,7 @@ const DashboardInfoCard = ({ icon, title, value, loading }) => {
       </div>
       <div className="h-14 w-0.5 bg-[#0a0f33]"></div>
       <div className="flex-1">
-        <h3 className="text-3xl font-semibold text-[#0a0f33] mb-1">
+        <h3 className="text-3xl font-bold text-[#0a0f33] mb-1">
           {loading ? '...' : String(value)}
         </h3>
         <p className="text-xs text-[#6f7390]">{title}</p>

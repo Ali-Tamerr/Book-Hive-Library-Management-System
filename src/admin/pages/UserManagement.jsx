@@ -1,26 +1,35 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Plus, FilePenLine, Trash2, BookUser } from 'lucide-react';
-import { 
-  useUsers, 
-  useCreateUser, 
-  useUpdateUser, 
-  useDeleteUser 
+import { Plus, FilePenLine, Trash2, Search, BookUser } from 'lucide-react';
+import {
+  useUsers,
+  useCreateUser,
+  useUpdateUser,
+  useDeleteUser
 } from '../hooks/useUsers';
 import { getUserById } from '../services/users.api';
-import UserFormPopup from '../components/UserFormPopup.jsx';
+import UserFormPopup from '../../components/UserFormPopup.jsx';
+import SearchBar from '../../components/SearchBar.jsx';
+import ButtonOne from '../../components/ButtonOne.jsx';
 
 function UserManagement({ searchValue }) {
   const location = useLocation();
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  
-  const [formData, setFormData] = useState({ 
+
+
+
+
+  // Hide search bar if on dashboard route
+  const isDashboard = location.pathname === '/dashboard';
+  const showSearchInput = !isDashboard;
+
+  const [formData, setFormData] = useState({
     id: Math.floor(10000000 + Math.random() * 90000000),
-    first_name: '', 
-    last_name: '', 
-    email: '', 
+    first_name: '',
+    last_name: '',
+    email: '',
     phone_number: '',
     role: 'User',
     password: '',
@@ -53,7 +62,7 @@ function UserManagement({ searchValue }) {
         if (formData.password) {
           dataToUpdate.password_hash = formData.password;
         }
-        
+
         // Remove the temporary 'password' field from the payload
         delete dataToUpdate.password;
 
@@ -102,93 +111,93 @@ function UserManagement({ searchValue }) {
     }
   };
 
+  const buttonBehaviour = () => {
+    setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '', booksBought: [], booksReserved: [] });
+    setEditMode(false);
+    setShowPopup(true);
+  }
   const filteredUsers = searchValue
     ? users.filter(
-        (user) =>
-          `${user.first_name || ""} ${user.last_name || ""}`
-            .toLowerCase()
-            .includes(searchValue.toLowerCase()) ||
-          user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          user.id?.toString().includes(searchValue)
-      )
+      (user) =>
+        `${user.first_name || ""} ${user.last_name || ""}`
+          .toLowerCase()
+          .includes(searchValue.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        user.id?.toString().includes(searchValue)
+    )
     : users;
 
   return (
-    <>
-        <section className="flex-1 h-full bg-white mx-6 my-5 rounded-lg p-5 border-2 border-[#c7d5f2] flex flex-col">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl max-[856px]:text-sm  font-semibold">User Management</h2>
-            <button
-              onClick={() => {
-                setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '', booksBought: [], booksReserved: [] });
-                setEditMode(false);
-                setShowPopup(true);
-              }}
-              className="bg-[#0b0b3b] max-[856px]:scale-90 text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
-            >
-              <Plus size={15}/> Add User
-            </button>
-          </div>
+    <div className='flex flex-col h-full p-7 gap-5'>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl max-[856px]:text-sm font-semibold">User Management</h2>
+        <div className='flex gap-2 h-10'>
+          <ButtonOne buttonBehaviour={buttonBehaviour}/>
+          <SearchBar searchValue={searchValue}/>
 
-          <div className="overflow-x-auto flex-1 h-full">
-            <table className="w-full border-collapse text-left text-sm min-w-max">
-              <thead>
+        </div>
+      </div>
+
+      <section className="flex-1 h-full bg-white  rounded-lg flex flex-col">
+        <div className="overflow-x-auto flex-1 h-full">
+          <table className="w-full border-collapse text-left text-sm min-w-max">
+            <thead>
+              <tr>
+                <th className="p-3 border-b border-gray-300 font-semibold">ID</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Name</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Email</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Phone</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Role</th>
+                <th className="p-3 border-b border-gray-300 font-semibold">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
                 <tr>
-                  <th className="p-3 border-b border-gray-300 font-semibold">ID</th>
-                  <th className="p-3 border-b border-gray-300 font-semibold">Name</th>
-                  <th className="p-3 border-b border-gray-300 font-semibold">Email</th>
-                  <th className="p-3 border-b border-gray-300 font-semibold">Phone</th>
-                  <th className="p-3 border-b border-gray-300 font-semibold">Role</th>
-                  <th className="p-3 border-b border-gray-300 font-semibold">Action</th>
+                  <td colSpan="6" className="p-3 text-center text-gray-500">Loading...</td>
                 </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan="6" className="p-3 text-center text-gray-500">Loading...</td>
+              ) : filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="p-3 text-center text-gray-500">No users found</td>
+                </tr>
+              ) : (
+                filteredUsers.map((user) => (
+                  <tr key={user.id} className="border-b border-gray-200">
+                    <td className="p-3">{user.id}</td>
+                    <td className="p-3">{`${user.first_name || ''} ${user.last_name || ''}`.trim() || 'N/A'}</td>
+                    <td className="p-3">{user.email || 'N/A'}</td>
+                    <td className="p-3">{user.phone_number || 'N/A'}</td>
+                    <td className="p-3">{user.role || 'User'}</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => handleEdit(user)}
+                        className="mr-2 text-lg hover:scale-125 transition-transform"
+                        title="Edit"><FilePenLine size={20} /></button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="mr-2 text-lg hover:scale-125 transition-transform"
+                        title="Delete"><Trash2 size={20} /></button>
+                      <button
+                        className="text-lg hover:scale-125 transition-transform"
+                        title="View"><BookUser size={20} /></button>
+                    </td>
                   </tr>
-                ) : filteredUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="p-3 text-center text-gray-500">No users found</td>
-                  </tr>
-                ) : (
-                  filteredUsers.map((user) => (
-                    <tr key={user.id} className="border-b border-gray-200">
-                      <td className="p-3">{user.id}</td>
-                      <td className="p-3">{`${user.first_name || ''} ${user.last_name || ''}`.trim() || 'N/A'}</td>
-                      <td className="p-3">{user.email || 'N/A'}</td>
-                      <td className="p-3">{user.phone_number || 'N/A'}</td>
-                      <td className="p-3">{user.role || 'User'}</td>
-                      <td className="p-3">
-                        <button 
-                          onClick={() => handleEdit(user)}
-                          className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Edit"><FilePenLine size={20}/></button>
-                        <button 
-                          onClick={() => handleDelete(user.id)}
-                          className="mr-2 text-lg hover:scale-125 transition-transform" 
-                          title="Delete"><Trash2 size={20}/></button>
-                        <button 
-                          className="text-lg hover:scale-125 transition-transform" 
-                          title="View"><BookUser size={20}/></button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      <UserFormPopup 
-        showPopup={showPopup} 
-        editMode={editMode} 
-        formData={formData} 
-        setFormData={setFormData} 
-        handleAddUser={handleAddUser} 
-        setShowPopup={setShowPopup} 
-        setEditMode={setEditMode} 
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <UserFormPopup
+        showPopup={showPopup}
+        editMode={editMode}
+        formData={formData}
+        setFormData={setFormData}
+        handleAddUser={handleAddUser}
+        setShowPopup={setShowPopup}
+        setEditMode={setEditMode}
       />
-    </>
+    </div>
   );
 }
 

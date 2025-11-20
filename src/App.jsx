@@ -37,7 +37,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f5f7fb] text-[#0a0f33]">
+    <div className="flex h-screen bg-[#F2F2F2] text-[#0a0f33]">
 
       <Router>
         <Sidebar
@@ -46,17 +46,9 @@ function App() {
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
         />
-
-        <main className="flex-1 h-full flex flex-col overflow-hidden">
+        <main className="flex-1 h-full flex flex-col overflow-hidden montserrat-regular">
           <Navbar searchValue={searchValue} setSearchValue={setSearchValue} toggleSidebar={toggleSidebar} />
           <div className="flex-1 h-full">
-
-            {/* <Suspense fallback={
-              <div className="h-screen w-screen flex gap-4 items-center justify-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-l-2 border-[#0a0f33] border-r-transparent" />
-                <p className="text-center text-xl font-medium text-[#0a0f33]">Loading...</p>
-              </div>
-            }> */}
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
