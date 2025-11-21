@@ -14,6 +14,7 @@ const CommonLayout = ({
   buttonText,
   columns,
   formPopup,
+  customActionRenderer,
 }) => {
   const FormPopupComponent = formPopup;
 
@@ -22,7 +23,7 @@ const CommonLayout = ({
       <div className="flex justify-between items-center">
         <h2 className="text-xl max-[856px]:text-sm font-semibold">{title}</h2>
         <div className='flex gap-2 h-10'>
-          <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />
+          {buttonText && <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />}
           <SearchBar searchValue={searchValue} />
         </div>
       </div>
@@ -52,7 +53,9 @@ const CommonLayout = ({
                     {columns.map(col => {
                       let cellContent;
                       if (col.accessor === 'action') {
-                        cellContent = (
+                        cellContent = customActionRenderer ? (
+                          customActionRenderer(item)
+                        ) : (
                           <>
                             <button
                               onClick={() => handleEdit(item)}

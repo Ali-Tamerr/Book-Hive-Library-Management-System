@@ -19,6 +19,8 @@ export const login = async (username, password) => {
     localStorage.setItem('authToken', JSON.stringify(user));
     localStorage.setItem('currentUser', JSON.stringify(user));
 
+    window.dispatchEvent(new Event('userUpdated'));
+
     return user;
   } catch (error) {
     console.error('Login error:', error);
@@ -28,7 +30,6 @@ export const login = async (username, password) => {
 
 export const signup = async (userData) => {
   try {
-    // Check if email already exists
     const users = await getAllUsers();
     const existingUser = users.find(u => u.email.toLowerCase() === userData.email.toLowerCase());
 
@@ -36,7 +37,7 @@ export const signup = async (userData) => {
       throw new Error('This email is already linked to another account.');
     }
 
-    const user = await createUser({
+    console.log('Creating user with data:', {
       first_name: userData.firstName,
       last_name: userData.lastName,
       email: userData.email,
@@ -45,8 +46,36 @@ export const signup = async (userData) => {
       role: 'User'
     });
 
+    const createdUser = await createUser({
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      email: userData.email,
+      phone_number: userData.contact,
+      password_hash: userData.password,
+      role: 'User'
+    });
+
+    console.log('API response after createUser:', createdUser);
+
+    let user = createdUser;
+
+    if (!createdUser || createdUser === '' || typeof createdUser === 'string') {
+      console.log('API returned empty/invalid response, fetching user by email...');
+      const allUsers = await getAllUsers();
+      user = allUsers.find(u => u.email.toLowerCase() === userData.email.toLowerCase());
+      console.log('Found user after fetch:', user);
+    }
+
+    if (!user || !user.email) {
+      throw new Error('Failed to create or retrieve user account');
+    }
+
     localStorage.setItem('authToken', JSON.stringify(user));
     localStorage.setItem('currentUser', JSON.stringify(user));
+
+    console.log('User saved to localStorage:', user);
+
+    window.dispatchEvent(new Event('userUpdated'));
 
     return user;
   } catch (error) {
@@ -58,6 +87,7 @@ export const signup = async (userData) => {
 export const logout = () => {
   localStorage.removeItem('authToken');
   localStorage.removeItem('currentUser');
+  window.dispatchEvent(new Event('userUpdated'));
 };
 
 export const getCurrentUser = () => {

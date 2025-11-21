@@ -75,6 +75,15 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                         <NavLink
                             isExpanded={isExpanded}
                             onClick={() => {
+                                setActiveTab('/user/books');
+                                navigate('/user/books');
+                            }}
+                            icon={<BookOpen size={18} strokeWidth={2.3} />}
+                            text="Books"
+                        />
+                        <NavLink
+                            isExpanded={isExpanded}
+                            onClick={() => {
                                 setActiveTab('/user/borrowed');
                                 navigate('/user/borrowed');
                             }}
