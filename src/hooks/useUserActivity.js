@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { updateUserActivity } from '../../services/userActivity.api';
-import { getCurrentUser } from '../../services/auth.api';
+import { updateUserActivity } from '../services/userActivity.api';
+import { getCurrentUser } from '../services/auth.api';
 
 
 export const useUserActivity = () => {

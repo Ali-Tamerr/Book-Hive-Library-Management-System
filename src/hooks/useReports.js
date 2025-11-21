@@ -1,11 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  getAllReports, 
-  getReportById, 
-  createReport, 
-  deleteReport 
-} from '../../services/reports.api';
-
+import {
+  getAllReports,
+  getReportById,
+  createReport,
+  deleteReport
+} from '../services/reports.api';
 // Query Key Factory
 export const reportKeys = {
   all: ['reports'],

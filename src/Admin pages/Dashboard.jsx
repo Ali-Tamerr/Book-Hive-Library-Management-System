@@ -12,7 +12,7 @@ import DashboardCard from '../components/DashboardCard';
 import DashboardInfoCard from '../components/DashboardInfoCard';
 import { useUserActivity } from '../hooks/useUserActivity';
 import { isUserOnline } from '../services/userActivity.api';
-import LogoIcon from "../../assets/logo.svg?react";
+import LogoIcon from "../assets/logo.svg?react";
 import PieChart from '../components/PieChart';
 
 function Dashboard() {

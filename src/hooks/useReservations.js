@@ -1,12 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  getAllReservations, 
+import {
+  getAllReservations,
   getReservationById,
-  createReservation, 
-  updateReservation, 
-  deleteReservation 
-} from '../../services/bookReservations.api';
-
+  createReservation,
+  updateReservation,
+  deleteReservation
+} from '../services/bookReservations.api';
 // Query Key Factory
 export const reservationKeys = {
   all: ['reservations'],
