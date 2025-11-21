@@ -2,8 +2,8 @@ import React from 'react'
 import { Settings, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getCurrentUser } from '../services/auth.api';
-import SearchBar from '../components/SearchBar';
+import { getCurrentUser } from '../../services/auth.api';
+import SearchBar from '../../components/SearchBar';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [currentUser, setCurrentUser] = useState(getCurrentUser());

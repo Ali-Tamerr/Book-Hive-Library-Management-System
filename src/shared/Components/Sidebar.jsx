@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import LogoIcon from '../assets/logo.svg?react';
+import LogoIcon from '../../assets/logo.svg?react';
 import {
     Home,
     BookOpen,
@@ -12,7 +12,7 @@ import {
     Settings, Book, RotateCcw,
 
 } from "lucide-react";
-import { logout, getCurrentUser } from '../services/auth.api';
+import { logout, getCurrentUser } from '../../../services/auth.api';
 
 import NavLink from './NavLink';
 
