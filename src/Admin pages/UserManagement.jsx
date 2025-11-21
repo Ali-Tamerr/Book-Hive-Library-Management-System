@@ -23,9 +23,7 @@ function UserManagement({ searchValue }) {
     email: '',
     phone_number: '',
     role: 'User',
-    password: '',
-    booksBought: [],
-    booksReserved: []
+    password: ''
   });
 
   const { data: users = [], isLoading } = useUsers();
@@ -44,14 +42,20 @@ function UserManagement({ searchValue }) {
         delete dataToUpdate.password;
         await updateUserMutation.mutateAsync({ id: formData.id, data: dataToUpdate });
       } else {
-        const { password, ...userData } = formData;
+        const { password, booksBought, booksReserved, ...userData } = formData;
         if (!password) {
           alert("Password is required for new users.");
           return;
         }
-        await createUserMutation.mutateAsync({ ...userData, password_hash: password });
+        await createUserMutation.mutateAsync({
+          ...userData,
+          user_id: 0,
+          rfid_tag_id: null,
+          status: 'Active',
+          password_hash: password
+        });
       }
-      setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '', booksBought: [], booksReserved: [] });
+      setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '' });
       setShowPopup(false);
       setEditMode(false);
       setEditingUser(null);
@@ -88,7 +92,7 @@ function UserManagement({ searchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '', booksBought: [], booksReserved: [] });
+    setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '' });
     setEditMode(false);
     setShowPopup(true);
   }
@@ -108,7 +112,7 @@ function UserManagement({ searchValue }) {
   const buttonText = "Add User";
   const columns = [
     { header: 'ID', accessor: 'id' },
-    { header: 'Name', accessor: 'first_name' },
+    { header: 'Name', accessor: 'name' },
     { header: 'Email', accessor: 'email' },
     { header: 'Phone', accessor: 'phone_number' },
     { header: 'Role', accessor: 'role' },
@@ -132,7 +136,7 @@ function UserManagement({ searchValue }) {
       searchValue={searchValue}
       buttonBehaviour={buttonBehaviour}
       isLoading={isLoading}
-      data={filteredUsers.map(u => ({...u, name: `${u.first_name} ${u.last_name}`}))}
+      data={filteredUsers.map(u => ({ ...u, name: `${u.first_name} ${u.last_name}` }))}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
       title={title}
