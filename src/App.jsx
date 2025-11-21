@@ -4,11 +4,11 @@ import React, { Suspense, lazy } from 'react';
 // import AdminLayout from './AdminLayout';
 // import UserLayout from './UserLayout';
 
-const Login = lazy(() => import('./Admin pages/Login'));
-const Signup = lazy(() => import('./Admin pages/Signup'));
-const ForgotPassword = lazy(() => import('./Admin pages/ForgotPassword'));
-const OTP = lazy(() => import('./Admin pages/OTP'));
-const ResetPassword = lazy(() => import('./Admin pages/ResetPassword'));
+const Login = lazy(() => import('./shared/Pages/Login'));
+const Signup = lazy(() => import('./shared/Pages/Signup'));
+const ForgotPassword = lazy(() => import('./shared/Pages/ForgotPassword'));
+const OTP = lazy(() => import('./shared/Pages/OTP'));
+const ResetPassword = lazy(() => import('./shared/Pages/ResetPassword'));
 
 const AdminDashboard = lazy(() => import('./Admin pages/Dashboard'));
 const Overdue = lazy(() => import('./Admin pages/Overdue'));
@@ -26,8 +26,8 @@ const UserBorrowedBooks = lazy(() => import('./User pages/UserBorrowedBooks'));
 const UserReturnedBooks = lazy(() => import('./User pages/UserReturnedBooks'));
 const UserLibraryLane = lazy(() => import('./User pages/UserLibraryLane'));
 
-import Sidebar from './shared/Sidebar';
-import Navbar from './shared/Navbar';
+import Sidebar from './shared/Components/Sidebar';
+import Navbar from './shared/Components/Navbar';
 
 function App() {
   const [activeTab, setActiveTab] = React.useState('');
