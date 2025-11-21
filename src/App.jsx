@@ -1,9 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
 
-// import AdminLayout from './AdminLayout';
-// import UserLayout from './UserLayout';
-
 const Login = lazy(() => import('./shared/Pages/Login'));
 const Signup = lazy(() => import('./shared/Pages/Signup'));
 const ForgotPassword = lazy(() => import('./shared/Pages/ForgotPassword'));
@@ -22,6 +19,7 @@ const Settings = lazy(() => import('./Admin pages/Settings'));
 const Branches = lazy(() => import('./Admin pages/Branches'));
 
 const UserDashboard = lazy(() => import('./User pages/Dashboard'));
+const UserBooks = lazy(() => import('./User pages/UserBooks'));
 const UserBorrowedBooks = lazy(() => import('./User pages/UserBorrowedBooks'));
 const UserReturnedBooks = lazy(() => import('./User pages/UserReturnedBooks'));
 const UserLibraryLane = lazy(() => import('./User pages/UserLibraryLane'));
@@ -69,16 +67,16 @@ function App() {
               <Route path="admin/branches" element={<Branches />} />
 
               <Route path="/user/dashboard" element={<UserDashboard />} />
+              <Route path="/user/books" element={<UserBooks />} />
               <Route path="/user/borrowed" element={<UserBorrowedBooks />} />
               <Route path="/user/returned" element={<UserReturnedBooks />} />
               <Route path="/user/library" element={<UserLibraryLane />} />
 
               <Route path="/" element={<Navigate to="/login" replace />} />
             </Routes>
-          {/* </Suspense> */}
-        </div>
-      </main>
-    </Router>
+          </div>
+        </main>
+      </Router>
     </div >
 
 

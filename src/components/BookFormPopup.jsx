@@ -71,7 +71,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
     { name: 'author', label: 'Author', type: 'text', placeholder: 'Enter author', required: true },
     {
       name: 'isbn',
-      label: 'ISBN',
+      label: 'ID',
       type: 'custom',
       render: (formData, onFormChange) => (
         <div key="isbn">

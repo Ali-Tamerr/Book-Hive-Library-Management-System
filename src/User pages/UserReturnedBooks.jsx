@@ -1,46 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
-import styles from './UserReturnedBooks.module.css';
+import CommonLayout from '../Layouts/CommonLayout';
 import { useReturnedBooks } from '../hooks/useReturnedBooks';
 
 function UserReturnedBooks() {
   const { data: returnedBooks = [], isLoading, error } = useReturnedBooks();
+  const [searchValue, setSearchValue] = useState('');
+
+  const filteredBooks = searchValue
+    ? returnedBooks.filter(book =>
+      book.book_id?.toString().includes(searchValue) ||
+      book.user_id?.toString().includes(searchValue)
+    )
+    : returnedBooks;
+
+  const columns = [
+    { header: 'Transaction ID', accessor: 'transaction_id' },
+    { header: 'Book ID', accessor: 'book_id' },
+    { header: 'User ID', accessor: 'user_id' },
+    { header: 'Borrow Date', accessor: 'created_at' },
+    { header: 'Due Date', accessor: 'due_date' },
+    { header: 'Return Date', accessor: 'return_date' },
+    { header: 'Status', accessor: 'status' },
+    { header: 'Action', accessor: 'action' },
+  ];
+
+  const handleView = (book) => {
+    console.log('View book details:', book);
+  };
+
+  const tableData = filteredBooks.map(book => ({
+    ...book,
+    created_at: book.created_at ? new Date(book.created_at).toLocaleDateString() : 'N/A',
+    due_date: book.due_date ? new Date(book.due_date).toLocaleDateString() : 'N/A',
+    return_date: book.return_date ? new Date(book.return_date).toLocaleDateString() : 'N/A',
+  }));
 
   return (
-    <div className="flex flex-col h-full">
-      <div className={`${styles.tableContainer} flex-1 overflow-x-auto`}>
-        <table className={`${styles.table} min-w-max`}>
-          <thead>
-            <tr>
-              <th className={styles.th}>ID</th>
-              <th className={styles.th}>User ID</th>
-              <th className={styles.th}>Amount</th>
-              <th className={styles.th}>Due Date</th>
-              <th className={styles.th}>Date & Time</th>
-              <th className={styles.th}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && <tr><td colSpan="6" className="text-center">Loading...</td></tr>}
-            {error && <tr><td colSpan="6" className="text-center text-red-500">{error.message}</td></tr>}
-            {!isLoading && !error && returnedBooks.map((book) => (
-              <tr key={book.id}>
-                <td className={styles.td}>{book.id}</td>
-                <td className={styles.td}>{book.user_id}</td>
-                <td className={styles.td}>{book.book_id}</td>
-                <td className={styles.td}>{book.due_date}</td>
-                <td className={styles.td}>{book.return_date}</td>
-                <td className={styles.td}>
-                  <button className={styles.viewBtn}>
-                    <Eye size={15} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <CommonLayout
+      searchValue={searchValue}
+      buttonBehaviour={() => { }}
+      isLoading={isLoading}
+      data={tableData}
+      handleEdit={() => { }}
+      handleDelete={() => { }}
+      title="Returned Books"
+      buttonText=""
+      columns={columns}
+      formPopup={null}
+      customActionRenderer={(book) => (
+        <button
+          onClick={() => handleView(book)}
+          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all flex items-center gap-2"
+        >
+          <Eye size={16} />
+          View
+        </button>
+      )}
+    />
   );
 }
 

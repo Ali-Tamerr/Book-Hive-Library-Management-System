@@ -11,8 +11,16 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Update the user whenever the route changes
-    setCurrentUser(getCurrentUser());
+    const updateAuth = () => {
+      const user = getCurrentUser();
+      console.log('Navbar: Current user from localStorage:', user);
+      setCurrentUser(user);
+    };
+
+    updateAuth();
+
+    window.addEventListener('storage', updateAuth);
+    window.addEventListener('userUpdated', updateAuth);
 
     const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
     if (authRoutes.includes(location.pathname)) {
@@ -20,9 +28,13 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
     } else {
       setNavVisibilty(true);
     }
+
+    return () => {
+      window.removeEventListener('storage', updateAuth);
+      window.removeEventListener('userUpdated', updateAuth);
+    };
   }, [location.pathname]);
 
-  // Hide search bar if on dashboard route
   const isDashboard = location.pathname === '/dashboard';
   const showSearchInput = !isDashboard;
 
@@ -33,7 +45,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
         <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
         <div>
           <h3 className="text-lg font-semibold max-[480px]:text-sm max-[350px]:text-xs">
-            {currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Loading...'}
+            {currentUser ? `${currentUser.first_name || currentUser.firstName || ''} ${currentUser.last_name || currentUser.lastName || ''}`.trim() || 'User' : 'Loading...'}
           </h3>
           <p className="text-sm max-[350px]:text-[10px] text-gray-600">{currentUser?.role || 'User'}</p>
         </div>

@@ -137,8 +137,8 @@ function Books({ searchValue }) {
   const title = "Book Management";
   const buttonText = "Add Book";
   const columns = [
-    { header: 'Book ID', accessor: 'book_id' },
-    { header: 'ISBN', accessor: 'isbn' },
+    // { header: 'Book ID', accessor: 'book_id' },
+    { header: 'ID', accessor: 'isbn' },
     { header: 'Title', accessor: 'title' },
     { header: 'Author', accessor: 'author' },
     { header: 'Publisher', accessor: 'publisher' },
