@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, logout } from '../../../services/auth.api';
+import { login, logout } from '../../services/auth.api';
 import LogoIcon from '../../assets/logo.svg?react'
 
 function Login() {

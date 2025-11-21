@@ -12,7 +12,7 @@ import {
     Settings, Book, RotateCcw,
 
 } from "lucide-react";
-import { logout, getCurrentUser } from '../../../services/auth.api';
+import { logout, getCurrentUser } from '../../services/auth.api';
 
 import NavLink from './NavLink';
 
