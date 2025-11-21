@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory } from '../../services/categories.api';
+import { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory } from '../services/categories.api';
 
 // Query Key Factory
 export const categoryKeys = {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, logout } from '../services/auth.api';
-import LogoIcon from '../../assets/logo.svg?react'
+import LogoIcon from '../assets/logo.svg?react'
 
 function Login() {
   const navigate = useNavigate();
