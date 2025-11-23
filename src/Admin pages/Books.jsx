@@ -138,6 +138,7 @@ function Books({ searchValue }) {
   const buttonText = "Add Book";
   const columns = [
     // { header: 'Book ID', accessor: 'book_id' },
+    { header: 'ID', accessor: 'isbn' },
     { header: 'Title', accessor: 'title' },
     { header: 'Author', accessor: 'author' },
     { header: 'Publisher', accessor: 'publisher' },
@@ -147,7 +148,6 @@ function Books({ searchValue }) {
     { header: 'Available', accessor: 'available_copies' },
     { header: 'Price', accessor: 'sale_price' },
     { header: 'Action', accessor: 'action' },
-    { header: 'ID', accessor: 'isbn' },
 
   ];
 
