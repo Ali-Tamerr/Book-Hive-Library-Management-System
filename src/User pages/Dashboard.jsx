@@ -1,6 +1,6 @@
 import React from 'react';
 import { Book, RotateCcw, Library, Settings } from 'lucide-react';
-import styles from './Dashboard.module.css';
+import styles from './Styles/Dashboard.module.css';
 import LogoIcon from '../assets/logo.svg?react';
 import PieChart from '../components/PieChart';
 import { useUsers } from '../hooks/useUsers';
