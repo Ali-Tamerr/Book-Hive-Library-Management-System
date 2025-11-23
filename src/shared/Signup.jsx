@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signup } from '../../services/auth.api';
+import { signup } from '../services/auth.api';
 import LogoIcon from '../../assets/logo.svg?react'
 
 

@@ -1,22 +1,22 @@
 import { useState } from 'react';
-import { Plus, FilePenLine, Trash2 } from 'lucide-react';
-import { 
-  useBorrowedBooks, 
-  useCreateBorrowedBook, 
-  useUpdateBorrowedBook, 
-  useDeleteBorrowedBook 
+import {
+  useBorrowedBooks,
+  useCreateBorrowedBook,
+  useUpdateBorrowedBook,
+  useDeleteBorrowedBook
 } from '../hooks/useBorrowedBooks.js';
 import BorrowedBookFormPopup from '../components/BorrowedBookFormPopup.jsx';
+import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function BorrowedBooks({ searchValue }) {
+function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState({ 
-    book_id: '', 
-    user_id: '', 
-    borrow_date: '', 
-    due_date: '', 
-    return_date: '' 
+  const [formData, setFormData] = useState({
+    book_id: '',
+    user_id: '',
+    borrow_date: '',
+    due_date: '',
+    return_date: ''
   });
 
   const { data: borrowedBooks = [], isLoading } = useBorrowedBooks();
@@ -64,86 +64,61 @@ function BorrowedBooks({ searchValue }) {
     }
   };
 
+  const handleButtonClick = () => {
+    setFormData({ book_id: '', user_id: '', borrow_date: '', due_date: '', return_date: '' });
+    setEditMode(false);
+    setShowPopup(true);
+  };
+
   const filteredBorrowedBooks = searchValue
     ? borrowedBooks.filter(
-        (book) =>
-          book.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          book.user_name?.toLowerCase().includes(searchValue.toLowerCase())
-      )
+      (book) =>
+        book.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        book.user_name?.toLowerCase().includes(searchValue.toLowerCase())
+    )
     : borrowedBooks;
 
+  const columns = [
+    { header: 'Book Title', accessor: 'book_title' },
+    { header: 'User Name', accessor: 'user_name' },
+    { header: 'Borrow Date', accessor: 'borrow_date' },
+    { header: 'Due Date', accessor: 'due_date' },
+    { header: 'Return Date', accessor: 'return_date' },
+    { header: 'Status', accessor: 'status' },
+    { header: 'Action', accessor: 'action' },
+  ];
+
+  const tableData = filteredBorrowedBooks.map(book => ({
+    ...book,
+    status: book.return_date ? 'Returned' : 'Borrowed'
+  }));
+
+  const formPopupComponent = (
+    <BorrowedBookFormPopup
+      showPopup={showPopup}
+      editMode={editMode}
+      formData={formData}
+      setFormData={setFormData}
+      handleAddBorrowedBook={handleAddBorrowedBook}
+      setShowPopup={setShowPopup}
+      setEditMode={setEditMode}
+    />
+  );
+
   return (
-<div className="flex flex-col h-full">
-      <div className="flex justify-between items-center mb-4 w-full">
-        <h2 className="text-xl font-semibold">Borrowed Books</h2>
-        <button
-          onClick={() => {
-            setFormData({ book_id: '', user_id: '', borrow_date: '', due_date: '', return_date: '' });
-            setEditMode(false);
-            setShowPopup(true);
-          }}
-          className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
-        >
-          <Plus size={15}/> Add Borrowed Book
-        </button>
-      </div>
-      <div className="w-full overflow-x-auto flex-1">
-        <table className="min-w-max w-full border-collapse text-left text-sm">
-          <thead>
-            <tr>
-              <th className="p-3 border-b border-gray-300 font-semibold">Book Title</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">User Name</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Borrow Date</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Due Date</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Return Date</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Status</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan="7" className="p-3 text-center text-gray-500">Loading...</td>
-              </tr>
-            ) : filteredBorrowedBooks.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="p-3 text-center text-gray-500">No borrowed books found</td>
-              </tr>
-            ) : (
-              filteredBorrowedBooks.map((book) => (
-                <tr key={book.id} className="border-b border-gray-200">
-                  <td className="p-3">{book.book_title}</td>
-                  <td className="p-3">{book.user_name}</td>
-                  <td className="p-3">{book.borrow_date}</td>
-                  <td className="p-3">{book.due_date}</td>
-                  <td className="p-3">{book.return_date}</td>
-                  <td className="p-3">{book.return_date ? 'Returned' : 'Borrowed'}</td>
-                  <td className="p-3">
-                    <button 
-                      onClick={() => handleEdit(book)}
-                      className="mr-2 text-lg hover:scale-125 transition-transform" 
-                      title="Edit"><FilePenLine size={20}/></button>
-                    <button 
-                      onClick={() => handleDelete(book.id)}
-                      className="mr-2 text-lg hover:scale-125 transition-transform" 
-                      title="Delete"><Trash2 size={20}/></button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-      <BorrowedBookFormPopup 
-        showPopup={showPopup} 
-        editMode={editMode} 
-        formData={formData} 
-        setFormData={setFormData} 
-        handleAddBorrowedBook={handleAddBorrowedBook} 
-        setShowPopup={setShowPopup} 
-        setEditMode={setEditMode} 
-      />
-    </div>
+    <CommonLayout
+      searchValue={searchValue}
+      buttonBehaviour={handleButtonClick}
+      isLoading={isLoading}
+      data={tableData}
+      handleEdit={handleEdit}
+      handleDelete={handleDelete}
+      title="Borrowed Books"
+      buttonText={hideButton ? "" : "Add Borrowed Book"}
+      columns={columns}
+      formPopup={formPopupComponent}
+      customTitle={customTitle}
+    />
   );
 }
 

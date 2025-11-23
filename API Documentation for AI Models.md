@@ -300,4 +300,3 @@ Tips for AI models / automated agents
 
 Contact
 - If you change models or DTOs, update this README so downstream tools and models stay in sync.
-

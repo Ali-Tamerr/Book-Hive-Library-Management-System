@@ -1,49 +1,37 @@
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
+import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function Overdue({ searchValue }) {
+function Overdue({ searchValue, customTitle }) {
   const { data: overdueBooks = [], isLoading } = useOverdueBooks();
 
   const filteredOverdueBooks = searchValue
     ? overdueBooks.filter(
-        (book) =>
-          book.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          book.user_name?.toLowerCase().includes(searchValue.toLowerCase())
-      )
+      (book) =>
+        book.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        book.user_name?.toLowerCase().includes(searchValue.toLowerCase())
+    )
     : overdueBooks;
 
+  const columns = [
+    { header: 'Book Title', accessor: 'book_title' },
+    { header: 'User Name', accessor: 'user_name' },
+    { header: 'Due Date', accessor: 'due_date' },
+  ];
+
   return (
-    <div className="flex flex-col h-full">
-    <div className="overflow-x-auto flex-1">
-      <table className="w-full border-collapse text-left text-sm min-w-max">
-        <thead>
-          <tr>
-            <th className="p-3 border-b border-gray-300 font-semibold">Book Title</th>
-            <th className="p-3 border-b border-gray-300 font-semibold">User Name</th>
-            <th className="p-3 border-b border-gray-300 font-semibold">Due Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {isLoading ? (
-            <tr>
-              <td colSpan="3" className="p-3 text-center text-gray-500">Loading...</td>
-            </tr>
-          ) : filteredOverdueBooks.length === 0 ? (
-            <tr>
-              <td colSpan="3" className="p-3 text-center text-gray-500">No overdue books found</td>
-            </tr>
-          ) : (
-            filteredOverdueBooks.map((book) => (
-              <tr key={book.id} className="border-b border-gray-200">
-                <td className="p-3">{book.book_title}</td>
-                <td className="p-3">{book.user_name}</td>
-                <td className="p-3">{book.due_date}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
-    </div>
+    <CommonLayout
+      searchValue={searchValue}
+      buttonBehaviour={() => { }}
+      isLoading={isLoading}
+      data={filteredOverdueBooks}
+      handleEdit={() => { }}
+      handleDelete={() => { }}
+      title="Overdue Borrowers"
+      buttonText=""
+      columns={columns}
+      formPopup={null}
+      customTitle={customTitle}
+    />
   );
 }
 

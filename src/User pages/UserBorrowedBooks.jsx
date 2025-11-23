@@ -46,6 +46,7 @@ function UserBorrowedBooks() {
       buttonText=""
       columns={columns}
       formPopup={null}
+      isUserPage={true}
       customActionRenderer={(book) => (
         <button
           onClick={() => handleReturn(book)}
