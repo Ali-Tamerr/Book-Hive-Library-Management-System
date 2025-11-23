@@ -59,7 +59,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             {new Date().toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
           </p>
         </div>
-        <div className='w-1 h-10 rounded-full bg-[#0b0b3b]'></div>
+        <div className='w-0.5 max-[1080px]:hidden h-10 rounded-full bg-[#0b0b3b]'></div>
         <button className=" max-[1080px]:hidden w-8 h-8"><Settings className='h-full w-full'/></button>
         <button onClick={toggleSidebar} className=" hidden max-[1080px]:block"><Menu className='h-full w-full'/></button>
       </div>

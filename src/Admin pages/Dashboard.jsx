@@ -85,11 +85,11 @@ function Dashboard() {
   }));
 
   return (
-    <div className="max-[1540px]:py-5 px-10 max-[1080px]:px-2 max-[430px]:px-0 flex-1 overflow-y-auto h-full relative max-[430px]:w-dvw ">
-      <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-14">
+    <div className="max-[1540px]:py-5 px-10 max-[1080px]:px-12 max-[430px]:px-0 flex-1 w-full overflow-y-auto h-full relative max-[430px]:w-dvw ">
+      <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-14 max-[1540px]:gap-0 ">
         <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 '>
           <div className=" rounded-lg w-full flex flex-col items-center justify-center [1200px]:mb-15">
-            <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
+            <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-60 max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
               <div className="gap-8 items-center bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ function Dashboard() {
                   </div>
                 </div>
               </div>
-              <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[140px] max-[1080px]:h-[140px] max-[340px]:-ml-10'>
+              <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[200px] max-[1080px]:h-full max-[340px]:-ml-10'>
                 <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
               </div>
               <div className="max-[1540px]:hidden flex gap-8 items-center bg-white p-6 rounded-lg scale-110">
@@ -134,7 +134,7 @@ function Dashboard() {
         </div>
 
         <div className='flex flex-col gap-8 h-full max-h-[890px] pt-10 justify-between items-end max-[1540px]:items-center flex-1'>
-          <div className='flex -mr-5 max-[1540px]:mr-0 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-5 max-[1080px]:gap-2 w-[330px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[1080px]:w-[110%]  max-[380px]:scale-80 max-[340px]:scale-70 max-[340px]:w-[120%]'>
+          <div className='flex -mr-5 max-[1540px]:mr-0 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1540px]:justify-center max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-5 max-[1080px]:gap-2 [1080px]:p-0 px-10 max-[650px]:p-0 max-[650px]:w-screen w-[330px] max-[1540px]:w-[90%]  max-[856px]:scale-90  max-[1080px]:w-[110%]'>
 
             <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
@@ -150,7 +150,7 @@ function Dashboard() {
                 value={stats.totalBooks}
                 loading={loading} />
             </div>
-            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
+            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex [640px]:m-0 -mt-10">
               <DashboardInfoCard
                 icon={<Building2 className="text-[#0a0f33] h-full w-full" />}
                 title="Branch Count"
@@ -168,7 +168,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex max-[1540px]:flex-row flex-col gap-6 mt-10 w-max max-h-[800px] min-w-[200px] max-w-[450px] max-[1540px]:w-full max-[1540px]:max-w-full  overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-10  max-[856px]:scale-90 snap-x snap-mandatory'>
+        <div className='flex max-[640px]:-mb-8 max-[1540px]:flex-row flex-col gap-6 mt-10 w-max max-h-[800px] min-w-[200px] max-w-[450px] max-[1540px]:w-full max-[1540px]:max-w-full  overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-10  max-[856px]:scale-90 snap-x snap-mandatory'>
 
           <div className='max-[1540px]:flex-1 h-[408px] w-[333px] max-[1540px]:h-full flex flex-col justify-end snap-start'>
             <DashboardCard title="Overdue Borrowers">
