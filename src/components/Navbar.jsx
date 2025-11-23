@@ -40,7 +40,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
 
   return (
 
-    <header className={`${navVisibilty ? '' : 'hidden'} bg-white text-black flex items-center justify-between  h-min px-6 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]`}>
+    <header className={`${navVisibilty ? '' : 'hidden'} bg-white text-black flex-1 flex items-center justify-between  h-min px-6 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]`}>
       <div className="flex items-center gap-3 flex-2">
         <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
         <div>

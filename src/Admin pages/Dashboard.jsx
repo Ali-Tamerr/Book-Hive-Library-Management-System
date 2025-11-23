@@ -14,6 +14,7 @@ import { useUserActivity } from '../hooks/useUserActivity';
 import { isUserOnline } from '../services/userActivity.api';
 import LogoIcon from "../assets/logo.svg?react";
 import PieChart from '../components/PieChart';
+import AdminDashboardCard from '../components/AdminDashboardCard';
 
 function Dashboard() {
   const location = useLocation();
@@ -84,8 +85,8 @@ function Dashboard() {
   }));
 
   return (
-    <div className="max-[1540px]:py-5 px-10 max-[1080px]:px-2 max-[430px]:px-0 flex-1 overflow-y-auto  h-full relative max-[430px]:w-dvw ">
-      <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-20">
+    <div className="max-[1540px]:py-5 px-10 max-[1080px]:px-2 max-[430px]:px-0 flex-1 overflow-y-auto h-full relative max-[430px]:w-dvw ">
+      <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-14">
         <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 '>
           <div className=" rounded-lg w-full flex flex-col items-center justify-center [1200px]:mb-15">
             <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
@@ -137,17 +138,17 @@ function Dashboard() {
 
             <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
-              icon={<User className="text-[#0a0f33] h-full w-full" />}
-              title="Total User Base"
-              value={stats.totalUsers}
-              loading={loading} />
+                icon={<User className="text-[#0a0f33] h-full w-full" />}
+                title="Total User Base"
+                value={stats.totalUsers}
+                loading={loading} />
             </div>
-            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center"> 
+            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
-              icon={<Book className="text-[#0a0f33] h-full w-full" />}
-              title="Total Book Count"
-              value={stats.totalBooks}
-              loading={loading} />
+                icon={<Book className="text-[#0a0f33] h-full w-full" />}
+                title="Total Book Count"
+                value={stats.totalBooks}
+                loading={loading} />
             </div>
             <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
@@ -158,36 +159,16 @@ function Dashboard() {
             </div>
           </div>
           <div className='h-[437px]  w-[424px] block max-[1540px]:hidden'>
-            <DashboardCard title="Admins">
-              {loading ? (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
-              ) : displayAdmins.length > 0 ? (
-                displayAdmins.map((admin) => (
-                  <li key={admin.id} className="text-xs bg-[#f5f7fb] p-1 rounded-lg flex items-center justify-between gap-3 mb-2 border border-[#0a0f33]">
-                    <div className="bg-[#C7C7C77A] flex gap-3 items-center flex-1 p-2 rounded-lg px-2 py-1">
-                      <div className="w-8 h-8 bg-[#0a0f33] rounded-lg flex items-center justify-center shrink-0 ">
-                        <ShieldCheck size={16} className="text-white" />
-                      </div>
-                      <div className="flex-1 overflow-hidden whitespace-nowrap truncate">
-                        <p className="text-sm font-medium text-[#0a0f33]">{admin.name}</p>
-                        <p className="text-xs text-[#6f7390]">Admin ID: {admin.adminId}</p>
-                        <div className="flex justify-end items-center gap-1 mt-1">
-                          <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-                          <span className="text-xs  text-[#0a0f33]">{admin.isOnline ? 'Online' : 'Offline'}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <RefreshCw onClick={() => handleRefreshAdmins(admin.id)} className={`mr-2 h-15 w-10 px-2 text-[#0a0f33] cursor-pointer ${loadingAdmins[admin.id] ? 'animate-spin' : ''}`} />
-                  </li>
-                ))
-              ) : (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg text-gray-500">No admins found</li>
-              )}
-            </DashboardCard>
+            <AdminDashboardCard
+              loading={loading}
+              displayAdmins={displayAdmins}
+              handleRefreshAdmins={handleRefreshAdmins}
+              loadingAdmins={loadingAdmins}
+            />
           </div>
         </div>
 
-        <div className='flex max-[1540px]:flex-row flex-col gap-10 mt-10 w-max max-h-[840px] min-w-[200px] max-w-[450px] max-[1540px]:min-w-full  overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-4 max-[1400px]:border-r border-[#0a0f3373] noBorderBox max-[856px]:scale-90 snap-x snap-mandatory'>
+        <div className='flex max-[1540px]:flex-row flex-col gap-6 mt-10 w-max h-full min-w-[200px] max-w-[450px] max-[1540px]:min-w-full  overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-4 max-[1400px]:border-r border-[#0a0f3373] noBorderBox max-[856px]:scale-90 snap-x snap-mandatory'>
 
           <div className='max-[1540px]:flex-1 h-full w-[333px] max-[1540px]:h-max flex flex-col justify-end snap-start'>
             <DashboardCard title="Overdue Borrowers">
@@ -236,32 +217,12 @@ function Dashboard() {
           </div>
 
           <div className=' h-[380px] max-[1540px]:h-max max-[1540px]:flex-1 max-[1540px]:flex hidden  flex-col justify-end snap-end '>
-            <DashboardCard title="Admins">
-              {loading ? (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
-              ) : displayAdmins.length > 0 ? (
-                displayAdmins.map((admin) => (
-                  <li key={admin.id} className="text-xs bg-[#f5f7fb]  p-1 rounded-lg flex items-center justify-between gap-3 mb-2 border border-[#0a0f33]">
-                    <div className="bg-[#C7C7C77A] flex gap-3 items-center flex-1 p-2 rounded-lg px-2 py-1">
-                      <div className="w-8 h-8 bg-[#0a0f33] rounded-lg flex items-center justify-center shrink-0 ">
-                        <ShieldCheck size={16} className="text-white" />
-                      </div>
-                      <div className="flex-1 overflow-hidden whitespace-nowrap truncate">
-                        <p className="text-sm font-medium text-[#0a0f33]">{admin.name}</p>
-                        <p className="text-xs text-[#6f7390]">Admin ID: {admin.adminId}</p>
-                        <div className="flex justify-end items-center gap-1 mt-1">
-                          <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-                          <span className="text-xs text-[#0a0f33]">{admin.isOnline ? 'Active' : 'Not Active'}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <RefreshCw onClick={() => handleRefreshAdmins(admin.id)} className={`mr-2 h-15 w-10 px-2 text-[#0a0f33] cursor-pointer ${loadingAdmins[admin.id] ? 'animate-spin' : ''}`} />
-                  </li>
-                ))
-              ) : (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg text-gray-500">No admins found</li>
-              )}
-            </DashboardCard>
+            <AdminDashboardCard
+              loading={loading}
+              displayAdmins={displayAdmins}
+              handleRefreshAdmins={handleRefreshAdmins}
+              loadingAdmins={loadingAdmins}
+            />
           </div>
 
         </div>
