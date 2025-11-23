@@ -19,7 +19,7 @@ const FormLayout = ({
 }) => {
   return (
     <Popup show={show} onClose={onClose} title={title}>
-      <form onSubmit={onSubmit} className="space-y-3">
+      <form onSubmit={onSubmit} className={inputs.length > 6 ? "grid grid-cols-2 gap-4" : "space-y-3"}>
         {inputs.map((input) => {
           const { name, type } = input;
           if (type === 'custom') {
@@ -45,7 +45,7 @@ const FormLayout = ({
           );
         })}
         {children}
-        <div className="flex justify-between mt-5">
+        <div className={`flex justify-between mt-5 ${inputs.length > 6 ? 'col-span-2' : ''}`}>
           <FormButton type="submit" isPrimary>
             {submitButtonText}
           </FormButton>

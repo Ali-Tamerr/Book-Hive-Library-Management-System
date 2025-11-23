@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { User, Book, MapPin, ShieldCheck, RefreshCw } from 'lucide-react';
+import { User, Book, Building2, ShieldCheck, RefreshCw } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useBooks } from '../hooks/useBooks';
 import { useReservations } from '../hooks/useReservations';
@@ -14,7 +14,7 @@ import { useUserActivity } from '../hooks/useUserActivity';
 import { isUserOnline } from '../services/userActivity.api';
 import LogoIcon from "../assets/logo.svg?react";
 import PieChart from '../components/PieChart';
-import AdminDashboardCard from '../components/AdminDashboardCard';
+import AdminDashboardCard from '../components/AdminDashboardCard.jsx';
 
 function Dashboard() {
   const location = useLocation();
@@ -152,7 +152,7 @@ function Dashboard() {
             </div>
             <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
-                icon={<MapPin className="text-[#0a0f33] h-full w-full" />}
+                icon={<Building2 className="text-[#0a0f33] h-full w-full" />}
                 title="Branch Count"
                 value={stats.branchCount}
                 loading={loading} />
@@ -168,12 +168,12 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex max-[1540px]:flex-row flex-col gap-6 mt-10 w-max h-full min-w-[200px] max-w-[450px] max-[1540px]:min-w-full  overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-4 max-[1400px]:border-r border-[#0a0f3373] noBorderBox max-[856px]:scale-90 snap-x snap-mandatory'>
+        <div className='flex max-[1540px]:flex-row flex-col gap-6 mt-10 w-max max-h-[800px] min-w-[200px] max-w-[450px] max-[1540px]:w-full max-[1540px]:max-w-full  overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-10  max-[856px]:scale-90 snap-x snap-mandatory'>
 
-          <div className='max-[1540px]:flex-1 h-full w-[333px] max-[1540px]:h-max flex flex-col justify-end snap-start'>
+          <div className='max-[1540px]:flex-1 h-[408px] w-[333px] max-[1540px]:h-full flex flex-col justify-end snap-start'>
             <DashboardCard title="Overdue Borrowers">
               {loading ? (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
+                <li className="text-xs p-3 rounded-lg flex items-center gap-3">Loading...</li>
               ) : overdueBorrowers.length > 0 ? (
                 overdueBorrowers.map((borrower) => (
                   <li key={borrower.id} className="text-xs bg-transparent border border-[#0a0f33] px-3 py-4 rounded-lg flex items-center gap-3 mb-2">
@@ -188,35 +188,35 @@ function Dashboard() {
                   </li>
                 ))
               ) : (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg text-gray-500">No overdue books</li>
+                <li className="text-xs  p-3 rounded-lg text-gray-500">No overdue books</li>
               )}
             </DashboardCard>
           </div>
 
-          <div className="max-[1540px]:flex-1 h-full w-[333px] max-[1540px]:h-max flex flex-col justify-end  snap-center">
+          <div className="max-[1540px]:flex-1 h-[453px] w-[333px] max-[1540px]:h-full flex flex-col justify-end  snap-center">
             <DashboardCard title="Branch Network">
               {branchesLoading ? (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
+                <li className="text-xs  p-3 rounded-lg flex items-center gap-3">Loading...</li>
               ) : branches.length > 0 ? (
                 branches.map((branch) => (
-                  <li key={branch.id} className="text-xs bg-transparent border border-[#0a0f33] px-3 py-4 rounded-lg flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-[#0a0f33] rounded-lg flex items-center justify-center shrink-0">
-                      <MapPin size={16} className="text-white" />
+                  <li key={branch.id} className="text-xs bg-transparent border border-[#0a0f33] px-3 py-2 h-18 rounded-lg flex items-center gap-3 mb-2">
+                    <div className="w-10 h-8 p4 rounded-lg flex items-center justify-center shrink-0">
+                      <Building2 className="text-[#0a0f33] h-full w-full" />
                     </div>
-                    <div className='w-[2px] h-10 bg-[#0b0b3b] rounded-full'></div>
+                    <div className='w-[2px] h-full bg-[#0b0b3b] rounded-full'></div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-[#0a0f33]">{branch.name}</p>
-                      <p className="text-xs text-[#6f7390]">{branch.location || branch.address || 'Location not specified'}</p>
+                      <p className="text-xs text-[#0a0f33]">{branch.location || branch.address || 'Location not specified'}</p>
                     </div>
                   </li>
                 ))
               ) : (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg text-gray-500">No branches found</li>
+                <li className="text-xs  p-3 rounded-lg text-gray-500">No branches found</li>
               )}
             </DashboardCard>
           </div>
 
-          <div className=' h-[380px] max-[1540px]:h-max max-[1540px]:flex-1 max-[1540px]:flex hidden  flex-col justify-end snap-end '>
+          <div className=' h-[380px] max-[1540px]:h-full max-[1540px]:flex-1 max-[1540px]:flex hidden  flex-col justify-end snap-end '>
             <AdminDashboardCard
               loading={loading}
               displayAdmins={displayAdmins}
@@ -224,7 +224,6 @@ function Dashboard() {
               loadingAdmins={loadingAdmins}
             />
           </div>
-
         </div>
       </section>
     </div>
