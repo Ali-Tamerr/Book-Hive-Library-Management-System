@@ -1,6 +1,6 @@
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import styles from './UserLibraryLane.module.css';
+import styles from './Styles/UserLibraryLane.module.css';
 import { useBooks } from '../hooks/useBooks';
 
 function UserLibraryLane() {
