@@ -150,7 +150,7 @@ function Dashboard() {
                 value={stats.totalBooks}
                 loading={loading} />
             </div>
-            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex [640px]:m-0 -mt-10">
+            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
                 icon={<Building2 className="text-[#0a0f33] h-full w-full" />}
                 title="Branch Count"
@@ -168,9 +168,9 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex max-[640px]:-mb-8 max-[1540px]:flex-row flex-col gap-6 mt-10 w-max max-h-[800px] min-w-[200px] max-w-[450px] max-[1540px]:w-full max-[1540px]:max-w-full  overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-10  max-[856px]:scale-90 snap-x snap-mandatory'>
+        <div className='flex max-[640px]:-mb-8 max-[1540px]:flex-row flex-col gap-6 mt-10 w-max max-h-[800px] min-w-[200px] max-w-[450px] max-[1540px]:w-full max-[1540px]:max-w-full max-[1080px]:mt-2 overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-10  max-[856px]:scale-90 snap-x snap-mandatory'>
 
-          <div className='max-[1540px]:flex-1 h-[408px] w-[333px] max-[1540px]:h-full flex flex-col justify-end snap-start'>
+          <div className='max-[1540px]:flex-1 h-[408px]  max-[1540px]:h-full flex flex-col justify-end snap-start'>
             <DashboardCard title="Overdue Borrowers">
               {loading ? (
                 <li className="text-xs p-3 rounded-lg flex items-center gap-3">Loading...</li>
@@ -193,7 +193,7 @@ function Dashboard() {
             </DashboardCard>
           </div>
 
-          <div className="max-[1540px]:flex-1 h-[453px] w-[333px] max-[1540px]:h-full flex flex-col justify-end  snap-center">
+          <div className="max-[1540px]:flex-1 h-[453px]  max-[1540px]:h-full flex flex-col justify-end  snap-center">
             <DashboardCard title="Branch Network">
               {branchesLoading ? (
                 <li className="text-xs  p-3 rounded-lg flex items-center gap-3">Loading...</li>
