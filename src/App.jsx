@@ -48,7 +48,7 @@ function App() {
         />
         <main className="flex-1 h-full flex flex-col overflow-hidden montserrat-regular">
           <Navbar searchValue={searchValue} setSearchValue={setSearchValue} toggleSidebar={toggleSidebar} />
-          <div className="flex-1 h-full">
+          <div className="flex-99 h-full">
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />

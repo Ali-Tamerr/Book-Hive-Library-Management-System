@@ -1,0 +1,40 @@
+import React from 'react';
+import { ShieldCheck, RefreshCw } from 'lucide-react';
+import DashboardCard from './DashboardCard';
+
+const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadingAdmins }) => {
+    return (
+        <DashboardCard title="Admins">
+            {loading ? (
+                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
+            ) : displayAdmins.length > 0 ? (
+                displayAdmins.map((admin) => (
+                    <li key={admin.id} className="text-xs bg-[#f5f7fb] h-19 p-1 rounded-lg flex items-center justify-between gap-3 mb-2 border border-[#0a0f33]">
+                        <div className="bg-[#C7C7C77A] relative flex gap-3 h-full items-center flex-1 p-2 rounded-lg px-2 py-1">
+                            <div className="w-12 h-12 p-2 rounded-lg flex items-center justify-center shrink-0 ">
+                                <ShieldCheck className="text-[#0a0f33] h-full w-full" />
+                            </div>
+                            <div className="w-0.5 h-[90%] bg-[#0a0f33]"></div>
+                            <div className="flex-1 overflow-hidden flex flex-col justify-between  whitespace-nowrap truncate">
+                                <p className="text-[18px] font-semibold text-[#0a0f33]">{admin.name}</p>
+                                <p className="text-[14px] text-[#6f7390]">Admin ID: {admin.adminId}</p>
+                                <div className="flex justify-end absolute right-2 bottom-1 items-center gap-1 mt-1">
+                                    <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                                    <span className="text-[12px] text-[#0a0f33]">{admin.isOnline ? 'Online' : 'Offline'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <RefreshCw
+                            onClick={() => handleRefreshAdmins(admin.id)}
+                            className={`mr-2 h-15 w-12 px-2 text-[#0a0f33] cursor-pointer ${loadingAdmins[admin.id] ? 'animate-spin' : ''}`}
+                        />
+                    </li>
+                ))
+            ) : (
+                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg text-gray-500">No admins found</li>
+            )}
+        </DashboardCard>
+    );
+};
+
+export default AdminDashboardCard;
