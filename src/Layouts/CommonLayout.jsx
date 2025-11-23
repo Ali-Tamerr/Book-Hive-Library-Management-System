@@ -15,21 +15,23 @@ const CommonLayout = ({
   columns,
   formPopup,
   customActionRenderer,
+  isUserPage = false,
+  customTitle,
 }) => {
   const FormPopupComponent = formPopup;
 
   return (
-    <div className='flex flex-col h-full p-7 gap-5'>
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl max-[856px]:text-sm font-semibold">{title}</h2>
+    <div className='flex flex-col h-full p-7 pb-0 pr-0 gap-5'>
+      <div className="flex justify-between items-center pr-7">
+        {customTitle ? customTitle : <h2 className="text-xl max-[856px]:text-sm font-semibold">{title}</h2>}
         <div className='flex gap-2 h-10'>
           {buttonText && <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />}
           <SearchBar searchValue={searchValue} />
         </div>
       </div>
 
-      <section className="flex-1 h-full bg-white rounded-lg flex flex-col">
-        <div className="overflow-x-auto flex-1 h-full">
+      <section className="flex-1 h-full  gap-6 rounded-lg flex">
+        <div className="overflow-x-auto bg-white rounded-lg flex items-start gap-4 flex-1 h-full">
           <table className="w-full border-collapse text-left text-sm min-w-max">
             <thead>
               <tr>
@@ -83,6 +85,11 @@ const CommonLayout = ({
             </tbody>
           </table>
         </div>
+        {isUserPage && (
+          <div className="flex flex-col items-center justify-center gap-2 w-28 h-full bg-[#0a0f33] rounded-tl-lg">
+            <span className='text-upright text-white text-2xl tracking-[5px]'>BOOK&nbsp;&nbsp;HIVE</span>
+          </div>
+        )}
       </section>
       {formPopup}
     </div>

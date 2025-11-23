@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import { Plus, FilePenLine, Trash2 } from 'lucide-react';
-import { 
-  useReservations, 
-  useCreateReservation, 
-  useUpdateReservation, 
-  useDeleteReservation 
+import {
+  useReservations,
+  useCreateReservation,
+  useUpdateReservation,
+  useDeleteReservation
 } from '../hooks/useReservations.js';
 import ReservedBookFormPopup from '../components/ReservedBookFormPopup.jsx';
+import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function ReservedBooks({ searchValue }) {
+function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState({ 
-    book_id: '', 
-    user_id: '', 
+  const [formData, setFormData] = useState({
+    book_id: '',
+    user_id: '',
     reservation_date: ''
   });
 
@@ -60,80 +60,53 @@ function ReservedBooks({ searchValue }) {
     }
   };
 
+  const handleButtonClick = () => {
+    setFormData({ book_id: '', user_id: '', reservation_date: '' });
+    setEditMode(false);
+    setShowPopup(true);
+  };
+
   const filteredReservations = searchValue
     ? reservations.filter(
-        (reservation) =>
-          reservation.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          reservation.user_name?.toLowerCase().includes(searchValue.toLowerCase())
-      )
+      (reservation) =>
+        reservation.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        reservation.user_name?.toLowerCase().includes(searchValue.toLowerCase())
+    )
     : reservations;
 
+  const columns = [
+    { header: 'Book Title', accessor: 'book_title' },
+    { header: 'User Name', accessor: 'user_name' },
+    { header: 'Reservation Date', accessor: 'reservation_date' },
+    { header: 'Action', accessor: 'action' },
+  ];
+
+  const formPopupComponent = (
+    <ReservedBookFormPopup
+      showPopup={showPopup}
+      editMode={editMode}
+      formData={formData}
+      setFormData={setFormData}
+      handleAddReservation={handleAddReservation}
+      setShowPopup={setShowPopup}
+      setEditMode={setEditMode}
+    />
+  );
+
   return (
-<div className="flex flex-col h-full">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Reserved Books</h2>
-        <button
-          onClick={() => {
-            setFormData({ book_id: '', user_id: '', reservation_date: '' });
-            setEditMode(false);
-            setShowPopup(true);
-          }}
-          className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
-        >
-          <Plus size={15}/> Add Reservation
-        </button>
-      </div>
-      <div className="overflow-x-auto flex-1">
-        <table className="w-full border-collapse text-left text-sm min-w-max">
-          <thead>
-            <tr>
-              <th className="p-3 border-b border-gray-300 font-semibold">Book Title</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">User Name</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Reservation Date</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan="4" className="p-3 text-center text-gray-500">Loading...</td>
-              </tr>
-            ) : filteredReservations.length === 0 ? (
-              <tr>
-                <td colSpan="4" className="p-3 text-center text-gray-500">No reservations found</td>
-              </tr>
-            ) : (
-              filteredReservations.map((reservation) => (
-                <tr key={reservation.id} className="border-b border-gray-200">
-                  <td className="p-3">{reservation.book_title}</td>
-                  <td className="p-3">{reservation.user_name}</td>
-                  <td className="p-3">{reservation.reservation_date}</td>
-                  <td className="p-3">
-                    <button 
-                      onClick={() => handleEdit(reservation)}
-                      className="mr-2 text-lg hover:scale-125 transition-transform" 
-                      title="Edit"><FilePenLine size={20}/></button>
-                    <button 
-                      onClick={() => handleDelete(reservation.id)}
-                      className="mr-2 text-lg hover:scale-125 transition-transform" 
-                      title="Delete"><Trash2 size={20}/></button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-      <ReservedBookFormPopup 
-        showPopup={showPopup} 
-        editMode={editMode} 
-        formData={formData} 
-        setFormData={setFormData} 
-        handleAddReservation={handleAddReservation} 
-        setShowPopup={setShowPopup} 
-        setEditMode={setEditMode} 
-      />
-    </div>
+    <CommonLayout
+      searchValue={searchValue}
+      buttonBehaviour={handleButtonClick}
+      isLoading={isLoading}
+      data={filteredReservations}
+      handleEdit={handleEdit}
+      handleDelete={handleDelete}
+      title="Reserved Books"
+      buttonText={hideButton ? "" : "Add Reservation"}
+      columns={columns}
+      formPopup={formPopupComponent}
+      customTitle={customTitle}
+    />
   );
 }
 

@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
 
-const Login = lazy(() => import('./shared/Pages/Login'));
-const Signup = lazy(() => import('./shared/Pages/Signup'));
-const ForgotPassword = lazy(() => import('./shared/Pages/ForgotPassword'));
-const OTP = lazy(() => import('./shared/Pages/OTP'));
-const ResetPassword = lazy(() => import('./shared/Pages/ResetPassword'));
+const Login = lazy(() => import('./shared/Login'));
+const Signup = lazy(() => import('./shared/Signup'));
+const ForgotPassword = lazy(() => import('./shared/ForgotPassword'));
+const OTP = lazy(() => import('./shared/OTP'));
+const ResetPassword = lazy(() => import('./shared/ResetPassword'));
 
 const AdminDashboard = lazy(() => import('./Admin pages/Dashboard'));
 const Overdue = lazy(() => import('./Admin pages/Overdue'));
@@ -23,9 +23,10 @@ const UserBooks = lazy(() => import('./User pages/UserBooks'));
 const UserBorrowedBooks = lazy(() => import('./User pages/UserBorrowedBooks'));
 const UserReturnedBooks = lazy(() => import('./User pages/UserReturnedBooks'));
 const UserLibraryLane = lazy(() => import('./User pages/UserLibraryLane'));
+const UserCatalog = lazy(() => import('./User pages/UserCatalog'));
 
-import Sidebar from './shared/Components/Sidebar';
-import Navbar from './shared/Components/Navbar';
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
 
 function App() {
   const [activeTab, setActiveTab] = React.useState('');
@@ -68,6 +69,7 @@ function App() {
 
               <Route path="/user/dashboard" element={<UserDashboard />} />
               <Route path="/user/books" element={<UserBooks />} />
+              <Route path="/user/catalog" element={<UserCatalog />} />
               <Route path="/user/borrowed" element={<UserBorrowedBooks />} />
               <Route path="/user/returned" element={<UserReturnedBooks />} />
               <Route path="/user/library" element={<UserLibraryLane />} />

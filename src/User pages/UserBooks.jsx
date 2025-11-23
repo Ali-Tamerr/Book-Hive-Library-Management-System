@@ -47,13 +47,14 @@ function UserBooks() {
             buttonText=""
             columns={columns}
             formPopup={null}
+            isUserPage={true}
             customActionRenderer={(book) => (
                 <button
                     onClick={() => handleBorrow(book)}
                     disabled={book.available_copies === 0}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${book.available_copies > 0
-                            ? 'bg-[#0a0f33] text-white hover:bg-[#192261]'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? 'bg-[#0a0f33] text-white hover:bg-[#192261]'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                 >
                     {book.available_copies > 0 ? 'Borrow' : 'Unavailable'}

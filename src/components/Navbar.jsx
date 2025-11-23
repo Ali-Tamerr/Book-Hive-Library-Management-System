@@ -2,8 +2,8 @@ import React from 'react'
 import { Settings, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getCurrentUser } from '../../services/auth.api';
-import SearchBar from '../../components/SearchBar';
+import { getCurrentUser } from '../services/auth.api';
+import SearchBar from './SearchBar';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
@@ -59,6 +59,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             {new Date().toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
           </p>
         </div>
+        <div className='w-1 h-10 rounded-full bg-[#0b0b3b]'></div>
         <button className="text-2xl max-[1080px]:hidden"><Settings /></button>
         <button onClick={toggleSidebar} className="text-2xl hidden max-[1080px]:block"><Menu /></button>
       </div>

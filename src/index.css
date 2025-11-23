@@ -47,6 +47,20 @@
   font-style: normal;
 }
 
+.text-sideways {
+text-orientation: sideways;
+}
+.text-upright{
+  text-orientation: upright;
+  writing-mode: vertical-lr;
+}
+.text-mixed{
+  text-orientation: mixed;
+}
+.text-sideways-right{
+  text-orientation: sideways-right;
+}
+
 
 body {
   font-family: 'Montserrat', sans-serif;

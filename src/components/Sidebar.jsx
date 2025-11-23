@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import LogoIcon from '../../assets/logo.svg?react';
+import LogoIcon from '../assets/logo.svg?react';
 import {
     Home,
     BookOpen,
@@ -12,7 +12,7 @@ import {
     Settings, Book, RotateCcw,
 
 } from "lucide-react";
-import { logout, getCurrentUser } from '../../services/auth.api';
+import { logout, getCurrentUser } from '../services/auth.api';
 
 import NavLink from './NavLink';
 
@@ -84,20 +84,11 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                         <NavLink
                             isExpanded={isExpanded}
                             onClick={() => {
-                                setActiveTab('/user/borrowed');
-                                navigate('/user/borrowed');
+                                setActiveTab('/user/catalog');
+                                navigate('/user/catalog');
                             }}
-                            icon={<Book size={18} strokeWidth={2.3} />}
-                            text="Borrowed Books"
-                        />
-                        <NavLink
-                            isExpanded={isExpanded}
-                            onClick={() => {
-                                setActiveTab('/user/returned');
-                                navigate('/user/returned');
-                            }}
-                            icon={<RotateCcw size={18} strokeWidth={2.3} />}
-                            text="Returned Books"
+                            icon={<Library size={18} strokeWidth={2.3} />}
+                            text="Catalog"
                         />
                     </nav>}
                     {isAdmin && <nav className="mt-10 flex gap-2 flex-col w-full">

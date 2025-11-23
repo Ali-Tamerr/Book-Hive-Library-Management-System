@@ -1,21 +1,21 @@
 import { useState } from 'react';
-import { Plus, FilePenLine, Trash2 } from 'lucide-react';
-import { 
-  useBookSales, 
-  useCreateBookSale, 
-  useUpdateBookSale, 
-  useDeleteBookSale 
+import {
+  useBookSales,
+  useCreateBookSale,
+  useUpdateBookSale,
+  useDeleteBookSale
 } from '../hooks/useBookSales.js';
 import BoughtBookFormPopup from '../components/BoughtBookFormPopup.jsx';
+import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function BoughtBooks({ searchValue }) {
+function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState({ 
-    book_id: '', 
-    user_id: '', 
-    sale_date: '', 
-    price: '' 
+  const [formData, setFormData] = useState({
+    book_id: '',
+    user_id: '',
+    sale_date: '',
+    price: ''
   });
 
   const { data: bookSales = [], isLoading } = useBookSales();
@@ -62,82 +62,54 @@ function BoughtBooks({ searchValue }) {
     }
   };
 
+  const handleButtonClick = () => {
+    setFormData({ book_id: '', user_id: '', sale_date: '', price: '' });
+    setEditMode(false);
+    setShowPopup(true);
+  };
+
   const filteredBookSales = searchValue
     ? bookSales.filter(
-        (sale) =>
-          sale.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          sale.user_name?.toLowerCase().includes(searchValue.toLowerCase())
-      )
+      (sale) =>
+        sale.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        sale.user_name?.toLowerCase().includes(searchValue.toLowerCase())
+    )
     : bookSales;
 
+  const columns = [
+    { header: 'Book Title', accessor: 'book_title' },
+    { header: 'User Name', accessor: 'user_name' },
+    { header: 'Sale Date', accessor: 'sale_date' },
+    { header: 'Price', accessor: 'price' },
+    { header: 'Action', accessor: 'action' },
+  ];
+
+  const formPopupComponent = (
+    <BoughtBookFormPopup
+      showPopup={showPopup}
+      editMode={editMode}
+      formData={formData}
+      setFormData={setFormData}
+      handleAddBookSale={handleAddBookSale}
+      setShowPopup={setShowPopup}
+      setEditMode={setEditMode}
+    />
+  );
+
   return (
-<div className="flex flex-col h-full">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Bought Books</h2>
-        <button
-          onClick={() => {
-            setFormData({ book_id: '', user_id: '', sale_date: '', price: '' });
-            setEditMode(false);
-            setShowPopup(true);
-          }}
-          className="bg-[#0b0b3b] text-white px-4 py-2 rounded hover:bg-[#1a1a6a] transition-colors text-sm font-medium flex items-center gap-2"
-        >
-          <Plus size={15}/> Add Book Sale
-        </button>
-      </div>
-      <div className="overflow-x-auto flex-1">
-        <table className="w-full border-collapse text-left text-sm min-w-max">
-          <thead>
-            <tr>
-              <th className="p-3 border-b border-gray-300 font-semibold">Book Title</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">User Name</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Sale Date</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Price</th>
-              <th className="p-3 border-b border-gray-300 font-semibold">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan="5" className="p-3 text-center text-gray-500">Loading...</td>
-              </tr>
-            ) : filteredBookSales.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="p-3 text-center text-gray-500">No book sales found</td>
-              </tr>
-            ) : (
-              filteredBookSales.map((sale) => (
-                <tr key={sale.id} className="border-b border-gray-200">
-                  <td className="p-3">{sale.book_title}</td>
-                  <td className="p-3">{sale.user_name}</td>
-                  <td className="p-3">{sale.sale_date}</td>
-                  <td className="p-3">{sale.price}</td>
-                  <td className="p-3">
-                    <button 
-                      onClick={() => handleEdit(sale)}
-                      className="mr-2 text-lg hover:scale-125 transition-transform" 
-                      title="Edit"><FilePenLine size={20}/></button>
-                    <button 
-                      onClick={() => handleDelete(sale.id)}
-                      className="mr-2 text-lg hover:scale-125 transition-transform" 
-                      title="Delete"><Trash2 size={20}/></button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-      <BoughtBookFormPopup 
-        showPopup={showPopup} 
-        editMode={editMode} 
-        formData={formData} 
-        setFormData={setFormData} 
-        handleAddBookSale={handleAddBookSale} 
-        setShowPopup={setShowPopup} 
-        setEditMode={setEditMode} 
-      />
-    </div>
+    <CommonLayout
+      searchValue={searchValue}
+      buttonBehaviour={handleButtonClick}
+      isLoading={isLoading}
+      data={filteredBookSales}
+      handleEdit={handleEdit}
+      handleDelete={handleDelete}
+      title="Bought Books"
+      buttonText={hideButton ? "" : "Add Book Sale"}
+      columns={columns}
+      formPopup={formPopupComponent}
+      customTitle={customTitle}
+    />
   );
 }
 

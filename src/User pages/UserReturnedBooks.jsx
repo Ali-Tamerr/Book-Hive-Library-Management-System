@@ -48,6 +48,7 @@ function UserReturnedBooks() {
       buttonText=""
       columns={columns}
       formPopup={null}
+      isUserPage={true}
       customActionRenderer={(book) => (
         <button
           onClick={() => handleView(book)}
