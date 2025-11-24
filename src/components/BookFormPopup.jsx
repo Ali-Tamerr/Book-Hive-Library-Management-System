@@ -10,7 +10,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
   useEffect(() => {
     setIsWebSerialSupported("serial" in navigator);
   }, []);
-  
+
   const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -26,7 +26,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
       await connectToArduino();
     }
   };
-  
+
   const disconnectFromArduino = async () => {
     if (readerRef.current) {
       await readerRef.current.cancel().catch(console.error);
@@ -75,14 +75,13 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
       type: 'custom',
       render: (formData, onFormChange) => (
         <div key="isbn">
-          <label className="text-sm font-medium block">ISBN</label>
+          <label className="text-sm font-medium block">ID</label>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={handleConnectClick}
-              className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${
-                isConnected ? 'bg-red-200 text-red-900 hover:bg-red-300' : 'bg-gray-300 hover:bg-gray-400'
-              }`}
+              className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${isConnected ? 'bg-red-200 text-red-900 hover:bg-red-300' : 'bg-gray-300 hover:bg-gray-400'
+                }`}
             >
               {isConnected ? "Disconnect" : "Connect NFC"}
             </button>
@@ -91,7 +90,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
               name="isbn"
               value={formData.isbn || ''}
               onChange={onFormChange}
-              placeholder="Enter ISBN"
+              placeholder="Enter ID"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             />
