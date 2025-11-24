@@ -7,7 +7,6 @@ import SearchBar from './SearchBar';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
-  const [navVisibilty, setNavVisibilty] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
@@ -22,13 +21,6 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
     window.addEventListener('storage', updateAuth);
     window.addEventListener('userUpdated', updateAuth);
 
-    const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
-    if (authRoutes.includes(location.pathname)) {
-      setNavVisibilty(false);
-    } else {
-      setNavVisibilty(true);
-    }
-
     return () => {
       window.removeEventListener('storage', updateAuth);
       window.removeEventListener('userUpdated', updateAuth);
@@ -39,8 +31,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const showSearchInput = !isDashboard;
 
   return (
-
-    <header className={`${navVisibilty ? '' : 'hidden'} bg-white text-[#0a0f33] flex-1 flex items-center justify-between  h-min px-4 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]`}>
+    <header className="bg-white text-[#0a0f33] flex-1 flex items-center justify-between h-min px-4 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
       <div className="flex items-center gap-3 flex-2">
         <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
         <div>
@@ -60,8 +51,8 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           </p>
         </div>
         <div className='w-0.5 max-[1080px]:hidden h-10 rounded-full bg-[#0b0b3b]'></div>
-        <button className=" max-[1080px]:hidden w-8 h-8"><Settings className='h-full w-full'/></button>
-        <button onClick={toggleSidebar} className=" hidden max-[1080px]:block"><Menu className='h-full w-full'/></button>
+        <button className=" max-[1080px]:hidden w-8 h-8"><Settings className='h-full w-full' /></button>
+        <button onClick={toggleSidebar} className=" hidden max-[1080px]:block"><Menu className='h-full w-full' /></button>
       </div>
     </header>
   );
