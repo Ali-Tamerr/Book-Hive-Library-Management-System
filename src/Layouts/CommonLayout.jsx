@@ -42,12 +42,12 @@ const CommonLayout = ({
             </thead>
             <tbody>
               {isLoading ? (
-                <tr>
+                <tr className=''>
                   <td colSpan={columns.length} className="p-3 text-center text-gray-500">Loading...</td>
                 </tr>
               ) : data.length === 0 ? (
-                <tr>
-                  <td colSpan={columns.length} className="p-3 text-center text-gray-500">No items found</td>
+                <tr className='h-full w-full flex items-center'>
+                  <td colSpan={columns.length} className="  p-3 text-center text-gray-500">No items found</td>
                 </tr>
               ) : (
                 data.map((item, index) => (
