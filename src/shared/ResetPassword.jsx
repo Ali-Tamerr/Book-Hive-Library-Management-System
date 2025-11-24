@@ -15,16 +15,16 @@ function ResetPassword() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#f5f7fb] [1080px]:p-4">
-            <div className="flex max-[1080px]:flex-col w-full max-w-[900px] h-[550px] max-[1080px]:h-full bg-white rounded-[10px] overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.1)]">
+        <div className="h-screen w-full flex bg-[#f5f7fb]">
+            <div className="flex max-[1080px]:flex-col w-full h-full max-[1080px]:h-full bg-white overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.15)]">
 
                 <div className="max-[1080px]:flex hidden max-[1080px]:w-full max-[1080px]:h-full bg-white items-center justify-center">
-                    <div className="flex flex-col gap-2 justify-center p-4 items-center max-[1080px]:h-screen w-[85%] max-[1080px]:w-full max-w-[400px]">
-                        <LogoIcon className="w-18 h-min text-[#0a0f33] mb-4" />
-                        <h2 className="text-xl font-semibold text-[#0a0f33] mb-2">Reset Password</h2>
-                        <p className="text-[#0a0f33] text-sm mb-5 text-center">Please enter your new password</p>
+                    <div className="flex flex-col gap-4 justify-center p-8 items-center max-[1080px]:h-screen w-[85%] max-[1080px]:w-full max-w-[650px]">
+                        <LogoIcon className="w-32 h-min text-[#0a0f33] mb-6" />
+                        <h2 className="text-3xl font-semibold text-[#0a0f33] mb-4">Reset Password</h2>
+                        <p className="text-[#0a0f33] text-lg mb-8 text-center">Please enter your new password</p>
 
-                        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
+                        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
                             <AuthInput
                                 type="password"
                                 placeholder="New Password"
@@ -48,30 +48,30 @@ function ResetPassword() {
                     </div>
                 </div>
 
-                <div className="w-1/2 max-[1080px]:hidden bg-[#0a0f33] text-white flex flex-col items-center justify-center gap-8 p-10 rounded-tr-[60px] rounded-br-[60px]">
-                    <LogoIcon className="w-[160px] h-min" />
-                    <h1 className="text-[40px] text-center -mt-8 text-white">
+                <div className="w-1/2 max-[1080px]:hidden bg-[#0a0f33] text-white flex flex-col items-center justify-center gap-12 p-16 rounded-tr-[80px] rounded-br-[80px]">
+                    <LogoIcon className="w-[280px] h-min" />
+                    <h1 className="text-[64px] text-center -mt-12 text-white">
                         BookHive
                         <br />
-                        <span className="block font-['Caveat',cursive] text-[40px] -mt-4 font-medium">Library</span>
+                        <span className="block font-['Caveat',cursive] text-[64px] -mt-6 font-medium">Library</span>
                     </h1>
-                    <p className="text-sm text-white text-center cursor-default">
+                    <p className="text-xl text-white text-center cursor-default">
                         "Your premier digital library<br />for borrowing and reading books"
                     </p>
                 </div>
 
-                <div className="w-1/2 max-[1080px]:hidden bg-white flex flex-col items-center justify-center relative">
+                <div className="w-1/2 max-[1080px]:hidden bg-white flex flex-col items-center justify-center relative p-16">
                     <button
                         onClick={() => navigate('/otp')}
-                        className="absolute top-5 right-5 border border-[#0a0f33] text-[#0a0f33] rounded-[20px] px-4 py-1 text-xs hover:bg-[#0a0f33] hover:text-white transition-colors"
+                        className="absolute top-8 right-8 border border-[#0a0f33] text-[#0a0f33] rounded-[30px] px-6 py-2 text-base hover:bg-[#0a0f33] hover:text-white transition-colors"
                     >
                         BACK
                     </button>
 
-                    <div className="text-center w-[80%] max-w-[300px]">
-                        <LogoIcon className="w-18 h-min text-[#0a0f33] mb-4 mx-auto" />
-                        <h2 className="text-xl font-semibold text-[#0a0f33] mb-2">Reset Password</h2>
-                        <p className="text-[#0a0f33] text-sm mb-5">Please enter your new password</p>
+                    <div className="text-center w-[80%] max-w-[500px]">
+                        <LogoIcon className="w-32 h-min text-[#0a0f33] mb-6 mx-auto" />
+                        <h2 className="text-3xl font-semibold text-[#0a0f33] mb-4">Reset Password</h2>
+                        <p className="text-[#0a0f33] text-lg mb-8">Please enter your new password</p>
 
                         <form onSubmit={handleSubmit}>
                             <AuthInput
@@ -80,7 +80,7 @@ function ResetPassword() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="mb-4"
+                                className="mb-6"
                             />
                             <AuthInput
                                 type="password"
@@ -88,7 +88,7 @@ function ResetPassword() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
-                                className="mb-5"
+                                className="mb-8"
                             />
                             <PrimaryButton
                                 type="submit"

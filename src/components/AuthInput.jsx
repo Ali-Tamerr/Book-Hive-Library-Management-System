@@ -7,7 +7,7 @@ const AuthInput = ({ type, placeholder, value, onChange, name, required = false,
             onChange={onChange}
             name={name}
             required={required}
-            className={`w-full p-3 rounded-xl border border-[#0a0f33] outline-none focus:border-[#1e255e] text-sm ${className}`}
+            className={`w-full p-5 rounded-xl border-2 border-[#0a0f33] outline-none focus:border-[#1e255e] text-lg ${className}`}
         />
     );
 };
