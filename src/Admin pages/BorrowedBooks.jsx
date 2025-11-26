@@ -12,11 +12,16 @@ function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    book_id: '',
+    transaction_id: '',
     user_id: '',
-    borrow_date: '',
+    book_id: '',
+    rfid_tag_id: '',
+    transaction_type: 'Borrow',
     due_date: '',
-    return_date: ''
+    return_date: '',
+    fine_amount: '',
+    status: 'Open',
+    borrow_type: 'TakeHome'
   });
 
   const { data: borrowedBooks = [], isLoading } = useBorrowedBooks();
@@ -27,45 +32,61 @@ function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
   const handleAddBorrowedBook = async (e) => {
     e.preventDefault();
     try {
-      if (editMode && formData.id) {
-        await updateBorrowedBookMutation.mutateAsync({ id: formData.id, data: formData });
+      const apiData = {
+        user_id: formData.user_id,
+        book_id: formData.book_id,
+        rfid_tag_id: formData.rfid_tag_id ? parseInt(formData.rfid_tag_id, 10) : null,
+        transaction_type: formData.transaction_type,
+        due_date: formData.due_date || null,
+        return_date: formData.return_date || null,
+        fine_amount: formData.fine_amount ? parseFloat(formData.fine_amount) : null,
+        status: formData.status,
+        borrow_type: formData.borrow_type || null
+      };
+
+      if (editMode && formData.transaction_id) {
+        await updateBorrowedBookMutation.mutateAsync({ id: formData.transaction_id, data: apiData });
       } else {
-        await createBorrowedBookMutation.mutateAsync(formData);
+        await createBorrowedBookMutation.mutateAsync(apiData);
       }
-      setFormData({ book_id: '', user_id: '', borrow_date: '', due_date: '', return_date: '' });
+      setFormData({ transaction_id: '', user_id: '', book_id: '', rfid_tag_id: '', transaction_type: 'Borrow', due_date: '', return_date: '', fine_amount: '', status: 'Open', borrow_type: 'TakeHome' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
-      console.error("Failed to save borrowed book:", error);
-      alert('Failed to save borrowed book. Please try again.');
+      console.error("Failed to save transaction:", error);
+      alert('Failed to save transaction. Please try again.');
     }
   };
 
-  const handleEdit = (book) => {
+  const handleEdit = (transaction) => {
     setFormData({
-      id: book.id,
-      book_id: book.book_id || '',
-      user_id: book.user_id || '',
-      borrow_date: book.borrow_date || '',
-      due_date: book.due_date || '',
-      return_date: book.return_date || ''
+      transaction_id: transaction.transaction_id || transaction.id,
+      user_id: transaction.user_id || '',
+      book_id: transaction.book_id || '',
+      rfid_tag_id: transaction.rfid_tag_id || '',
+      transaction_type: transaction.transaction_type || 'Borrow',
+      due_date: transaction.due_date || '',
+      return_date: transaction.return_date || '',
+      fine_amount: transaction.fine_amount || '',
+      status: transaction.status || 'Open',
+      borrow_type: transaction.borrow_type || 'TakeHome'
     });
     setEditMode(true);
     setShowPopup(true);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this record?')) {
+    if (window.confirm('Are you sure you want to delete this transaction?')) {
       try {
         await deleteBorrowedBookMutation.mutateAsync(id);
       } catch (error) {
-        alert('Failed to delete record. Please try again.');
+        alert('Failed to delete transaction. Please try again.');
       }
     }
   };
 
   const handleButtonClick = () => {
-    setFormData({ book_id: '', user_id: '', borrow_date: '', due_date: '', return_date: '' });
+    setFormData({ transaction_id: '', user_id: '', book_id: '', rfid_tag_id: '', transaction_type: 'Borrow', due_date: '', return_date: '', fine_amount: '', status: 'Open', borrow_type: 'TakeHome' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -74,24 +95,23 @@ function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
     ? borrowedBooks.filter(
       (book) =>
         book.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        book.user_name?.toLowerCase().includes(searchValue.toLowerCase())
+        book.user_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        book.transaction_id?.toString().includes(searchValue)
     )
     : borrowedBooks;
 
   const columns = [
+    { header: 'Transaction ID', accessor: 'transaction_id' },
     { header: 'Book Title', accessor: 'book_title' },
     { header: 'User Name', accessor: 'user_name' },
-    { header: 'Borrow Date', accessor: 'borrow_date' },
+    { header: 'Transaction Type', accessor: 'transaction_type' },
+    { header: 'Borrow Type', accessor: 'borrow_type' },
     { header: 'Due Date', accessor: 'due_date' },
     { header: 'Return Date', accessor: 'return_date' },
+    { header: 'Fine Amount', accessor: 'fine_amount' },
     { header: 'Status', accessor: 'status' },
     { header: 'Action', accessor: 'action' },
   ];
-
-  const tableData = filteredBorrowedBooks.map(book => ({
-    ...book,
-    status: book.return_date ? 'Returned' : 'Borrowed'
-  }));
 
   const formPopupComponent = (
     <BorrowedBookFormPopup
@@ -110,11 +130,11 @@ function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
       searchValue={searchValue}
       buttonBehaviour={handleButtonClick}
       isLoading={isLoading}
-      data={tableData}
+      data={filteredBorrowedBooks}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
-      title="Borrowed Books"
-      buttonText={hideButton ? "" : "Add Borrowed Book"}
+      title={customTitle || "Book Transactions"}
+      buttonText={hideButton ? "" : "Add Transaction"}
       columns={columns}
       formPopup={formPopupComponent}
       customTitle={customTitle}

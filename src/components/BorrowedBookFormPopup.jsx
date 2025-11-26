@@ -7,18 +7,50 @@ function BorrowedBookFormPopup({ showPopup, editMode, formData, setFormData, han
   };
 
   const inputs = [
-    { name: 'book_id', label: 'Book ID', type: 'text', placeholder: 'Enter book ID', required: true },
     { name: 'user_id', label: 'User ID', type: 'text', placeholder: 'Enter user ID', required: true },
-    { name: 'borrow_date', label: 'Borrow Date', type: 'date', required: true },
-    { name: 'due_date', label: 'Due Date', type: 'date', required: true },
-    { name: 'return_date', label: 'Return Date', type: 'date' },
+    { name: 'book_id', label: 'Book ID', type: 'text', placeholder: 'Enter book ID', required: true },
+    { name: 'rfid_tag_id', label: 'RFID Tag ID', type: 'number', placeholder: 'Enter RFID tag ID (optional)' },
+    {
+      name: 'transaction_type',
+      label: 'Transaction Type',
+      type: 'select',
+      options: [
+        { value: 'Borrow', label: 'Borrow' },
+        { value: 'Return', label: 'Return' },
+        { value: 'Renewal', label: 'Renewal' },
+        { value: 'SaleConversion', label: 'Sale Conversion' },
+      ],
+    },
+    {
+      name: 'borrow_type',
+      label: 'Borrow Type',
+      type: 'select',
+      options: [
+        { value: '', label: 'Select Borrow Type' },
+        { value: 'InLibrary', label: 'In Library' },
+        { value: 'TakeHome', label: 'Take Home' },
+      ],
+    },
+    { name: 'due_date', label: 'Due Date', type: 'datetime-local' },
+    { name: 'return_date', label: 'Return Date', type: 'datetime-local' },
+    { name: 'fine_amount', label: 'Fine Amount', type: 'number', placeholder: 'Enter fine amount', step: '0.01' },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [
+        { value: 'Open', label: 'Open' },
+        { value: 'Completed', label: 'Completed' },
+        { value: 'Overdue', label: 'Overdue' },
+      ],
+    },
   ];
 
   return (
     <FormLayout
       show={showPopup}
       onClose={() => { setShowPopup(false); setEditMode(false); }}
-      title={editMode ? 'Edit Borrowed Book' : 'Add New Borrowed Book'}
+      title={editMode ? 'Edit Transaction' : 'Add New Transaction'}
       onSubmit={handleAddBorrowedBook}
       inputs={inputs}
       formData={formData}

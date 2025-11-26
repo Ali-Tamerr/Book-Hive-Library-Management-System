@@ -1,302 +1,356 @@
-Library Management System - API Documentation
+# Library Management System – Backend Data Contract (AI-Facing)
 
-Overview
+Authoritative, machine- and human-friendly schema for the current backend entities. Use this to generate frontend types, forms, validation, and correct API payloads.
 
-This document describes the Web API endpoints implemented in the project and documents every model property, DTO field, DbContext set name, and controller route names used by the backend. Use this file as a schema reference for external tools or AI models that need to interact with the API.
+Key rules for AI agents:
 
-Conventions
-- Model property names shown exactly as in the C# models (usually snake_case for DB-mapped properties in this project).
-- DTOs are listed with their property names as exposed by the controllers (BookDTO currently uses snake_case; UserDTO mixes lower-case and PascalCase for LastActivityAt).
-- All endpoints return JSON unless otherwise stated.
+- Use property names exactly as listed (casing included).
+- Do not include navigation properties in write payloads.
+- Respect nullability, lengths, and defaults.
+- Supply only scalar fields and FK IDs for POST/PUT.
 
-DbContext (LibraryManagementSystemContext)
-- DbSet<Book> Books
-- DbSet<BookReservation> BookReservations
-- DbSet<BookSale> BookSales
-- DbSet<BookTransaction> BookTransactions
-- DbSet<Category> Categories
-- DbSet<RFID_Tag> RFID_Tags
-- DbSet<Report> Reports
-- DbSet<SystemLog> SystemLogs
-- DbSet<User> Users
-- DbSet<Branch> Branches
+---
 
-Models (properties exactly as in code)
+## DbContext: LibraryManagementSystemContext
 
-Book
-- int book_id
-- string isbn
-- string title
-- string author
-- string publisher
-- int? publication_year
-- int category_id
-- int total_copies
-- int available_copies
-- string digital_url
-- DateTime? created_at
-- DateTime? updated_at
-- decimal? sale_price
-- ICollection<BookReservation> BookReservations
-- ICollection<BookSale> BookSales
-- ICollection<BookTransaction> BookTransactions
-- Category category (navigation property; FK: category_id)
+DbSets:
 
-User
-- int user_id
-- int? rfid_tag_id
-- string first_name
-- string last_name
-- string email
-- string password_hash
-- string phone_number
-- string role
-- string status
-- DateTime? created_at
-- DateTime? updated_at
-- ICollection<BookReservation> BookReservations
-- ICollection<BookSale> BookSales
-- ICollection<BookTransaction> BookTransactions
-- ICollection<Report> Reports
-- ICollection<SystemLog> SystemLogs
-- RFID_Tag rfid_tag (navigation; FK: rfid_tag_id)
-- DateTime? LastActivityAt (column name: last_activity_at)
+- Books (DbSet<Book>)
+- BookReservations (DbSet<BookReservation>)
+- BookSales (DbSet<BookSale>)
+- BookTransactions (DbSet<BookTransaction>)
+- Categories (DbSet<Category>)
+- Reports (DbSet<Report>)
+- Users (DbSet<User>)
+- Languages (DbSet<Language>)
+- Branches (DbSet<Branch>)
 
-Category
-- int category_id
-- string category_name
-- ICollection<Book> Books
+---
 
-BookReservation
-- int reservation_id
-- int user_id
-- int book_id
-- DateTime? reservation_date
-- DateTime expiration_date
-- string status
-- Book book (navigation; FK: book_id)
-- User user (navigation; FK: user_id)
+## Entities (Tables)
 
-BookSale
-- int sale_id
-- int user_id
-- int book_id
-- int transaction_id
-- decimal price
-- DateTime? sale_date
-- Book book (navigation; FK: book_id)
-- BookTransaction transaction (navigation; FK: transaction_id)
-- User user (navigation; FK: user_id)
+All fields and attributes are based on the current code in Models/\*.cs. Navigation properties are documented for read comprehension; never send them in write payloads.
 
-BookTransaction
-- int transaction_id
-- int user_id
-- int book_id
-- int rfid_tag_id
-- string transaction_type
-- DateTime? due_date
-- DateTime? return_date
-- decimal? fine_amount
-- string status
-- DateTime? created_at
-- string borrow_type
-- BookSale BookSale (navigation)
-- Book book (navigation; FK: book_id)
-- RFID_Tag rfid_tag (navigation; FK: rfid_tag_id)
-- User user (navigation; FK: user_id)
+### Book (Models/Book.cs)
 
-RFID_Tag
-- int tag_id
-- string tag_type
-- int assigned_to
-- DateTime? assigned_date
-- string status
-- ICollection<BookTransaction> BookTransactions
-- User User (navigation)
+- Indexes:
+  - [Index("name", Name = "IDX_Books_Name")]
+- Fields:
+  - string book_id
+    - [Key]
+  - string name
+    - [Required], [StringLength(255)]
+  - int language_id
+  - int category_id
+  - int quantity
+  - DateTime? created_at
+    - [Column(TypeName = "datetime")], default: GETDATE() (via OnModelCreating)
+  - DateTime? updated_at
+    - [Column(TypeName = "datetime")], default: GETDATE() (via OnModelCreating)
+  - decimal? sale_price
+    - [Column(TypeName = "decimal(10, 2)")]
+- Navigation (read-only):
+  - ICollection<BookReservation> BookReservations [InverseProperty("book")]
+  - ICollection<BookSale> BookSales [InverseProperty("book")]
+  - ICollection<BookTransaction> BookTransactions [InverseProperty("book")]
+  - Category category [ForeignKey("category_id")] [InverseProperty("Books")]
+  - Language language [ForeignKey("language_id")]
 
-Report
-- int report_id
-- string report_name
-- int generated_by
-- string report_type
-- DateTime? generated_at
-- string file_path
-- User generated_byNavigation (navigation; FK: generated_by)
+Notes:
 
-SystemLog
-- int log_id
-- int? user_id
-- string action_type
-- string description
-- DateTime? created_at
-- User user (navigation; FK: user_id)
+- Older fields like isbn, author, publisher, publication_year, digital_url are removed/commented in this branch.
 
-Branch
-- int branch_id
-- string name
-- string location
-- string contact_number
+Example write (POST/PUT):
 
-DTOs (as used by controllers)
-
-BookDTO (current controller mapping)
-- int book_id
-- string isbn
-- string title
-- string author
-- string publisher
-- int? publication_year
-- int category_id
-- int total_copies
-- int available_copies
-- decimal? sale_price
-- string digital_url
-- string description (DTO-only)
-- List<string> user_names (DTO-only; aggregated user full names involved in reservations/sales/transactions)
-
-UserDTO
-- int id
-- string full_name
-- string first_name
-- string last_name
-- string email
-- string phone_number
-- string role
-- string password_hash (sensitive; consider removing in production)
-- List<string> booksBought
-- List<string> booksReserved
-- DateTime? LastActivityAt
-
-Notes about DTOs and payloads
-- Controllers currently bind `Book` entity directly for POST/PUT actions. This allows clients to accidentally include navigation properties (e.g., `category`, `BookReservations`) in the request body which can lead to EF attach/FK issues. Recommended pattern: accept an input DTO (BookInputDTO) with only the writable primitive fields, then map server-side to the `Book` entity.
-
-Controllers and routes (summary)
-- BooksController (base route: /api/Books)
-  - GET /api/Books -> returns List<BookDTO>
-  - GET /api/Books/{id:int} -> returns BookDTO
-  - GET /api/Books/{title:alpha} -> returns list of Book entities matching title substring
-  - POST /api/Books -> expects `Book` entity in body (or a BookInput shape). Validations: isbn & title required; total_copies/available_copies non-negative; available_copies <= total_copies; category_id must exist. Returns 201 Created with BookDTO.
-  - PUT /api/Books/{id:int} -> expects `Book` entity in body. Same validations as POST. Returns 200 OK with BookDTO.
-  - DELETE /api/Books/{id:int} -> deletes book (controller currently allows delete regardless of related items but has commented checks to prevent deleting when related records exist). Returns 204 NoContent.
-
-- UsersController (base route: /api/Users)
-  - GET /api/Users -> returns list of UserDTO
-  - GET /api/Users/{id:int} -> returns UserDTO
-  - GET /api/Users/{name:alpha} -> returns UserDTO (by first name)
-  - POST /api/Users -> create User (binds User entity)
-  - PUT /api/Users/{id} -> update User (binds User entity)
-  - PUT /api/Users/{id}/activity -> updates last_activity_at timestamp
-  - (PATCH may not be implemented; APIs hosted in Azure returned 405 for PATCH in some tests)
-
-- CategoriesController (base route: /api/Categories)
-  - CRUD for categories, expects `Category` entity in body for POST/PUT
-
-- BookReservationsController (base route: /api/BookReservations)
-  - CRUD for reservations, binds BookReservation entity
-
-- BookSalesController (base route: /api/BookSales)
-  - CRUD for sales, binds BookSale entity
-
-- BookTransactionsController (base route: /api/BookTransactions)
-  - CRUD for transactions, binds BookTransaction entity
-
-- RFID_TagController (base route: /api/RFID_Tag)
-  - CRUD for RFID tags, binds RFID_Tag entity
-
-- ReportsController (base route: /api/Reports)
-  - CRUD for reports, binds Report entity
-
-- BranchesController (base route: /api/Branches)
-  - GET /api/Branches -> returns list of Branch entities
-  - GET /api/Branches/{id} -> returns single Branch entity
-  - POST /api/Branches -> create Branch (binds Branch entity)
-  - PUT /api/Branches/{id} -> update Branch (binds Branch entity)
-  - DELETE /api/Branches/{id} -> delete Branch
-
-Field name casing and JSON
-- The server returns JSON using the C# property names. Currently many model properties use snake_case identifiers (e.g., `book_id`, `category_id`). BookDTO returns snake_case fields. UserDTO uses `id` and `LastActivityAt` (note the mixed casing).
-- If a client expects a different casing (e.g., camelCase), either update serialization settings or handle mapping client-side.
-
-Example JSON payloads
-
-Book (entity shape expected by POST/PUT)
+```json
 {
-  "book_id": 0,                 // omitted or 0 for new
-  "isbn": "ABC123",
-  "title": "Book Title",
-  "author": "Author Name",
-  "publisher": "Publisher",
-  "publication_year": 2023,
-  "category_id": 4,             // must exist in Categories table
-  "total_copies": 5,
-  "available_copies": 5,
-  "digital_url": "http://...",
-  "sale_price": 12.50
-}
-
-BookDTO (returned by GET endpoints)
-{
-  "book_id": 16,
-  "isbn": "2131313",
-  "title": "dsawad",
-  "author": "111",
-  "publisher": "111",
-  "publication_year": 2022,
+  "book_id": "B-00123",
+  "name": "Clean Code",
+  "language_id": 1,
   "category_id": 4,
-  "total_copies": 1,
-  "available_copies": 1,
-  "digital_url": null,
-  "sale_price": 22.00,
-  "description": "",
-  "user_names": ["Alice Smith", "Bob Jones"]
+  "quantity": 12,
+  "sale_price": 39.99
 }
+```
 
-User (entity shape expected by POST/PUT)
+---
+
+### User (Models/User.cs)
+
+- Indexes (unique):
+  - [Index("email", Name = "UQ__Users__AB6E6164...", IsUnique = true)]
+  - [Index("phone_number", Name = "UQ__Users__PhoneNumber", IsUnique = true)]
+  - [Index("username", Name = "UQ__Users__UserName", IsUnique = true)]
+- Fields:
+  - string user_id
+    - [Key], ValueGeneratedNever (OnModelCreating) → client must provide
+  - string name
+    - [Required], [StringLength(50)]
+  - string username
+    - [StringLength(50)]
+  - string email
+    - [Required], [StringLength(100)]
+  - string password_hash
+    - [Required], [StringLength(255)]
+  - string phone_number
+    - [StringLength(20)]
+  - string role
+    - [Required], [StringLength(20)]
+  - string? status
+    - [StringLength(20)], default: "Active" (OnModelCreating)
+  - DateTime? created_at
+    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
+  - DateTime? updated_at
+    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
+  - DateTime? LastActivityAt
+    - [Column("last_activity_at")]
+- Navigation (read-only):
+  - ICollection<BookReservation> BookReservations [InverseProperty("user")]
+  - ICollection<BookSale> BookSales [InverseProperty("user")]
+  - ICollection<BookTransaction> BookTransactions [InverseProperty("user")]
+  - ICollection<Report> Reports [InverseProperty("generated_byNavigation")]
+
+Example write:
+
+```json
 {
-  "user_id": 0,
-  "rfid_tag_id": null,
-  "first_name": "Ali",
-  "last_name": "Tamerr",
+  "user_id": "U-10001",
+  "name": "Ali Tamerr",
+  "username": "ali.t",
   "email": "ali@example.com",
-  "password_hash": "...",
+  "password_hash": "<secure-hash>",
   "phone_number": "1234567890",
   "role": "Admin",
   "status": "Active"
 }
+```
 
-UserDTO (returned by GET)
+---
+
+### Category (Models/Category.cs)
+
+- Indexes:
+  - [Index("category_name", Name = "UQ__Categori__5189E255...", IsUnique = true)]
+- Fields:
+  - int category_id
+    - [Key]
+  - string category_name
+    - [Required], [StringLength(100)]
+- Navigation (read-only):
+  - ICollection<Book> Books [InverseProperty("category")]
+
+Example write:
+
+```json
 {
-  "id": 51,
-  "full_name": "Ali Tamerr",
-  "first_name": "Ali",
-  "last_name": "Tamerr",
-  "email": "ali@example.com",
-  "phone_number": "1234567890",
-  "role": "Admin",
-  "password_hash": "...",
-  "booksBought": ["Book A"],
-  "booksReserved": ["Book B"],
-  "LastActivityAt": "2025-11-18T...Z"
+  "category_id": 4,
+  "category_name": "Software Engineering"
 }
+```
 
-Branch (entity shape expected by POST/PUT)
+---
+
+### Language (Models/Language.cs)
+
+- Fields:
+  - int language_id
+    - [Key]
+  - string name
+    - [Required]
+- Navigation (read-only):
+  - ICollection<Book> Books [InverseProperty("language")]
+    - Backed by private field "\_books" (configured in OnModelCreating)
+
+Example write:
+
+```json
 {
-  "branch_id": 0,
+  "language_id": 1,
+  "name": "English"
+}
+```
+
+---
+
+### BookReservation (Models/BookReservation.cs)
+
+- Indexes:
+  - [Index("status", Name = "IDX_Reservations_Status")]
+- Fields:
+  - int reservation_id
+    - [Key]
+  - string user_id
+  - string book_id
+  - DateTime? reservation_date
+    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
+  - DateTime expiration_date
+    - [Column(TypeName = "datetime")]
+  - string status
+    - [StringLength(20)], default: "Active" (OnModelCreating)
+- Navigation (read-only):
+  - Book book [ForeignKey("book_id")] [InverseProperty("BookReservations")]
+  - User user [ForeignKey("user_id")] [InverseProperty("BookReservations")]
+
+Example write:
+
+```json
+{
+  "user_id": "U-10001",
+  "book_id": "B-00123",
+  "expiration_date": "2025-12-31T00:00:00Z",
+  "status": "Active"
+}
+```
+
+---
+
+### BookSale (Models/BookSale.cs)
+
+- Indexes:
+  - [Index("transaction_id", Name = "UQ__BookSale__85C600AE...", IsUnique = true)]
+- Fields:
+  - int sale_id
+    - [Key]
+  - string user_id
+  - string book_id
+  - int transaction_id
+  - decimal price
+    - [Column(TypeName = "decimal(10, 2)")]
+  - DateTime? sale_date
+    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
+- Navigation (read-only):
+  - Book book [ForeignKey("book_id")] [InverseProperty("BookSales")]
+  - BookTransaction transaction [ForeignKey("transaction_id")] [InverseProperty("BookSale")]
+  - User user [ForeignKey("user_id")] [InverseProperty("BookSales")]
+
+Example write:
+
+```json
+{
+  "user_id": "U-10001",
+  "book_id": "B-00123",
+  "transaction_id": 9876,
+  "price": 25.0
+}
+```
+
+---
+
+### BookTransaction (Models/BookTransaction.cs)
+
+- Indexes:
+  - [Index("status", Name = "IDX_Transactions_Status")]
+- Fields:
+  - int transaction_id
+    - [Key]
+  - string user_id
+  - string book_id
+  - string transaction_type
+    - [Required], [StringLength(20)]
+  - DateTime? due_date
+    - [Column(TypeName = "datetime")]
+  - DateTime? return_date
+    - [Column(TypeName = "datetime")]
+  - decimal? fine_amount
+    - [Column(TypeName = "decimal(10, 2)")], default: 0.00 (OnModelCreating)
+  - string status
+    - [StringLength(20)], default: "Pending" (OnModelCreating)
+  - DateTime? created_at
+    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
+  - string borrow_type
+    - [Required], [StringLength(20)], default: "Borrow" (OnModelCreating)
+- Navigation (read-only):
+  - BookSale BookSale [InverseProperty("transaction")]
+  - Book book [ForeignKey("book_id")] [InverseProperty("BookTransactions")]
+  - User user [ForeignKey("user_id")] [InverseProperty("BookTransactions")]
+
+Example write:
+
+```json
+{
+  "user_id": "U-10001",
+  "book_id": "B-00123",
+  "transaction_type": "Borrow",
+  "due_date": "2025-12-15T00:00:00Z",
+  "borrow_type": "Borrow"
+}
+```
+
+---
+
+### Report (Models/Report.cs)
+
+- Fields:
+  - int report_id
+    - [Key]
+  - string report_name
+    - [Required], [StringLength(255)]
+  - string generated_by
+  - string report_type
+    - [Required], [StringLength(50)]
+  - DateTime? generated_at
+    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
+  - string file_path
+    - [StringLength(500)]
+- Navigation (read-only):
+  - User generated_byNavigation [ForeignKey("generated_by")] [InverseProperty("Reports")]
+
+Example write:
+
+```json
+{
+  "report_name": "Monthly Inventory",
+  "generated_by": "U-10001",
+  "report_type": "Inventory",
+  "file_path": "/reports/inventory-2025-11.pdf"
+}
+```
+
+---
+
+### Branch (Models/Branch.cs)
+
+- Fields:
+  - int branch_id
+    - [Key]
+  - string name
+    - [Required], [StringLength(50)]
+  - string location
+    - [Required], [StringLength(100)]
+  - string contact_number
+    - [StringLength(20)]
+
+Example write:
+
+```json
+{
+  "branch_id": 10,
   "name": "Central Library",
   "location": "123 Main St, City",
   "contact_number": "0123456789"
 }
+```
 
-Validation and common errors
-- FK constraint violations (Postgres 23503) happen when `category_id` or other FK value doesn't exist. Validate existence server-side before SaveChanges.
-- Do not send navigation properties (e.g., `category`, `BookReservations`) in POST/PUT bodies; send only primitive FK ids.
-- `405 Method Not Allowed` for PATCH means server doesn't accept PATCH; either use PUT or implement PATCH support server-side with JSON Patch and AddNewtonsoftJson.
+---
 
-Tips for AI models / automated agents
-- Use the DbContext DbSet names to discover available collections: `Books`, `Users`, `Categories`, `BookReservations`, `BookSales`, `BookTransactions`, `RFID_Tags`, `Reports`, `SystemLogs`, `Branches`.
-- Use model property lists above as canonical field names for building queries and payloads.
-- For updates, prefer using `PUT /api/Books/{id}` with full entity or implement a dedicated input DTO on server to accept partial updates safely.
-- When creating/updating Books, check `Categories` for existence of `category_id` first to avoid FK errors.
+## Relationships & Delete Behavior (OnModelCreating highlights)
 
-Contact
-- If you change models or DTOs, update this README so downstream tools and models stay in sync.
+- Book → Category (Many-to-One): FK `category_id`, DeleteBehavior.ClientSetNull
+- Book → Language (Many-to-One): FK `language_id`, DeleteBehavior.ClientSetNull
+- BookReservation → Book/User: FKs `book_id`, `user_id`, DeleteBehavior.ClientSetNull
+- BookSale → Book (Many-to-One), User (Many-to-One)
+- BookSale → BookTransaction (One-to-One): FK `transaction_id`, DeleteBehavior.ClientSetNull
+- BookTransaction → Book/User: FKs `book_id`, `user_id`, DeleteBehavior.ClientSetNull
+- Report → User (Many-to-One): FK `generated_by`, DeleteBehavior.ClientSetNull
+
+---
+
+## JSON & Validation Guidance for AI Agents
+
+- Casing: Use the exact property names (mostly snake_case). Note: `LastActivityAt` is PascalCase but maps to `last_activity_at` in DB.
+- Required fields enforced via annotations must be present in write payloads.
+- Unique constraints (User: email, phone_number, username) should be pre-checked or handled on 409/400.
+- Default values (e.g., timestamps, statuses) may be set server-side; do not rely on client to populate unless required.
+- Never send navigation properties or collections in POST/PUT bodies.
+
+---

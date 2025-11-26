@@ -7,10 +7,11 @@ function BoughtBookFormPopup({ showPopup, editMode, formData, setFormData, handl
   };
 
   const inputs = [
-    { name: 'book_id', label: 'Book ID', type: 'text', placeholder: 'Enter book ID', required: true },
     { name: 'user_id', label: 'User ID', type: 'text', placeholder: 'Enter user ID', required: true },
-    { name: 'sale_date', label: 'Sale Date', type: 'date', required: true },
-    { name: 'price', label: 'Price', type: 'number', placeholder: 'Enter price', required: true },
+    { name: 'book_id', label: 'Book ID', type: 'text', placeholder: 'Enter book ID', required: true },
+    { name: 'transaction_id', label: 'Transaction ID', type: 'number', placeholder: 'Enter linked transaction ID', required: true },
+    { name: 'price', label: 'Price', type: 'number', placeholder: 'Enter sale price', step: '0.01', required: true },
+    { name: 'sale_date', label: 'Sale Date', type: 'datetime-local' },
   ];
 
   return (

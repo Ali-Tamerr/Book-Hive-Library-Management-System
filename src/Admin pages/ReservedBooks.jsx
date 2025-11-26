@@ -12,9 +12,12 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    book_id: '',
+    reservation_id: '',
     user_id: '',
-    reservation_date: ''
+    book_id: '',
+    reservation_date: '',
+    expiration_date: '',
+    status: 'Pending'
   });
 
   const { data: reservations = [], isLoading } = useReservations();
@@ -25,12 +28,20 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
   const handleAddReservation = async (e) => {
     e.preventDefault();
     try {
-      if (editMode && formData.id) {
-        await updateReservationMutation.mutateAsync({ id: formData.id, data: formData });
+      const apiData = {
+        user_id: formData.user_id,
+        book_id: formData.book_id,
+        reservation_date: formData.reservation_date || null,
+        expiration_date: formData.expiration_date,
+        status: formData.status
+      };
+
+      if (editMode && formData.reservation_id) {
+        await updateReservationMutation.mutateAsync({ id: formData.reservation_id, data: apiData });
       } else {
-        await createReservationMutation.mutateAsync(formData);
+        await createReservationMutation.mutateAsync(apiData);
       }
-      setFormData({ book_id: '', user_id: '', reservation_date: '' });
+      setFormData({ reservation_id: '', user_id: '', book_id: '', reservation_date: '', expiration_date: '', status: 'Pending' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -41,10 +52,12 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
 
   const handleEdit = (reservation) => {
     setFormData({
-      id: reservation.id,
-      book_id: reservation.book_id || '',
+      reservation_id: reservation.reservation_id || reservation.id,
       user_id: reservation.user_id || '',
-      reservation_date: reservation.reservation_date || ''
+      book_id: reservation.book_id || '',
+      reservation_date: reservation.reservation_date || '',
+      expiration_date: reservation.expiration_date || '',
+      status: reservation.status || 'Pending'
     });
     setEditMode(true);
     setShowPopup(true);
@@ -61,7 +74,7 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
   };
 
   const handleButtonClick = () => {
-    setFormData({ book_id: '', user_id: '', reservation_date: '' });
+    setFormData({ reservation_id: '', user_id: '', book_id: '', reservation_date: '', expiration_date: '', status: 'Pending' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -70,14 +83,18 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
     ? reservations.filter(
       (reservation) =>
         reservation.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        reservation.user_name?.toLowerCase().includes(searchValue.toLowerCase())
+        reservation.user_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        reservation.reservation_id?.toString().includes(searchValue)
     )
     : reservations;
 
   const columns = [
+    { header: 'Reservation ID', accessor: 'reservation_id' },
     { header: 'Book Title', accessor: 'book_title' },
     { header: 'User Name', accessor: 'user_name' },
     { header: 'Reservation Date', accessor: 'reservation_date' },
+    { header: 'Expiration Date', accessor: 'expiration_date' },
+    { header: 'Status', accessor: 'status' },
     { header: 'Action', accessor: 'action' },
   ];
 
@@ -101,7 +118,7 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
       data={filteredReservations}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
-      title="Reserved Books"
+      title={customTitle || "Book Reservations"}
       buttonText={hideButton ? "" : "Add Reservation"}
       columns={columns}
       formPopup={formPopupComponent}
