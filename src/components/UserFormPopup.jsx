@@ -74,7 +74,7 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
             if (lines.length > 1) {
               const completeLine = lines.shift().trim();
               if (completeLine) {
-                setFormData(prevData => ({ ...prevData, id: completeLine }));
+                setFormData(prevData => ({ ...prevData, user_id: completeLine }));
               }
               buffer = lines.join('\n');
             }
@@ -100,55 +100,66 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
       await connectToArduino();
     }
   };
-  
+
   const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const inputs = [
     {
-      name: 'id',
-      label: 'ID',
+      name: 'user_id',
+      label: 'User ID',
       type: 'custom',
       render: () => (
-        <div key="id">
-          <label className="text-sm font-medium block">ID</label>
+        <div key="user_id">
+          <label className="text-sm font-medium block">User ID</label>
           <div className='flex gap-2'>
             <button
               type="button"
               onClick={handleConnectClick}
-              className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${
-                isConnected
+              className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${isConnected
                   ? 'bg-red-200 text-red-900 hover:bg-red-300'
                   : 'bg-gray-300 hover:bg-gray-400'
-              }`}
+                }`}
             >
               {isConnected ? "Disconnect" : "Connect to NFC Reader"}
             </button>
             <input
               type="text"
-              name="id"
-              value={formData.id || ''}
+              name="user_id"
+              value={formData.user_id || ''}
               onChange={onFormChange}
-              placeholder="Enter ID (auto-generated if empty)"
+              placeholder="Enter User ID (e.g., U-10001)"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              required
             />
           </div>
         </div>
       ),
     },
-    { name: 'first_name', label: 'First Name', type: 'text', placeholder: 'Enter first name', required: true },
-    { name: 'last_name', label: 'Last Name', type: 'text', placeholder: 'Enter last name', required: true },
+    { name: 'name', label: 'Full Name', type: 'text', placeholder: 'Enter full name', required: true },
+    { name: 'username', label: 'Username', type: 'text', placeholder: 'Enter username', required: true },
     { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter email', required: true },
-    { name: 'phone_number', label: 'Phone Number (optional)', type: 'text', placeholder: 'Enter phone number' },
-    { name: 'password', label: 'Password', type: 'password', placeholder: editMode ? "Leave blank to keep current password" : "Enter password" },
+    { name: 'phone_number', label: 'Phone Number', type: 'text', placeholder: 'Enter phone number' },
+    { name: 'password', label: 'Password', type: 'password', placeholder: editMode ? "Leave blank to keep current password" : "Enter password", required: !editMode },
     {
       name: 'role',
       label: 'Role',
       type: 'select',
       options: [
-        { value: 'User', label: 'User' },
+        { value: 'Member', label: 'Member' },
+        { value: 'Librarian', label: 'Librarian' },
         { value: 'Admin', label: 'Admin' },
+      ],
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      options: [
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
+        { value: 'Suspended', label: 'Suspended' },
       ],
     },
   ];

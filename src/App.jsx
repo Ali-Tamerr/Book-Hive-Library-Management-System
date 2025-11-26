@@ -10,13 +10,13 @@ const ResetPassword = lazy(() => import('./shared/ResetPassword'));
 const AdminDashboard = lazy(() => import('./Admin pages/Dashboard'));
 const Overdue = lazy(() => import('./Admin pages/Overdue'));
 const UserManagement = lazy(() => import('./Admin pages/UserManagement'));
-const TestAPI = lazy(() => import('./Admin pages/TestAPI'));
 const Catalog = lazy(() => import('./Admin pages/Catalog'));
 const Books = lazy(() => import('./Admin pages/Books'));
 const Categories = lazy(() => import('./Admin pages/Categories'));
 const Reports = lazy(() => import('./Admin pages/Reports'));
-const Settings = lazy(() => import('./Admin pages/Settings'));
+const Settings = lazy(() => import('./shared/Settings'));
 const Branches = lazy(() => import('./Admin pages/Branches'));
+const Languages = lazy(() => import('./Admin pages/Languages'));
 
 const UserDashboard = lazy(() => import('./User pages/Dashboard'));
 const UserBooks = lazy(() => import('./User pages/UserBooks'));
@@ -91,10 +91,10 @@ function App() {
           <Route path="admin/dashboard" element={<AdminDashboard />} />
           <Route path="admin/overdue" element={<Overdue />} />
           <Route path="admin/user-management" element={<UserManagement />} />
-          <Route path="admin/test-api" element={<TestAPI />} />
           <Route path="admin/catalog" element={<Catalog />} />
           <Route path="admin/books" element={<Books />} />
           <Route path="admin/categories" element={<Categories />} />
+          <Route path="admin/languages" element={<Languages searchValue={searchValue} />} />
           <Route path="admin/reports" element={<Reports />} />
           <Route path="admin/settings" element={<Settings />} />
           <Route path="admin/branches" element={<Branches />} />

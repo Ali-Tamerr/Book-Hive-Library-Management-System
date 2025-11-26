@@ -1,28 +1,24 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import {
   useUsers,
   useCreateUser,
   useUpdateUser,
   useDeleteUser
-} from '../hooks/useUsers';
-import { getUserById } from '../services/users.api';
-import CommonLayout from '../Layouts/CommonLayout';
-import UserFormPopup from '../components/UserFormPopup';
+} from '../hooks/useUsers.js';
+import UserFormPopup from '../components/UserFormPopup.jsx';
+import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function UserManagement({ searchValue }) {
-  const location = useLocation();
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-
   const [formData, setFormData] = useState({
-    id: Math.floor(10000000 + Math.random() * 90000000),
-    first_name: '',
-    last_name: '',
+    id: '',
+    name: '',
+    username: '',
     email: '',
     phone_number: '',
-    role: 'User',
+    role: 'Member',
+    status: 'Active',
     password: ''
   });
 
@@ -34,51 +30,47 @@ function UserManagement({ searchValue }) {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
+      const apiData = {
+        id: formData.id,
+        name: formData.name,
+        username: formData.username,
+        email: formData.email,
+        phone_number: formData.phone_number,
+        role: formData.role,
+        status: formData.status,
+        password_hash: formData.password
+      };
+
       if (editMode && formData.id) {
-        const dataToUpdate = { ...editingUser, ...formData };
-        if (formData.password) {
-          dataToUpdate.password_hash = formData.password;
+        if (!formData.password) {
+          delete apiData.password_hash;
         }
-        delete dataToUpdate.password;
-        await updateUserMutation.mutateAsync({ id: formData.id, data: dataToUpdate });
+        await updateUserMutation.mutateAsync({ id: formData.id, data: apiData });
       } else {
-        const { password, booksBought, booksReserved, ...userData } = formData;
-        if (!password) {
-          alert("Password is required for new users.");
-          return;
-        }
-        await createUserMutation.mutateAsync({
-          ...userData,
-          user_id: 0,
-          rfid_tag_id: null,
-          status: 'Active',
-          password_hash: password
-        });
+        await createUserMutation.mutateAsync(apiData);
       }
-      setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '' });
+      setFormData({ id: '', name: '', username: '', email: '', phone_number: '', role: 'Member', status: 'Active', password: '' });
       setShowPopup(false);
       setEditMode(false);
-      setEditingUser(null);
     } catch (error) {
       console.error("Failed to save user:", error);
       alert('Failed to save user. Please try again.');
     }
   };
 
-  const handleEdit = async (user) => {
-    try {
-      const fullUserData = await getUserById(user.id);
-      setEditingUser(fullUserData);
-      setFormData({
-        ...fullUserData,
-        password: '',
-      });
-      setEditMode(true);
-      setShowPopup(true);
-    } catch (error) {
-      console.error("Failed to fetch user details:", error);
-      alert("Failed to fetch user details. Please try again.");
-    }
+  const handleEdit = (user) => {
+    setFormData({
+      id: user.id,
+      name: user.name || '',
+      username: user.username || '',
+      email: user.email || '',
+      phone_number: user.phone_number || '',
+      role: user.role || 'Member',
+      status: user.status || 'Active',
+      password: ''
+    });
+    setEditMode(true);
+    setShowPopup(true);
   };
 
   const handleDelete = async (id) => {
@@ -92,17 +84,16 @@ function UserManagement({ searchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ first_name: '', last_name: '', email: '', phone_number: '', role: 'User', password: '' });
+    setFormData({ id: '', name: '', username: '', email: '', phone_number: '', role: 'Member', status: 'Active', password: '' });
     setEditMode(false);
     setShowPopup(true);
-  }
+  };
 
   const filteredUsers = searchValue
     ? users.filter(
       (user) =>
-        `${user.first_name || ""} ${user.last_name || ""}`
-          .toLowerCase()
-          .includes(searchValue.toLowerCase()) ||
+        user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        user.username?.toLowerCase().includes(searchValue.toLowerCase()) ||
         user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
         user.id?.toString().includes(searchValue)
     )
@@ -111,11 +102,13 @@ function UserManagement({ searchValue }) {
   const title = "User Management";
   const buttonText = "Add User";
   const columns = [
-    { header: 'ID', accessor: 'id' },
+    { header: 'User ID', accessor: 'id' },
     { header: 'Name', accessor: 'name' },
+    { header: 'Username', accessor: 'username' },
     { header: 'Email', accessor: 'email' },
-    { header: 'Phone', accessor: 'phone_number' },
+    { header: 'Phone Number', accessor: 'phone_number' },
     { header: 'Role', accessor: 'role' },
+    { header: 'Status', accessor: 'status' },
     { header: 'Action', accessor: 'action' },
   ];
 
@@ -136,7 +129,7 @@ function UserManagement({ searchValue }) {
       searchValue={searchValue}
       buttonBehaviour={buttonBehaviour}
       isLoading={isLoading}
-      data={filteredUsers.map(u => ({ ...u, name: `${u.first_name} ${u.last_name}` }))}
+      data={filteredUsers}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
       title={title}
@@ -148,4 +141,3 @@ function UserManagement({ searchValue }) {
 }
 
 export default UserManagement;
-

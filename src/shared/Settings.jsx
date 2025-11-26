@@ -1,10 +1,10 @@
 import React from 'react';
+import JustImage from '../assets/images/image.png';
 
 const Settings = () => {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
-      <p>This is the settings page.</p>
+      <img src={JustImage} className='w-100' />
     </div>
   );
 };

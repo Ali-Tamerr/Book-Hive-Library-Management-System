@@ -12,10 +12,12 @@ function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    book_id: '',
+    sale_id: '',
     user_id: '',
-    sale_date: '',
-    price: ''
+    book_id: '',
+    transaction_id: '',
+    price: '',
+    sale_date: ''
   });
 
   const { data: bookSales = [], isLoading } = useBookSales();
@@ -26,12 +28,20 @@ function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
   const handleAddBookSale = async (e) => {
     e.preventDefault();
     try {
-      if (editMode && formData.id) {
-        await updateBookSaleMutation.mutateAsync({ id: formData.id, data: formData });
+      const apiData = {
+        user_id: formData.user_id,
+        book_id: formData.book_id,
+        transaction_id: formData.transaction_id ? parseInt(formData.transaction_id, 10) : null,
+        price: parseFloat(formData.price),
+        sale_date: formData.sale_date || null
+      };
+
+      if (editMode && formData.sale_id) {
+        await updateBookSaleMutation.mutateAsync({ id: formData.sale_id, data: apiData });
       } else {
-        await createBookSaleMutation.mutateAsync(formData);
+        await createBookSaleMutation.mutateAsync(apiData);
       }
-      setFormData({ book_id: '', user_id: '', sale_date: '', price: '' });
+      setFormData({ sale_id: '', user_id: '', book_id: '', transaction_id: '', price: '', sale_date: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -42,28 +52,29 @@ function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
 
   const handleEdit = (sale) => {
     setFormData({
-      id: sale.id,
-      book_id: sale.book_id || '',
+      sale_id: sale.sale_id || sale.id,
       user_id: sale.user_id || '',
-      sale_date: sale.sale_date || '',
-      price: sale.price || ''
+      book_id: sale.book_id || '',
+      transaction_id: sale.transaction_id || '',
+      price: sale.price || '',
+      sale_date: sale.sale_date || ''
     });
     setEditMode(true);
     setShowPopup(true);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this record?')) {
+    if (window.confirm('Are you sure you want to delete this sale record?')) {
       try {
         await deleteBookSaleMutation.mutateAsync(id);
       } catch (error) {
-        alert('Failed to delete record. Please try again.');
+        alert('Failed to delete sale record. Please try again.');
       }
     }
   };
 
   const handleButtonClick = () => {
-    setFormData({ book_id: '', user_id: '', sale_date: '', price: '' });
+    setFormData({ sale_id: '', user_id: '', book_id: '', transaction_id: '', price: '', sale_date: '' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -72,15 +83,18 @@ function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
     ? bookSales.filter(
       (sale) =>
         sale.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        sale.user_name?.toLowerCase().includes(searchValue.toLowerCase())
+        sale.user_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+        sale.sale_id?.toString().includes(searchValue)
     )
     : bookSales;
 
   const columns = [
+    { header: 'Sale ID', accessor: 'sale_id' },
     { header: 'Book Title', accessor: 'book_title' },
     { header: 'User Name', accessor: 'user_name' },
-    { header: 'Sale Date', accessor: 'sale_date' },
+    { header: 'Transaction ID', accessor: 'transaction_id' },
     { header: 'Price', accessor: 'price' },
+    { header: 'Sale Date', accessor: 'sale_date' },
     { header: 'Action', accessor: 'action' },
   ];
 
@@ -104,7 +118,7 @@ function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
       data={filteredBookSales}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
-      title="Bought Books"
+      title={customTitle || "Book Sales"}
       buttonText={hideButton ? "" : "Add Book Sale"}
       columns={columns}
       formPopup={formPopupComponent}

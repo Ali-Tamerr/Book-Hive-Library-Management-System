@@ -9,8 +9,8 @@ import WhiteBgSection from '../components/WhiteBgSection';
 function Signup() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
+        name: '',
+        username: '',
         contact: '',
         email: '',
         password: ''
@@ -59,17 +59,17 @@ function Signup() {
                         <div className="flex gap-4">
                             <AuthInput
                                 type="text"
-                                name="firstName"
-                                placeholder="First Name"
-                                value={formData.firstName}
+                                name="name"
+                                placeholder="Full Name"
+                                value={formData.name}
                                 onChange={handleChange}
                                 required
                             />
                             <AuthInput
                                 type="text"
-                                name="lastName"
-                                placeholder="Last Name"
-                                value={formData.lastName}
+                                name="username"
+                                placeholder="Username"
+                                value={formData.username}
                                 onChange={handleChange}
                                 required
                             />
@@ -134,17 +134,17 @@ function Signup() {
                         <div className="flex w-full gap-4">
                             <AuthInput
                                 type="text"
-                                name="firstName"
-                                placeholder="First Name"
-                                value={formData.firstName}
+                                name="name"
+                                placeholder="Full Name"
+                                value={formData.name}
                                 onChange={handleChange}
                                 required
                             />
                             <AuthInput
                                 type="text"
-                                name="lastName"
-                                placeholder="Last Name"
-                                value={formData.lastName}
+                                name="username"
+                                placeholder="Username"
+                                value={formData.username}
                                 onChange={handleChange}
                                 required
                             />

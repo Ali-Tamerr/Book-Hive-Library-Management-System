@@ -24,9 +24,9 @@ function Login() {
 
         try {
             const user = await login(username, password);
-            if (user.role === 'Admin') {
+            if (user.role === 'Admin' || user.role === 'Librarian') {
                 navigate('/admin/dashboard');
-            } else if (user.role === 'User') {
+            } else if (user.role === 'User' || user.role === 'Member') {
                 navigate('/user/dashboard');
             } else {
                 navigate('/login');
@@ -44,13 +44,13 @@ function Login() {
 
                 <WhiteBgSection
                     title="Welcome Back !!"
-                    subtitle="Please enter your credentials to log in"
+                    subtitle="Please enter your username and password to log in"
                     loginLayout={true}
                 >
                     <form onSubmit={handleSubmit} className='w-full items-center flex flex-col gap-6'>
                         <AuthInput
-                            type="email"
-                            placeholder="Email"
+                            type="text"
+                            placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required

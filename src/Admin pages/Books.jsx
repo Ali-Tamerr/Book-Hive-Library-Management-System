@@ -1,37 +1,31 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { 
-  useBooks, 
-  useCreateBook, 
-  useUpdateBook, 
-  useDeleteBook 
+import { useState } from 'react';
+import {
+  useBooks,
+  useCreateBook,
+  useUpdateBook,
+  useDeleteBook
 } from '../hooks/useBooks.js';
 import { useCategories } from '../hooks/useCategories.js';
+import { useLanguages } from '../hooks/useLanguages.js';
 import BookFormPopup from '../components/BookFormPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function Books({ searchValue }) {
-  const location = useLocation();
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  
-  const [formData, setFormData] = useState({ 
-    book_id: 0,
-    title: '', 
-    author: '', 
-    isbn: '', 
-    publisher: '',
-    publication_year: '',
+
+  const [formData, setFormData] = useState({
+    book_id: '',
+    name: '',
+    language_id: '',
     category_id: '',
-    total_copies: 1,
-    available_copies: 1,
-    sale_price: '',
-    digital_url: '',
-    description: ''
+    quantity: 1,
+    sale_price: ''
   });
 
   const { data: books = [], isLoading } = useBooks();
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
+  const { data: languages = [], isLoading: isLoadingLanguages } = useLanguages();
   const createBookMutation = useCreateBook();
   const updateBookMutation = useUpdateBook();
   const deleteBookMutation = useDeleteBook();
@@ -39,33 +33,26 @@ function Books({ searchValue }) {
   const handleAddBook = async (e) => {
     e.preventDefault();
     try {
-      const publication_year = parseInt(formData.publication_year, 10);
+      const language_id = parseInt(formData.language_id, 10);
       const category_id = parseInt(formData.category_id, 10);
-      const total_copies = parseInt(formData.total_copies, 10);
-      const available_copies = parseInt(formData.available_copies, 10);
+      const quantity = parseInt(formData.quantity, 10);
       const sale_price = parseFloat(formData.sale_price);
 
       const apiData = {
         book_id: formData.book_id,
-        title: formData.title,
-        author: formData.author,
-        isbn: formData.isbn,
-        publisher: formData.publisher,
-        publication_year: isNaN(publication_year) ? null : publication_year,
+        name: formData.name,
+        language_id: isNaN(language_id) ? null : language_id,
         category_id: isNaN(category_id) ? null : category_id,
-        total_copies: isNaN(total_copies) ? 1 : total_copies,
-        available_copies: isNaN(available_copies) ? 1 : available_copies,
-        sale_price: isNaN(sale_price) ? null : sale_price,
-        digital_url: formData.digital_url || null,
-        description: formData.description || null
+        quantity: isNaN(quantity) ? 1 : quantity,
+        sale_price: isNaN(sale_price) ? null : sale_price
       };
-      
+
       if (editMode && formData.book_id) {
         await updateBookMutation.mutateAsync({ id: formData.book_id, data: apiData });
       } else {
         await createBookMutation.mutateAsync(apiData);
       }
-      setFormData({ title: '', author: '', isbn: '', publisher: '', publication_year: '', category_id: '', total_copies: 1, available_copies: 1, sale_price: '', digital_url: '', description: '' });
+      setFormData({ book_id: '', name: '', language_id: '', category_id: '', quantity: 1, sale_price: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -73,7 +60,8 @@ function Books({ searchValue }) {
       if (error.status === 405) {
         alert('Book creation/update is not supported by the API. The Books endpoint may be read-only.');
       } else if (error.status === 400) {
-        alert(`Validation error: ${error.message || 'Please check your input fields.'}`);
+        alert(`Validation error: ${error.message || 'Please check your input fields.'}`)
+          ;
       } else {
         alert(`Failed to save book: ${error.message || 'Please try again.'}`);
       }
@@ -83,17 +71,11 @@ function Books({ searchValue }) {
   const handleEdit = (book) => {
     setFormData({
       book_id: book.book_id,
-      title: book.title || '',
-      author: book.author || '',
-      isbn:  book.isbn || '',
-      publisher:  book.publisher || '',
-      publication_year:  book.publication_year || '',
-      category_id:  book.category_id || '',
-      total_copies: book.total_copies || 1,
-      available_copies: book.available_copies || 1,
-      sale_price: book.sale_price || '',
-      digital_url: book.digital_url || '',
-      description:book.description || ''
+      name: book.name || '',
+      language_id: book.language_id || '',
+      category_id: book.category_id || '',
+      quantity: book.quantity || 1,
+      sale_price: book.sale_price || ''
     });
     setEditMode(true);
     setShowPopup(true);
@@ -116,54 +98,58 @@ function Books({ searchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ title: '', author: '', isbn: '', publisher: '', publication_year: '', category_id: '', total_copies: 1, available_copies: 1, sale_price: '', digital_url: '', description: '' });
+    setFormData({ book_id: '', name: '', language_id: '', category_id: '', quantity: 1, sale_price: '' });
     setEditMode(false);
     setShowPopup(true);
   };
 
   const filteredBooks = searchValue
     ? books.filter(
-        (book) => {
-          const title = book.title || '';
-          const author = book.author || '';
-          const isbn = book.isbn || '';
-          return title.toLowerCase().includes(searchValue.toLowerCase()) ||
-                 author.toLowerCase().includes(searchValue.toLowerCase()) ||
-                 isbn.toString().includes(searchValue);
-        }
-      )
+      (book) => {
+        const name = book.name || '';
+        const book_id = book.book_id || '';
+        return name.toLowerCase().includes(searchValue.toLowerCase()) ||
+          book_id.toString().includes(searchValue);
+      }
+    )
     : books;
-  
+
   const title = "Book Management";
   const buttonText = "Add Book";
   const columns = [
-    // { header: 'Book ID', accessor: 'book_id' },
-    { header: 'ID', accessor: 'isbn' },
-    { header: 'Title', accessor: 'title' },
-    { header: 'Author', accessor: 'author' },
-    { header: 'Publisher', accessor: 'publisher' },
-    { header: 'Year', accessor: 'publication_year' },
-    { header: 'Category ID', accessor: 'category_id' },
-    { header: 'Total Copies', accessor: 'total_copies' },
-    { header: 'Available', accessor: 'available_copies' },
-    { header: 'Price', accessor: 'sale_price' },
+    { header: 'ID', accessor: 'book_id' },
+    { header: 'Name', accessor: 'name' },
+    { header: 'Category', accessor: 'category_id' },
+    { header: 'Language', accessor: 'language_id' },
+    {
+      header: 'Availability',
+      accessor: 'availability',
+      render: (book) => (
+        <span className={`px-3 py-1 rounded-full text-sm font-medium ${book.quantity > 0
+            ? 'bg-green-100 text-green-800'
+            : 'bg-red-100 text-red-800'
+          }`}>
+          {book.quantity > 0 ? 'Available' : 'Borrowed'}
+        </span>
+      )
+    },
     { header: 'Action', accessor: 'action' },
-
   ];
 
   const formPopup = (
-    <BookFormPopup 
-      showPopup={showPopup} 
-      editMode={editMode} 
-      formData={formData} 
-      setFormData={setFormData} 
-      handleAddBook={handleAddBook} 
-      setShowPopup={setShowPopup} 
-      setEditMode={setEditMode} 
+    <BookFormPopup
+      showPopup={showPopup}
+      editMode={editMode}
+      formData={formData}
+      setFormData={setFormData}
+      handleAddBook={handleAddBook}
+      setShowPopup={setShowPopup}
+      setEditMode={setEditMode}
       categories={categories}
+      languages={languages}
     />
   );
-  
+
   return (
     <CommonLayout
       searchValue={searchValue}

@@ -36,7 +36,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
         <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
         <div>
           <h3 className="text-lg font-semibold max-[480px]:text-sm max-[350px]:text-xs">
-            {currentUser ? `${currentUser.first_name || currentUser.firstName || ''} ${currentUser.last_name || currentUser.lastName || ''}`.trim() || 'User' : 'Loading...'}
+            {currentUser ? currentUser.name || 'User' : 'Loading...'}
           </h3>
           <p className="text-sm max-[350px]:text-[10px] text-gray-600">{currentUser?.role || 'User'}</p>
         </div>

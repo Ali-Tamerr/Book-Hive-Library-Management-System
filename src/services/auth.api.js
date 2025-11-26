@@ -6,16 +6,45 @@ import { API_BASE_URL } from './api.config';
 export const login = async (username, password) => {
   try {
     const users = await getAllUsers();
+    
+    console.log('Login attempt with username:', username);
+    console.log('Total users fetched:', users.length);
 
-    const user = users.find(u =>
-      u.email === username ||
-      u.first_name?.toLowerCase() === username?.toLowerCase() ||
-      u.last_name?.toLowerCase() === username?.toLowerCase()
-    );
+    const user = users.find(u => {
+      console.log('Checking user:', {
+        email: u.email,
+        username: u.username,
+        name: u.name,
+        user_id: u.user_id
+      });
+      
+      const emailMatch = u.email?.toLowerCase() === username?.toLowerCase();
+      const usernameMatch = u.username?.toLowerCase() === username?.toLowerCase();
+      const nameMatch = u.name?.toLowerCase() === username?.toLowerCase();
+      const userIdMatch = u.user_id?.toString() === username?.toString();
+      
+      console.log('Match results:', {
+        emailMatch,
+        usernameMatch,
+        nameMatch,
+        userIdMatch
+      });
+      
+      return emailMatch || usernameMatch || nameMatch || userIdMatch;
+    });
 
     if (!user) {
-      throw new Error('User not found');
+      console.error('User not found. Available users:', users.map(u => ({
+        email: u.email,
+        username: u.username,
+        name: u.name,
+        user_id: u.user_id
+      })));
+      throw new Error('User not found. Please check your username.');
     }
+
+    console.log('User found:', { email: user.email, role: user.role });
+
     localStorage.setItem('authToken', JSON.stringify(user));
     localStorage.setItem('currentUser', JSON.stringify(user));
 
@@ -38,21 +67,23 @@ export const signup = async (userData) => {
     }
 
     console.log('Creating user with data:', {
-      first_name: userData.firstName,
-      last_name: userData.lastName,
+      name: userData.name,
+      username: userData.username,
       email: userData.email,
       phone_number: userData.contact,
       password_hash: userData.password,
-      role: 'User'
+      role: 'Member',
+      status: 'Active'
     });
 
     const createdUser = await createUser({
-      first_name: userData.firstName,
-      last_name: userData.lastName,
+      name: userData.name,
+      username: userData.username,
       email: userData.email,
       phone_number: userData.contact,
       password_hash: userData.password,
-      role: 'User'
+      role: 'Member',
+      status: 'Active'
     });
 
     console.log('API response after createUser:', createdUser);
