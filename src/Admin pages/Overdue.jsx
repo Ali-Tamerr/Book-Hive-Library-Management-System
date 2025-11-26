@@ -13,9 +13,12 @@ function Overdue({ searchValue, customTitle }) {
     : overdueBooks;
 
   const columns = [
-    { header: 'Book Title', accessor: 'book_title' },
-    { header: 'User Name', accessor: 'user_name' },
+    { header: 'ID', accessor: 'transaction_id' },
+    { header: 'User ID', accessor: 'user_id' },
+    { header: 'Amount', accessor: 'fine_amount' },
     { header: 'Due Date', accessor: 'due_date' },
+    { header: 'Date & Time', accessor: 'transaction_date' },
+    { header: 'Action', accessor: 'action' },
   ];
 
   return (
