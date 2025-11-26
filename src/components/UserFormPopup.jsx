@@ -110,29 +110,30 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
       name: 'user_id',
       label: 'User ID',
       type: 'custom',
-      render: () => (
-        <div key="user_id">
+      render: (data, onChange) => (
+        <div>
           <label className="text-sm font-medium block">User ID</label>
-          <div className='flex gap-2'>
+          <div className="flex items-center gap-2">
+            <input
+              name="user_id"
+              type="text"
+              value={data.user_id || ''}
+              onChange={onChange}
+              placeholder="Enter User ID (e.g., U-10001)"
+              required
+              className="w-full p-5 rounded-xl border-2 border-[#3D3E3E] outline-none focus:border-[#1e255e] text-lg max-[1080px]:text-sm max-[1080px]:p-4"
+            />
             <button
               type="button"
               onClick={handleConnectClick}
-              className={`px-4 py-2 rounded transition-colors text-[10px] font-semibold ${isConnected
-                  ? 'bg-red-200 text-red-900 hover:bg-red-300'
-                  : 'bg-gray-300 hover:bg-gray-400'
+              className={`px-4 py-2 h-full rounded transition-colors text-[10px] font-semibold whitespace-nowrap ${isConnected
+                ? 'bg-red-200 text-red-900 hover:bg-red-300'
+                : 'bg-gray-300 hover:bg-gray-400'
                 }`}
+              style={{ height: '50px' }}
             >
               {isConnected ? "Disconnect" : "Connect to NFC Reader"}
             </button>
-            <input
-              type="text"
-              name="user_id"
-              value={formData.user_id || ''}
-              onChange={onFormChange}
-              placeholder="Enter User ID (e.g., U-10001)"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              required
-            />
           </div>
         </div>
       ),
