@@ -4,9 +4,8 @@ const BASE_ENDPOINT = '/Users';
 
 export const updateUserActivity = async (userId) => {
   try {
-  
     return await apiPut(`${BASE_ENDPOINT}/${userId}/activity`, {
-      lastActivityAt: new Date().toISOString()
+      LastActivityAt: new Date().toISOString()
     });
   } catch (error) {
     console.error('Error updating user activity:', error);
@@ -18,7 +17,7 @@ export const updateUserActivity = async (userId) => {
 export const getUserOnlineStatus = (lastActivityAt) => {
   if (!lastActivityAt) return false;
   
-  const ONLINE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+  const ONLINE_THRESHOLD_MS = 5 * 60 * 1000;
   const lastActivity = new Date(lastActivityAt);
   const now = new Date();
   

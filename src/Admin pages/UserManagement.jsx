@@ -60,7 +60,7 @@ function UserManagement({ searchValue }) {
 
   const handleEdit = (user) => {
     setFormData({
-      id: user.id,
+      id: user.user_id,
       name: user.name || '',
       username: user.username || '',
       email: user.email || '',
@@ -95,7 +95,7 @@ function UserManagement({ searchValue }) {
         user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
         user.username?.toLowerCase().includes(searchValue.toLowerCase()) ||
         user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        user.id?.toString().includes(searchValue)
+        user.user_id?.toString().includes(searchValue)
     )
     : users;
 

@@ -1,18 +1,20 @@
 import React from 'react'
 import { Settings, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../services/auth.api';
 import SearchBar from './SearchBar';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const location = useLocation();
+  const [activeTab, setActiveTab] = useState('');
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
     const updateAuth = () => {
       const user = getCurrentUser();
-      console.log('Navbar: Current user from localStorage:', user);
       setCurrentUser(user);
     };
 
@@ -51,7 +53,10 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           </p>
         </div>
         <div className='w-0.5 max-[1080px]:hidden h-10 rounded-full bg-[#0b0b3b]'></div>
-        <button className=" max-[1080px]:hidden w-8 h-8"><Settings className='h-full w-full' /></button>
+        <button className=" max-[1080px]:hidden w-8 h-8" onClick={() => {
+                                setActiveTab('/settings');
+                                navigate('/settings');
+                            }}><Settings className='h-full w-full' /></button>
         <button onClick={toggleSidebar} className=" hidden max-[1080px]:block"><Menu className='h-full w-full' /></button>
       </div>
     </header>

@@ -87,6 +87,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/otp" element={<OTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/settings" element={<Settings />} />
 
           <Route path="admin/dashboard" element={<AdminDashboard />} />
           <Route path="admin/overdue" element={<Overdue />} />
@@ -96,7 +97,6 @@ function App() {
           <Route path="admin/categories" element={<Categories />} />
           <Route path="admin/languages" element={<Languages searchValue={searchValue} />} />
           <Route path="admin/reports" element={<Reports />} />
-          <Route path="admin/settings" element={<Settings />} />
           <Route path="admin/branches" element={<Branches />} />
 
           <Route path="/user/dashboard" element={<UserDashboard />} />
