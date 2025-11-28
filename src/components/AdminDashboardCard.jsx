@@ -6,7 +6,7 @@ const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadi
     return (
         <DashboardCard title="BookWorm Admins">
             {loading ? (
-                <li className="text-xs bg-[#f5f7fb] p-3 rounded-lg flex items-center gap-3">Loading...</li>
+                <li className="text-xs  p-3 rounded-lg flex items-center gap-3">Loading...</li>
             ) : displayAdmins.length > 0 ? (
                 displayAdmins.map((admin) => (
                     <li key={admin.id} className="text-xs bg-[#f5f7fb] h-18 p-1 rounded-lg flex items-center justify-between gap-3 mb-2 border border-[#0a0f33]">
@@ -17,7 +17,7 @@ const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadi
                             <div className="w-0.5 h-[90%] bg-[#0a0f33]"></div>
                             <div className="flex-1 overflow-hidden flex flex-col justify-between  whitespace-nowrap truncate">
                                 <p className="text-[18px] font-semibold text-[#0a0f33]">{admin.name}</p>
-                                <p className="text-[14px] text-[#6f7390]">Admin ID: {admin.adminId}</p>
+                                <p className="max-[1540px]:text-[11px] text-[14px] text-[#6f7390]">Admin ID: {admin.adminId}</p>
                                 <div className="flex justify-end absolute right-2 bottom-1 items-center gap-1 mt-1">
                                     <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-[#0a0f33]' : 'bg-gray-400'}`}></span>
                                     <span className="text-[12px] text-[#0a0f33]">{admin.isOnline ? 'Online' : 'Offline'}</span>

@@ -191,9 +191,9 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                             isExpanded={isExpanded}
                             active={location.pathname === '/admin/settings'}
                             onClick={() => {
-                                setActiveTab('/admin/settings');
+                                setActiveTab('/settings');
 
-                                navigate('/admin/settings');
+                                navigate('/settings');
                             }}
                             icon={<Settings size={18} strokeWidth={2.3} />}
                             text="Settings"

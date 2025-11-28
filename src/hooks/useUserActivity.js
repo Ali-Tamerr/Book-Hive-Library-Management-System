@@ -9,27 +9,22 @@ export const useUserActivity = () => {
   const [currentUser] = useState(() => getCurrentUser());
 
   useEffect(() => {
-    if (!currentUser || !currentUser.id) {
+    if (!currentUser || !currentUser.user_id) {
       return;
     }
 
-    // Send initial activity update
-    updateUserActivity(currentUser.id);
+    updateUserActivity(currentUser.user_id);
 
-    // Set up interval to send heartbeat every 2 minutes
-    // This ensures the user stays "online" if they're active
-    const HEARTBEAT_INTERVAL = 2 * 60 * 1000; // 2 minutes
+    const HEARTBEAT_INTERVAL = 2 * 60 * 1000;
     
     intervalRef.current = setInterval(() => {
-      updateUserActivity(currentUser.id);
+      updateUserActivity(currentUser.user_id);
     }, HEARTBEAT_INTERVAL);
 
-    // Update activity on user interactions
     const handleUserActivity = () => {
-      updateUserActivity(currentUser.id);
+      updateUserActivity(currentUser.user_id);
     };
 
-    // Listen to various user activity events
     const events = [
       { name: 'mousedown', options: undefined },
       { name: 'keydown', options: undefined },
@@ -38,8 +33,7 @@ export const useUserActivity = () => {
       { name: 'click', options: undefined }
     ];
     
-    // Throttle activity updates to avoid too many API calls
-    const THROTTLE_MS = 60 * 1000; // 1 minute throttle
+    const THROTTLE_MS = 60 * 1000;
 
     const throttledHandler = () => {
       const now = Date.now();
@@ -53,7 +47,6 @@ export const useUserActivity = () => {
       window.addEventListener(name, throttledHandler, options);
     });
 
-    // Cleanup
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);

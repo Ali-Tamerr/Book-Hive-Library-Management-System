@@ -8,7 +8,7 @@ import WhiteBgSection from '../components/WhiteBgSection';
 
 function Login() {
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ function Login() {
         setLoading(true);
 
         try {
-            const user = await login(username, password);
+            const user = await login(email, password);
             if (user.role === 'Admin' || user.role === 'Librarian') {
                 navigate('/admin/dashboard');
             } else if (user.role === 'User' || user.role === 'Member') {
@@ -44,15 +44,15 @@ function Login() {
 
                 <WhiteBgSection
                     title="Welcome Back !!"
-                    subtitle="Please enter your username and password to log in"
+                    subtitle="Please enter your email and password to log in"
                     loginLayout={true}
                 >
                     <form onSubmit={handleSubmit} className='w-full items-center flex flex-col gap-6'>
                         <AuthInput
-                            type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                         <AuthInput
