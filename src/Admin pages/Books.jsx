@@ -6,7 +6,6 @@ import {
   useDeleteBook
 } from '../hooks/useBooks.js';
 import { useCategories } from '../hooks/useCategories.js';
-import { useLanguages } from '../hooks/useLanguages.js';
 import BookFormPopup from '../components/BookFormPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
@@ -17,7 +16,6 @@ function Books({ searchValue }) {
   const [formData, setFormData] = useState({
     book_id: '',
     name: '',
-    language_id: '',
     category_id: '',
     quantity: 1,
     sale_price: ''
@@ -25,7 +23,6 @@ function Books({ searchValue }) {
 
   const { data: books = [], isLoading } = useBooks();
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
-  const { data: languages = [], isLoading: isLoadingLanguages } = useLanguages();
   const createBookMutation = useCreateBook();
   const updateBookMutation = useUpdateBook();
   const deleteBookMutation = useDeleteBook();
@@ -33,7 +30,6 @@ function Books({ searchValue }) {
   const handleAddBook = async (e) => {
     e.preventDefault();
     try {
-      const language_id = parseInt(formData.language_id, 10);
       const category_id = parseInt(formData.category_id, 10);
       const quantity = parseInt(formData.quantity, 10);
       const sale_price = parseFloat(formData.sale_price);
@@ -41,7 +37,6 @@ function Books({ searchValue }) {
       const apiData = {
         book_id: formData.book_id,
         name: formData.name,
-        language_id: isNaN(language_id) ? null : language_id,
         category_id: isNaN(category_id) ? null : category_id,
         quantity: isNaN(quantity) ? 1 : quantity,
         sale_price: isNaN(sale_price) ? null : sale_price
@@ -52,7 +47,7 @@ function Books({ searchValue }) {
       } else {
         await createBookMutation.mutateAsync(apiData);
       }
-      setFormData({ book_id: '', name: '', language_id: '', category_id: '', quantity: 1, sale_price: '' });
+      setFormData({ book_id: '', name: '', category_id: '', quantity: 1, sale_price: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -72,7 +67,6 @@ function Books({ searchValue }) {
     setFormData({
       book_id: book.book_id,
       name: book.name || '',
-      language_id: book.language_id || '',
       category_id: book.category_id || '',
       quantity: book.quantity || 1,
       sale_price: book.sale_price || ''
@@ -98,7 +92,7 @@ function Books({ searchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ book_id: '', name: '', language_id: '', category_id: '', quantity: 1, sale_price: '' });
+    setFormData({ book_id: '', name: '', category_id: '', quantity: 1, sale_price: '' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -120,14 +114,13 @@ function Books({ searchValue }) {
     { header: 'ID', accessor: 'book_id' },
     { header: 'Name', accessor: 'name' },
     { header: 'Category', accessor: 'category_id' },
-    { header: 'Language', accessor: 'language_id' },
     {
       header: 'Availability',
       accessor: 'availability',
       render: (book) => (
         <span className={`px-3 py-1 rounded-full text-sm font-medium ${book.quantity > 0
-            ? 'bg-green-100 text-green-800'
-            : 'bg-red-100 text-red-800'
+          ? 'bg-green-100 text-green-800'
+          : 'bg-red-100 text-red-800'
           }`}>
           {book.quantity > 0 ? 'Available' : 'Borrowed'}
         </span>
@@ -146,7 +139,6 @@ function Books({ searchValue }) {
       setShowPopup={setShowPopup}
       setEditMode={setEditMode}
       categories={categories}
-      languages={languages}
     />
   );
 

@@ -36,7 +36,7 @@ const CommonLayout = ({
             <thead>
               <tr>
                 {columns.map(col => (
-                  <th key={col.accessor} className="p-3 font-semibold text-center" style={{ width: `${100 / columns.length}%` }}>{col.header}</th>
+                  <th key={col.accessor} className="p-3 font-medium text-center" style={{ width: `${100 / columns.length}%` }}>{col.header}</th>
                 ))}
               </tr>
               <tr>
@@ -56,7 +56,7 @@ const CommonLayout = ({
                 </tr>
               ) : (
                 data.map((item, index) => (
-                  <tr key={index} className="border-b border-gray-200">
+                  <tr key={index} className="border-b font-medium border-gray-200">
                     {columns.map(col => {
                       let cellContent;
                       if (col.accessor === 'action') {

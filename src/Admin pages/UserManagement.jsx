@@ -14,10 +14,9 @@ function UserManagement({ searchValue }) {
   const [formData, setFormData] = useState({
     id: '',
     name: '',
-    username: '',
     email: '',
     phone_number: '',
-    role: 'Member',
+    role: 'User',
     status: 'Active',
     password: ''
   });
@@ -31,9 +30,8 @@ function UserManagement({ searchValue }) {
     e.preventDefault();
     try {
       const apiData = {
-        id: formData.id,
+        user_id: formData.user_id,
         name: formData.name,
-        username: formData.username,
         email: formData.email,
         phone_number: formData.phone_number,
         role: formData.role,
@@ -49,7 +47,7 @@ function UserManagement({ searchValue }) {
       } else {
         await createUserMutation.mutateAsync(apiData);
       }
-      setFormData({ id: '', name: '', username: '', email: '', phone_number: '', role: 'Member', status: 'Active', password: '' });
+      setFormData({ id: '', name: '',  email: '', phone_number: '', role: 'User', status: 'Active', password: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -60,12 +58,11 @@ function UserManagement({ searchValue }) {
 
   const handleEdit = (user) => {
     setFormData({
-      id: user.user_id,
+      user_id: user.user_id,
       name: user.name || '',
-      username: user.username || '',
       email: user.email || '',
       phone_number: user.phone_number || '',
-      role: user.role || 'Member',
+      role: user.role || 'User',
       status: user.status || 'Active',
       password: ''
     });
@@ -84,7 +81,7 @@ function UserManagement({ searchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ id: '', name: '', username: '', email: '', phone_number: '', role: 'Member', status: 'Active', password: '' });
+    setFormData({ user_id: '', name: '',  email: '', phone_number: '', role: 'User', status: 'Active', password: '' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -93,7 +90,6 @@ function UserManagement({ searchValue }) {
     ? users.filter(
       (user) =>
         user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        user.username?.toLowerCase().includes(searchValue.toLowerCase()) ||
         user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
         user.user_id?.toString().includes(searchValue)
     )
@@ -102,13 +98,11 @@ function UserManagement({ searchValue }) {
   const title = "User Management";
   const buttonText = "Add User";
   const columns = [
-    { header: 'User ID', accessor: 'id' },
+    { header: 'User ID', accessor: 'user_id' },
     { header: 'Name', accessor: 'name' },
-    { header: 'Username', accessor: 'username' },
     { header: 'Email', accessor: 'email' },
-    { header: 'Phone Number', accessor: 'phone_number' },
+    { header: 'Contact No', accessor: 'phone_number' },
     { header: 'Role', accessor: 'role' },
-    { header: 'Status', accessor: 'status' },
     { header: 'Action', accessor: 'action' },
   ];
 

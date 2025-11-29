@@ -10,11 +10,11 @@ const NavLink = ({ isExpanded, active, onClick, icon, text, toggleSidebar }) => 
   return (
     <button
       onClick={handleClick}
-      className={`h-12 min-h-12 w-full my-1 transition-all duration-300 flex justify-start items-center ${
+      className={`h-12 min-h-12 w-full my-1 transition-all duration-300 flex justify-start items-center font-bold ${
         isExpanded ? 'px-8 gap-2' : 'px-[39px] gap-0'
       } ${
         active
-          ? 'bg-white text-[#0a0f33] rounded-l-[30px] font-medium'
+          ? 'bg-white text-[#0a0f33] '
           : 'text-[#b5b8d1] hover:bg-white/10'
       } max-[1080px]:gap-2 max-[1080px]:px-8`}
     >

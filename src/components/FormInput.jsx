@@ -1,14 +1,19 @@
 import React from 'react';
 
-const FormInput = ({ label, name, type = 'text', value, onChange, placeholder, required, rows }) => {
+const FormInput = ({ label, name, type = 'text', value, onChange, placeholder, required, rows, autocomplete, step }) => {
   const commonProps = {
     name,
     value: value || '',
     onChange,
     placeholder,
     required,
-    className: 'w-full p-5 rounded-xl border-2 border-[#3D3E3E] outline-none focus:border-[#1e255e] text-lg max-[1080px]:text-sm max-[1080px]:p-4',
+    autoComplete: autocomplete || 'off',
+    className: 'w-full p-5 rounded-xl border-1 border-[#3D3E3E] outline-none focus:border-[#1e255e] text-lg max-[1080px]:text-sm max-[1080px]:p-4',
   };
+
+  if (step) {
+    commonProps.step = step;
+  }
 
   return (
     <div>

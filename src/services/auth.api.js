@@ -3,44 +3,31 @@ import { getAllUsers, getUserByName, createUser } from './users.api';
 import { API_BASE_URL } from './api.config';
 
 
-export const login = async (username, password) => {
+export const login = async (email, password) => {
   try {
     const users = await getAllUsers();
     
-    console.log('Login attempt with username:', username);
     console.log('Total users fetched:', users.length);
 
     const user = users.find(u => {
       console.log('Checking user:', {
-        email: u.email,
-        username: u.username,
-        name: u.name,
-        user_id: u.user_id
+        email: u.email
       });
       
-      const emailMatch = u.email?.toLowerCase() === username?.toLowerCase();
-      const usernameMatch = u.username?.toLowerCase() === username?.toLowerCase();
-      const nameMatch = u.name?.toLowerCase() === username?.toLowerCase();
-      const userIdMatch = u.user_id?.toString() === username?.toString();
+      const emailMatch = u.email?.toLowerCase() === email?.toLowerCase();
       
       console.log('Match results:', {
-        emailMatch,
-        usernameMatch,
-        nameMatch,
-        userIdMatch
+        emailMatch
       });
       
-      return emailMatch || usernameMatch || nameMatch || userIdMatch;
+      return emailMatch;
     });
 
     if (!user) {
       console.error('User not found. Available users:', users.map(u => ({
-        email: u.email,
-        username: u.username,
-        name: u.name,
-        user_id: u.user_id
+        email: u.email
       })));
-      throw new Error('User not found. Please check your username.');
+      throw new Error('User not found. Please check your email.');
     }
 
     console.log('User found:', { email: user.email, role: user.role });
@@ -68,21 +55,19 @@ export const signup = async (userData) => {
 
     console.log('Creating user with data:', {
       name: userData.name,
-      username: userData.username,
       email: userData.email,
       phone_number: userData.contact,
       password_hash: userData.password,
-      role: 'Member',
+      role: 'User',
       status: 'Active'
     });
 
     const createdUser = await createUser({
       name: userData.name,
-      username: userData.username,
       email: userData.email,
       phone_number: userData.contact,
       password_hash: userData.password,
-      role: 'Member',
+      role: 'User',
       status: 'Active'
     });
 

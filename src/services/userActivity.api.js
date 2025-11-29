@@ -1,14 +1,26 @@
 import { apiPut } from './api.config';
 
-const BASE_ENDPOINT = '/Users';
+const BASE_ENDPOINT = '/users';
 
 export const updateUserActivity = async (userId) => {
   try {
-    return await apiPut(`${BASE_ENDPOINT}/${userId}/activity`, {
+    const encodedUserId = encodeURIComponent(userId);
+    console.log('Updating activity for user:', userId, 'Encoded:', encodedUserId);
+    
+    const response = await apiPut(`${BASE_ENDPOINT}/${encodedUserId}/activity`, {
       LastActivityAt: new Date().toISOString()
     });
+    
+    console.log('Activity update response:', response);
+    return response;
   } catch (error) {
     console.error('Error updating user activity:', error);
+    console.error('Error details:', {
+      userId,
+      status: error.status,
+      message: error.message,
+      response: error.response?.data
+    });
     return null;
   }
 };
@@ -26,5 +38,5 @@ export const getUserOnlineStatus = (lastActivityAt) => {
 
 
 export const isUserOnline = (user) => {
-  return getUserOnlineStatus(user.lastActivityAt);
+  return getUserOnlineStatus(user.LastActivityAt);
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { BarChart2 } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 
 function ReportFormPopup({ showPopup, formData, setFormData, handleAddReport, setShowPopup }) {
@@ -7,10 +8,9 @@ function ReportFormPopup({ showPopup, formData, setFormData, handleAddReport, se
   };
 
   const inputs = [
-    { name: 'report_name', label: 'Report Name', type: 'text', placeholder: 'Enter report name', required: true },
+    { name: 'report_name', type: 'text', placeholder: 'Report Name', required: true },
     {
       name: 'report_type',
-      label: 'Report Type',
       type: 'select',
       options: [
         { value: '', label: 'Select Report Type' },
@@ -25,7 +25,7 @@ function ReportFormPopup({ showPopup, formData, setFormData, handleAddReport, se
       ],
       required: true
     },
-    { name: 'file_path', label: 'File Path', type: 'text', placeholder: 'Enter file path (optional)' },
+    { name: 'file_path', type: 'text', placeholder: 'File Path (optional)' },
   ];
 
   return (
@@ -37,8 +37,9 @@ function ReportFormPopup({ showPopup, formData, setFormData, handleAddReport, se
       inputs={inputs}
       formData={formData}
       onFormChange={onFormChange}
-      submitButtonText="Generate"
+      submitButtonText="GENERATE"
       onCancel={() => setShowPopup(false)}
+      icon={<BarChart2 size={24} strokeWidth={2.3} />}
     />
   );
 }

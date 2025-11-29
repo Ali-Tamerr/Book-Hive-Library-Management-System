@@ -170,18 +170,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                             text="Categories"
                             toggleSidebar={toggleSidebar}
                         />
-                        <NavLink
-                            isExpanded={isExpanded}
-                            active={location.pathname === '/admin/languages'}
-                            onClick={() => {
-                                setActiveTab('/admin/languages');
-
-                                navigate('/admin/languages');
-                            }}
-                            icon={<Globe size={18} strokeWidth={2.3} />}
-                            text="Languages"
-                            toggleSidebar={toggleSidebar}
-                        />
+                     
                     </nav>
                     <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#0a0f33] to-transparent pointer-events-none" />
                 </div>}

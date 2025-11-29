@@ -1,4 +1,5 @@
 import React from 'react';
+import { Library } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 
 const BranchFormPopup = ({ showPopup, editMode, formData, setFormData, handleAddBranch, setShowPopup, setEditMode }) => {
@@ -9,9 +10,9 @@ const BranchFormPopup = ({ showPopup, editMode, formData, setFormData, handleAdd
     };
 
     const inputs = [
-        { name: 'name', label: 'Name', type: 'text', placeholder: 'Enter branch name', required: true },
-        { name: 'location', label: 'Location', type: 'text', placeholder: 'Enter location', required: true },
-        { name: 'contact_number', label: 'Contact Number', type: 'text', placeholder: 'Enter contact number' },
+        { name: 'name', type: 'text', placeholder: 'Name', required: true },
+        { name: 'location', type: 'text', placeholder: 'Location', required: true },
+        { name: 'contact_number', type: 'text', placeholder: 'Contact Number' },
     ];
 
     return (
@@ -23,8 +24,9 @@ const BranchFormPopup = ({ showPopup, editMode, formData, setFormData, handleAdd
             inputs={inputs}
             formData={formData}
             onFormChange={onFormChange}
-            submitButtonText={editMode ? 'Update' : 'Add'}
+            submitButtonText={editMode ? 'UPDATE' : 'ADD'}
             onCancel={() => { setShowPopup(false); setEditMode(false); }}
+            icon={<Library size={24} strokeWidth={2.3} />}
         />
     );
 };
