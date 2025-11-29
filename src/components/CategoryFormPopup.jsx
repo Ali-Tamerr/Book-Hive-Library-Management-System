@@ -1,4 +1,5 @@
 import React from 'react';
+import { Folder } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 
 function CategoryFormPopup({ showPopup, editMode, formData, setFormData, handleAddCategory, setShowPopup, setEditMode }) {
@@ -7,8 +8,8 @@ function CategoryFormPopup({ showPopup, editMode, formData, setFormData, handleA
   };
 
   const inputs = [
-    { name: 'name', label: 'Name', type: 'text', placeholder: 'Enter name', required: true },
-    { name: 'description', label: 'Description', type: 'text', placeholder: 'Enter description' },
+    { name: 'name', type: 'text', placeholder: 'Name', required: true },
+    { name: 'description', type: 'text', placeholder: 'Description' },
   ];
 
   return (
@@ -20,8 +21,9 @@ function CategoryFormPopup({ showPopup, editMode, formData, setFormData, handleA
       inputs={inputs}
       formData={formData}
       onFormChange={onFormChange}
-      submitButtonText={editMode ? 'Update' : 'Add'}
+      submitButtonText={editMode ? 'UPDATE' : 'ADD'}
       onCancel={() => { setShowPopup(false); setEditMode(false); }}
+      icon={<Folder size={24} strokeWidth={2.3} />}
     />
   );
 }

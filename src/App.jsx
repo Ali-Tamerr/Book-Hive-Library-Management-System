@@ -16,7 +16,6 @@ const Categories = lazy(() => import('./Admin pages/Categories'));
 const Reports = lazy(() => import('./Admin pages/Reports'));
 const Settings = lazy(() => import('./shared/Settings'));
 const Branches = lazy(() => import('./Admin pages/Branches'));
-const Languages = lazy(() => import('./Admin pages/Languages'));
 
 const UserDashboard = lazy(() => import('./User pages/Dashboard'));
 const UserBooks = lazy(() => import('./User pages/UserBooks'));
@@ -95,7 +94,6 @@ function App() {
           <Route path="admin/catalog" element={<Catalog />} />
           <Route path="admin/books" element={<Books />} />
           <Route path="admin/categories" element={<Categories />} />
-          <Route path="admin/languages" element={<Languages searchValue={searchValue} />} />
           <Route path="admin/reports" element={<Reports />} />
           <Route path="admin/branches" element={<Branches />} />
 

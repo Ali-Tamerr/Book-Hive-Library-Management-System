@@ -1,4 +1,5 @@
 import React from 'react';
+import { BookmarkPlus } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 
 function ReservedBookFormPopup({ showPopup, editMode, formData, setFormData, handleAddReservation, setShowPopup, setEditMode }) {
@@ -7,13 +8,12 @@ function ReservedBookFormPopup({ showPopup, editMode, formData, setFormData, han
   };
 
   const inputs = [
-    { name: 'user_id', label: 'User ID', type: 'text', placeholder: 'Enter user ID', required: true },
-    { name: 'book_id', label: 'Book ID', type: 'text', placeholder: 'Enter book ID', required: true },
-    { name: 'reservation_date', label: 'Reservation Date', type: 'datetime-local' },
-    { name: 'expiration_date', label: 'Expiration Date', type: 'datetime-local', required: true },
+    { name: 'user_id', type: 'text', placeholder: 'User ID', required: true },
+    { name: 'book_id', type: 'text', placeholder: 'Book ID', required: true },
+    { name: 'reservation_date', type: 'datetime-local' },
+    { name: 'expiration_date', type: 'datetime-local', required: true },
     {
       name: 'status',
-      label: 'Status',
       type: 'select',
       options: [
         { value: 'Pending', label: 'Pending' },
@@ -33,8 +33,9 @@ function ReservedBookFormPopup({ showPopup, editMode, formData, setFormData, han
       inputs={inputs}
       formData={formData}
       onFormChange={onFormChange}
-      submitButtonText={editMode ? 'Update' : 'Add'}
+      submitButtonText={editMode ? 'UPDATE' : 'ADD'}
       onCancel={() => { setShowPopup(false); setEditMode(false); }}
+      icon={<BookmarkPlus size={24} strokeWidth={2.3} />}
     />
   );
 }

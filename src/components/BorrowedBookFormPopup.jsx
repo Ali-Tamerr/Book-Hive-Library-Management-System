@@ -1,4 +1,5 @@
 import React from 'react';
+import { RotateCcw } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 
 function BorrowedBookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBorrowedBook, setShowPopup, setEditMode }) {
@@ -7,12 +8,11 @@ function BorrowedBookFormPopup({ showPopup, editMode, formData, setFormData, han
   };
 
   const inputs = [
-    { name: 'user_id', label: 'User ID', type: 'text', placeholder: 'Enter user ID', required: true },
-    { name: 'book_id', label: 'Book ID', type: 'text', placeholder: 'Enter book ID', required: true },
-    { name: 'rfid_tag_id', label: 'RFID Tag ID', type: 'number', placeholder: 'Enter RFID tag ID (optional)' },
+    { name: 'user_id', type: 'text', placeholder: 'User ID', required: true },
+    { name: 'book_id', type: 'text', placeholder: 'Book ID', required: true },
+    { name: 'rfid_tag_id', type: 'number', placeholder: 'RFID Tag ID (optional)' },
     {
       name: 'transaction_type',
-      label: 'Transaction Type',
       type: 'select',
       options: [
         { value: 'Borrow', label: 'Borrow' },
@@ -23,7 +23,6 @@ function BorrowedBookFormPopup({ showPopup, editMode, formData, setFormData, han
     },
     {
       name: 'borrow_type',
-      label: 'Borrow Type',
       type: 'select',
       options: [
         { value: '', label: 'Select Borrow Type' },
@@ -31,12 +30,11 @@ function BorrowedBookFormPopup({ showPopup, editMode, formData, setFormData, han
         { value: 'TakeHome', label: 'Take Home' },
       ],
     },
-    { name: 'due_date', label: 'Due Date', type: 'datetime-local' },
-    { name: 'return_date', label: 'Return Date', type: 'datetime-local' },
-    { name: 'fine_amount', label: 'Fine Amount', type: 'number', placeholder: 'Enter fine amount', step: '0.01' },
+    { name: 'due_date', type: 'datetime-local' },
+    { name: 'return_date', type: 'datetime-local' },
+    { name: 'fine_amount', type: 'number', placeholder: 'Fine Amount', step: '0.01' },
     {
       name: 'status',
-      label: 'Status',
       type: 'select',
       options: [
         { value: 'Open', label: 'Open' },
@@ -55,8 +53,9 @@ function BorrowedBookFormPopup({ showPopup, editMode, formData, setFormData, han
       inputs={inputs}
       formData={formData}
       onFormChange={onFormChange}
-      submitButtonText={editMode ? 'Update' : 'Add'}
+      submitButtonText={editMode ? 'UPDATE' : 'ADD'}
       onCancel={() => { setShowPopup(false); setEditMode(false); }}
+      icon={<RotateCcw size={24} strokeWidth={2.3} />}
     />
   );
 }

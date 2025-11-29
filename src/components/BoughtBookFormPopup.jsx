@@ -1,4 +1,5 @@
 import React from 'react';
+import { ShoppingCart } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 
 function BoughtBookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBookSale, setShowPopup, setEditMode }) {
@@ -7,11 +8,11 @@ function BoughtBookFormPopup({ showPopup, editMode, formData, setFormData, handl
   };
 
   const inputs = [
-    { name: 'user_id', label: 'User ID', type: 'text', placeholder: 'Enter user ID', required: true },
-    { name: 'book_id', label: 'Book ID', type: 'text', placeholder: 'Enter book ID', required: true },
-    { name: 'transaction_id', label: 'Transaction ID', type: 'number', placeholder: 'Enter linked transaction ID', required: true },
-    { name: 'price', label: 'Price', type: 'number', placeholder: 'Enter sale price', step: '0.01', required: true },
-    { name: 'sale_date', label: 'Sale Date', type: 'datetime-local' },
+    { name: 'user_id', type: 'text', placeholder: 'User ID', required: true },
+    { name: 'book_id', type: 'text', placeholder: 'Book ID', required: true },
+    { name: 'transaction_id', type: 'number', placeholder: 'Transaction ID', required: true },
+    { name: 'price', type: 'number', placeholder: 'Price', step: '0.01', required: true },
+    { name: 'sale_date', type: 'datetime-local' },
   ];
 
   return (
@@ -23,8 +24,9 @@ function BoughtBookFormPopup({ showPopup, editMode, formData, setFormData, handl
       inputs={inputs}
       formData={formData}
       onFormChange={onFormChange}
-      submitButtonText={editMode ? 'Update' : 'Add'}
+      submitButtonText={editMode ? 'UPDATE' : 'ADD'}
       onCancel={() => { setShowPopup(false); setEditMode(false); }}
+      icon={<ShoppingCart size={24} strokeWidth={2.3} />}
     />
   );
 }

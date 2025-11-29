@@ -12,45 +12,79 @@ const FormLayout = ({
   inputs,
   formData,
   onFormChange,
-  submitButtonText = 'Submit',
-  cancelButtonText = 'Cancel',
+  submitButtonText = 'SUBMIT',
+  cancelButtonText = 'CANCEL',
   onCancel,
   children,
+  icon,
+  customLayout,
 }) => {
+  const renderInput = (input) => {
+    const { name, type } = input;
+    if (type === 'custom') {
+      return <div key={name}>{input.render(formData, onFormChange)}</div>;
+    }
+    if (type === 'select') {
+      return (
+        <FormSelect
+          key={name}
+          {...input}
+          value={formData[name]}
+          onChange={onFormChange}
+        />
+      );
+    }
+    return (
+      <FormInput
+        key={name}
+        {...input}
+        value={formData[name]}
+        onChange={onFormChange}
+      />
+    );
+  };
+
+  const renderFormContent = () => {
+    if (customLayout) {
+      return (
+        <div className="space-y-4">
+          {customLayout.map((row, rowIndex) => (
+            <div
+              key={rowIndex}
+              className={`grid gap-4`}
+              style={{ gridTemplateColumns: `repeat(${row.columns}, 1fr)` }}
+            >
+              {row.inputs.map((inputName) => {
+                const input = inputs.find(inp => inp.name === inputName);
+                return input ? renderInput(input) : null;
+              })}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div className={inputs.length > 6 ? "grid grid-cols-2 gap-4" : "space-y-3"}>
+        {inputs.map((input) => renderInput(input))}
+      </div>
+    );
+  };
+
   return (
-    <Popup show={show} onClose={onClose} title={title}>
-      <form onSubmit={onSubmit} className={inputs.length > 6 ? "grid grid-cols-2 gap-4" : "space-y-3"}>
-        {inputs.map((input) => {
-          const { name, type } = input;
-          if (type === 'custom') {
-            return <div key={name}>{input.render(formData, onFormChange)}</div>;
-          }
-          if (type === 'select') {
-            return (
-              <FormSelect
-                key={name}
-                {...input}
-                value={formData[name]}
-                onChange={onFormChange}
-              />
-            );
-          }
-          return (
-            <FormInput
-              key={name}
-              {...input}
-              value={formData[name]}
-              onChange={onFormChange}
-            />
-          );
-        })}
+    <Popup show={show} onClose={onClose} title={title} icon={icon}>
+      <form onSubmit={onSubmit} className='flex flex-col gap-14'>
+        <div className='px-10'>
+
+        {renderFormContent()}
         {children}
-        <div className={`flex justify-between mt-5 ${inputs.length > 6 ? 'col-span-2' : ''}`}>
-          <FormButton type="submit" isPrimary>
-            {submitButtonText}
-          </FormButton>
+        </div>
+        <div className={`flex justify-between gap-3 ${inputs.length > 6 && !customLayout ? 'col-span-2' : ''}`}>
           <FormButton onClick={onCancel}>
             {cancelButtonText}
+          </FormButton>
+          <FormButton type="submit" isPrimary>
+            {submitButtonText}
           </FormButton>
         </div>
       </form>

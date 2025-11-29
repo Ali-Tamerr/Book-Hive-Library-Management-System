@@ -10,7 +10,6 @@ function Signup() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
-        username: '',
         contact: '',
         email: '',
         password: ''
@@ -56,20 +55,12 @@ function Signup() {
                     mobileOnly={true}
                 >
                     <form onSubmit={handleSubmit} className='w-full items-center flex flex-col gap-8'>
-                        <div className="flex gap-4">
+                        <div className="">
                             <AuthInput
                                 type="text"
                                 name="name"
                                 placeholder="Full Name"
                                 value={formData.name}
-                                onChange={handleChange}
-                                required
-                            />
-                            <AuthInput
-                                type="text"
-                                name="username"
-                                placeholder="Username"
-                                value={formData.username}
                                 onChange={handleChange}
                                 required
                             />
@@ -131,20 +122,12 @@ function Signup() {
                     desktopOnly={true}
                 >
                     <form onSubmit={handleSubmit} className='w-full items-center flex flex-col gap-8'>
-                        <div className="flex w-full gap-4">
+                        <div className="w-full">
                             <AuthInput
                                 type="text"
                                 name="name"
                                 placeholder="Full Name"
                                 value={formData.name}
-                                onChange={handleChange}
-                                required
-                            />
-                            <AuthInput
-                                type="text"
-                                name="username"
-                                placeholder="Username"
-                                value={formData.username}
                                 onChange={handleChange}
                                 required
                             />

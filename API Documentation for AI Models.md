@@ -3,7 +3,6 @@
 Authoritative, machine- and human-friendly schema for the current backend entities. Use this to generate frontend types, forms, validation, and correct API payloads.
 
 Key rules for AI agents:
-
 - Use property names exactly as listed (casing included).
 - Do not include navigation properties in write payloads.
 - Respect nullability, lengths, and defaults.
@@ -14,7 +13,6 @@ Key rules for AI agents:
 ## DbContext: LibraryManagementSystemContext
 
 DbSets:
-
 - Books (DbSet<Book>)
 - BookReservations (DbSet<BookReservation>)
 - BookSales (DbSet<BookSale>)
@@ -29,10 +27,9 @@ DbSets:
 
 ## Entities (Tables)
 
-All fields and attributes are based on the current code in Models/\*.cs. Navigation properties are documented for read comprehension; never send them in write payloads.
+All fields and attributes are based on the current code in Models/*.cs. Navigation properties are documented for read comprehension; never send them in write payloads.
 
 ### Book (Models/Book.cs)
-
 - Indexes:
   - [Index("name", Name = "IDX_Books_Name")]
 - Fields:
@@ -57,11 +54,9 @@ All fields and attributes are based on the current code in Models/\*.cs. Navigat
   - Language language [ForeignKey("language_id")]
 
 Notes:
-
 - Older fields like isbn, author, publisher, publication_year, digital_url are removed/commented in this branch.
 
 Example write (POST/PUT):
-
 ```json
 {
   "book_id": "B-00123",
@@ -76,7 +71,6 @@ Example write (POST/PUT):
 ---
 
 ### User (Models/User.cs)
-
 - Indexes (unique):
   - [Index("email", Name = "UQ__Users__AB6E6164...", IsUnique = true)]
   - [Index("phone_number", Name = "UQ__Users__PhoneNumber", IsUnique = true)]
@@ -111,7 +105,6 @@ Example write (POST/PUT):
   - ICollection<Report> Reports [InverseProperty("generated_byNavigation")]
 
 Example write:
-
 ```json
 {
   "user_id": "U-10001",
@@ -128,7 +121,6 @@ Example write:
 ---
 
 ### Category (Models/Category.cs)
-
 - Indexes:
   - [Index("category_name", Name = "UQ__Categori__5189E255...", IsUnique = true)]
 - Fields:
@@ -140,7 +132,6 @@ Example write:
   - ICollection<Book> Books [InverseProperty("category")]
 
 Example write:
-
 ```json
 {
   "category_id": 4,
@@ -151,7 +142,6 @@ Example write:
 ---
 
 ### Language (Models/Language.cs)
-
 - Fields:
   - int language_id
     - [Key]
@@ -159,10 +149,9 @@ Example write:
     - [Required]
 - Navigation (read-only):
   - ICollection<Book> Books [InverseProperty("language")]
-    - Backed by private field "\_books" (configured in OnModelCreating)
+    - Backed by private field "_books" (configured in OnModelCreating)
 
 Example write:
-
 ```json
 {
   "language_id": 1,
@@ -173,7 +162,6 @@ Example write:
 ---
 
 ### BookReservation (Models/BookReservation.cs)
-
 - Indexes:
   - [Index("status", Name = "IDX_Reservations_Status")]
 - Fields:
@@ -192,7 +180,6 @@ Example write:
   - User user [ForeignKey("user_id")] [InverseProperty("BookReservations")]
 
 Example write:
-
 ```json
 {
   "user_id": "U-10001",
@@ -205,7 +192,6 @@ Example write:
 ---
 
 ### BookSale (Models/BookSale.cs)
-
 - Indexes:
   - [Index("transaction_id", Name = "UQ__BookSale__85C600AE...", IsUnique = true)]
 - Fields:
@@ -224,20 +210,18 @@ Example write:
   - User user [ForeignKey("user_id")] [InverseProperty("BookSales")]
 
 Example write:
-
 ```json
 {
   "user_id": "U-10001",
   "book_id": "B-00123",
   "transaction_id": 9876,
-  "price": 25.0
+  "price": 25.00
 }
 ```
 
 ---
 
 ### BookTransaction (Models/BookTransaction.cs)
-
 - Indexes:
   - [Index("status", Name = "IDX_Transactions_Status")]
 - Fields:
@@ -265,7 +249,6 @@ Example write:
   - User user [ForeignKey("user_id")] [InverseProperty("BookTransactions")]
 
 Example write:
-
 ```json
 {
   "user_id": "U-10001",
@@ -279,7 +262,6 @@ Example write:
 ---
 
 ### Report (Models/Report.cs)
-
 - Fields:
   - int report_id
     - [Key]
@@ -296,7 +278,6 @@ Example write:
   - User generated_byNavigation [ForeignKey("generated_by")] [InverseProperty("Reports")]
 
 Example write:
-
 ```json
 {
   "report_name": "Monthly Inventory",
@@ -309,7 +290,6 @@ Example write:
 ---
 
 ### Branch (Models/Branch.cs)
-
 - Fields:
   - int branch_id
     - [Key]
@@ -321,7 +301,6 @@ Example write:
     - [StringLength(20)]
 
 Example write:
-
 ```json
 {
   "branch_id": 10,
@@ -334,7 +313,6 @@ Example write:
 ---
 
 ## Relationships & Delete Behavior (OnModelCreating highlights)
-
 - Book → Category (Many-to-One): FK `category_id`, DeleteBehavior.ClientSetNull
 - Book → Language (Many-to-One): FK `language_id`, DeleteBehavior.ClientSetNull
 - BookReservation → Book/User: FKs `book_id`, `user_id`, DeleteBehavior.ClientSetNull
@@ -346,7 +324,6 @@ Example write:
 ---
 
 ## JSON & Validation Guidance for AI Agents
-
 - Casing: Use the exact property names (mostly snake_case). Note: `LastActivityAt` is PascalCase but maps to `last_activity_at` in DB.
 - Required fields enforced via annotations must be present in write payloads.
 - Unique constraints (User: email, phone_number, username) should be pre-checked or handled on 409/400.
@@ -354,3 +331,31 @@ Example write:
 - Never send navigation properties or collections in POST/PUT bodies.
 
 ---
+
+LibraryManagementSystem - API changes (summary)
+
+Overview
+- The `LastActivityAt` field for users is now fully supported end-to-end: it can be sent to the API, persisted asynchronously, and is returned in responses.
+
+Key API changes
+- GET    `/api/users`                     -> unchanged, returns list of `UserDTO` (includes `LastActivityAt`).
+- GET    `/api/users/byid/{id}`           -> get single user by id (route changed to avoid route conflicts).
+- GET    `/api/users/{name}`              -> search users by name.
+- PUT    `/api/users/{id}/activity`       -> update user's `LastActivityAt` (async).
+
+PUT `/api/users/{id}/activity`
+- Purpose: update the `LastActivityAt` timestamp for a given user.
+- Request body (JSON):
+  - `LastActivityAt` (string, optional) — ISO 8601 timestamp. If omitted or null, server sets the value to current UTC time.
+  Example:
+  {
+    "LastActivityAt": "2025-11-28T14:35:00Z"
+  }
+- Responses:
+  - 200 OK — returns JSON: `{ "user_id": "<id>", "LastActivityAt": "<timestamp>" }` (the persisted timestamp).
+  - 400 Bad Request — when request body is missing.
+  - 404 Not Found — when user id does not exist.
+  - 500 Internal Server Error — on database update failure.
+
+Repository changes
+- `IGenericRepository<T>`: added async signatures `getByIdAsync(string|int)` and `saveAsync()`.
