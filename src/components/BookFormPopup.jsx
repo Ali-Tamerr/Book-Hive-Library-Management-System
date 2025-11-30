@@ -40,7 +40,7 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
               onChange={onChange}
               placeholder="Book ID"
               required
-              className="w-full p-5 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-lg max-[1080px]:text-sm max-[1080px]:p-4"
+              className="w-full h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
             />
           </div>
         </div>

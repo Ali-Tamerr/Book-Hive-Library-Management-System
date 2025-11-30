@@ -46,57 +46,85 @@ const NFCReaderButton = ({ onDataReceived, inputRef }) => {
         }
 
         try {
+            console.log("Requesting serial port...");
             const port = await navigator.serial.requestPort();
-            portRef.current = port;
-            await port.open({ baudRate: 9600 });
-            setIsConnected(true);
+            console.log("Port selected:", port);
 
-            if (inputRef?.current) {
-                inputRef.current.focus();
-            }
+            portRef.current = port;
+            console.log("Opening port with baudRate 9600...");
+            await port.open({ baudRate: 9600 });
+            console.log("Port opened successfully!");
+
+            setIsConnected(true);
+            console.log("Connection state set to true");
+
+            setTimeout(() => {
+                if (inputRef?.current) {
+                    console.log("Focusing input field...");
+                    inputRef.current.focus();
+                } else {
+                    console.warn("Input ref is not available");
+                }
+            }, 100);
 
             port.ondisconnect = () => {
+                console.log("Port disconnected");
                 setIsConnected(false);
                 portRef.current = null;
                 readerRef.current = null;
             };
 
+            console.log("Setting up text decoder...");
             const textDecoder = new TextDecoderStream();
-            port.readable.pipeTo(textDecoder.writable);
+            const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
             const reader = textDecoder.readable.getReader();
             readerRef.current = reader;
+            console.log("Reader ready, waiting for data...");
 
             (async () => {
                 let buffer = '';
                 try {
                     while (true) {
                         const { value, done } = await reader.read();
-                        if (done) break;
+                        if (done) {
+                            console.log("Reader done");
+                            break;
+                        }
+                        console.log("Raw data received:", value);
                         buffer += value;
                         const lines = buffer.split('\n');
                         if (lines.length > 1) {
                             const completeLine = lines.shift().trim();
                             if (completeLine) {
-                                console.log('NFC Tag ID:', completeLine);
+                                console.log('Complete NFC Tag ID:', completeLine);
                                 onDataReceived(completeLine);
+                                console.log("Data sent to callback");
                             }
                             buffer = lines.join('\n');
                         }
                     }
                 } catch (error) {
-                    console.log("Read loop was cancelled or an error occurred:", error);
+                    console.error("Read loop error:", error);
                 } finally {
+                    console.log("Cleaning up reader...");
                     reader.releaseLock();
                     setIsConnected(false);
                     if (portRef.current) {
-                        await portRef.current.close();
+                        await portRef.current.close().catch(e => console.error("Error closing port in finally:", e));
                         portRef.current = null;
                     }
                     readerRef.current = null;
                 }
             })();
+
+            readableStreamClosed.catch(e => console.error("Readable stream closed with error:", e));
         } catch (error) {
-            if (error.name !== 'NotFoundError') {
+            console.error("Connection error:", error);
+            if (error.name === 'NotFoundError') {
+                console.log("User cancelled port selection");
+            } else if (error.name === 'InvalidStateError') {
+                alert("The port is already open. Please disconnect and try again.");
+            } else {
                 console.error("Failed to connect to the serial device:", error);
                 alert(`An error occurred while connecting to the NFC reader: ${error.message}`);
             }
@@ -119,9 +147,9 @@ const NFCReaderButton = ({ onDataReceived, inputRef }) => {
         <button
             type="button"
             onClick={handleConnectClick}
-            className={`px-6 h-[50px] w-[180px] rounded-lg transition-colors text-[13px] font-medium ${isConnected
-                    ? 'bg-red-200 text-red-900 hover:bg-red-300'
-                    : 'bg-[#D7D7D7] hover:bg-gray-400'
+            className={`px-6 h-[50px] w-[180px] rounded-[12px] transition-colors text-[13px] font-medium ${isConnected
+                ? 'bg-red-200 text-red-900 hover:bg-red-300'
+                : 'bg-[#D7D7D7] hover:bg-gray-400'
                 }`}
         >
             {isConnected ? "Disconnect" : "Connect to NFC Reader"}

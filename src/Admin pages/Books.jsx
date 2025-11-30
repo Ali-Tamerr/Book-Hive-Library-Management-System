@@ -17,7 +17,7 @@ function Books({ searchValue }) {
     book_id: '',
     name: '',
     category_id: '',
-    quantity: 1,
+    quantity: '',
     sale_price: ''
   });
 
@@ -47,7 +47,7 @@ function Books({ searchValue }) {
       } else {
         await createBookMutation.mutateAsync(apiData);
       }
-      setFormData({ book_id: '', name: '', category_id: '', quantity: 1, sale_price: '' });
+      setFormData({ book_id: '', name: '', category_id: '', quantity: '', sale_price: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -92,7 +92,7 @@ function Books({ searchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ book_id: '', name: '', category_id: '', quantity: 1, sale_price: '' });
+    setFormData({ book_id: '', name: '', category_id: '', quantity: '', sale_price: '' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -118,10 +118,7 @@ function Books({ searchValue }) {
       header: 'Availability',
       accessor: 'availability',
       render: (book) => (
-        <span className={`px-3 py-1 rounded-full text-sm font-medium ${book.quantity > 0
-          ? 'bg-green-100 text-green-800'
-          : 'bg-red-100 text-red-800'
-          }`}>
+        <span className={`px-3 py-1 rounded-full text-sm font-medium`}>
           {book.quantity > 0 ? 'Available' : 'Borrowed'}
         </span>
       )

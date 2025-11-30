@@ -1,4 +1,4 @@
-# Library Management System – Backend Data Contract (AI-Facing)
+﻿# Library Management System – Backend Data Contract (AI-Facing)
 
 Authoritative, machine- and human-friendly schema for the current backend entities. Use this to generate frontend types, forms, validation, and correct API payloads.
 
@@ -37,7 +37,6 @@ All fields and attributes are based on the current code in Models/*.cs. Navigati
     - [Key]
   - string name
     - [Required], [StringLength(255)]
-  - int language_id
   - int category_id
   - int quantity
   - DateTime? created_at
@@ -51,9 +50,9 @@ All fields and attributes are based on the current code in Models/*.cs. Navigati
   - ICollection<BookSale> BookSales [InverseProperty("book")]
   - ICollection<BookTransaction> BookTransactions [InverseProperty("book")]
   - Category category [ForeignKey("category_id")] [InverseProperty("Books")]
-  - Language language [ForeignKey("language_id")]
 
 Notes:
+- The `language_id` field has been removed from the Book model in this branch. Do not include `language_id` in Book payloads.
 - Older fields like isbn, author, publisher, publication_year, digital_url are removed/commented in this branch.
 
 Example write (POST/PUT):
@@ -61,7 +60,6 @@ Example write (POST/PUT):
 {
   "book_id": "B-00123",
   "name": "Clean Code",
-  "language_id": 1,
   "category_id": 4,
   "quantity": 12,
   "sale_price": 39.99
@@ -74,14 +72,12 @@ Example write (POST/PUT):
 - Indexes (unique):
   - [Index("email", Name = "UQ__Users__AB6E6164...", IsUnique = true)]
   - [Index("phone_number", Name = "UQ__Users__PhoneNumber", IsUnique = true)]
-  - [Index("username", Name = "UQ__Users__UserName", IsUnique = true)]
+  - Note: the `username` index and `username` property were removed in this branch.
 - Fields:
   - string user_id
-    - [Key], ValueGeneratedNever (OnModelCreating) → client must provide
+    - [Key], ValueGeneratedNever (OnModelGenerating) → client must provide
   - string name
     - [Required], [StringLength(50)]
-  - string username
-    - [StringLength(50)]
   - string email
     - [Required], [StringLength(100)]
   - string password_hash
@@ -109,7 +105,6 @@ Example write:
 {
   "user_id": "U-10001",
   "name": "Ali Tamerr",
-  "username": "ali.t",
   "email": "ali@example.com",
   "password_hash": "<secure-hash>",
   "phone_number": "1234567890",
@@ -335,27 +330,52 @@ Example write:
 LibraryManagementSystem - API changes (summary)
 
 Overview
-- The `LastActivityAt` field for users is now fully supported end-to-end: it can be sent to the API, persisted asynchronously, and is returned in responses.
+- The `LastActivityAt` field for users is supported end-to-end: it can be sent to the API, persisted asynchronously, and is returned in responses.
 
 Key API changes
 - GET    `/api/users`                     -> unchanged, returns list of `UserDTO` (includes `LastActivityAt`).
 - GET    `/api/users/byid/{id}`           -> get single user by id (route changed to avoid route conflicts).
 - GET    `/api/users/{name}`              -> search users by name.
-- PUT    `/api/users/{id}/activity`       -> update user's `LastActivityAt` (async).
+- PUT    `/api/users/{id}/activity`       -> update user's `LastActivityAt` (async). Decodes URL-encoded ids.
+- PUT    `/api/users/activity`            -> alternative body-based endpoint that accepts `{ "user_id": "<id>", "LastActivityAt": "<timestamp>" }`.
 
 PUT `/api/users/{id}/activity`
-- Purpose: update the `LastActivityAt` timestamp for a given user.
+- Purpose: update the `LastActivityAt` timestamp for a given user via route id.
+- Notes: The server URL-decodes the incoming `id` before lookup to tolerate encoded values (e.g. spaces -> `%20`).
+
+PUT `/api/users/activity`
+- Purpose: update `LastActivityAt` by sending the `user_id` in the JSON body. Use this when the client cannot reliably call route-based endpoints (IDs containing spaces or special characters).
 - Request body (JSON):
-  - `LastActivityAt` (string, optional) — ISO 8601 timestamp. If omitted or null, server sets the value to current UTC time.
+  - `user_id` (string, required)
+  - `LastActivityAt` (string, optional) — ISO 8601 timestamp. If omitted or null, server sets UTC now.
   Example:
   {
+    "user_id": "1c 4r 14 o9",
     "LastActivityAt": "2025-11-28T14:35:00Z"
   }
-- Responses:
+- Responses (both endpoints):
   - 200 OK — returns JSON: `{ "user_id": "<id>", "LastActivityAt": "<timestamp>" }` (the persisted timestamp).
-  - 400 Bad Request — when request body is missing.
+  - 400 Bad Request — when required fields are missing.
   - 404 Not Found — when user id does not exist.
   - 500 Internal Server Error — on database update failure.
 
 Repository changes
 - `IGenericRepository<T>`: added async signatures `getByIdAsync(string|int)` and `saveAsync()`.
+- `GenericRepository<T>`: implemented `FindAsync(...)` and `SaveChangesAsync()` usages in the new async methods.
+- `UsersController`: `UpdateUserActivity` is async, URL-decodes path ids, and a new `UpdateUserActivityByBody` endpoint accepts body-based updates.
+
+Frontend integration guidance (for AI/frontend teams)
+- Preferred: call `PUT /api/users/activity` with JSON body `{ user_id, LastActivityAt }` to avoid issues with special characters in IDs.
+- If using route-based call `PUT /api/users/{id}/activity`, ensure the client URL-encodes the id; the server will decode it before lookup.
+- After a successful update, either refresh the local `currentUser` object (update `LastActivityAt`) or refetch the user via `GET /api/users/byid/{id}`.
+
+Database schema note
+- No database schema changes are required for these API changes. The `User` model already contains `LastActivityAt` mapped to `last_activity_at` in the database, so only application-layer changes were necessary.
+
+Optional suggestions
+- Consider normalizing user IDs to avoid spaces/special characters (client-side or at creation time). This is not required but reduces risk of encoding/validation edge cases across systems.
+- If you want stronger guarantees, add a normalized unique column (e.g., `normalized_user_id`) with indexing and use that for route-based lookups.
+
+Example curl (body-based)
+
+curl -X PUT "https://<host>/api/users/activity" -H "Content-Type: application/json" -d '{"user_id":"1c 4r 14 o9","LastActivityAt":"2025-11-28T14:35:00Z"}'
