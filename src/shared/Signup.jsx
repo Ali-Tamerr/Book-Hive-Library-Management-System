@@ -12,7 +12,8 @@ function Signup() {
         name: '',
         contact: '',
         email: '',
-        password: ''
+        password: '',
+        user_id: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -55,7 +56,7 @@ function Signup() {
                     mobileOnly={true}
                 >
                     <form onSubmit={handleSubmit} className='w-full items-center flex flex-col gap-8'>
-                        <div className="">
+                        <div className="flex w-full gap-4">
                             <AuthInput
                                 type="text"
                                 name="name"
@@ -63,9 +64,8 @@ function Signup() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
+                                autoComplete="name"
                             />
-                        </div>
-                        <div className="flex gap-4">
                             <AuthInput
                                 type="text"
                                 name="contact"
@@ -73,7 +73,10 @@ function Signup() {
                                 value={formData.contact}
                                 onChange={handleChange}
                                 required
+                                autoComplete="tel"
                             />
+                        </div>
+                        <div className="flex w-full gap-4">
                             <AuthInput
                                 type="email"
                                 name="email"
@@ -81,9 +84,8 @@ function Signup() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
+                                autoComplete="email"
                             />
-                        </div>
-                        <div className="">
                             <AuthInput
                                 type="password"
                                 name="password"
@@ -91,12 +93,24 @@ function Signup() {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
+                                autoComplete="new-password"
+                            />
+                        </div>
+                        <div className="w-full">
+                            <AuthInput
+                                type="text"
+                                name="user_id"
+                                placeholder="ID (for sign in testing)"
+                                value={formData.user_id}
+                                onChange={handleChange}
+                                required
+                                autoComplete="off"
                             />
                         </div>
                         {error && (
                             <p className="text-red-500 text-base mb-3">{error}</p>
                         )}
-                        <div className='w-full max-[1080px]:px-12'>
+                        <div className='w-full flex justify-center max-[1080px]:px-12'>
                             <PrimaryButton
                                 type="submit"
                                 disabled={loading}
@@ -130,6 +144,7 @@ function Signup() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
+                                autoComplete="name"
                             />
                         </div>
                         <div className="flex w-full gap-4">
@@ -140,6 +155,7 @@ function Signup() {
                                 value={formData.contact}
                                 onChange={handleChange}
                                 required
+                                autoComplete="tel"
                             />
                             <AuthInput
                                 type="email"
@@ -148,6 +164,7 @@ function Signup() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
+                                autoComplete="email"
                             />
                         </div>
                         <div className="w-full">
@@ -158,6 +175,18 @@ function Signup() {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
+                                autoComplete="new-password"
+                            />
+                        </div>
+                        <div className="w-full">
+                            <AuthInput
+                                type="text"
+                                name="user_id"
+                                placeholder="ID (for sign in testing)"
+                                value={formData.user_id}
+                                onChange={handleChange}
+                                required
+                                autoComplete="off"
                             />
                         </div>
                         {error && (

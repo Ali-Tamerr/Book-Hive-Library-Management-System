@@ -4,6 +4,8 @@ import FormLayout from '../Layouts/FormLayout.jsx';
 import NFCReaderButton from './NFCReaderButton.jsx';
 
 function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUser, setShowPopup, setEditMode }) {
+  const userIdInputRef = React.useRef(null);
+
   const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -32,8 +34,9 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
       render: (data, onChange) => (
         <div>
           <div className="flex items-center gap-2">
-            <NFCReaderButton onDataReceived={handleNFCData} />
+            <NFCReaderButton onDataReceived={handleNFCData} inputRef={userIdInputRef} />
             <input
+              ref={userIdInputRef}
               name="user_id"
               type="text"
               value={data.user_id || ''}
@@ -41,7 +44,7 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
               placeholder="User ID"
               required
               autoComplete="off"
-              className="w-full p-5 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-lg max-[1080px]:text-sm max-[1080px]:p-4"
+              className="w-full h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
             />
           </div>
         </div>

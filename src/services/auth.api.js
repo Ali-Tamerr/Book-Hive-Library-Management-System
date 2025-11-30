@@ -54,6 +54,7 @@ export const signup = async (userData) => {
     }
 
     console.log('Creating user with data:', {
+      user_id: userData.user_id,
       name: userData.name,
       email: userData.email,
       phone_number: userData.contact,
@@ -63,6 +64,7 @@ export const signup = async (userData) => {
     });
 
     const createdUser = await createUser({
+      user_id: userData.user_id,
       name: userData.name,
       email: userData.email,
       phone_number: userData.contact,

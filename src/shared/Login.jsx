@@ -47,7 +47,7 @@ function Login() {
                     subtitle="Please enter your email and password to log in"
                     loginLayout={true}
                 >
-                    <form onSubmit={handleSubmit} className='w-full items-center flex flex-col gap-6'>
+                    <form onSubmit={handleSubmit} className='w-full px-[198px] items-center flex flex-col gap-6'>
                         <AuthInput
                             type="email"
                             placeholder="Email"
@@ -70,7 +70,7 @@ function Login() {
                         <a
                             href="#"
                             onClick={() => navigate('/forgot-password')}
-                            className="block text-lg font-medium text-[#0a0f33] mb-6 hover:underline"
+                            className="block text-lg self-start font-medium text-[#0a0f33] mb-6 hover:underline"
                         >
                             Forgot password?
                         </a>
