@@ -7,10 +7,16 @@ import {
 } from '../hooks/useBranches';
 import CommonLayout from '../Layouts/CommonLayout';
 import BranchFormPopup from '../components/BranchFormPopup';
+import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
+import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 
 function Branches({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [branchToDelete, setBranchToDelete] = useState(null);
+  const [showViewDetails, setShowViewDetails] = useState(false);
+  const [selectedBranch, setSelectedBranch] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -45,14 +51,28 @@ function Branches({ searchValue }) {
     setShowPopup(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this branch?')) {
+  const handleDelete = (id) => {
+    setBranchToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (branchToDelete) {
       try {
-        await deleteBranchMutation.mutateAsync(id);
+        await deleteBranchMutation.mutateAsync(branchToDelete);
+        setShowDeleteConfirm(false);
+        setBranchToDelete(null);
       } catch (error) {
         alert('Failed to delete branch. Please try again.');
+        setShowDeleteConfirm(false);
+        setBranchToDelete(null);
       }
     }
+  };
+
+  const handleView = (branch) => {
+    setSelectedBranch(branch);
+    setShowViewDetails(true);
   };
 
   const buttonBehaviour = () => {
@@ -92,18 +112,49 @@ function Branches({ searchValue }) {
   );
 
   return (
-    <CommonLayout
-      searchValue={searchValue}
-      buttonBehaviour={buttonBehaviour}
-      isLoading={isLoading}
-      data={filteredBranches}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      title={title}
-      buttonText={buttonText}
-      columns={columns}
-      formPopup={formPopup}
-    />
+    <>
+      <CommonLayout
+        searchValue={searchValue}
+        buttonBehaviour={buttonBehaviour}
+        isLoading={isLoading}
+        data={filteredBranches}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleView={handleView}
+        title={title}
+        buttonText={buttonText}
+        columns={columns}
+        formPopup={formPopup}
+      />
+      <DeleteConfirmationPopup
+        show={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setBranchToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Branch"
+      />
+      <ViewDetailsPopup
+        show={showViewDetails}
+        onClose={() => {
+          setShowViewDetails(false);
+          setSelectedBranch(null);
+        }}
+        title="View Branch"
+        data={selectedBranch ? {
+          'Branch ID': selectedBranch.branch_id,
+          'Name': selectedBranch.name,
+          'Location': selectedBranch.location,
+          'Contact Number': selectedBranch.contact_number
+        } : null}
+        savedBy={{
+          name: 'Admin User',
+          role: 'Admin'
+        }}
+      >
+      </ViewDetailsPopup>
+    </>
   );
 }
 

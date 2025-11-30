@@ -1,5 +1,5 @@
 import React from 'react';
-import { FilePenLine, Trash2, BookUser } from 'lucide-react';
+import { FilePenLine, Trash2, ReceiptText } from 'lucide-react';
 import SearchBar from '../components/SearchBar.jsx';
 import ButtonOne from '../components/ButtonOne.jsx';
 
@@ -10,6 +10,7 @@ const CommonLayout = ({
   data,
   handleEdit,
   handleDelete,
+  handleView,
   title,
   buttonText,
   columns,
@@ -72,10 +73,11 @@ const CommonLayout = ({
                               onClick={() => handleDelete(item.id || item.book_id || item.category_id)}
                               className="mr-2 text-lg hover:scale-125 transition-transform"
                               title="Delete"><Trash2 size={20} /></button>
-                            {title === "User Management" && (
+                            {handleView && (
                               <button
+                                onClick={() => handleView(item)}
                                 className="text-lg hover:scale-125 transition-transform"
-                                title="View"><BookUser size={20} /></button>
+                                title="View"><ReceiptText size={20} /></button>
                             )}
                           </>
                         );

@@ -6,11 +6,17 @@ import {
   useDeleteBookSale
 } from '../hooks/useBookSales.js';
 import BoughtBookFormPopup from '../components/BoughtBookFormPopup.jsx';
+import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
+import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [saleToDelete, setSaleToDelete] = useState(null);
+  const [showViewDetails, setShowViewDetails] = useState(false);
+  const [selectedSale, setSelectedSale] = useState(null);
   const [formData, setFormData] = useState({
     sale_id: '',
     user_id: '',
@@ -63,14 +69,28 @@ function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
     setShowPopup(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this sale record?')) {
+  const handleDelete = (id) => {
+    setSaleToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (saleToDelete) {
       try {
-        await deleteBookSaleMutation.mutateAsync(id);
+        await deleteBookSaleMutation.mutateAsync(saleToDelete);
+        setShowDeleteConfirm(false);
+        setSaleToDelete(null);
       } catch (error) {
         alert('Failed to delete sale record. Please try again.');
+        setShowDeleteConfirm(false);
+        setSaleToDelete(null);
       }
     }
+  };
+
+  const handleView = (sale) => {
+    setSelectedSale(sale);
+    setShowViewDetails(true);
   };
 
   const handleButtonClick = () => {
@@ -111,19 +131,52 @@ function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
   );
 
   return (
-    <CommonLayout
-      searchValue={searchValue}
-      buttonBehaviour={handleButtonClick}
-      isLoading={isLoading}
-      data={filteredBookSales}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      title={customTitle || "Book Sales"}
-      buttonText={hideButton ? "" : "Add Book Sale"}
-      columns={columns}
-      formPopup={formPopupComponent}
-      customTitle={customTitle}
-    />
+    <>
+      <CommonLayout
+        searchValue={searchValue}
+        buttonBehaviour={handleButtonClick}
+        isLoading={isLoading}
+        data={filteredBookSales}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleView={handleView}
+        title={customTitle || "Book Sales"}
+        buttonText={hideButton ? "" : "Add Book Sale"}
+        columns={columns}
+        formPopup={formPopupComponent}
+        customTitle={customTitle}
+      />
+      <DeleteConfirmationPopup
+        show={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setSaleToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Sale Record"
+      />
+      <ViewDetailsPopup
+        show={showViewDetails}
+        onClose={() => {
+          setShowViewDetails(false);
+          setSelectedSale(null);
+        }}
+        title="View Sale"
+        data={selectedSale ? {
+          'Sale ID': selectedSale.sale_id,
+          'Book Title': selectedSale.book_title,
+          'User Name': selectedSale.user_name,
+          'Transaction ID': selectedSale.transaction_id,
+          'Price': selectedSale.price,
+          'Sale Date': selectedSale.sale_date
+        } : null}
+        savedBy={{
+          name: 'Admin User',
+          role: 'Admin'
+        }}
+      >
+      </ViewDetailsPopup>
+    </>
   );
 }
 

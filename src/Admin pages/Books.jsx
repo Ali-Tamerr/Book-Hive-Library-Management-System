@@ -7,11 +7,17 @@ import {
 } from '../hooks/useBooks.js';
 import { useCategories } from '../hooks/useCategories.js';
 import BookFormPopup from '../components/BookFormPopup.jsx';
+import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
+import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function Books({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState(null);
+  const [showViewDetails, setShowViewDetails] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const [formData, setFormData] = useState({
     book_id: '',
@@ -75,10 +81,17 @@ function Books({ searchValue }) {
     setShowPopup(true);
   };
 
-  const handleDelete = async (book_id) => {
-    if (window.confirm('Are you sure you want to delete this book?')) {
+  const handleDelete = (book_id) => {
+    setBookToDelete(book_id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (bookToDelete) {
       try {
-        await deleteBookMutation.mutateAsync(book_id);
+        await deleteBookMutation.mutateAsync(bookToDelete);
+        setShowDeleteConfirm(false);
+        setBookToDelete(null);
       } catch (error) {
         if (error.status === 405) {
           alert('Book deletion is not supported by the API. The Books endpoint may be read-only.');
@@ -87,8 +100,15 @@ function Books({ searchValue }) {
         } else {
           alert(`Failed to delete book: ${error.message || 'Please try again.'}`);
         }
+        setShowDeleteConfirm(false);
+        setBookToDelete(null);
       }
     }
+  };
+
+  const handleView = (book) => {
+    setSelectedBook(book);
+    setShowViewDetails(true);
   };
 
   const buttonBehaviour = () => {
@@ -140,18 +160,49 @@ function Books({ searchValue }) {
   );
 
   return (
-    <CommonLayout
-      searchValue={searchValue}
-      buttonBehaviour={buttonBehaviour}
-      isLoading={isLoading}
-      data={filteredBooks}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      title={title}
-      buttonText={buttonText}
-      columns={columns}
-      formPopup={formPopup}
-    />
+    <>
+      <CommonLayout
+        searchValue={searchValue}
+        buttonBehaviour={buttonBehaviour}
+        isLoading={isLoading}
+        data={filteredBooks}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleView={handleView}
+        title={title}
+        buttonText={buttonText}
+        columns={columns}
+        formPopup={formPopup}
+      />
+      <DeleteConfirmationPopup
+        show={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setBookToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Book"
+      />
+      <ViewDetailsPopup
+        show={showViewDetails}
+        onClose={() => {
+          setShowViewDetails(false);
+          setSelectedBook(null);
+        }}
+        title="View Book"
+        data={selectedBook ? {
+          'Book ID': selectedBook.book_id,
+          'Name': selectedBook.name,
+          'Category': categories.find(cat => cat.category_id === selectedBook.category_id)?.category_name || 'N/A',
+          'Availability': selectedBook.quantity > 0 ? 'Available' : 'Borrowed',
+        } : null}
+        savedBy={{
+          name: 'Admin User',
+          role: 'Admin'
+        }}
+      >
+      </ViewDetailsPopup>
+    </>
   );
 }
 

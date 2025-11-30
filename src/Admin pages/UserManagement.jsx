@@ -6,11 +6,17 @@ import {
   useDeleteUser
 } from '../hooks/useUsers.js';
 import UserFormPopup from '../components/UserFormPopup.jsx';
+import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
+import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function UserManagement({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [showViewDetails, setShowViewDetails] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -47,7 +53,7 @@ function UserManagement({ searchValue }) {
       } else {
         await createUserMutation.mutateAsync(apiData);
       }
-      setFormData({ id: '', name: '',  email: '', phone_number: '', role: 'User', status: 'Active', password: '' });
+      setFormData({ id: '', name: '', email: '', phone_number: '', role: 'User', status: 'Active', password: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -70,18 +76,32 @@ function UserManagement({ searchValue }) {
     setShowPopup(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
+  const handleDelete = (id) => {
+    setUserToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (userToDelete) {
       try {
-        await deleteUserMutation.mutateAsync(id);
+        await deleteUserMutation.mutateAsync(userToDelete);
+        setShowDeleteConfirm(false);
+        setUserToDelete(null);
       } catch (error) {
         alert('Failed to delete user. Please try again.');
+        setShowDeleteConfirm(false);
+        setUserToDelete(null);
       }
     }
   };
 
+  const handleView = (user) => {
+    setSelectedUser(user);
+    setShowViewDetails(true);
+  };
+
   const buttonBehaviour = () => {
-    setFormData({ user_id: '', name: '',  email: '', phone_number: '', role: 'User', status: 'Active', password: '' });
+    setFormData({ user_id: '', name: '', email: '', phone_number: '', role: 'User', status: 'Active', password: '' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -119,18 +139,51 @@ function UserManagement({ searchValue }) {
   );
 
   return (
-    <CommonLayout
-      searchValue={searchValue}
-      buttonBehaviour={buttonBehaviour}
-      isLoading={isLoading}
-      data={filteredUsers}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      title={title}
-      buttonText={buttonText}
-      columns={columns}
-      formPopup={formPopup}
-    />
+    <>
+      <CommonLayout
+        searchValue={searchValue}
+        buttonBehaviour={buttonBehaviour}
+        isLoading={isLoading}
+        data={filteredUsers}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleView={handleView}
+        title={title}
+        buttonText={buttonText}
+        columns={columns}
+        formPopup={formPopup}
+      />
+      <DeleteConfirmationPopup
+        show={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setUserToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete User"
+      />
+      <ViewDetailsPopup
+        show={showViewDetails}
+        onClose={() => {
+          setShowViewDetails(false);
+          setSelectedUser(null);
+        }}
+        title="View User"
+        data={selectedUser ? {
+          'User ID': selectedUser.user_id,
+          'Name': selectedUser.name,
+          'Email': selectedUser.email,
+          'Phone Number': selectedUser.phone_number,
+          'Role': selectedUser.role,
+          'Status': selectedUser.status
+        } : null}
+        savedBy={{
+          name: 'Admin User',
+          role: 'Admin'
+        }}
+      >
+      </ViewDetailsPopup>
+    </>
   );
 }
 
