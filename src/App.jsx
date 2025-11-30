@@ -13,7 +13,6 @@ const UserManagement = lazy(() => import('./Admin pages/UserManagement'));
 const Catalog = lazy(() => import('./Admin pages/Catalog'));
 const Books = lazy(() => import('./Admin pages/Books'));
 const Categories = lazy(() => import('./Admin pages/Categories'));
-const Reports = lazy(() => import('./Admin pages/Reports'));
 const Settings = lazy(() => import('./shared/Settings'));
 const Branches = lazy(() => import('./Admin pages/Branches'));
 
@@ -94,7 +93,6 @@ function App() {
           <Route path="admin/catalog" element={<Catalog />} />
           <Route path="admin/books" element={<Books />} />
           <Route path="admin/categories" element={<Categories />} />
-          <Route path="admin/reports" element={<Reports />} />
           <Route path="admin/branches" element={<Branches />} />
 
           <Route path="/user/dashboard" element={<UserDashboard />} />

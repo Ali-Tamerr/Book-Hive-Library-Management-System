@@ -6,11 +6,17 @@ import {
   useDeleteBorrowedBook
 } from '../hooks/useBorrowedBooks.js';
 import BorrowedBookFormPopup from '../components/BorrowedBookFormPopup.jsx';
+import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
+import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState(null);
+  const [showViewDetails, setShowViewDetails] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [formData, setFormData] = useState({
     transaction_id: '',
     user_id: '',
@@ -75,14 +81,28 @@ function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
     setShowPopup(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this transaction?')) {
+  const handleDelete = (id) => {
+    setTransactionToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (transactionToDelete) {
       try {
-        await deleteBorrowedBookMutation.mutateAsync(id);
+        await deleteBorrowedBookMutation.mutateAsync(transactionToDelete);
+        setShowDeleteConfirm(false);
+        setTransactionToDelete(null);
       } catch (error) {
         alert('Failed to delete transaction. Please try again.');
+        setShowDeleteConfirm(false);
+        setTransactionToDelete(null);
       }
     }
+  };
+
+  const handleView = (transaction) => {
+    setSelectedTransaction(transaction);
+    setShowViewDetails(true);
   };
 
   const handleButtonClick = () => {
@@ -122,19 +142,51 @@ function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
   );
 
   return (
-    <CommonLayout
-      searchValue={searchValue}
-      buttonBehaviour={handleButtonClick}
-      isLoading={isLoading}
-      data={filteredBorrowedBooks}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      title={customTitle || "Book Transactions"}
-      buttonText={hideButton ? "" : "Add Transaction"}
-      columns={columns}
-      formPopup={formPopupComponent}
-      customTitle={customTitle}
-    />
+    <>
+      <CommonLayout
+        searchValue={searchValue}
+        buttonBehaviour={handleButtonClick}
+        isLoading={isLoading}
+        data={filteredBorrowedBooks}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleView={handleView}
+        title={customTitle || "Book Transactions"}
+        buttonText={hideButton ? "" : "Add Transaction"}
+        columns={columns}
+        formPopup={formPopupComponent}
+        customTitle={customTitle}
+      />
+      <DeleteConfirmationPopup
+        show={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setTransactionToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Transaction"
+      />
+      <ViewDetailsPopup
+        show={showViewDetails}
+        onClose={() => {
+          setShowViewDetails(false);
+          setSelectedTransaction(null);
+        }}
+        title="View Transaction"
+        data={selectedTransaction ? {
+          'Transaction ID': selectedTransaction.transaction_id,
+          'User ID': selectedTransaction.user_id,
+          'Book ID': selectedTransaction.book_id,
+          'Transaction Type': selectedTransaction.transaction_type,
+          'Due Date': selectedTransaction.due_date,
+          'Return Date': selectedTransaction.return_date,
+          'Fine Amount': selectedTransaction.fine_amount,
+          'Status': selectedTransaction.status,
+          'Borrow Type': selectedTransaction.borrow_type
+        } : null}
+      >
+      </ViewDetailsPopup>
+    </>
   );
 }
 

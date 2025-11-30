@@ -137,18 +137,6 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                         />
                         <NavLink
                             isExpanded={isExpanded}
-                            active={location.pathname === '/admin/reports'}
-                            onClick={() => {
-                                setActiveTab('/admin/reports');
-
-                                navigate('/admin/reports');
-                            }}
-                            icon={<BarChart2 size={18} strokeWidth={2.3} />}
-                            text="Reports"
-                            toggleSidebar={toggleSidebar}
-                        />
-                        <NavLink
-                            isExpanded={isExpanded}
                             active={location.pathname === '/admin/branches'}
                             onClick={() => {
                                 setActiveTab('/admin/branches');

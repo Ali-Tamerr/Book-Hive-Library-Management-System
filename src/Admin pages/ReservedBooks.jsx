@@ -6,11 +6,17 @@ import {
   useDeleteReservation
 } from '../hooks/useReservations.js';
 import ReservedBookFormPopup from '../components/ReservedBookFormPopup.jsx';
+import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
+import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [reservationToDelete, setReservationToDelete] = useState(null);
+  const [showViewDetails, setShowViewDetails] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState(null);
   const [formData, setFormData] = useState({
     reservation_id: '',
     user_id: '',
@@ -63,14 +69,28 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
     setShowPopup(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this reservation?')) {
+  const handleDelete = (id) => {
+    setReservationToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (reservationToDelete) {
       try {
-        await deleteReservationMutation.mutateAsync(id);
+        await deleteReservationMutation.mutateAsync(reservationToDelete);
+        setShowDeleteConfirm(false);
+        setReservationToDelete(null);
       } catch (error) {
         alert('Failed to delete reservation. Please try again.');
+        setShowDeleteConfirm(false);
+        setReservationToDelete(null);
       }
     }
+  };
+
+  const handleView = (reservation) => {
+    setSelectedReservation(reservation);
+    setShowViewDetails(true);
   };
 
   const handleButtonClick = () => {
@@ -111,19 +131,52 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
   );
 
   return (
-    <CommonLayout
-      searchValue={searchValue}
-      buttonBehaviour={handleButtonClick}
-      isLoading={isLoading}
-      data={filteredReservations}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      title={customTitle || "Book Reservations"}
-      buttonText={hideButton ? "" : "Add Reservation"}
-      columns={columns}
-      formPopup={formPopupComponent}
-      customTitle={customTitle}
-    />
+    <>
+      <CommonLayout
+        searchValue={searchValue}
+        buttonBehaviour={handleButtonClick}
+        isLoading={isLoading}
+        data={filteredReservations}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleView={handleView}
+        title={customTitle || "Book Reservations"}
+        buttonText={hideButton ? "" : "Add Reservation"}
+        columns={columns}
+        formPopup={formPopupComponent}
+        customTitle={customTitle}
+      />
+      <DeleteConfirmationPopup
+        show={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setReservationToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Reservation"
+      />
+      <ViewDetailsPopup
+        show={showViewDetails}
+        onClose={() => {
+          setShowViewDetails(false);
+          setSelectedReservation(null);
+        }}
+        title="View Reservation"
+        data={selectedReservation ? {
+          'Reservation ID': selectedReservation.reservation_id,
+          'Book Title': selectedReservation.book_title,
+          'User Name': selectedReservation.user_name,
+          'Reservation Date': selectedReservation.reservation_date,
+          'Expiration Date': selectedReservation.expiration_date,
+          'Status': selectedReservation.status
+        } : null}
+        savedBy={{
+          name: 'Admin User',
+          role: 'Admin'
+        }}
+      >
+      </ViewDetailsPopup>
+    </>
   );
 }
 

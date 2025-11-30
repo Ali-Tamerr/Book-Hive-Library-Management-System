@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react';
-import { 
-  useCategories, 
-  useCreateCategory, 
-  useUpdateCategory, 
-  useDeleteCategory 
+import {
+  useCategories,
+  useCreateCategory,
+  useUpdateCategory,
+  useDeleteCategory
 } from '../hooks/useCategories.js';
 import CategoryFormPopup from '../components/CategoryFormPopup.jsx';
+import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
+import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function Categories({ searchValue }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  
-  const [formData, setFormData] = useState({ 
-    name: '', 
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [showViewDetails, setShowViewDetails] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
     description: ''
   });
 
@@ -29,7 +35,7 @@ function Categories({ searchValue }) {
         category_name: formData.name,
         category_description: formData.description
       };
-      
+
       if (editMode && formData.id) {
         await updateCategoryMutation.mutateAsync({ id: formData.id, data: apiData });
       } else {
@@ -54,14 +60,28 @@ function Categories({ searchValue }) {
     setShowPopup(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
+  const handleDelete = (id) => {
+    setCategoryToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (categoryToDelete) {
       try {
-        await deleteCategoryMutation.mutateAsync(id);
+        await deleteCategoryMutation.mutateAsync(categoryToDelete);
+        setShowDeleteConfirm(false);
+        setCategoryToDelete(null);
       } catch (error) {
         alert(`Failed to delete category: ${error.message || 'Unknown error'}. Please try again.`);
+        setShowDeleteConfirm(false);
+        setCategoryToDelete(null);
       }
     }
+  };
+
+  const handleView = (category) => {
+    setSelectedCategory(category);
+    setShowViewDetails(true);
   };
 
   const buttonBehaviour = () => {
@@ -72,13 +92,13 @@ function Categories({ searchValue }) {
 
   const filteredCategories = searchValue
     ? categories.filter(
-        (category) => {
-          const name = category.category_name || category.name || '';
-          const description = category.category_description || category.description || '';
-          return name.toLowerCase().includes(searchValue.toLowerCase()) ||
-                 description.toLowerCase().includes(searchValue.toLowerCase());
-        }
-      )
+      (category) => {
+        const name = category.category_name || category.name || '';
+        const description = category.category_description || category.description || '';
+        return name.toLowerCase().includes(searchValue.toLowerCase()) ||
+          description.toLowerCase().includes(searchValue.toLowerCase());
+      }
+    )
     : categories;
 
   const title = "Category Management";
@@ -91,30 +111,60 @@ function Categories({ searchValue }) {
   ];
 
   const formPopup = (
-    <CategoryFormPopup 
-      showPopup={showPopup} 
-      editMode={editMode} 
-      formData={formData} 
-      setFormData={setFormData} 
-      handleAddCategory={handleAddCategory} 
-      setShowPopup={setShowPopup} 
-      setEditMode={setEditMode} 
+    <CategoryFormPopup
+      showPopup={showPopup}
+      editMode={editMode}
+      formData={formData}
+      setFormData={setFormData}
+      handleAddCategory={handleAddCategory}
+      setShowPopup={setShowPopup}
+      setEditMode={setEditMode}
     />
   );
 
   return (
-    <CommonLayout
-      searchValue={searchValue}
-      buttonBehaviour={buttonBehaviour}
-      isLoading={isLoading}
-      data={filteredCategories}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-      title={title}
-      buttonText={buttonText}
-      columns={columns}
-      formPopup={formPopup}
-    />
+    <>
+      <CommonLayout
+        searchValue={searchValue}
+        buttonBehaviour={buttonBehaviour}
+        isLoading={isLoading}
+        data={filteredCategories}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleView={handleView}
+        title={title}
+        buttonText={buttonText}
+        columns={columns}
+        formPopup={formPopup}
+      />
+      <DeleteConfirmationPopup
+        show={showDeleteConfirm}
+        onClose={() => {
+          setShowDeleteConfirm(false);
+          setCategoryToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Category"
+      />
+      <ViewDetailsPopup
+        show={showViewDetails}
+        onClose={() => {
+          setShowViewDetails(false);
+          setSelectedCategory(null);
+        }}
+        title="View Category"
+        data={selectedCategory ? {
+          'Category ID': selectedCategory.category_id,
+          'Name': selectedCategory.category_name,
+          'Description': selectedCategory.category_description
+        } : null}
+        savedBy={{
+          name: 'Admin User',
+          role: 'Admin'
+        }}
+      >
+      </ViewDetailsPopup>
+    </>
   );
 }
 
