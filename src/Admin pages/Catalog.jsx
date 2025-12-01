@@ -6,7 +6,7 @@ import BoughtBooks from './BoughtBooks';
 import ReservedBooks from './ReservedBooks';
 import TabButton from '../components/TabButton';
 
-function Catalog({ searchValue }) {
+function Catalog({ searchValue, setSearchValue }) {
   const location = useLocation();
   const [localActiveTab, setLocalActiveTab] = useState('borrowed');
 
@@ -50,10 +50,10 @@ function Catalog({ searchValue }) {
 
   return (
     <>
-      {localActiveTab === 'borrowed' && <BorrowedBooks searchValue={searchValue} customTitle={tabButtons} hideButton={true} />}
-      {localActiveTab === 'bought' && <BoughtBooks searchValue={searchValue} customTitle={tabButtons} hideButton={true} />}
-      {localActiveTab === 'reserved' && <ReservedBooks searchValue={searchValue} customTitle={tabButtons} hideButton={true} />}
-      {localActiveTab === 'overdue' && <Overdue searchValue={searchValue} customTitle={tabButtons} />}
+      {localActiveTab === 'borrowed' && <BorrowedBooks searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} hideButton={true} />}
+      {localActiveTab === 'bought' && <BoughtBooks searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} hideButton={true} />}
+      {localActiveTab === 'reserved' && <ReservedBooks searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} hideButton={true} />}
+      {localActiveTab === 'overdue' && <Overdue searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} />}
     </>
   );
 }

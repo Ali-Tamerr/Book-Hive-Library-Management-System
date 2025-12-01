@@ -10,7 +10,8 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function Categories({ searchValue }) {
+function Categories({ searchValue, setSearchValue }) {
+  // Search searches: Name, Description
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -126,6 +127,7 @@ function Categories({ searchValue }) {
     <>
       <CommonLayout
         searchValue={searchValue}
+        setSearchValue={setSearchValue}
         buttonBehaviour={buttonBehaviour}
         isLoading={isLoading}
         data={filteredCategories}

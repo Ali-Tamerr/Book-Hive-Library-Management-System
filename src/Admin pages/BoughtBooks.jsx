@@ -10,7 +10,8 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
+function BoughtBooks({ searchValue, setSearchValue, customTitle, hideButton = false }) {
+  // Search searches: Book Title, User Name, Sale ID
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -134,6 +135,7 @@ function BoughtBooks({ searchValue, customTitle, hideButton = false }) {
     <>
       <CommonLayout
         searchValue={searchValue}
+        setSearchValue={setSearchValue}
         buttonBehaviour={handleButtonClick}
         isLoading={isLoading}
         data={filteredBookSales}

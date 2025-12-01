@@ -10,7 +10,8 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
+function ReservedBooks({ searchValue, setSearchValue, customTitle, hideButton = false }) {
+  // Search searches: Book Title, User Name, Reservation ID
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -134,6 +135,7 @@ function ReservedBooks({ searchValue, customTitle, hideButton = false }) {
     <>
       <CommonLayout
         searchValue={searchValue}
+        setSearchValue={setSearchValue}
         buttonBehaviour={handleButtonClick}
         isLoading={isLoading}
         data={filteredReservations}

@@ -10,7 +10,8 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
+function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = false }) {
+  // Search searches: Book Title, User Name, Transaction ID
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -145,6 +146,7 @@ function BorrowedBooks({ searchValue, customTitle, hideButton = false }) {
     <>
       <CommonLayout
         searchValue={searchValue}
+        setSearchValue={setSearchValue}
         buttonBehaviour={handleButtonClick}
         isLoading={isLoading}
         data={filteredBorrowedBooks}
