@@ -5,6 +5,7 @@ import ButtonOne from '../components/ButtonOne.jsx';
 
 const CommonLayout = ({
   searchValue,
+  setSearchValue,
   buttonBehaviour,
   isLoading,
   data,
@@ -27,7 +28,7 @@ const CommonLayout = ({
         {customTitle ? customTitle : <h2 className="text-xl max-[856px]:text-sm font-semibold">{title}</h2>}
         <div className='flex gap-2 h-10'>
           {buttonText && <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />}
-          <SearchBar searchValue={searchValue} />
+          <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
         </div>
       </div>
 
