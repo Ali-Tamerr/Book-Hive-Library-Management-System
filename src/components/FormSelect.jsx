@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronUp } from 'lucide-react';
 
-const FormSelect = ({ label, name, value, onChange, options, placeholder }) => {
+const FormSelect = ({ label, name, value, onChange, options, placeholder, required }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelectChange = (e) => {
@@ -23,6 +23,7 @@ const FormSelect = ({ label, name, value, onChange, options, placeholder }) => {
           onChange={handleSelectChange}
           onClick={handleSelectClick}
           onBlur={() => setIsOpen(false)}
+          required={required}
           className="w-full text-[#727374] h-[50px] px-4 py-3 pr-10 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px] appearance-none"
         >
           {placeholder && (
