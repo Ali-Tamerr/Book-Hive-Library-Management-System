@@ -70,7 +70,7 @@ const CommonLayout = ({
                               className="mr-2 text-lg hover:scale-125 transition-transform"
                               title="Edit"><FilePenLine size={20} /></button>
                             <button
-                              onClick={() => handleDelete(item.id || item.book_id || item.category_id)}
+                              onClick={() => handleDelete(item.id || item.user_id || item.book_id || item.category_id)}
                               className="mr-2 text-lg hover:scale-125 transition-transform"
                               title="Delete"><Trash2 size={20} /></button>
                             {handleView && (
