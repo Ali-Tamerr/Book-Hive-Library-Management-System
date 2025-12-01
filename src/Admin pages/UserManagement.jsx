@@ -175,7 +175,6 @@ function UserManagement({ searchValue }) {
           'Email': selectedUser.email,
           'Phone Number': selectedUser.phone_number,
           'Role': selectedUser.role,
-          'Status': selectedUser.status
         } : null}
         savedBy={{
           name: 'Admin User',

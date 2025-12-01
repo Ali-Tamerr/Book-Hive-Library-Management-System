@@ -64,7 +64,7 @@ const CommonLayout = ({
                         cellContent = customActionRenderer ? (
                           customActionRenderer(item)
                         ) : (
-                          <>
+                          <div className='w-max'>
                             <button
                               onClick={() => handleEdit(item)}
                               className="mr-2 text-lg hover:scale-125 transition-transform"
@@ -79,7 +79,7 @@ const CommonLayout = ({
                                 className="text-lg hover:scale-125 transition-transform"
                                 title="View"><ReceiptText size={20} /></button>
                             )}
-                          </>
+                          </div>
                         );
                       } else if (col.render) {
                         cellContent = col.render(item);

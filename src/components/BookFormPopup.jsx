@@ -19,10 +19,8 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
     {
       name: 'category_id',
       type: 'select',
-      options: [
-        { value: '', label: 'Select Category' },
-        ...(categories || []).map(cat => ({ value: cat.category_id, label: cat.category_name })),
-      ],
+      placeholder: 'Category',
+      options: (categories || []).map(cat => ({ value: cat.category_id, label: cat.category_name })),
     },
     { name: 'quantity', type: 'number', placeholder: 'Quantity', required: true },
     {
