@@ -58,7 +58,7 @@ function Dashboard() {
 
   const stats = {
     totalUsers: users?.length || 0,
-    totalBooks: books?.length || 0,
+    totalBooks: books?.reduce((sum, book) => sum + (book.quantity || 0), 0) || 0,
     branchCount: branches?.length || 0,
     totalBorrowed: totalBorrowed,
     currentlyBorrowed: currentlyBorrowed,

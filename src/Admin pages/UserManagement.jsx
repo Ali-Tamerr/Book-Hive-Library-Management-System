@@ -125,8 +125,8 @@ function UserManagement({ searchValue, setSearchValue }) {
     { header: 'User ID', accessor: 'user_id' },
     { header: 'Name', accessor: 'name' },
     { header: 'Email', accessor: 'email' },
-    { header: 'Contact No', accessor: 'phone_number' },
     { header: 'Role', accessor: 'role' },
+    { header: 'Contact No', accessor: 'phone_number' },
     { header: 'Action', accessor: 'action' },
   ];
 
