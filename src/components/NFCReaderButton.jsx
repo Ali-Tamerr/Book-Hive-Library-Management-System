@@ -83,28 +83,58 @@ const NFCReaderButton = ({ onDataReceived, inputRef }) => {
 
             (async () => {
                 let buffer = '';
+                let dataReceivedCount = 0;
                 try {
                     while (true) {
+                        console.log(`Waiting for data (iteration ${dataReceivedCount})...`);
                         const { value, done } = await reader.read();
+
                         if (done) {
                             console.log("Reader done");
                             break;
                         }
-                        console.log("Raw data received:", value);
+
+                        dataReceivedCount++;
+                        console.log(`[${dataReceivedCount}] Raw data received:`, value);
+                        console.log(`[${dataReceivedCount}] Data length:`, value.length);
+                        console.log(`[${dataReceivedCount}] Data bytes:`, Array.from(value).map(c => c.charCodeAt(0)));
+
                         buffer += value;
+                        console.log(`[${dataReceivedCount}] Current buffer:`, buffer);
+                        console.log(`[${dataReceivedCount}] Buffer length:`, buffer.length);
+
                         const lines = buffer.split('\n');
+                        console.log(`[${dataReceivedCount}] Lines after split:`, lines);
+
                         if (lines.length > 1) {
                             const completeLine = lines.shift().trim();
+                            console.log(`[${dataReceivedCount}] Complete line extracted:`, completeLine);
+
                             if (completeLine) {
-                                console.log('Complete NFC Tag ID:', completeLine);
+                                console.log('✅ Complete NFC Tag ID:', completeLine);
                                 onDataReceived(completeLine);
-                                console.log("Data sent to callback");
+                                console.log("✅ Data sent to callback");
+                            } else {
+                                console.warn("Complete line was empty after trim");
                             }
                             buffer = lines.join('\n');
+                            console.log(`[${dataReceivedCount}] Remaining buffer:`, buffer);
+                        } else {
+                            console.log(`[${dataReceivedCount}] No complete line yet, waiting for more data...`);
+
+                            if (buffer.length > 50) {
+                                console.warn("⚠️ Buffer is getting long without newline. Sending anyway:", buffer);
+                                const trimmedBuffer = buffer.trim();
+                                if (trimmedBuffer) {
+                                    onDataReceived(trimmedBuffer);
+                                    console.log("✅ Data sent to callback (without newline)");
+                                }
+                                buffer = '';
+                            }
                         }
                     }
                 } catch (error) {
-                    console.error("Read loop error:", error);
+                    console.error("❌ Read loop error:", error);
                 } finally {
                     console.log("Cleaning up reader...");
                     reader.releaseLock();
