@@ -96,13 +96,13 @@ function Dashboard() {
                     <svg width="16" height="16" viewBox="0 0 16 16">
                       <circle cx="8" cy="8" r="6" fill="#4b5563" />
                     </svg>
-                    <p className="text-sm text-[#6f7390] max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
+                    <p className="text-sm text-[#000035] font-medium max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
                       <circle cx="8" cy="8" r="6" fill="#0a0f33" />
                     </svg>
-                    <p className="text-sm text-[#6f7390] max-[340px]:whitespace-nowrap">Total Returned Books</p>
+                    <p className="text-sm text-[#000035] font-medium max-[340px]:whitespace-nowrap">Total Returned Books</p>
                   </div>
                 </div>
               </div>
@@ -119,13 +119,13 @@ function Dashboard() {
                     <svg width="16" height="16" viewBox="0 0 16 16">
                       <circle cx="8" cy="8" r="6" fill="#4b5563" />
                     </svg>
-                    <p className="text-sm text-[#6f7390]">Total Borrowed Books</p>
+                    <p className="text-sm text-[#000035] font-medium">Total Borrowed Books</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
                       <circle cx="8" cy="8" r="6" fill="#0a0f33" />
                     </svg>
-                    <p className="text-sm text-[#6f7390]">Total Returned Books</p>
+                    <p className="text-sm text-[#000035] font-medium">Total Returned Books</p>
                   </div>
                 </div>
               </div>
