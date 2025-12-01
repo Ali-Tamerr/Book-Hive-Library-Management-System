@@ -82,6 +82,25 @@ function App() {
           setSearchValue={setSearchValue}
         >
           <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/otp" element={<OTP />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+
+            <Route path="admin/dashboard" element={<AdminDashboard />} />
+            <Route path="admin/overdue" element={<Overdue searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/user-management" element={<UserManagement searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/catalog" element={<Catalog searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/books" element={<Books searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/categories" element={<Categories searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/settings" element={<Settings />} />
+            <Route path="admin/branches" element={<Branches searchValue={searchValue} setSearchValue={setSearchValue} />} />
+
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+            <Route path="/user/books" element={<UserBooks />} />
+            <Route path="/user/catalog" element={<UserCatalog />} />
+            <Route path="/user/borrowed" element={<UserBorrowedBooks />} />
             <Route path="/user/returned" element={<UserReturnedBooks />} />
             <Route path="/user/library" element={<UserLibraryLane />} />
 
