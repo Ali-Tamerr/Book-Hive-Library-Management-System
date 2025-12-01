@@ -139,6 +139,7 @@ function Books({ searchValue, setSearchValue }) {
       accessor: 'category_id',
       render: (book) => categories.find(cat => cat.category_id === book.category_id)?.category_name || 'N/A'
     },
+    { header: 'Quantity', accessor: 'quantity' },
     {
       header: 'Availability',
       accessor: 'availability',
@@ -200,6 +201,7 @@ function Books({ searchValue, setSearchValue }) {
           'Book ID': selectedBook.book_id,
           'Name': selectedBook.name,
           'Category': categories.find(cat => cat.category_id === selectedBook.category_id)?.category_name || 'N/A',
+          'Quantity': selectedBook.quantity,
           'Availability': selectedBook.quantity > 0 ? 'Available' : 'Borrowed',
         } : null}
         savedBy={{
