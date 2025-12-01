@@ -171,7 +171,7 @@ function Books({ searchValue, setSearchValue }) {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         buttonBehaviour={buttonBehaviour}
-        isLoading={isLoading}
+        isLoading={isLoading || isLoadingCategories}
         data={filteredBooks}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
