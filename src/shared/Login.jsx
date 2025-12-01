@@ -78,7 +78,7 @@ function Login() {
                             type="submit"
                             disabled={loading}
                         >
-                            {loading ? 'LOGGING IN...' : 'SIGN IN'}
+                            {loading ? 'SIGNING IN...' : 'SIGN IN'}
                         </PrimaryButton>
                     </form>
                     <p className="text-lg max-[1080px]:block hidden text-gray-400">New to our platform? <button onClick={() => navigate('/signup')} className='underline text-gray-900'>Sign Up now.</button></p>
