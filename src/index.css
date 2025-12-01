@@ -78,19 +78,15 @@ body {
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+::-webkit-scrollbar{
+  width: 0.6rem;
+  background-color: hsl(24, 32%, 75%);
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f100;
+::-webkit-scrollbar-thumb{
+  background-color: hsl(24, 32%, 65%);
 }
 
-::-webkit-scrollbar-thumb {
-  background: #192261;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #192261;
+::-webkit-scrollbar-thumb:hover{
+  background-color: hsl(24, 32%, 55%);
 }
