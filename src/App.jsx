@@ -13,8 +13,10 @@ const UserManagement = lazy(() => import('./Admin pages/UserManagement'));
 const Catalog = lazy(() => import('./Admin pages/Catalog'));
 const Books = lazy(() => import('./Admin pages/Books'));
 const Categories = lazy(() => import('./Admin pages/Categories'));
+const Reports = lazy(() => import('./Admin pages/Reports'));
 const Settings = lazy(() => import('./shared/Settings'));
 const Branches = lazy(() => import('./Admin pages/Branches'));
+const Languages = lazy(() => import('./Admin pages/Languages'));
 
 const UserDashboard = lazy(() => import('./User pages/Dashboard'));
 const UserBooks = lazy(() => import('./User pages/UserBooks'));
@@ -25,6 +27,7 @@ const UserCatalog = lazy(() => import('./User pages/UserCatalog'));
 
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
+import { NFCReaderProvider } from './contexts/NFCReaderContext';
 
 function Layout({ children, activeTab, setActiveTab, isSidebarOpen, toggleSidebar, searchValue, setSearchValue }) {
   const location = useLocation();
@@ -70,42 +73,46 @@ function App() {
   };
 
   return (
-    <Router>
-      <Layout
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-        searchValue={searchValue}
-        setSearchValue={setSearchValue}
-      >
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/otp" element={<OTP />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/settings" element={<Settings />} />
+    <NFCReaderProvider>
+      <Router>
+        <Layout
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isSidebarOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+        >
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/otp" element={<OTP />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-          <Route path="admin/dashboard" element={<AdminDashboard />} />
-          <Route path="admin/overdue" element={<Overdue />} />
-          <Route path="admin/user-management" element={<UserManagement />} />
-          <Route path="admin/catalog" element={<Catalog />} />
-          <Route path="admin/books" element={<Books />} />
-          <Route path="admin/categories" element={<Categories />} />
-          <Route path="admin/branches" element={<Branches />} />
+            <Route path="admin/dashboard" element={<AdminDashboard />} />
+            <Route path="admin/overdue" element={<Overdue searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/user-management" element={<UserManagement searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/catalog" element={<Catalog searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/books" element={<Books searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/categories" element={<Categories searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/languages" element={<Languages searchValue={searchValue} setSearchValue={setSearchValue} />} />
+            <Route path="admin/reports" element={<Reports />} />
+            <Route path="admin/settings" element={<Settings />} />
+            <Route path="admin/branches" element={<Branches searchValue={searchValue} setSearchValue={setSearchValue} />} />
 
-          <Route path="/user/dashboard" element={<UserDashboard />} />
-          <Route path="/user/books" element={<UserBooks />} />
-          <Route path="/user/catalog" element={<UserCatalog />} />
-          <Route path="/user/borrowed" element={<UserBorrowedBooks />} />
-          <Route path="/user/returned" element={<UserReturnedBooks />} />
-          <Route path="/user/library" element={<UserLibraryLane />} />
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+            <Route path="/user/books" element={<UserBooks />} />
+            <Route path="/user/catalog" element={<UserCatalog />} />
+            <Route path="/user/borrowed" element={<UserBorrowedBooks />} />
+            <Route path="/user/returned" element={<UserReturnedBooks />} />
+            <Route path="/user/library" element={<UserLibraryLane />} />
 
-          <Route path="/" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </Layout>
-    </Router>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </NFCReaderProvider>
   );
 }
 

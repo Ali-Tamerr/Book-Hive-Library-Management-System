@@ -4,9 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 
-
-
-const SearchBar = ({ searchValue }) => {
+const SearchBar = ({ searchValue, setSearchValue }) => {
   const location = useLocation();
 
   const [navVisibilty, setNavVisibilty] = useState(true);
@@ -14,7 +12,6 @@ const SearchBar = ({ searchValue }) => {
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
 
   useEffect(() => {
-    // Update the user whenever the route changes
     setCurrentUser(getCurrentUser());
 
     const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
@@ -25,7 +22,6 @@ const SearchBar = ({ searchValue }) => {
     }
   }, [location.pathname]);
 
-  // Hide search bar if on dashboard route
   const isDashboard = location.pathname === '/dashboard';
   const showSearchInput = !isDashboard;
   return (

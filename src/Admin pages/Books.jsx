@@ -11,7 +11,8 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function Books({ searchValue }) {
+function Books({ searchValue, setSearchValue }) {
+  // Search searches: Name, Book ID
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -133,7 +134,11 @@ function Books({ searchValue }) {
   const columns = [
     { header: 'ID', accessor: 'book_id' },
     { header: 'Name', accessor: 'name' },
-    { header: 'Category', accessor: 'category_id' },
+    {
+      header: 'Category',
+      accessor: 'category_id',
+      render: (book) => categories.find(cat => cat.category_id === book.category_id)?.category_name || 'N/A'
+    },
     {
       header: 'Availability',
       accessor: 'availability',
@@ -163,6 +168,7 @@ function Books({ searchValue }) {
     <>
       <CommonLayout
         searchValue={searchValue}
+        setSearchValue={setSearchValue}
         buttonBehaviour={buttonBehaviour}
         isLoading={isLoading}
         data={filteredBooks}

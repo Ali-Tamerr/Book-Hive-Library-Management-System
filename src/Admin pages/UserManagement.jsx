@@ -10,7 +10,8 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function UserManagement({ searchValue }) {
+function UserManagement({ searchValue, setSearchValue }) {
+  // Search searches: Name, Email, User ID
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -145,6 +146,7 @@ function UserManagement({ searchValue }) {
     <>
       <CommonLayout
         searchValue={searchValue}
+        setSearchValue={setSearchValue}
         buttonBehaviour={buttonBehaviour}
         isLoading={isLoading}
         data={filteredUsers}
