@@ -10,7 +10,8 @@ import BranchFormPopup from '../components/BranchFormPopup';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 
-function Branches({ searchValue }) {
+function Branches({ searchValue, setSearchValue }) {
+  // Search searches: Name, Location
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -115,6 +116,7 @@ function Branches({ searchValue }) {
     <>
       <CommonLayout
         searchValue={searchValue}
+        setSearchValue={setSearchValue}
         buttonBehaviour={buttonBehaviour}
         isLoading={isLoading}
         data={filteredBranches}

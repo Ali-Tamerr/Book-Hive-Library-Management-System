@@ -1,7 +1,8 @@
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
-function Overdue({ searchValue, customTitle }) {
+function Overdue({ searchValue, setSearchValue, customTitle }) {
+  // Search searches: Book Title, User Name
   const { data: overdueBooks = [], isLoading } = useOverdueBooks();
 
   const filteredOverdueBooks = searchValue
@@ -24,6 +25,7 @@ function Overdue({ searchValue, customTitle }) {
   return (
     <CommonLayout
       searchValue={searchValue}
+      setSearchValue={setSearchValue}
       buttonBehaviour={() => { }}
       isLoading={isLoading}
       data={filteredOverdueBooks}
