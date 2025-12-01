@@ -64,7 +64,7 @@ const CommonLayout = ({
                         cellContent = customActionRenderer ? (
                           customActionRenderer(item)
                         ) : (
-                          <div className='w-max'>
+                          <div className='w-max mx-auto flex justify-center items-center'>
                             <button
                               onClick={() => handleEdit(item)}
                               className="mr-2 text-lg hover:scale-125 transition-transform"
