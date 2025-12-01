@@ -22,6 +22,7 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
     {
       name: 'role',
       type: 'select',
+      placeholder: 'Role',
       autocomplete: 'off',
       options: [
         { value: 'User', label: 'User' },
