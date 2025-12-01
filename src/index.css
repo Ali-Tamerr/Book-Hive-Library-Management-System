@@ -79,11 +79,13 @@ body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar{
+    border-radius: 4px;
   width: 0.6rem;
   background-color: hsl(24, 32%, 75%);
 }
 
 ::-webkit-scrollbar-thumb{
+  border-radius: 4px;
   background-color: hsl(24, 32%, 65%);
 }
 
