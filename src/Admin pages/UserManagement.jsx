@@ -22,7 +22,7 @@ function UserManagement({ searchValue }) {
     name: '',
     email: '',
     phone_number: '',
-    role: 'User',
+    role: '',
     status: 'Active',
     password: ''
   });
@@ -53,7 +53,7 @@ function UserManagement({ searchValue }) {
       } else {
         await createUserMutation.mutateAsync(apiData);
       }
-      setFormData({ id: '', name: '', email: '', phone_number: '', role: 'User', status: 'Active', password: '' });
+      setFormData({ id: '', name: '', email: '', phone_number: '', role: '', status: 'Active', password: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -101,7 +101,7 @@ function UserManagement({ searchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ user_id: '', name: '', email: '', phone_number: '', role: 'User', status: 'Active', password: '' });
+    setFormData({ user_id: '', name: '', email: '', phone_number: '', role: '', status: 'Active', password: '' });
     setEditMode(false);
     setShowPopup(true);
   };
