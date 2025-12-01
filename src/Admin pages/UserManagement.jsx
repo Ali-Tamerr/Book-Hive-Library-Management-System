@@ -24,7 +24,8 @@ function UserManagement({ searchValue }) {
     phone_number: '',
     role: '',
     status: 'Active',
-    password: ''
+    password: '',
+    password_hash: ''
   });
 
   const { data: users = [], isLoading } = useUsers();
@@ -45,15 +46,15 @@ function UserManagement({ searchValue }) {
         password_hash: formData.password
       };
 
-      if (editMode && formData.id) {
-        if (!formData.password) {
-          delete apiData.password_hash;
+      if (editMode && formData.user_id) {
+        if (!formData.password || formData.password.trim() === '') {
+          apiData.password_hash = formData.password_hash;
         }
-        await updateUserMutation.mutateAsync({ id: formData.id, data: apiData });
+        await updateUserMutation.mutateAsync({ id: formData.user_id, data: apiData });
       } else {
         await createUserMutation.mutateAsync(apiData);
       }
-      setFormData({ id: '', name: '', email: '', phone_number: '', role: '', status: 'Active', password: '' });
+      setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', role: '', status: 'Active', password: '', password_hash: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -64,13 +65,15 @@ function UserManagement({ searchValue }) {
 
   const handleEdit = (user) => {
     setFormData({
+      id: user.user_id,
       user_id: user.user_id,
       name: user.name || '',
       email: user.email || '',
       phone_number: user.phone_number || '',
       role: user.role || 'User',
       status: user.status || 'Active',
-      password: ''
+      password: '',
+      password_hash: user.password_hash || ''
     });
     setEditMode(true);
     setShowPopup(true);
@@ -101,7 +104,7 @@ function UserManagement({ searchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ user_id: '', name: '', email: '', phone_number: '', role: '', status: 'Active', password: '' });
+    setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', role: '', status: 'Active', password: '', password_hash: '' });
     setEditMode(false);
     setShowPopup(true);
   };
