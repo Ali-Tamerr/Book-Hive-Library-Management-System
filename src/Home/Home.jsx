@@ -75,8 +75,8 @@ const Home = () => {
         <div className="home-page" dangerouslySetInnerHTML={{
             __html: `<header class="header" id="header">
          <nav class="nav container">
-            <a href="#" class="nav__logo">
-               <i class="ri-book-line"></i> E-Book
+            <a href="#" class="nav__logo" style="color:black;">
+               <img src="/home/assets/logo.svg" alt="Book Hive Logo" style="width: 30px; height: auto;"> Book Hive
             </a>
 
             <div class="nav__menu">
@@ -994,8 +994,8 @@ const Home = () => {
       <footer class="footer">
          <div class="footer__container container grid">
             <div>
-               <a href="#" class="footer__logo">
-                  <i class="ri-book-3-line"></i> E-book
+               <a href="#" class="footer__logo" style="color:black;">
+                  <img src="/home/assets/logo.svg" alt="Book Hive Logo" style="width: 30px; height: auto;"> Book Hive
                </a>
 
                <p class="footer__description">
