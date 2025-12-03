@@ -26,11 +26,11 @@ const Home = () => {
 
         const initScripts = async () => {
             try {
-                await loadScript('/src/Home/js/scrollreveal.min.js', 'scrollreveal');
-                await loadScript('/src/Home/js/swiper-bundle.min.js', 'swiper');
+                await loadScript('/home/js/scrollreveal.min.js', 'scrollreveal');
+                await loadScript('/home/js/swiper-bundle.min.js', 'swiper');
 
                 setTimeout(async () => {
-                    await loadScript('/src/Home/js/main.js', 'main');
+                    await loadScript('/home/js/main.js', 'main');
 
                     setTimeout(() => {
                         const themeButton = document.getElementById('theme-button');
@@ -199,19 +199,19 @@ const Home = () => {
                   <div class="home__swiper swiper">
                      <div class="swiper-wrapper">
                         <article class="home__article swiper-slide">
-                           <img src="/src/Home/assets/img/home-book-1.png" alt="image" class="home__img">
+                           <img src="/home/assets/img/home-book-1.png" alt="image" class="home__img">
                         </article>
 
                         <article class="home__article swiper-slide">
-                           <img src="/src/Home/assets/img/home-book-2.png" alt="image" class="home__img">
+                           <img src="/home/assets/img/home-book-2.png" alt="image" class="home__img">
                         </article>
 
                         <article class="home__article swiper-slide">
-                           <img src="/src/Home/assets/img/home-book-3.png" alt="image" class="home__img">
+                           <img src="/home/assets/img/home-book-3.png" alt="image" class="home__img">
                         </article>
 
                         <article class="home__article swiper-slide">
-                           <img src="/src/Home/assets/img/home-book-4.png" alt="image" class="home__img">
+                           <img src="/home/assets/img/home-book-4.png" alt="image" class="home__img">
                         </article>
                      </div>
                   </div>
@@ -252,7 +252,7 @@ const Home = () => {
                <div class="featured__swiper swiper">
                   <div class="swiper-wrapper">
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-1.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-1.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -270,7 +270,7 @@ const Home = () => {
                      </article>
                      
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-2.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-2.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -288,7 +288,7 @@ const Home = () => {
                      </article>
 
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-3.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-3.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -306,7 +306,7 @@ const Home = () => {
                      </article>
 
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-4.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-4.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -324,7 +324,7 @@ const Home = () => {
                      </article>
 
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-5.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-5.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -342,7 +342,7 @@ const Home = () => {
                      </article>
 
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-6.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-6.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -360,7 +360,7 @@ const Home = () => {
                      </article>
 
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-7.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-7.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -378,7 +378,7 @@ const Home = () => {
                      </article>
 
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-8.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-8.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -396,7 +396,7 @@ const Home = () => {
                      </article>
 
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-9.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-9.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -414,7 +414,7 @@ const Home = () => {
                      </article>
 
                      <article class="featured__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-10.png" alt="img" class="featured__img">
+                        <img src="/home/assets/img/book-10.png" alt="img" class="featured__img">
 
                         <h2 class="featured__title">Featured Book</h2>
                         <div class="featured__prices">
@@ -462,8 +462,8 @@ const Home = () => {
                </div>
 
                <div class="discount__images">
-                  <img src="/src/Home/assets/img/discount-book-1.png" alt="image" class="discount__img-1">
-                  <img src="/src/Home/assets/img/discount-book-2.png" alt="image" class="discount__img-2">
+                  <img src="/home/assets/img/discount-book-1.png" alt="image" class="discount__img-1">
+                  <img src="/home/assets/img/discount-book-2.png" alt="image" class="discount__img-2">
                </div>
             </div>
          </section>
@@ -478,7 +478,7 @@ const Home = () => {
                <div class="new__swiper swiper">
                   <div class="swiper-wrapper">
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-1.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-1.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -498,7 +498,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-2.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-2.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -518,7 +518,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-3.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-3.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -538,7 +538,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-4.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-4.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -558,7 +558,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-5.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-5.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -578,7 +578,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-6.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-6.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -598,7 +598,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-7.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-7.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -618,7 +618,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-8.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-8.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -638,7 +638,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-9.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-9.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -658,7 +658,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-10.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-10.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -682,7 +682,7 @@ const Home = () => {
                <div class="new__swiper swiper">
                   <div class="swiper-wrapper">
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-10.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-10.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -702,7 +702,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-9.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-9.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -722,7 +722,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-8.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-8.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -742,7 +742,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-7.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-7.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -762,7 +762,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-6.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-6.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -782,7 +782,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-5.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-5.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -802,7 +802,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-4.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-4.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -822,7 +822,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-3.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-3.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -842,7 +842,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-2.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-2.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -862,7 +862,7 @@ const Home = () => {
                      </a>
 
                      <a href="#" class="new__card swiper-slide">
-                        <img src="/src/Home/assets/img/book-1.png" alt="image" class="new__img">
+                        <img src="/home/assets/img/book-1.png" alt="image" class="new__img">
 
                         <div>
                            <h2 class="new__title">New Book</h2>
@@ -888,7 +888,7 @@ const Home = () => {
          <!--==================== JOIN ====================-->
          <section class="join section">
             <div class="join__container">
-               <img src="/src/Home/assets/img/join-bg.jpg" alt="image" class="join__bg">
+               <img src="/home/assets/img/join-bg.jpg" alt="image" class="join__bg">
 
                <div class="join__data container grid">
                   <h2 class="join__title section__title">
@@ -914,7 +914,7 @@ const Home = () => {
                <div class="testimonial__swiper swiper">
                   <div class="swiper-wrapper">
                      <article class="testimonial__card swiper-slide">
-                        <img src="/src/Home/assets/img/testimonial-perfil-1.png" alt="image" class="testimonial__img">
+                        <img src="/home/assets/img/testimonial-perfil-1.png" alt="image" class="testimonial__img">
 
                         <h2 class="testimonial__title">Rial Loz</h2>
                         <p class="testimonial__description">
@@ -932,7 +932,7 @@ const Home = () => {
                      </article>
 
                      <article class="testimonial__card swiper-slide">
-                        <img src="/src/Home/assets/img/testimonial-perfil-2.png" alt="image" class="testimonial__img">
+                        <img src="/home/assets/img/testimonial-perfil-2.png" alt="image" class="testimonial__img">
 
                         <h2 class="testimonial__title">Rial Loz</h2>
                         <p class="testimonial__description">
@@ -950,7 +950,7 @@ const Home = () => {
                      </article>
 
                      <article class="testimonial__card swiper-slide">
-                        <img src="/src/Home/assets/img/testimonial-perfil-3.png" alt="image" class="testimonial__img">
+                        <img src="/home/assets/img/testimonial-perfil-3.png" alt="image" class="testimonial__img">
 
                         <h2 class="testimonial__title">Rial Loz</h2>
                         <p class="testimonial__description">
@@ -968,7 +968,7 @@ const Home = () => {
                      </article>
 
                      <article class="testimonial__card swiper-slide">
-                        <img src="/src/Home/assets/img/testimonial-perfil-4.png" alt="image" class="testimonial__img">
+                        <img src="/home/assets/img/testimonial-perfil-4.png" alt="image" class="testimonial__img">
 
                         <h2 class="testimonial__title">Rial Loz</h2>
                         <p class="testimonial__description">
@@ -1114,4 +1114,5 @@ const Home = () => {
 };
 
 export default Home;
+
 
