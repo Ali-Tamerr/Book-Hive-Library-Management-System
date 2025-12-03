@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import React, { Suspense, lazy } from 'react';
 
+const Home = lazy(() => import('./Home/Home'));
 import Login from './shared/Login';
 const Signup = lazy(() => import('./shared/Signup'));
 const ForgotPassword = lazy(() => import('./shared/ForgotPassword'));
@@ -29,8 +30,17 @@ import { NFCReaderProvider } from './contexts/NFCReaderContext';
 
 function Layout({ children, activeTab, setActiveTab, isSidebarOpen, toggleSidebar, searchValue, setSearchValue }) {
   const location = useLocation();
-  const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password', '/'];
+  const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
   const isAuthRoute = authRoutes.includes(location.pathname);
+  const isHomePage = location.pathname === '/';
+
+  if (isHomePage) {
+    return (
+      <Suspense fallback={<div className="h-screen bg-white"></div>}>
+        {children}
+      </Suspense>
+    );
+  }
 
   if (isAuthRoute) {
     return (
@@ -82,6 +92,7 @@ function App() {
           setSearchValue={setSearchValue}
         >
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -103,8 +114,6 @@ function App() {
             <Route path="/user/borrowed" element={<UserBorrowedBooks />} />
             <Route path="/user/returned" element={<UserReturnedBooks />} />
             <Route path="/user/library" element={<UserLibraryLane />} />
-
-            <Route path="/" element={<Navigate to="/login" replace />} />
           </Routes>
         </Layout>
       </Router>
