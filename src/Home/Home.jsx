@@ -4,1115 +4,1089 @@ import './css/swiper-bundle.min.css';
 import './css/styles.css';
 
 const Home = () => {
-    const navigate = useNavigate();
+   const navigate = useNavigate();
 
-    useEffect(() => {
-        const loadScript = (src, id) => {
-            return new Promise((resolve, reject) => {
-                const existingScript = document.getElementById(id);
-                if (existingScript) {
-                    resolve();
-                    return;
-                }
-
-                const script = document.createElement('script');
-                script.src = src;
-                script.id = id;
-                script.onload = () => resolve();
-                script.onerror = () => reject();
-                document.body.appendChild(script);
-            });
-        };
-
-        const initScripts = async () => {
-            try {
-                await loadScript('/home/js/scrollreveal.min.js', 'scrollreveal');
-                await loadScript('/home/js/swiper-bundle.min.js', 'swiper');
-
-                setTimeout(async () => {
-                    await loadScript('/home/js/main.js', 'main');
-
-                    setTimeout(() => {
-                        const themeButton = document.getElementById('theme-button');
-                        const selectedTheme = localStorage.getItem('selected-theme');
-                        const selectedIcon = localStorage.getItem('selected-icon');
-
-                        if (selectedTheme) {
-                            document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove']('dark-theme');
-                            if (themeButton) {
-                                themeButton.classList[selectedIcon === 'ri-moon-line' ? 'add' : 'remove']('ri-sun-line');
-                            }
-                        }
-                    }, 200);
-                }, 300);
-            } catch (error) {
-                console.error('Error loading scripts:', error);
+   useEffect(() => {
+      const loadScript = (src, id) => {
+         return new Promise((resolve, reject) => {
+            const existingScript = document.getElementById(id);
+            if (existingScript) {
+               resolve();
+               return;
             }
-        };
 
-        initScripts();
+            const script = document.createElement('script');
+            script.src = src;
+            script.id = id;
+            script.onload = () => resolve();
+            script.onerror = () => reject();
+            document.body.appendChild(script);
+         });
+      };
 
-        const handleLoginClick = () => {
-            navigate('/login');
-        };
+      const initScripts = async () => {
+         try {
+            await loadScript('/home/js/scrollreveal.min.js', 'scrollreveal');
+            await loadScript('/home/js/swiper-bundle.min.js', 'swiper');
 
-        setTimeout(() => {
-            const loginButton = document.getElementById('login-button');
-            if (loginButton) {
-                loginButton.addEventListener('click', handleLoginClick);
-            }
-        }, 500);
+            setTimeout(async () => {
+               await loadScript('/home/js/main.js', 'main');
 
-        return () => {
-            const loginButton = document.getElementById('login-button');
-            if (loginButton) {
-                loginButton.removeEventListener('click', handleLoginClick);
-            }
-        };
-    }, [navigate]);
+               setTimeout(() => {
+                  const themeButton = document.getElementById('theme-button');
+                  const selectedTheme = localStorage.getItem('selected-theme');
+                  const selectedIcon = localStorage.getItem('selected-icon');
 
-    return (
-        <div className="home-page" dangerouslySetInnerHTML={{
-            __html: `<header class="header" id="header">
-         <nav class="nav container">
-            <a href="#" class="nav__logo" style="color:black;">
-               <img src="/home/assets/logo.svg" alt="Book Hive Logo" style="width: 30px; height: auto;"> Book Hive
-            </a>
+                  if (selectedTheme) {
+                     document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove']('dark-theme');
+                     if (themeButton) {
+                        themeButton.classList[selectedIcon === 'ri-moon-line' ? 'add' : 'remove']('ri-sun-line');
+                     }
+                  }
+               }, 200);
+            }, 300);
+         } catch (error) {
+            console.error('Error loading scripts:', error);
+         }
+      };
 
-            <div class="nav__menu">
-               <ul class="nav__list">
-                  <li class="nav__item">
-                     <a href="#home" class="nav__link">
-                        <i class="ri-home-4-line"></i>
-                        <span>Home</span>
-                     </a>
-                  </li>
+      initScripts();
+   }, [navigate]);
 
-                  <li class="nav__item">
-                     <a href="#featured" class="nav__link">
-                        <i class="ri-book-3-line"></i>
-                        <span>Featured</span>
-                     </a>
-                  </li>
-
-                  <li class="nav__item">
-                     <a href="#discount" class="nav__link">
-                        <i class="ri-price-tag-3-line"></i>
-                        <span>Discount</span>
-                     </a>
-                  </li>
-
-                  <li class="nav__item">
-                     <a href="#new" class="nav__link">
-                        <i class="ri-bookmark-line"></i>
-                        <span>New Books</span>
-                     </a>
-                  </li>
-
-                  <li class="nav__item">
-                     <a href="#testimonial" class="nav__link">
-                        <i class="ri-message-3-line"></i>
-                        <span>Testimonial</span>
-                     </a>
-                  </li>
-               </ul>
-            </div>
-
-            <div class="nav__actions">
-               <!-- Search button -->
-                <i class="ri-search-line search-button" id="search-button"></i>
-
-               <!-- Login button -->
-                 <i class="ri-user-line login-button" id="login-button"></i>
-
-               <!-- Theme button -->
-                  <i class="ri-moon-line change-theme" id="theme-button"></i>
-            </div>
-         </nav>
-      </header>
-
-      <!--==================== SEARCH ====================-->
-      <div class="search" id="search-content">
-         <form action="" class="search__form">
-            <i class="ri-search-line search__icon"></i>
-            <input type="search" placeholder="What are you looking for?" class="search__input">
-         </form>
-
-         <i class="ri-close-line search__close" id="search-close"></i>
-      </div>
-
-      <!--==================== LOGIN ====================-->
-      <div class="login grid" id="login-content">
-         <form action="" class="login__form grid">
-            <h3 class="login__title">Log In</h3>
-
-            <div class="login__group grid">
-               <div>
-                  <label for="login-mail" class="login__label">Email</label>
-                  <input type="email" placeholder="Write your email" class="login__input" id="login-email">
-               </div>
-
-               <div>
-                  <label for="login-pass" class="login__label">Password</label>
-                  <input type="password" placeholder="Enter your password" class="login__input" id="login-pass">
-               </div>
-            </div>
-
-            <div>
-               <span class="login__signup">
-                  You do not have an account? <a href="#">Sign up</a>
-               </span>
-
-               <a href="#" class="login__forgot">
-                  You forgot your password
+   return (
+      <div className="home-page">
+         <header className="header" id="header">
+            <nav className="nav container">
+               <a href="#" className="nav__logo" style={{ color: 'black' }}>
+                  <img src="/home/assets/logo.svg" alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
                </a>
 
-               <button type="submit" class="login__button button">Log In</button>
-            </div>
-         </form>
+               <div className="nav__menu">
+                  <ul className="nav__list">
+                     <li className="nav__item">
+                        <a href="#home" className="nav__link">
+                           <i className="ri-home-4-line"></i>
+                           <span>Home</span>
+                        </a>
+                     </li>
 
-         <i class="ri-close-line login__close" id="login-close"></i>
-      </div>
+                     <li className="nav__item">
+                        <a href="#featured" className="nav__link">
+                           <i className="ri-book-3-line"></i>
+                           <span>Featured</span>
+                        </a>
+                     </li>
 
-      <!--==================== MAIN ====================-->
-      <main class="main">
-         <!--==================== HOME ====================-->
-         <section class="home section" id="home">
-            <div class="home__container container grid">
-               <div class="home__data">
-                  <h1 class="home__title">
-                     Browse & <br>
-                     Select E-Books
-                  </h1>
+                     <li className="nav__item">
+                        <a href="#discount" className="nav__link">
+                           <i className="ri-price-tag-3-line"></i>
+                           <span>Discount</span>
+                        </a>
+                     </li>
 
-                  <p class="home__description">
-                     Find the best e-books from your favorite 
-                     writers, explore hundreds of books with all 
-                     possible categories, take advantage of the 
-                     50% discount and much more. 
-                  </p>
+                     <li className="nav__item">
+                        <a href="#new" className="nav__link">
+                           <i className="ri-bookmark-line"></i>
+                           <span>New Books</span>
+                        </a>
+                     </li>
 
-                  <a href="#" class="button">Explore Now</a>
+                     <li className="nav__item">
+                        <a href="#testimonial" className="nav__link">
+                           <i className="ri-message-3-line"></i>
+                           <span>Testimonial</span>
+                        </a>
+                     </li>
+                  </ul>
                </div>
 
-               <div class="home__images">
-                  <div class="home__swiper swiper">
-                     <div class="swiper-wrapper">
-                        <article class="home__article swiper-slide">
-                           <img src="/home/assets/img/home-book-1.png" alt="image" class="home__img">
+               <div className="nav__actions">
+                  {/* Search button */}
+                  <i className="ri-search-line search-button" id="search-button"></i>
+
+                  {/* Login button */}
+                  <i
+                     className="ri-user-line login-button"
+                     id="login-button"
+                     onClick={() => navigate('/login')}
+                     style={{ cursor: 'pointer' }}
+                  ></i>
+
+                  {/* Theme button */}
+                  <i className="ri-moon-line change-theme" id="theme-button"></i>
+               </div>
+            </nav>
+         </header>
+
+         {/*==================== SEARCH ====================*/}
+         <div className="search" id="search-content">
+            <form action="" className="search__form">
+               <i className="ri-search-line search__icon"></i>
+               <input type="search" placeholder="What are you looking for?" className="search__input" />
+            </form>
+
+            <i className="ri-close-line search__close" id="search-close"></i>
+         </div>
+
+         {/*==================== LOGIN ====================*/}
+         <div className="login grid" id="login-content">
+            <form action="" className="login__form grid">
+               <h3 className="login__title">Log In</h3>
+
+               <div className="login__group grid">
+                  <div>
+                     <label htmlFor="login-mail" className="login__label">Email</label>
+                     <input type="email" placeholder="Write your email" className="login__input" id="login-email" />
+                  </div>
+
+                  <div>
+                     <label htmlFor="login-pass" className="login__label">Password</label>
+                     <input type="password" placeholder="Enter your password" className="login__input" id="login-pass" />
+                  </div>
+               </div>
+
+               <div>
+                  <span className="login__signup">
+                     You do not have an account? <a href="#">Sign up</a>
+                  </span>
+
+                  <a href="#" className="login__forgot">
+                     You forgot your password
+                  </a>
+
+                  <button type="submit" className="login__button button">Log In</button>
+               </div>
+            </form>
+
+            <i className="ri-close-line login__close" id="login-close"></i>
+         </div>
+
+         {/*==================== MAIN ====================*/}
+         <main className="main">
+            {/*==================== HOME ====================*/}
+            <section className="home section" id="home">
+               <div className="home__container container grid">
+                  <div className="home__data">
+                     <h1 className="home__title">
+                        Browse & <br />
+                        Select E-Books
+                     </h1>
+
+                     <p className="home__description">
+                        Find the best e-books from your favorite
+                        writers, explore hundreds of books with all
+                        possible categories, take advantage of the
+                        50% discount and much more.
+                     </p>
+
+                     <a href="#" className="button">Explore Now</a>
+                  </div>
+
+                  <div className="home__images">
+                     <div className="home__swiper swiper">
+                        <div className="swiper-wrapper">
+                           <article className="home__article swiper-slide">
+                              <img src="/home/assets/img/home-book-1.png" alt="image" className="home__img" />
+                           </article>
+
+                           <article className="home__article swiper-slide">
+                              <img src="/home/assets/img/home-book-2.png" alt="image" className="home__img" />
+                           </article>
+
+                           <article className="home__article swiper-slide">
+                              <img src="/home/assets/img/home-book-3.png" alt="image" className="home__img" />
+                           </article>
+
+                           <article className="home__article swiper-slide">
+                              <img src="/home/assets/img/home-book-4.png" alt="image" className="home__img" />
+                           </article>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            {/*==================== SERVICES ====================*/}
+            <section className="services section">
+               <div className="services__container container grid">
+                  <article className="services__card">
+                     <i className="ri-truck-line"></i>
+                     <h3 className="services__title">Free Shipping</h3>
+                     <p className="services__description">Order More Than $100</p>
+                  </article>
+
+                  <article className="services__card">
+                     <i className="ri-lock-2-line"></i>
+                     <h3 className="services__title">Secure Payment</h3>
+                     <p className="services__description">100% Secure Payment</p>
+                  </article>
+
+                  <article className="services__card">
+                     <i className="ri-customer-service-2-line"></i>
+                     <h3 className="services__title">24/7 Support</h3>
+                     <p className="services__description">Call us anytime</p>
+                  </article>
+               </div>
+            </section>
+
+            {/*==================== FEATURED ====================*/}
+            <section className="featured section" id="featured">
+               <h2 className="section__title">
+                  Featured Books
+               </h2>
+
+               <div className="featured__container container">
+                  <div className="featured__swiper swiper">
+                     <div className="swiper-wrapper">
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-1.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
                         </article>
 
-                        <article class="home__article swiper-slide">
-                           <img src="/home/assets/img/home-book-2.png" alt="image" class="home__img">
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-2.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
                         </article>
 
-                        <article class="home__article swiper-slide">
-                           <img src="/home/assets/img/home-book-3.png" alt="image" class="home__img">
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-3.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
                         </article>
 
-                        <article class="home__article swiper-slide">
-                           <img src="/home/assets/img/home-book-4.png" alt="image" class="home__img">
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-4.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
+                        </article>
+
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-5.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
+                        </article>
+
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-6.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
+                        </article>
+
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-7.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
+                        </article>
+
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-8.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
+                        </article>
+
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-9.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
+                        </article>
+
+                        <article className="featured__card swiper-slide">
+                           <img src="/home/assets/img/book-10.png" alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
+                        </article>
+                     </div>
+
+                     <div className="swiper-button-prev">
+                        <i className="ri-arrow-left-s-line"></i>
+                     </div>
+
+                     <div className="swiper-button-next">
+                        <i className="ri-arrow-right-s-line"></i>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            {/*==================== DISCOUNT ====================*/}
+            <section className="discount section" id="discount">
+               <div className="discount__container container grid">
+                  <div className="dicount__data">
+                     <h2 className="discount__title section__title">
+                        Up To 50% Discount
+                     </h2>
+
+                     <p className="discount__discription">
+                        Take advantage of the discount days we
+                        have for you, buy books from your favorite
+                        writers, the more you buy, the more
+                        discounts we have for you.
+                     </p>
+
+                     <a href="#" className="button">Shop Now</a>
+                  </div>
+
+                  <div className="discount__images">
+                     <img src="/home/assets/img/discount-book-1.png" alt="image" className="discount__img-1" />
+                     <img src="/home/assets/img/discount-book-2.png" alt="image" className="discount__img-2" />
+                  </div>
+               </div>
+            </section>
+
+            {/*==================== NEW BOOKS ====================*/}
+            <section className="new section" id="new">
+               <h2 className="section__title">
+                  New Books
+               </h2>
+
+               <div className="new__container container">
+                  <div className="new__swiper swiper">
+                     <div className="swiper-wrapper">
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-1.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-2.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-3.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-4.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-5.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-6.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-7.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-8.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-9.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-10.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                  </div>
+
+                  <div className="new__swiper swiper">
+                     <div className="swiper-wrapper">
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-10.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-9.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-8.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-7.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-6.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-5.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-4.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-3.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-2.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+
+                        <a href="#" className="new__card swiper-slide">
+                           <img src="/home/assets/img/book-1.png" alt="image" className="new__img" />
+
+                           <div>
+                              <h2 className="new__title">New Book</h2>
+                              <div className="new__prices">
+                                 <span className="new__discount">$7.99</span>
+                                 <span className="new__price">$14.99</span>
+                              </div>
+
+                              <div className="new__stars">
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-fill"></i>
+                                 <i className="ri-star-half-fill"></i>
+                              </div>
+                           </div>
+                        </a>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            {/*==================== JOIN ====================*/}
+            <section className="join section">
+               <div className="join__container">
+                  <img src="/home/assets/img/join-bg.jpg" alt="image" className="join__bg" />
+
+                  <div className="join__data container grid">
+                     <h2 className="join__title section__title">
+                        Subscribe To Receive <br />
+                        The Latest Updates
+                     </h2>
+
+                     <form action="" className="join__form">
+                        <input type="email" placeholder="Enter email" className="join__input" />
+                        <button type="button" className="join__button button">Subscribe</button>
+                     </form>
+                  </div>
+               </div>
+            </section>
+
+            {/*==================== TESTIMONIAL ====================*/}
+            <section className="testimonial section" id="testimonial">
+               <h2 className="section__title">
+                  Customer Opinions
+               </h2>
+
+               <div className="testimonial__container container">
+                  <div className="testimonial__swiper swiper">
+                     <div className="swiper-wrapper">
+                        <article className="testimonial__card swiper-slide">
+                           <img src="/home/assets/img/testimonial-perfil-1.png" alt="image" className="testimonial__img" />
+
+                           <h2 className="testimonial__title">Rial Loz</h2>
+                           <p className="testimonial__description">
+                              The best website to buy books, the purchase
+                              is very easy to make and has great discounts.
+                           </p>
+
+                           <div className="testimonial__stars">
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-half-fill"></i>
+                           </div>
+                        </article>
+
+                        <article className="testimonial__card swiper-slide">
+                           <img src="/home/assets/img/testimonial-perfil-2.png" alt="image" className="testimonial__img" />
+
+                           <h2 className="testimonial__title">Rial Loz</h2>
+                           <p className="testimonial__description">
+                              The best website to buy books, the purchase
+                              is very easy to make and has great discounts.
+                           </p>
+
+                           <div className="testimonial__stars">
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-half-fill"></i>
+                           </div>
+                        </article>
+
+                        <article className="testimonial__card swiper-slide">
+                           <img src="/home/assets/img/testimonial-perfil-3.png" alt="image" className="testimonial__img" />
+
+                           <h2 className="testimonial__title">Rial Loz</h2>
+                           <p className="testimonial__description">
+                              The best website to buy books, the purchase
+                              is very easy to make and has great discounts.
+                           </p>
+
+                           <div className="testimonial__stars">
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-half-fill"></i>
+                           </div>
+                        </article>
+
+                        <article className="testimonial__card swiper-slide">
+                           <img src="/home/assets/img/testimonial-perfil-4.png" alt="image" className="testimonial__img" />
+
+                           <h2 className="testimonial__title">Rial Loz</h2>
+                           <p className="testimonial__description">
+                              The best website to buy books, the purchase
+                              is very easy to make and has great discounts.
+                           </p>
+
+                           <div className="testimonial__stars">
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-half-fill"></i>
+                           </div>
                         </article>
                      </div>
                   </div>
                </div>
-            </div>
-         </section>
+            </section>
+         </main>
 
-         <!--==================== SERVICES ====================-->
-         <section class="services section">
-            <div class="services__container container grid">
-               <article class="services__card">
-                  <i class="ri-truck-line"></i>
-                  <h3 class="services__title">Free Shipping</h3>
-                  <p class="services__description">Order More Than $100</p>
-               </article>
+         {/*==================== FOOTER ====================*/}
+         <footer className="footer">
+            <div className="footer__container container grid">
+               <div>
+                  <a href="#" className="footer__logo" style={{ color: 'black' }}>
+                     <img src="/home/assets/logo.svg" alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
+                  </a>
 
-               <article class="services__card">
-                  <i class="ri-lock-2-line"></i>
-                  <h3 class="services__title">Secure Payment</h3>
-                  <p class="services__description">100% Secure Payment</p>
-               </article>
-
-               <article class="services__card">
-                  <i class="ri-customer-service-2-line"></i>
-                  <h3 class="services__title">24/7 Support</h3>
-                  <p class="services__description">Call us anytime</p>
-               </article>
-            </div>
-         </section>
-
-         <!--==================== FEATURED ====================-->
-         <section class="featured section" id="featured">
-            <h2 class="section__title">
-               Featured Books
-            </h2>
-
-            <div class="featured__container container">
-               <div class="featured__swiper swiper">
-                  <div class="swiper-wrapper">
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-1.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-                     
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-2.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-3.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-4.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-5.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-6.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-7.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-8.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-9.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-
-                     <article class="featured__card swiper-slide">
-                        <img src="/home/assets/img/book-10.png" alt="img" class="featured__img">
-
-                        <h2 class="featured__title">Featured Book</h2>
-                        <div class="featured__prices">
-                           <span class="featured__discount">$11.99</span>
-                           <span class="featured__price">$19.99</span>
-                        </div>
-
-                        <button class="button">Add To Card</button>
-
-                        <div class="featured__actions">
-                           <button><i class="ri-search-line"></i></button>
-                           <button><i class="ri-heart-3-line"></i></button>
-                           <button><i class="ri-eye-line"></i></button>
-                        </div>
-                     </article>
-                  </div>
-
-                  <div class="swiper-button-prev">
-                     <i class="ri-arrow-left-s-line"></i>
-                  </div>
-
-                  <div class="swiper-button-next">
-                     <i class="ri-arrow-right-s-line"></i>
-                  </div>
-               </div>
-            </div>
-         </section>
-
-         <!--==================== DISCOUNT ====================-->
-         <section class="discount section" id="discount">
-            <div class="discount__container container grid">
-               <div class="dicount__data">
-                  <h2 class="discount__title section__title">
-                     Up To 50% Discount
-                  </h2>
-
-                  <p class="discount__discription">
-                     Take advantage of the discount days we 
-                     have for you, buy books from your favorite 
-                     writers, the more you buy, the more 
-                     discounts we have for you.
+                  <p className="footer__description">
+                     Find and explore the best <br />
+                     eBooks from all your <br />
+                     favorite writers.
                   </p>
-
-                  <a href="#" class="button">Shop Now</a>
                </div>
 
-               <div class="discount__images">
-                  <img src="/home/assets/img/discount-book-1.png" alt="image" class="discount__img-1">
-                  <img src="/home/assets/img/discount-book-2.png" alt="image" class="discount__img-2">
-               </div>
-            </div>
-         </section>
+               <div className="footer__data grid">
+                  <div>
+                     <h3 className="footer__title">About</h3>
 
-         <!--==================== NEW BOOKS ====================-->
-         <section class="new section" id="new">
-            <h2 class="section__title">
-               New Books
-            </h2>
+                     <ul className="footer__links">
+                        <li>
+                           <a href="#" className="footer__link">Awards</a>
+                        </li>
 
-            <div class="new__container container">
-               <div class="new__swiper swiper">
-                  <div class="swiper-wrapper">
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-1.png" alt="image" class="new__img">
+                        <li>
+                           <a href="#" className="footer__link">FAQs</a>
+                        </li>
 
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
+                        <li>
+                           <a href="#" className="footer__link">Privacy policy</a>
+                        </li>
 
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-2.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-3.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-4.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-5.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-6.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-7.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-8.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-9.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-10.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
+                        <li>
+                           <a href="#" className="footer__link">Terms of services</a>
+                        </li>
+                     </ul>
                   </div>
-               </div>
 
-               <div class="new__swiper swiper">
-                  <div class="swiper-wrapper">
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-10.png" alt="image" class="new__img">
+                  <div>
+                     <h3 className="footer__title">Company</h3>
 
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
+                     <ul className="footer__links">
+                        <li>
+                           <a href="#" className="footer__link">Blogs</a>
+                        </li>
 
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
+                        <li>
+                           <a href="#" className="footer__link">Community</a>
+                        </li>
 
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-9.png" alt="image" class="new__img">
+                        <li>
+                           <a href="#" className="footer__link">Our team</a>
+                        </li>
 
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
+                        <li>
+                           <a href="#" className="footer__link">Help center</a>
+                        </li>
+                     </ul>
+                  </div>
 
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
+                  <div>
+                     <h3 className="footer__title">Contact</h3>
 
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-8.png" alt="image" class="new__img">
+                     <ul className="footer__links">
+                        <li>
+                           <address className="footer__info">
+                              Cairo, Egypt
+                           </address>
+                        </li>
 
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
+                        <li>
+                           <address className="footer__info">
+                              abdelmohymen21@gmail.com <br />
+                              01124422202
+                           </address>
+                        </li>
+                     </ul>
+                  </div>
 
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
+                  <div>
+                     <h3 className="footer__title">Social</h3>
 
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-7.png" alt="image" class="new__img">
+                     <div className="footer__social">
+                        <a href="https://www.facebook.com/" target="_blank" className="footer__social-link">
+                           <i className="ri-facebook-circle-line"></i>
+                        </a>
 
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
+                        <a href="https://www.instagram.com/" target="_blank" className="footer__social-link">
+                           <i className="ri-instagram-line"></i>
+                        </a>
 
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-6.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-5.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-4.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-3.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-2.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
-
-                     <a href="#" class="new__card swiper-slide">
-                        <img src="/home/assets/img/book-1.png" alt="image" class="new__img">
-
-                        <div>
-                           <h2 class="new__title">New Book</h2>
-                           <div class="new__prices">
-                              <span class="new__discount">$7.99</span>
-                              <span class="new__price">$14.99</span>
-                           </div>
-
-                           <div class="new__stars">
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-fill"></i>
-                              <i class="ri-star-half-fill"></i>
-                           </div>
-                        </div>
-                     </a>
+                        <a href="https://twitter.com/" target="_blank" className="footer__social-link">
+                           <i className="ri-twitter-x-line"></i>
+                        </a>
+                     </div>
                   </div>
                </div>
             </div>
-         </section>
 
-         <!--==================== JOIN ====================-->
-         <section class="join section">
-            <div class="join__container">
-               <img src="/home/assets/img/join-bg.jpg" alt="image" class="join__bg">
+            <span className="footer__copy">
+               &#169; All Rights Reserved By Abdelmohymen
+            </span>
+         </footer>
 
-               <div class="join__data container grid">
-                  <h2 class="join__title section__title">
-                     Subscribe To Receive <br>
-                     The Latest Updates
-                  </h2>
-
-                  <form action="" class="join__form">
-                     <input type="email" placeholder="Enter email" class="join__input">
-                     <button type="button" class="join__button button">Subscribe</button>
-                  </form>
-               </div>
-            </div>
-         </section>
-
-         <!--==================== TESTIMONIAL ====================-->
-         <section class="testimonial section" id="testimonial">
-            <h2 class="section__title">
-               Customer Opinions
-            </h2>
-
-            <div class="testimonial__container container">
-               <div class="testimonial__swiper swiper">
-                  <div class="swiper-wrapper">
-                     <article class="testimonial__card swiper-slide">
-                        <img src="/home/assets/img/testimonial-perfil-1.png" alt="image" class="testimonial__img">
-
-                        <h2 class="testimonial__title">Rial Loz</h2>
-                        <p class="testimonial__description">
-                           The best website to buy books, the purchase 
-                           is very easy to make and has great discounts.
-                        </p>
-
-                        <div class="testimonial__stars">
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-half-fill"></i>
-                        </div>
-                     </article>
-
-                     <article class="testimonial__card swiper-slide">
-                        <img src="/home/assets/img/testimonial-perfil-2.png" alt="image" class="testimonial__img">
-
-                        <h2 class="testimonial__title">Rial Loz</h2>
-                        <p class="testimonial__description">
-                           The best website to buy books, the purchase 
-                           is very easy to make and has great discounts.
-                        </p>
-
-                        <div class="testimonial__stars">
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-half-fill"></i>
-                        </div>
-                     </article>
-
-                     <article class="testimonial__card swiper-slide">
-                        <img src="/home/assets/img/testimonial-perfil-3.png" alt="image" class="testimonial__img">
-
-                        <h2 class="testimonial__title">Rial Loz</h2>
-                        <p class="testimonial__description">
-                           The best website to buy books, the purchase 
-                           is very easy to make and has great discounts.
-                        </p>
-
-                        <div class="testimonial__stars">
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-half-fill"></i>
-                        </div>
-                     </article>
-
-                     <article class="testimonial__card swiper-slide">
-                        <img src="/home/assets/img/testimonial-perfil-4.png" alt="image" class="testimonial__img">
-
-                        <h2 class="testimonial__title">Rial Loz</h2>
-                        <p class="testimonial__description">
-                           The best website to buy books, the purchase 
-                           is very easy to make and has great discounts.
-                        </p>
-
-                        <div class="testimonial__stars">
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-fill"></i>
-                           <i class="ri-star-half-fill"></i>
-                        </div>
-                     </article>
-                  </div>
-               </div>
-            </div>
-         </section>
-      </main>
-
-      <!--==================== FOOTER ====================-->
-      <footer class="footer">
-         <div class="footer__container container grid">
-            <div>
-               <a href="#" class="footer__logo" style="color:black;">
-                  <img src="/home/assets/logo.svg" alt="Book Hive Logo" style="width: 30px; height: auto;"> Book Hive
-               </a>
-
-               <p class="footer__description">
-                  Find and explore the best <br>
-                  eBooks from all your <br>
-                  favorite writers.
-               </p>
-            </div>
-
-            <div class="footer__data grid">
-               <div>
-                  <h3 class="footer__title">About</h3>
-
-                  <ul class="footer__links">
-                     <li>
-                        <a href="#" class="footer__link">Awards</a>
-                     </li>
-
-                     <li>
-                        <a href="#" class="footer__link">FAQs</a>
-                     </li>
-
-                     <li>
-                        <a href="#" class="footer__link">Privacy policy</a>
-                     </li>
-
-                     <li>
-                        <a href="#" class="footer__link">Terms of services</a>
-                     </li>
-                  </ul>
-               </div>
-
-               <div>
-                  <h3 class="footer__title">Company</h3>
-
-                  <ul class="footer__links">
-                     <li>
-                        <a href="#" class="footer__link">Blogs</a>
-                     </li>
-
-                     <li>
-                        <a href="#" class="footer__link">Community</a>
-                     </li>
-
-                     <li>
-                        <a href="#" class="footer__link">Our team</a>
-                     </li>
-
-                     <li>
-                        <a href="#" class="footer__link">Help center</a>
-                     </li>
-                  </ul>
-               </div>
-
-               <div>
-                  <h3 class="footer__title">Contact</h3>
-
-                  <ul class="footer__links">
-                     <li>
-                        <address class="footer__info">
-                           Cairo, Egypt 
-                        </address>
-                     </li>
-
-                     <li>
-                        <address class="footer__info">
-                           abdelmohymen21@gmail.com <br>
-                           01124422202
-                        </address>
-                     </li>
-                  </ul>
-               </div>
-
-               <div>
-                  <h3 class="footer__title">Social</h3>
-
-                  <div class="footer__social">
-                     <a href="https://www.facebook.com/" target="_blank" class="footer__social-link">
-                        <i class="ri-facebook-circle-line"></i>
-                     </a>
-
-                     <a href="https://www.instagram.com/" target="_blank" class="footer__social-link">
-                        <i class="ri-instagram-line"></i>
-                     </a>
-
-                     <a href="https://twitter.com/" target="_blank" class="footer__social-link">
-                        <i class="ri-twitter-x-line"></i>
-                     </a>
-                  </div>
-               </div>
-            </div>
-         </div>
-
-         <span class="footer__copy">
-            &#169; All Rights Reserved By Abdelmohymen
-         </span>
-      </footer>
-
-      <!--========== SCROLL UP ==========-->
-      <a href="#" class="scrollup" id="scroll-up">
-         <i class="ri-arrow-up-line"></i>
-      </a>
-
-      <!--=============== SCROLLREVEAL ===============-->
-      <script src="assets/js/scrollreveal.min.js"></script>
-
-      <!--=============== SWIPER JS ===============-->
-      <script src="assets/js/swiper-bundle.min.js"></script>
-
-      <!--=============== MAIN JS ===============-->
-      <script src="assets/js/main.js"></script>
-   </body>
-`
-        }} />
-    );
+         {/*========== SCROLL UP ==========*/}
+         <a href="#" className="scrollup" id="scroll-up">
+            <i className="ri-arrow-up-line"></i>
+         </a>
+      </div>
+   );
 };
 
 export default Home;
-
-
