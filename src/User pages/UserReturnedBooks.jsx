@@ -15,13 +15,12 @@ function UserReturnedBooks() {
     : returnedBooks;
 
   const columns = [
-    { header: 'Transaction ID', accessor: 'transaction_id' },
-    { header: 'Book ID', accessor: 'book_id' },
+    { header: 'ID', accessor: 'transaction_id' },
     { header: 'User ID', accessor: 'user_id' },
-    { header: 'Borrow Date', accessor: 'created_at' },
+    { header: 'Amount', accessor: 'fine_amount' },
     { header: 'Due Date', accessor: 'due_date' },
+    { header: 'Date & Time', accessor: 'created_at' },
     { header: 'Return Date', accessor: 'return_date' },
-    { header: 'Status', accessor: 'status' },
     { header: 'Action', accessor: 'action' },
   ];
 
@@ -34,6 +33,7 @@ function UserReturnedBooks() {
     created_at: book.created_at ? new Date(book.created_at).toLocaleDateString() : 'N/A',
     due_date: book.due_date ? new Date(book.due_date).toLocaleDateString() : 'N/A',
     return_date: book.return_date ? new Date(book.return_date).toLocaleDateString() : 'N/A',
+    fine_amount: book.fine_amount ? `$${book.fine_amount}` : 'N/A',
   }));
 
   return (
