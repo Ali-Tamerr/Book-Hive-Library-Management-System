@@ -24,7 +24,7 @@ function Login() {
 
         try {
             const user = await login(email, password);
-            if (user.role === 'Admin' || user.role === 'Librarian') {
+            if (user.role === 'Super Admin' || user.role === 'Admin' || user.role === 'Librarian') {
                 navigate('/admin/dashboard');
             } else if (user.role === 'User' || user.role === 'Member') {
                 navigate('/user/dashboard');

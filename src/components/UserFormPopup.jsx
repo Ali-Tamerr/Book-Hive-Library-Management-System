@@ -2,9 +2,12 @@ import React from 'react';
 import { Users } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 import NFCReaderButton from './NFCReaderButton.jsx';
+import { getCurrentUser } from '../services/auth.api';
 
 function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUser, setShowPopup, setEditMode }) {
   const userIdInputRef = React.useRef(null);
+  const currentUser = getCurrentUser();
+  const isSuperAdmin = currentUser?.role === 'Super Admin';
 
   const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -14,51 +17,64 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
     setFormData(prevData => ({ ...prevData, user_id: data }));
   };
 
-  const inputs = [
+  const baseInputs = [
     { name: 'name', type: 'text', placeholder: 'Name', required: true, autocomplete: 'name' },
     { name: 'email', type: 'email', placeholder: 'Email', required: true, autocomplete: 'email' },
     { name: 'phone_number', type: 'text', placeholder: 'Contact No', autocomplete: 'tel' },
     { name: 'password', type: 'password', placeholder: editMode ? "Password (leave blank to keep current)" : "Password", required: !editMode, autocomplete: editMode ? 'off' : 'new-password' },
-    {
-      name: 'role',
-      type: 'select',
-      placeholder: 'Role',
-      required: true,
-      autocomplete: 'off',
-      options: [
-        { value: 'User', label: 'User' },
-        { value: 'Admin', label: 'Admin' },
-      ],
-    },
-    {
-      name: 'user_id',
-      type: 'custom',
-      render: (data, onChange) => (
-        <div>
-          <div className="flex items-center gap-2">
-            <NFCReaderButton onDataReceived={handleNFCData} inputRef={userIdInputRef} />
-            <input
-              ref={userIdInputRef}
-              name="user_id"
-              type="text"
-              value={data.user_id || ''}
-              onChange={onChange}
-              placeholder="User ID"
-              required
-              autoComplete="off"
-              className="w-full h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
-            />
-          </div>
-        </div>
-      ),
-    },
   ];
 
-  const customLayout = [
-    { columns: 3, inputs: ['name', 'phone_number', 'role'] },
-    { columns: 2, inputs: ['email', 'password'] },
-    { columns: 1, inputs: ['user_id'] },
-  ];
+  const roleInput = isSuperAdmin ? {
+    name: 'role',
+    type: 'select',
+    placeholder: 'Role',
+    required: true,
+    autocomplete: 'off',
+    options: [
+      { value: 'User', label: 'User' },
+      { value: 'Admin', label: 'Admin' },
+      { value: 'Super Admin', label: 'Super Admin' },
+    ],
+  } : null;
+
+  const userIdInput = {
+    name: 'user_id',
+    type: 'custom',
+    render: (data, onChange) => (
+      <div>
+        <div className="flex items-center gap-2">
+          <NFCReaderButton onDataReceived={handleNFCData} inputRef={userIdInputRef} />
+          <input
+            ref={userIdInputRef}
+            name="user_id"
+            type="text"
+            value={data.user_id || ''}
+            onChange={onChange}
+            placeholder="User ID"
+            required
+            autoComplete="off"
+            className="w-full h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+          />
+        </div>
+      </div>
+    ),
+  };
+
+  const inputs = roleInput
+    ? [...baseInputs, roleInput, userIdInput]
+    : [...baseInputs, userIdInput];
+
+  const customLayout = roleInput
+    ? [
+      { columns: 3, inputs: ['name', 'phone_number', 'role'] },
+      { columns: 2, inputs: ['email', 'password'] },
+      { columns: 1, inputs: ['user_id'] },
+    ]
+    : [
+      { columns: 2, inputs: ['name', 'phone_number'] },
+      { columns: 2, inputs: ['email', 'password'] },
+      { columns: 1, inputs: ['user_id'] },
+    ];
 
   return (
     <FormLayout

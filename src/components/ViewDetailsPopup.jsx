@@ -2,8 +2,12 @@ import React from 'react';
 import Popup from './Popup.jsx';
 import FormButton from './FormButton.jsx';
 import { ReceiptText } from 'lucide-react';
+import { getCurrentUser } from '../services/auth.api';
 
 const ViewDetailsPopup = ({ show, onClose, title = "View Details", children, data, savedBy }) => {
+    const currentUser = getCurrentUser();
+    const isSuperAdmin = currentUser?.role === 'Super Admin';
+
     return (
         <Popup
             show={show}
@@ -24,16 +28,18 @@ const ViewDetailsPopup = ({ show, onClose, title = "View Details", children, dat
                                     </div>
                                 ))}
                             </div>
-                            <div className='w-[1px] self-stretch bg-[#828282]'></div>
-                            <div className='flex flex-1 justify-center items-center'>
-                                {savedBy && (
-                                    <p>
-                                        Saved by:
-                                        <br /><br />
-                                        <span>{savedBy.name} ({savedBy.role})</span>
-                                    </p>
-                                )}
-                            </div>
+                            {isSuperAdmin && savedBy && (
+                                <>
+                                    <div className='w-[1px] self-stretch bg-[#828282]'></div>
+                                    <div className='flex flex-1 justify-center items-center'>
+                                        <p>
+                                            Saved by:
+                                            <br /><br />
+                                            <span>{savedBy.name} ({savedBy.role})</span>
+                                        </p>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     )}
 
