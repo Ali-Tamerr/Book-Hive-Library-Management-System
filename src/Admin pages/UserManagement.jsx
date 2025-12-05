@@ -10,8 +10,12 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
+import { getCurrentUser } from '../services/auth.api';
+
 function UserManagement({ searchValue, setSearchValue }) {
-  // Search searches: Name, Email, User ID
+  const currentUser = getCurrentUser();
+  const isSuperAdmin = currentUser?.role === 'Super Admin';
+
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -42,7 +46,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         name: formData.name,
         email: formData.email,
         phone_number: formData.phone_number,
-        role: formData.role,
+        role: isSuperAdmin ? formData.role : 'User',
         status: formData.status,
         password_hash: formData.password
       };

@@ -42,7 +42,7 @@ function UserLibraryLane() {
                 <td className={styles.td}>{categories.find(cat => cat.category_id === book.category_id)?.category_name || 'N/A'}</td>
                 <td className={styles.td}>{book.quantity}</td>
                 <td className={styles.td}>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${book.quantity > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium text-black`}>
                     {book.quantity > 0 ? 'Available' : 'Borrowed'}
                   </span>
                 </td>

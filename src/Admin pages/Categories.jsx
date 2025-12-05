@@ -10,6 +10,8 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
+import { useBooks } from '../hooks/useBooks.js';
+
 function Categories({ searchValue, setSearchValue }) {
   // Search searches: Name, Description
   const [showPopup, setShowPopup] = useState(false);
@@ -18,6 +20,8 @@ function Categories({ searchValue, setSearchValue }) {
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [showViewDetails, setShowViewDetails] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [deleteWarning, setDeleteWarning] = useState(null);
+  const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -25,6 +29,7 @@ function Categories({ searchValue, setSearchValue }) {
   });
 
   const { data: categories = [], isLoading } = useCategories();
+  const { data: books = [] } = useBooks();
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
   const deleteCategoryMutation = useDeleteCategory();
@@ -63,11 +68,22 @@ function Categories({ searchValue, setSearchValue }) {
 
   const handleDelete = (id) => {
     setCategoryToDelete(id);
+
+    // Check if any book uses this category
+    const linkedBooks = books.filter(book => book.category_id === id);
+    if (linkedBooks.length > 0) {
+      setDeleteWarning(`Cannot delete this category because it is linked to ${linkedBooks.length} book(s).`);
+      setIsDeleteDisabled(true);
+    } else {
+      setDeleteWarning(null);
+      setIsDeleteDisabled(false);
+    }
+
     setShowDeleteConfirm(true);
   };
 
   const confirmDelete = async () => {
-    if (categoryToDelete) {
+    if (categoryToDelete && !isDeleteDisabled) {
       try {
         await deleteCategoryMutation.mutateAsync(categoryToDelete);
         setShowDeleteConfirm(false);
@@ -144,9 +160,13 @@ function Categories({ searchValue, setSearchValue }) {
         onClose={() => {
           setShowDeleteConfirm(false);
           setCategoryToDelete(null);
+          setDeleteWarning(null);
+          setIsDeleteDisabled(false);
         }}
         onConfirm={confirmDelete}
         title="Delete Category"
+        warningMessage={deleteWarning}
+        isDeleteDisabled={isDeleteDisabled}
       />
       <ViewDetailsPopup
         show={showViewDetails}
