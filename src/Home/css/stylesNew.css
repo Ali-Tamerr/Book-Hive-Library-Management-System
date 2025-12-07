@@ -51,50 +51,50 @@
 }
 
 /*=============== BASE ===============*/
-* {
+.home-page * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-html {
+.home-page {
   scroll-behavior: smooth;
 }
 
-body,
-input,
-button {
+.home-page,
+.home-page input,
+.home-page button {
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
 }
 
-body {
+.home-page {
   background-color: var(--body-color);
   color: var(--text-color);
   transition: background-color .4s;
 }
 
-input,
-button {
+.home-page input,
+.home-page button {
   border: none;
   outline: none;
 }
 
-h1, h2, h3, h4 {
+.home-page h1, .home-page h2, .home-page h3, .home-page h4 {
   color: var(--title-color);
   font-family: var(--second-font);
   font-weight: var(--font-medium);
 }
 
-ul {
+.home-page ul {
   list-style: none;
 }
 
-a {
+.home-page a {
   text-decoration: none;
 }
 
-img {
+.home-page img {
   display: block;
   max-width: 100%;
   height: auto;
