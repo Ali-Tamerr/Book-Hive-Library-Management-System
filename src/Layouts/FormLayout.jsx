@@ -48,18 +48,37 @@ const FormLayout = ({
     if (customLayout) {
       return (
         <div className="space-y-4">
-          {customLayout.map((row, rowIndex) => (
-            <div
-              key={rowIndex}
-              className={`grid gap-4`}
-              style={{ gridTemplateColumns: `repeat(${row.columns}, 1fr)` }}
-            >
-              {row.inputs.map((inputName) => {
-                const input = inputs.find(inp => inp.name === inputName);
-                return input ? renderInput(input) : null;
-              })}
-            </div>
-          ))}
+          {customLayout.map((row, rowIndex) => {
+            if (row.type === 'flex') {
+              return (
+                <div key={rowIndex} className="flex gap-4">
+                  {row.inputs.map((inputConfig) => {
+                    const inputName = typeof inputConfig === 'string' ? inputConfig : inputConfig.name;
+                    const flexValue = typeof inputConfig === 'object' ? inputConfig.flex : 1;
+                    const input = inputs.find(inp => inp.name === inputName);
+                    return input ? (
+                      <div key={inputName} style={{ flex: flexValue }}>
+                        {renderInput(input)}
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={rowIndex}
+                className={`grid gap-4`}
+                style={{ gridTemplateColumns: `repeat(${row.columns}, 1fr)` }}
+              >
+                {row.inputs.map((inputName) => {
+                  const input = inputs.find(inp => inp.name === inputName);
+                  return input ? renderInput(input) : null;
+                })}
+              </div>
+            );
+          })}
         </div>
       );
     }
@@ -76,8 +95,8 @@ const FormLayout = ({
       <form onSubmit={onSubmit} className='flex flex-col gap-14'>
         <div className='px-10'>
 
-        {renderFormContent()}
-        {children}
+          {renderFormContent()}
+          {children}
         </div>
         <div className={`flex justify-between gap-3 ${inputs.length > 6 && !customLayout ? 'col-span-2' : ''}`}>
           <FormButton onClick={onCancel}>
