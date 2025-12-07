@@ -1,109 +1,169 @@
 ﻿# Library Management System — Backend Data Contract (Machine & Frontend Friendly)
 
-This document is the authoritative, machine-readable contract for frontend engineers and AI agents that generate UI, validation, and API clients. Use the exact property names, types and rules listed here when generating types or request/response shapes. Do not include navigation properties in write payloads — send only scalar fields and foreign-key IDs.
+This README is the authoritative, machine- and frontend-consumable contract for API shapes, field names, types, validation rules and endpoints. It is written for frontend engineers and AI models that generate UI, validation logic and API clients. Use the exact property names and rules listed below when generating types or request/response shapes.
 
-Quick rules for AI models and frontend devs
-
+Principles (must-follow)
 - Use property names exactly as shown (including casing).
-- Send only scalar fields and FK IDs in POST/PUT payloads; never send navigation collections or complex objects.
-- Respect required fields, string lengths and numeric types.
-- For enum-like columns, send one of the allowed string values.
-- Timestamps are ISO-8601 strings. If omitted where default exists, the server will set defaults.
+- Send only scalar fields and foreign-key IDs in POST/PUT payloads. Do NOT send navigation objects or collections (no nested User/Category objects) except where the contract explicitly allows an array of FK-bearing objects (e.g. `BookCopies`).
+- Timestamps are ISO-8601 strings. If omitted and a default exists, the server will set the default value.
+- For enum-like columns, send one of the allowed string values exactly.
+- Respect required fields, string length limits and numeric types.
 
----
+Type definitions (canonical, exact names and types)
+- Branch
+  - `branch_id` (int, identity, PK)
+  - `name` (string, required)
+  - `location` (string, required)
+  - `contact_number` (string, nullable)
 
-Summary of recent backend changes (important for frontend/AI clients)
+- Category
+  - `category_id` (int, identity, PK)
+  - `category_name` (string, required, unique)
 
-- The model originally named `Book` was renamed to `BookDetail` to reflect the `BookDetails` table. Public controller routes remain under `/api/Books` for compatibility.
-- New entity `BookCopy` was added to represent physical copies. Each copy has a unique `book_copy_id` (string) and an FK `book_id` (int) referencing `BookDetail.book_id`.
-- The system now enforces that `BookDetail.quantity` equals the number of `BookCopy` rows linked to that `book_id`. Controllers validate and persist copies accordingly.
-- `BooksController` was updated to accept `BookCopies` in POST/PUT payloads (optional). If provided, the controller requires `BookCopies.Count == quantity`.
-- All create/update operations that affect a `BookDetail` and its `BookCopies` are performed inside explicit EF Core transactions to guarantee atomicity.
-- A new `BookCopiesController` was added to manage individual copies. Creating or deleting a `BookCopy` adjusts the parent `BookDetail.quantity` inside a transaction.
+- User
+  - `user_id` (string, PK)
+  - `name` (string, nullable)
+  - `email` (string, required, unique)
+  - `password_hash` (string, nullable)
+  - `phone_number` (string, unique, nullable)
+  - `role` (string, required) — allowed: `"Super Admin"`, `"Admin"`, `"User"`
+  - `status` (string, required, default: `"Active"`) — allowed: `"Banned"`, `"Inactive"`, `"Active"`
+  - `plan` (string, nullable) — allowed: `"Discover"`, `"Enterprise"`, `"Professional"`
+  - `created_at` (timestamp, default: now())
+  - `updated_at` (timestamp, default: now())
+  - `last_activity_at` (timestamp, nullable)
 
-Why this matters to frontend
+- BookDetail (represents the book meta)
+  - `book_id` (int, PK)
+  - `name` (string, required)
+  - `category_id` (int, FK -> `Categories.category_id`)
+  - `quantity` (short/int16, required) — invariant: must be >= 0
+  - `sale_price` (numeric, nullable)
+  - `image_url` (text, nullable)
+  - `created_at` (timestamp, default: now())
+  - `updated_at` (timestamp, default: now())
 
-- Your book form should collect `quantity` and then prompt the user to enter exactly `quantity` copy IDs in the popup. The frontend should send the `BookCopies` array when creating or updating a `BookDetail` if it intends to set or change the copy IDs.
-- If the frontend updates `quantity` but does not send `BookCopies`, the server requires that the existing number of copies already matches the updated `quantity`. Otherwise the request will be rejected with 400 and the client should send the exact list of `book_copy_id`s.
-- When removing a single physical copy (e.g., borrowed and removed from inventory), use `DELETE /api/BookCopies/{book_copy_id}`. The controller will verify the copy is not referenced by reservations/transactions/sales and will decrement `BookDetail.quantity` atomically.
+- BookCopy (physical copy)
+  - `book_copy_id` (string, PK)
+  - `book_id` (int, FK -> `BookDetails.book_id`)
+  - `branch_id` (int, FK -> `Branches.branch_id`)
+  - Note: Row-Level Security (RLS) is enabled on this table in the DB. API enforces access rules as implemented in backend.
 
----
+- BookReservation
+  - `reservation_id` (short/int16, identity, PK)
+  - `user_id` (string, FK -> `Users.user_id`)
+  - `book_id` (string, FK -> `BookCopies.book_copy_id`)
+  - `reservation_date` (timestamp, default: now())
+  - `expiration_date` (timestamp, nullable)
+  - `status` (string, default: `"Active"`) — allowed: `"Fulfilled"`, `"Cancelled"`, `"Active"`
+  - `reserved_quantity` (int, nullable)
+  - `is_confirmed` (boolean, nullable)
 
-API changes and endpoints (high level)
+- BookTransaction
+  - `transaction_id` (short/int16, identity, PK)
+  - `user_id` (string, FK -> `Users.user_id`)
+  - `book_id` (string, FK -> `BookCopies.book_copy_id`)
+  - `transaction_type` (string, required) — allowed: `"Check-In"`, `"Check-Out"`
+  - `borrow_type` (string, default: `"Borrow"`) — allowed: `"Purchase"`, `"Borrow"`
+  - `status` (string, default: `"Pending"`) — allowed: `"Overdue"`, `"Pending"`, `"Completed"`
+  - `due_date` (timestamp, nullable)
+  - `return_date` (timestamp, nullable)
+  - `fine_amount` (numeric, default: 0.00)
+  - `created_at` (timestamp, default: now())
 
-Books (BookDetail resource)
+Contract rules and validation (server-enforced)
+- Always send scalar fields and FK IDs only. Example: use `category_id` not a nested `Category` object.
+- BookDetail / BookCopies invariants:
+  - If a BookDetail POST/PUT includes a `BookCopies` array, then `BookCopies.Count` MUST equal `quantity`. Each element in `BookCopies` must include `book_copy_id` (string) and `branch_id` (int).
+  - If the BookDetail update changes `quantity` but `BookCopies` is omitted, the server will validate that the existing number of copies for that `book_id` equals the new `quantity`; otherwise the request will be rejected with 400 and the client must send `BookCopies` to reconcile.
+  - `book_copy_id` values must be unique across `BookCopies`.
+- BookCopy operations (create/delete) update `BookDetail.quantity` atomically and are performed in transactions.
+- Deleting a BookCopy is blocked if the copy is referenced by reservations, transactions or other domain rules.
 
-- GET `/api/Books` — returns list of `BookDTO` (summary plus aggregated user names).
-- GET `/api/Books/{id}` — return single BookDetail DTO by `book_id` (integer).
-- GET `/api/Books/title/{t}` — search by title.
-- POST `/api/Books` — create BookDetail; optionally include `BookCopies` array. If `BookCopies` present, its length must equal `quantity`.
-- PUT `/api/Books/{id}` — update BookDetail; optionally include `BookCopies` to replace current copies. Must match `quantity` if provided.
-- DELETE `/api/Books/{id}` — delete BookDetail and its copies.
+API endpoints (canonical list)
+- Branches
+  - GET    `/api/Branches`                — returns `Branch[]`
+  - GET    `/api/Branches/{branch_id}`    — returns single `Branch`
+  - POST   `/api/Branches`                — create Branch; body: `{ name, location, contact_number? }`
+  - PUT    `/api/Branches/{branch_id}`    — update Branch
+  - DELETE `/api/Branches/{branch_id}`    — delete Branch
 
-BookCopies
+- Categories
+  - GET    `/api/Categories`
+  - POST   `/api/Categories`               — body: `{ category_name }`
 
-- GET `/api/BookCopies` — list copies.
-- GET `/api/BookCopies/{id}` — get single copy by `book_copy_id`.
-- POST `/api/BookCopies` — create single copy. Body: `{ "book_copy_id": "BC-0001", "book_id": 42 }`. This increments `BookDetail.quantity`.
-- DELETE `/api/BookCopies/{id}` — delete single copy. Controller prevents deletion if the copy is referenced by reservations/transactions/sales; on success decrements `BookDetail.quantity`.
+- Users
+  - GET    `/api/Users`
+  - GET    `/api/Users/{user_id}`
+  - POST   `/api/Users`                    — body: `{ user_id, email, name?, password_hash?, phone_number?, role?, status?, plan? }`
+  - PUT    `/api/Users/{user_id}`
 
-Validation rules enforced by controllers
+- Books (BookDetail)
+  - GET    `/api/Books`                    — returns `BookDTO[]` (summary + optional aggregates)
+  - GET    `/api/Books/{book_id}`
+  - GET    `/api/Books/title/{t}`          — search by title
+  - POST   `/api/Books`                    — create BookDetail; body: scalar book fields and optional `BookCopies` array
+  - PUT    `/api/Books/{book_id}`          — update BookDetail; optional `BookCopies` array replaces existing copies (must match `quantity`)
+  - DELETE `/api/Books/{book_id}`          — delete BookDetail and its copies
 
-- When `BookCopies` array is provided with a BookDetail create/update, controllers validate `BookCopies.Count == quantity`.
-- When updating quantity without a `BookCopies` array, controllers validate the existing copy count equals the new `quantity`.
-- `BookCopies` must have unique `book_copy_id` values.
-- Deleting a `BookCopy` is blocked if there are related reservations, transactions or sales referencing that `book_copy_id`.
+- BookCopies
+  - GET    `/api/BookCopies`
+  - GET    `/api/BookCopies/{book_copy_id}`
+  - POST   `/api/BookCopies`                — create single copy; body: `{ "book_copy_id": "BC-0001", "book_id": 42, "branch_id": 1 }`
+  - DELETE `/api/BookCopies/{book_copy_id}`
 
-Atomic behavior and transactions
+- BookReservations
+  - GET    `/api/BookReservations`
+  - GET    `/api/BookReservations/{reservation_id}`
+  - POST   `/api/BookReservations`          — body: `{ "user_id": "u-1", "book_id": "BC-0001", "expiration_date"?: "ISO-8601", "reserved_quantity"?: 1, "is_confirmed"?: true }`
+  - PUT    `/api/BookReservations/{reservation_id}`
+  - DELETE `/api/BookReservations/{reservation_id}`
 
-- Add and Edit flows that affect both `BookDetail` and `BookCopies` use explicit EF Core transactions so the operations commit together. If any step fails the transaction is rolled back.
-- Independent copy operations in `BookCopiesController` (create/delete) also use transactions and update the parent `BookDetail.quantity` atomically.
+- BookTransactions
+  - GET    `/api/BookTransactions`
+  - GET    `/api/BookTransactions/{transaction_id}`
+  - POST   `/api/BookTransactions`          — body: `{ "user_id": "u-1", "book_id": "BC-0001", "transaction_type": "Check-Out", "borrow_type"?: "Borrow", "due_date"?: "ISO-8601" }`
+  - PUT    `/api/BookTransactions/{transaction_id}`
 
-Frontend guidance and examples
+Examples (exact shapes)
+- Create BookDetail with copies (server will set timestamps):
 
-- Frontend form flow for creating/updating books:
-  1. User sets `quantity` in the book form.
-  2. User clicks "Enter copy IDs" → popup opens and expects exactly `quantity` entries.
-  3. Frontend sends BookDetail POST/PUT with `BookCopies` array when creating/updating copies.
-
-- Example POST payload with copies:
-
-```json
 {
   "name": "Clean Code",
   "category_id": 4,
   "quantity": 3,
   "sale_price": 39.99,
+  "image_url": "https://.../clean-code.jpg",
   "BookCopies": [
-    { "book_copy_id": "BC-0001" },
-    { "book_copy_id": "BC-0002" },
-    { "book_copy_id": "BC-0003" }
+    { "book_copy_id": "BC-0001", "branch_id": 1 },
+    { "book_copy_id": "BC-0002", "branch_id": 1 },
+    { "book_copy_id": "BC-0003", "branch_id": 1 }
   ]
 }
-```
 
-- Example creating a single copy (increments quantity):
-
-```json
+- Create single BookCopy (increments parent quantity):
 POST /api/BookCopies
-{ "book_copy_id": "BC-0004", "book_id": 42 }
-```
+{ "book_copy_id": "BC-0004", "book_id": 42, "branch_id": 1 }
 
-- Example deleting a single copy (decrements quantity):
+- Create reservation:
+POST /api/BookReservations
+{ "user_id": "user-123", "book_id": "BC-0001", "expiration_date": "2025-12-31T23:59:59Z" }
 
-```http
-DELETE /api/BookCopies/BC-0002
-```
+- Create transaction (checkout):
+POST /api/BookTransactions
+{ "user_id": "user-123", "book_id": "BC-0001", "transaction_type": "Check-Out", "due_date": "2025-12-15T00:00:00Z" }
 
-Database recommendations
+Behavior and implementation notes (for UI/AI generation)
+- Atomic operations: multi-step changes (BookDetail + BookCopies) use explicit transactions. UI should treat create/update as all-or-nothing and implement retry/error handling on 4xx/5xx.
+- Error handling: API returns 400 for validation failures (include readable error message), 409 for unique constraint violations, 404 for missing resources and 500 for server errors.
+- Pagination and filtering: long-list endpoints may implement pagination. Check OpenAPI or query params in real-time endpoints.
+- Row-Level Security: `BookCopies` has RLS in the database; API enforces access based on authenticated user and server rules.
 
-- The application enforces the copies-count rule in code. Enforcing it in the DB requires more complex constructs (triggers or stored procedures). Consider one of these if you want a DB-level invariant:
-  - Add a trigger that runs after insert/update/delete on `BookCopies` and verifies `BookDetails.quantity` equals the count of copies; optionally rollback on mismatch.
-  - Use stored procedures for creating/updating `BookDetails` and copies and restrict direct table modifications.
-- Ensure `BookCopies.book_id` FK is NOT NULL and indexed for fast counts/joins.
-- Keep `book_copy_id` as primary key (unique) and consider adding a separate numeric surrogate id if you need sequential numeric ordering.
+Generating client code
+- Use these exact property names and types when auto-generating TypeScript/Swift/Kotlin models.
+- Map `timestamp` to `string` in JSON models (ISO-8601). Map `numeric` to `number`/`decimal` in clients that support decimals.
 
-Compatibility notes
-
-- The public `Books` controller routes remain `/api/Books` to reduce client changes even though the CLR model type is `BookDetail`.
-- DTOs and controller behaviors changed to support `BookCopies`. Update frontend generators to include the `BookCopies` array on create/update when appropriate.
+If you need machine-friendly artifacts I can generate:
+- OpenAPI (Swagger) operation descriptions for all endpoints.
+- TypeScript interfaces for all resources matching this contract.
+- JSON Schema or Protobuf definitions for use by AI models.
