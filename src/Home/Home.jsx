@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './css/swiper-bundle.min.css';
+import './css/styles.css';
+import './css/stylesNew.css';
 
 
 const Home = () => {
