@@ -1,54 +1,46 @@
 
-import { getAllUsers, getAllUsersUnauthenticated, getUserByName, createUser } from './users.api';
+import { getAllUsers, getUserByName, createUser } from './users.api';
 import { API_BASE_URL } from './api.config';
 
 
 export const login = async (email, password) => {
   try {
-    console.log('Attempting login for:', email);
+    const users = await getAllUsers();
     
-    try {
-      const users = await getAllUsersUnauthenticated();
-      console.log('Total users fetched:', users.length);
+    console.log('Total users fetched:', users.length);
 
-      const user = users.find(u => {
-        const emailMatch = u.email?.toLowerCase() === email?.toLowerCase();
-        return emailMatch;
+    const user = users.find(u => {
+      console.log('Checking user:', {
+        email: u.email
       });
-
-      if (!user) {
-        throw new Error('User not found. Please check your email.');
-      }
-
-      console.log('User found:', { email: user.email, role: user.role });
-
-      localStorage.setItem('authToken', JSON.stringify(user));
-      localStorage.setItem('currentUser', JSON.stringify(user));
-
-      window.dispatchEvent(new Event('userUpdated'));
-
-      return user;
-    } catch (apiError) {
-      console.error('API login failed, using mock authentication:', apiError);
       
-      const mockUser = {
-        id: 1,
-        email: email,
-        name: email.split('@')[0],
-        role: email.includes('admin') ? 'Admin' : 'User',
-        phone_number: '000-000-0000'
-      };
+      const emailMatch = u.email?.toLowerCase() === email?.toLowerCase();
+      
+      console.log('Match results:', {
+        emailMatch
+      });
+      
+      return emailMatch;
+    });
 
-      localStorage.setItem('authToken', JSON.stringify(mockUser));
-      localStorage.setItem('currentUser', JSON.stringify(mockUser));
-
-      window.dispatchEvent(new Event('userUpdated'));
-
-      return mockUser;
+    if (!user) {
+      console.error('User not found. Available users:', users.map(u => ({
+        email: u.email
+      })));
+      throw new Error('User not found. Please check your email.');
     }
+
+    console.log('User found:', { email: user.email, role: user.role });
+
+    localStorage.setItem('authToken', JSON.stringify(user));
+    localStorage.setItem('currentUser', JSON.stringify(user));
+
+    window.dispatchEvent(new Event('userUpdated'));
+
+    return user;
   } catch (error) {
     console.error('Login error:', error);
-    throw new Error('Login failed. Please try again.');
+    throw error;
   }
 };
 
