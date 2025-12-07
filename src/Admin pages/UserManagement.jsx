@@ -27,7 +27,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     name: '',
     email: '',
     phone_number: '',
-    role: '',
+    plan: '',
     status: 'Active',
     password: '',
     password_hash: ''
@@ -46,7 +46,8 @@ function UserManagement({ searchValue, setSearchValue }) {
         name: formData.name,
         email: formData.email,
         phone_number: formData.phone_number,
-        role: isSuperAdmin ? formData.role : 'User',
+        role: 'User',
+        plan: formData.plan || null,
         status: formData.status,
         password_hash: formData.password
       };
@@ -59,7 +60,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       } else {
         await createUserMutation.mutateAsync(apiData);
       }
-      setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', role: '', status: 'Active', password: '', password_hash: '' });
+      setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', status: 'Active', password: '', password_hash: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -75,7 +76,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       name: user.name || '',
       email: user.email || '',
       phone_number: user.phone_number || '',
-      role: user.role || 'User',
+      plan: user.plan || '',
       status: user.status || 'Active',
       password: '',
       password_hash: user.password_hash || ''
@@ -109,7 +110,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', role: '', status: 'Active', password: '', password_hash: '' });
+    setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', status: 'Active', password: '', password_hash: '' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -129,7 +130,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     { header: 'User ID', accessor: 'user_id' },
     { header: 'Name', accessor: 'name' },
     { header: 'Email', accessor: 'email' },
-    { header: 'Role', accessor: 'role' },
+    { header: 'Plan', accessor: 'plan' },
     { header: 'Contact No', accessor: 'phone_number' },
     { header: 'Action', accessor: 'action' },
   ];
@@ -183,7 +184,7 @@ function UserManagement({ searchValue, setSearchValue }) {
           'Name': selectedUser.name,
           'Email': selectedUser.email,
           'Phone Number': selectedUser.phone_number,
-          'Role': selectedUser.role,
+          'Plan': selectedUser.plan || 'N/A',
         } : null}
         savedBy={{
           name: 'Admin User',

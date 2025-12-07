@@ -2,12 +2,9 @@ import React from 'react';
 import { Users } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 import NFCReaderButton from './NFCReaderButton.jsx';
-import { getCurrentUser } from '../services/auth.api';
 
 function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUser, setShowPopup, setEditMode }) {
   const userIdInputRef = React.useRef(null);
-  const currentUser = getCurrentUser();
-  const isSuperAdmin = currentUser?.role === 'Super Admin';
 
   const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,18 +21,18 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
     { name: 'password', type: 'password', placeholder: editMode ? "Password (leave blank to keep current)" : "Password", required: !editMode, autocomplete: editMode ? 'off' : 'new-password' },
   ];
 
-  const roleInput = isSuperAdmin ? {
-    name: 'role',
+  const planInput = {
+    name: 'plan',
     type: 'select',
-    placeholder: 'Role',
-    required: true,
+    placeholder: 'Plan',
+    required: false,
     autocomplete: 'off',
     options: [
-      { value: 'User', label: 'User' },
-      { value: 'Admin', label: 'Admin' },
-      { value: 'Super Admin', label: 'Super Admin' },
+      { value: 'Discover', label: 'Discover' },
+      { value: 'Enterprise', label: 'Enterprise' },
+      { value: 'Professional', label: 'Professional' },
     ],
-  } : null;
+  };
 
   const userIdInput = {
     name: 'user_id',
@@ -64,21 +61,19 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
     ),
   };
 
-  const inputs = roleInput
-    ? [...baseInputs, roleInput, userIdInput]
-    : [...baseInputs, userIdInput];
+  const inputs = [...baseInputs, planInput, userIdInput];
 
-  const customLayout = roleInput
-    ? [
-      { columns: 3, inputs: ['name', 'phone_number', 'role'] },
-      { columns: 2, inputs: ['email', 'password'] },
-      { columns: 1, inputs: ['user_id'] },
-    ]
-    : [
-      { columns: 2, inputs: ['name', 'phone_number'] },
-      { columns: 2, inputs: ['email', 'password'] },
-      { columns: 1, inputs: ['user_id'] },
-    ];
+  const customLayout = [
+    { columns: 3, inputs: ['name', 'phone_number', 'plan'] },
+    {
+      type: 'flex',
+      inputs: [
+        { name: 'email', flex: 2 },
+        { name: 'password', flex: 1 }
+      ]
+    },
+    { columns: 1, inputs: ['user_id'] },
+  ];
 
   return (
     <FormLayout
