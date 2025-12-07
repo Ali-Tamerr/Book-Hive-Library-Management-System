@@ -1,401 +1,109 @@
-﻿# Library Management System – Backend Data Contract (AI-Facing)
+﻿# Library Management System — Backend Data Contract (Machine & Frontend Friendly)
 
-Authoritative, machine- and human-friendly schema for the current backend entities. Use this to generate frontend types, forms, validation, and correct API payloads.
+This document is the authoritative, machine-readable contract for frontend engineers and AI agents that generate UI, validation, and API clients. Use the exact property names, types and rules listed here when generating types or request/response shapes. Do not include navigation properties in write payloads — send only scalar fields and foreign-key IDs.
 
-Key rules for AI agents:
+Quick rules for AI models and frontend devs
 
-- Use property names exactly as listed (casing included).
-- Do not include navigation properties in write payloads.
-- Respect nullability, lengths, and defaults.
-- Supply only scalar fields and FK IDs for POST/PUT.
-
----
-
-## DbContext: LibraryManagementSystemContext
-
-DbSets:
-
-- Books (DbSet<Book>)
-- BookReservations (DbSet<BookReservation>)
-- BookSales (DbSet<BookSale>)
-- BookTransactions (DbSet<BookTransaction>)
-- Categories (DbSet<Category>)
-- Reports (DbSet<Report>)
-- Users (DbSet<User>)
-- Languages (DbSet<Language>)
-- Branches (DbSet<Branch>)
+- Use property names exactly as shown (including casing).
+- Send only scalar fields and FK IDs in POST/PUT payloads; never send navigation collections or complex objects.
+- Respect required fields, string lengths and numeric types.
+- For enum-like columns, send one of the allowed string values.
+- Timestamps are ISO-8601 strings. If omitted where default exists, the server will set defaults.
 
 ---
 
-## Entities (Tables)
+Summary of recent backend changes (important for frontend/AI clients)
 
-All fields and attributes are based on the current code in Models/\*.cs. Navigation properties are documented for read comprehension; never send them in write payloads.
+- The model originally named `Book` was renamed to `BookDetail` to reflect the `BookDetails` table. Public controller routes remain under `/api/Books` for compatibility.
+- New entity `BookCopy` was added to represent physical copies. Each copy has a unique `book_copy_id` (string) and an FK `book_id` (int) referencing `BookDetail.book_id`.
+- The system now enforces that `BookDetail.quantity` equals the number of `BookCopy` rows linked to that `book_id`. Controllers validate and persist copies accordingly.
+- `BooksController` was updated to accept `BookCopies` in POST/PUT payloads (optional). If provided, the controller requires `BookCopies.Count == quantity`.
+- All create/update operations that affect a `BookDetail` and its `BookCopies` are performed inside explicit EF Core transactions to guarantee atomicity.
+- A new `BookCopiesController` was added to manage individual copies. Creating or deleting a `BookCopy` adjusts the parent `BookDetail.quantity` inside a transaction.
 
-### Book (Models/Book.cs)
+Why this matters to frontend
 
-- Indexes:
-  - [Index("name", Name = "IDX_Books_Name")]
-- Fields:
-  - string book_id
-    - [Key]
-  - string name
-    - [Required], [StringLength(255)]
-  - int category_id
-  - int quantity
-  - DateTime? created_at
-    - [Column(TypeName = "datetime")], default: GETDATE() (via OnModelCreating)
-  - DateTime? updated_at
-    - [Column(TypeName = "datetime")], default: GETDATE() (via OnModelCreating)
-  - decimal? sale_price
-    - [Column(TypeName = "decimal(10, 2)")]
-- Navigation (read-only):
-  - ICollection<BookReservation> BookReservations [InverseProperty("book")]
-  - ICollection<BookSale> BookSales [InverseProperty("book")]
-  - ICollection<BookTransaction> BookTransactions [InverseProperty("book")]
-  - Category category [ForeignKey("category_id")] [InverseProperty("Books")]
+- Your book form should collect `quantity` and then prompt the user to enter exactly `quantity` copy IDs in the popup. The frontend should send the `BookCopies` array when creating or updating a `BookDetail` if it intends to set or change the copy IDs.
+- If the frontend updates `quantity` but does not send `BookCopies`, the server requires that the existing number of copies already matches the updated `quantity`. Otherwise the request will be rejected with 400 and the client should send the exact list of `book_copy_id`s.
+- When removing a single physical copy (e.g., borrowed and removed from inventory), use `DELETE /api/BookCopies/{book_copy_id}`. The controller will verify the copy is not referenced by reservations/transactions/sales and will decrement `BookDetail.quantity` atomically.
 
-Notes:
+---
 
-- The `language_id` field has been removed from the Book model in this branch. Do not include `language_id` in Book payloads.
-- `book_id` is a string. Controller routes accept string ids for book lookups.
+API changes and endpoints (high level)
 
-Controller routes (BooksController):
+Books (BookDetail resource)
 
-- GET `/api/Books` -> returns list of `BookDTO`.
-- GET `/api/Books/{id}` -> get single book by `book_id` (string). Use this route for CreatedAtAction Location.
-- GET `/api/Books/title/{title}` -> search books by title (avoids conflict with id route).
-- POST `/api/Books` -> create book, returns 201 Created with Location header pointing to `GET /api/Books/{id}`.
-- PUT `/api/Books/{id}` -> update book by `book_id` (string).
-- DELETE `/api/Books/{id}` -> delete book by `book_id` (string).
+- GET `/api/Books` — returns list of `BookDTO` (summary plus aggregated user names).
+- GET `/api/Books/{id}` — return single BookDetail DTO by `book_id` (integer).
+- GET `/api/Books/title/{t}` — search by title.
+- POST `/api/Books` — create BookDetail; optionally include `BookCopies` array. If `BookCopies` present, its length must equal `quantity`.
+- PUT `/api/Books/{id}` — update BookDetail; optionally include `BookCopies` to replace current copies. Must match `quantity` if provided.
+- DELETE `/api/Books/{id}` — delete BookDetail and its copies.
 
-Example write (POST/PUT):
+BookCopies
+
+- GET `/api/BookCopies` — list copies.
+- GET `/api/BookCopies/{id}` — get single copy by `book_copy_id`.
+- POST `/api/BookCopies` — create single copy. Body: `{ "book_copy_id": "BC-0001", "book_id": 42 }`. This increments `BookDetail.quantity`.
+- DELETE `/api/BookCopies/{id}` — delete single copy. Controller prevents deletion if the copy is referenced by reservations/transactions/sales; on success decrements `BookDetail.quantity`.
+
+Validation rules enforced by controllers
+
+- When `BookCopies` array is provided with a BookDetail create/update, controllers validate `BookCopies.Count == quantity`.
+- When updating quantity without a `BookCopies` array, controllers validate the existing copy count equals the new `quantity`.
+- `BookCopies` must have unique `book_copy_id` values.
+- Deleting a `BookCopy` is blocked if there are related reservations, transactions or sales referencing that `book_copy_id`.
+
+Atomic behavior and transactions
+
+- Add and Edit flows that affect both `BookDetail` and `BookCopies` use explicit EF Core transactions so the operations commit together. If any step fails the transaction is rolled back.
+- Independent copy operations in `BookCopiesController` (create/delete) also use transactions and update the parent `BookDetail.quantity` atomically.
+
+Frontend guidance and examples
+
+- Frontend form flow for creating/updating books:
+  1. User sets `quantity` in the book form.
+  2. User clicks "Enter copy IDs" → popup opens and expects exactly `quantity` entries.
+  3. Frontend sends BookDetail POST/PUT with `BookCopies` array when creating/updating copies.
+
+- Example POST payload with copies:
 
 ```json
 {
-  "book_id": "B-00123",
   "name": "Clean Code",
   "category_id": 4,
-  "quantity": 12,
-  "sale_price": 39.99
+  "quantity": 3,
+  "sale_price": 39.99,
+  "BookCopies": [
+    { "book_copy_id": "BC-0001" },
+    { "book_copy_id": "BC-0002" },
+    { "book_copy_id": "BC-0003" }
+  ]
 }
 ```
 
----
-
-### User (Models/User.cs)
-
-- Indexes (unique):
-  - [Index("email", Name = "UQ__Users__AB6E6164...", IsUnique = true)]
-  - [Index("phone_number", Name = "UQ__Users__PhoneNumber", IsUnique = true)]
-  - Note: the `username` index and `username` property were removed in this branch.
-- Fields:
-  - string user_id
-    - [Key], ValueGeneratedNever (OnModelGenerating) → client must provide
-  - string name
-    - [Required], [StringLength(50)]
-  - string email
-    - [Required], [StringLength(100)]
-  - string password_hash
-    - [Required], [StringLength(255)]
-  - string phone_number
-    - [StringLength(20)]
-  - string role
-    - [Required], [StringLength(20)]
-  - string? status
-    - [StringLength(20)], default: "Active" (OnModelCreating)
-  - DateTime? created_at
-    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
-  - DateTime? updated_at
-    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
-  - DateTime? LastActivityAt
-    - [Column("last_activity_at")]
-- Navigation (read-only):
-  - ICollection<BookReservation> BookReservations [InverseProperty("user")]
-  - ICollection<BookSale> BookSales [InverseProperty("user")]
-  - ICollection<BookTransaction> BookTransactions [InverseProperty("user")]
-  - ICollection<Report> Reports [InverseProperty("generated_byNavigation")]
-
-Controller routes (UsersController):
-
-- GET `/api/Users` -> list of `UserDTO` (includes `LastActivityAt`).
-- GET `/api/Users/byid/{id}` -> get single user by `user_id` (string).
-- GET `/api/Users/{name}` -> search users by name.
-- PUT `/api/Users/{id}/activity` -> update `LastActivityAt` using route id. Server URL-decodes incoming id before lookup (tolerates encoded characters, e.g. spaces -> `%20`). Accepts flexible timestamp keys in body (e.g. `LastActivityAt`, `lastActivityAt`, `last_activity_at`).
-- PUT `/api/Users/activity` -> alternative body-based endpoint. Accepts flexible keys for user id and timestamp in JSON body (accepted id keys: `user_id`, `userId`, `user`; accepted timestamp keys: `LastActivityAt`, `lastActivityAt`, `last_activity_at`, `lastAt`). Use this if client cannot reliably call route-based endpoints due to special characters in IDs.
-
-PUT `/api/Users/{id}/activity` and PUT `/api/Users/activity`
-
-- Purpose: update the `LastActivityAt` timestamp for a given user.
-- Request body (JSON): flexible key names are accepted. If timestamp is omitted or null, server sets `LastActivityAt` to UTC now.
-- Successful response: 200 OK — returns JSON: `{ "user_id": "<id>", "LastActivityAt": "<timestamp>" }` (the persisted timestamp).
-- Error responses include more diagnostic information during development (DB error/inner exception) to aid debugging.
-
-Example body-based request:
+- Example creating a single copy (increments quantity):
 
 ```json
-{
-  "user_id": "1c 4r 14 o9",
-  "LastActivityAt": "2025-11-28T14:35:00Z"
-}
+POST /api/BookCopies
+{ "book_copy_id": "BC-0004", "book_id": 42 }
 ```
 
-Notes:
+- Example deleting a single copy (decrements quantity):
 
-- The API accepts several JSON key shapes for compatibility with different frontend code. In production you may want to standardize shape and reduce diagnostic verbosity.
-
----
-
-### Category (Models/Category.cs)
-
-- Indexes:
-  - [Index("category_name", Name = "UQ__Categori__5189E255...", IsUnique = true)]
-- Fields:
-  - int category_id
-    - [Key]
-  - string category_name
-    - [Required], [StringLength(100)]
-- Navigation (read-only):
-  - ICollection<Book> Books [InverseProperty("category")]
-
-Example write:
-
-```json
-{
-  "category_id": 4,
-  "category_name": "Software Engineering"
-}
+```http
+DELETE /api/BookCopies/BC-0002
 ```
 
----
+Database recommendations
 
-### Language (Models/Language.cs)
+- The application enforces the copies-count rule in code. Enforcing it in the DB requires more complex constructs (triggers or stored procedures). Consider one of these if you want a DB-level invariant:
+  - Add a trigger that runs after insert/update/delete on `BookCopies` and verifies `BookDetails.quantity` equals the count of copies; optionally rollback on mismatch.
+  - Use stored procedures for creating/updating `BookDetails` and copies and restrict direct table modifications.
+- Ensure `BookCopies.book_id` FK is NOT NULL and indexed for fast counts/joins.
+- Keep `book_copy_id` as primary key (unique) and consider adding a separate numeric surrogate id if you need sequential numeric ordering.
 
-- Fields:
-  - int language_id
-    - [Key]
-  - string name
-    - [Required]
-- Navigation (read-only):
-  - ICollection<Book> Books [InverseProperty("language")]
-    - Backed by private field "\_books" (configured in OnModelCreating)
+Compatibility notes
 
-Example write:
-
-```json
-{
-  "language_id": 1,
-  "name": "English"
-}
-```
-
----
-
-### BookReservation (Models/BookReservation.cs)
-
-- Indexes:
-  - [Index("status", Name = "IDX_Reservations_Status")]
-- Fields:
-  - int reservation_id
-    - [Key]
-  - string user_id
-  - string book_id
-  - DateTime? reservation_date
-    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
-  - DateTime expiration_date
-    - [Column(TypeName = "datetime")]
-  - string status
-    - [StringLength(20)], default: "Active" (OnModelCreating)
-- Navigation (read-only):
-  - Book book [ForeignKey("book_id")] [InverseProperty("BookReservations")]
-  - User user [ForeignKey("user_id")] [InverseProperty("BookReservations")]
-
-Example write:
-
-```json
-{
-  "user_id": "U-10001",
-  "book_id": "B-00123",
-  "expiration_date": "2025-12-31T00:00:00Z",
-  "status": "Active"
-}
-```
-
----
-
-### BookSale (Models/BookSale.cs)
-
-- Indexes:
-  - [Index("transaction_id", Name = "UQ__BookSale__85C600AE...", IsUnique = true)]
-- Fields:
-  - int sale_id
-    - [Key]
-  - string user_id
-  - string book_id
-  - int transaction_id
-  - decimal price
-    - [Column(TypeName = "decimal(10, 2)")]
-  - DateTime? sale_date
-    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
-- Navigation (read-only):
-  - Book book [ForeignKey("book_id")] [InverseProperty("BookSales")]
-  - BookTransaction transaction [ForeignKey("transaction_id")] [InverseProperty("BookSale")]
-  - User user [ForeignKey("user_id")] [InverseProperty("BookSales")]
-
-Example write:
-
-```json
-{
-  "user_id": "U-10001",
-  "book_id": "B-00123",
-  "transaction_id": 9876,
-  "price": 25.0
-}
-```
-
----
-
-### BookTransaction (Models/BookTransaction.cs)
-
-- Indexes:
-  - [Index("status", Name = "IDX_Transactions_Status")]
-- Fields:
-  - int transaction_id
-    - [Key]
-  - string user_id
-  - string book_id
-  - string transaction_type
-    - [Required], [StringLength(20)]
-  - DateTime? due_date
-    - [Column(TypeName = "datetime")]
-  - DateTime? return_date
-    - [Column(TypeName = "datetime")]
-  - decimal? fine_amount
-    - [Column(TypeName = "decimal(10, 2)")], default: 0.00 (OnModelCreating)
-  - string status
-    - [StringLength(20)], default: "Pending" (OnModelCreating)
-  - DateTime? created_at
-    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
-  - string borrow_type
-    - [Required], [StringLength(20)], default: "Borrow" (OnModelCreating)
-- Navigation (read-only):
-  - BookSale BookSale [InverseProperty("transaction")]
-  - Book book [ForeignKey("book_id")] [InverseProperty("BookTransactions")]
-  - User user [ForeignKey("user_id")] [InverseProperty("BookTransactions")]
-
-Example write:
-
-```json
-{
-  "user_id": "U-10001",
-  "book_id": "B-00123",
-  "transaction_type": "Borrow",
-  "due_date": "2025-12-15T00:00:00Z",
-  "borrow_type": "Borrow"
-}
-```
-
----
-
-### Report (Models/Report.cs)
-
-- Fields:
-  - int report_id
-    - [Key]
-  - string report_name
-    - [Required], [StringLength(255)]
-  - string generated_by
-  - string report_type
-    - [Required], [StringLength(50)]
-  - DateTime? generated_at
-    - [Column(TypeName = "datetime")], default: GETDATE() (OnModelCreating)
-  - string file_path
-    - [StringLength(500)]
-- Navigation (read-only):
-  - User generated_byNavigation [ForeignKey("generated_by")] [InverseProperty("Reports")]
-
-Example write:
-
-```json
-{
-  "report_name": "Monthly Inventory",
-  "generated_by": "U-10001",
-  "report_type": "Inventory",
-  "file_path": "/reports/inventory-2025-11.pdf"
-}
-```
-
----
-
-### Branch (Models/Branch.cs)
-
-- Fields:
-  - int branch_id
-    - [Key]
-  - string name
-    - [Required], [StringLength(50)]
-  - string location
-    - [Required], [StringLength(100)]
-  - string contact_number
-    - [StringLength(20)]
-
-Example write:
-
-```json
-{
-  "branch_id": 10,
-  "name": "Central Library",
-  "location": "123 Main St, City",
-  "contact_number": "0123456789"
-}
-```
-
----
-
-## Relationships & Delete Behavior (OnModelCreating highlights)
-
-- Book → Category (Many-to-One): FK `category_id`, DeleteBehavior.ClientSetNull
-- Book → Language (Many-to-One): FK `language_id`, DeleteBehavior.ClientSetNull
-- BookReservation → Book/User: FKs `book_id`, `user_id`, DeleteBehavior.ClientSetNull
-- BookSale → Book (Many-to-One), User (Many-to-One)
-- BookSale → BookTransaction (One-to-One): FK `transaction_id`, DeleteBehavior.ClientSetNull
-- BookTransaction → Book/User: FKs `book_id`, `user_id`, DeleteBehavior.ClientSetNull
-- Report → User (Many-to-One): FK `generated_by`, DeleteBehavior.ClientSetNull
-
----
-
-## Repository & API changes (summary)
-
-Overview
-
-- The `LastActivityAt` field for users is supported end-to-end: it can be sent to the API, persisted asynchronously, and is returned in responses.
-
-Repository changes
-
-- `IGenericRepository<T>`: added async signatures `getByIdAsync(string|int)` and `saveAsync()`.
-- `GenericRepository<T>`: implemented `FindAsync(...)` and `SaveChangesAsync()` usages in the new async methods.
-
-Users activity endpoints
-
-- PUT `/api/Users/{id}/activity` — updates `LastActivityAt` by route id (server will URL-decode the id).
-- PUT `/api/Users/activity` — body-based update accepting flexible key names (`user_id`, `userId`, `user`) and timestamp keys (`LastActivityAt`, `lastActivityAt`, `last_activity_at`, `lastAt`).
-
-Notes on behavior & errors
-
-- Both user-activity endpoints return 200 OK with `{ user_id, LastActivityAt }` on success.
-- During development the API returns additional diagnostic details for DB errors (error message and inner exception) to aid debugging; consider removing or sanitizing this in production.
-
----
-
-## JSON & Validation Guidance for AI Agents
-
-- Casing: Use the exact property names (mostly snake_case). Note: `LastActivityAt` is PascalCase but maps to `last_activity_at` in DB.
-- Required fields enforced via annotations must be present in write payloads.
-- Unique constraints (User: email, phone_number) should be pre-checked or handled on 409/400.
-- Default values (e.g., timestamps, statuses) may be set server-side; do not rely on client to populate unless required.
-- Never send navigation properties or collections in POST/PUT bodies.
-
----
-
-Example curl (books)
-
-curl -X PUT "https://<host>/api/books/activity" -H "Content-Type: application/json" -d '{"user_id":"1c 4r 14 o9","LastActivityAt":"2025-11-28T14:35:00Z"}'
+- The public `Books` controller routes remain `/api/Books` to reduce client changes even though the CLR model type is `BookDetail`.
+- DTOs and controller behaviors changed to support `BookCopies`. Update frontend generators to include the `BookCopies` array on create/update when appropriate.

@@ -62,13 +62,46 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-// Helper functions for different HTTP methods
+const unauthenticatedAxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+unauthenticatedAxiosInstance.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    console.error('Full error object:', error);
+    
+    if (error.response) {
+      const message = error.response.data?.message || (typeof error.response.data?.errors === 'object' ? JSON.stringify(error.response.data.errors) : error.response.data?.errors) || error.message || `Server error: ${error.response.status}`;
+      console.error('API Error Response:', error.response.status, error.response.data);
+      
+      const errorWithDetails = new Error(message);
+      errorWithDetails.response = error.response;
+      errorWithDetails.status = error.response.status;
+      return Promise.reject(errorWithDetails);
+    } else if (error.request) {
+      console.error('Network Error - No response received:', error.message);
+      const networkError = new Error('Network error. Please check your connection.');
+      networkError.request = error.request;
+      return Promise.reject(networkError);
+    } else {
+      console.error('Error:', error.message);
+      return Promise.reject(error);
+    }
+  }
+);
+
 export const apiGet = (endpoint, config = {}) => axiosInstance.get(endpoint, config);
 export const apiPost = (endpoint, data, config = {}) => axiosInstance.post(endpoint, data, config);
 export const apiPut = (endpoint, data, config = {}) => axiosInstance.put(endpoint, data, config);
 export const apiPatch = (endpoint, data, config = {}) => axiosInstance.patch(endpoint, data, config);
 export const apiDelete = (endpoint, config = {}) => axiosInstance.delete(endpoint, config);
 
-// Export the instance for custom use
+export const unauthApiGet = (endpoint, config = {}) => unauthenticatedAxiosInstance.get(endpoint, config);
+export const unauthApiPost = (endpoint, data, config = {}) => unauthenticatedAxiosInstance.post(endpoint, data, config);
+
 export default axiosInstance;
 

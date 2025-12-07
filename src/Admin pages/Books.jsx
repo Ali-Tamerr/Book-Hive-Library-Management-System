@@ -25,7 +25,8 @@ function Books({ searchValue, setSearchValue }) {
     name: '',
     category_id: '',
     quantity: '',
-    sale_price: ''
+    sale_price: '',
+    BookCopies: []
   });
 
   const { data: books = [], isLoading } = useBooks();
@@ -41,12 +42,18 @@ function Books({ searchValue, setSearchValue }) {
       const quantity = parseInt(formData.quantity, 10);
       const sale_price = parseFloat(formData.sale_price);
 
+      const bookCopiesCount = formData.BookCopies?.length || 0;
+      if (bookCopiesCount !== quantity) {
+        alert(`Please enter exactly ${quantity} copy ID${quantity !== 1 ? 's' : ''}. Currently have ${bookCopiesCount}.`);
+        return;
+      }
+
       const apiData = {
-        book_id: formData.book_id,
         name: formData.name,
         category_id: isNaN(category_id) ? null : category_id,
         quantity: isNaN(quantity) ? 1 : quantity,
-        sale_price: isNaN(sale_price) ? null : sale_price
+        sale_price: isNaN(sale_price) ? null : sale_price,
+        BookCopies: formData.BookCopies
       };
 
       if (editMode && formData.book_id) {
@@ -54,7 +61,7 @@ function Books({ searchValue, setSearchValue }) {
       } else {
         await createBookMutation.mutateAsync(apiData);
       }
-      setFormData({ book_id: '', name: '', category_id: '', quantity: '', sale_price: '' });
+      setFormData({ book_id: '', name: '', category_id: '', quantity: '', sale_price: '', BookCopies: [] });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -62,8 +69,7 @@ function Books({ searchValue, setSearchValue }) {
       if (error.status === 405) {
         alert('Book creation/update is not supported by the API. The Books endpoint may be read-only.');
       } else if (error.status === 400) {
-        alert(`Validation error: ${error.message || 'Please check your input fields.'}`)
-          ;
+        alert(`Validation error: ${error.message || 'Please check your input fields.'}`);
       } else {
         alert(`Failed to save book: ${error.message || 'Please try again.'}`);
       }
@@ -71,12 +77,14 @@ function Books({ searchValue, setSearchValue }) {
   };
 
   const handleEdit = (book) => {
+    const existingCopies = book.BookCopies?.map(c => ({ book_copy_id: c.book_copy_id })) || [];
     setFormData({
       book_id: book.book_id,
       name: book.name || '',
       category_id: book.category_id || '',
       quantity: book.quantity || 1,
-      sale_price: book.sale_price || ''
+      sale_price: book.sale_price || '',
+      BookCopies: existingCopies
     });
     setEditMode(true);
     setShowPopup(true);
@@ -113,7 +121,7 @@ function Books({ searchValue, setSearchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ book_id: '', name: '', category_id: '', quantity: '', sale_price: '' });
+    setFormData({ book_id: '', name: '', category_id: '', quantity: '', sale_price: '', BookCopies: [] });
     setEditMode(false);
     setShowPopup(true);
   };
