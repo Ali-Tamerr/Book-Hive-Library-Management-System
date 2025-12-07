@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
+/* Home page specific styles - imported before custom utilities so Tailwind can override */
+@import "./Home/css/swiper-bundle.min.css";
+@import "./Home/css/styles.css";
+@import "./Home/css/stylesNew.css";
+
 
 * {
   box-sizing: border-box;
