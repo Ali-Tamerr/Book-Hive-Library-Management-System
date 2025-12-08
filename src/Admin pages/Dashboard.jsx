@@ -5,7 +5,6 @@ import { useUsers } from '../hooks/useUsers';
 import { useBooks } from '../hooks/useBooks';
 import { useReservations } from '../hooks/useReservations';
 import { useBranches } from '../hooks/useBranches';
-import { useBookSales } from '../hooks/useBookSales';
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
 import { getCurrentUser } from '../services/auth.api';
 import DashboardCard from '../components/DashboardCard';
@@ -37,7 +36,6 @@ function Dashboard() {
   const { data: reservations = [], isLoading: reservationsLoading } = useReservations();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
   const { data: overdueBooksData = [], isLoading: overdueLoading } = useOverdueBooks();
-  const { data: bookSales = [], isLoading: bookSalesLoading } = useBookSales();
 
   const handleRefreshAdmins = (adminId) => {
     setLoadingAdmins(prev => ({ ...prev, [adminId]: true }));

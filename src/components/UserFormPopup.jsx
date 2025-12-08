@@ -43,18 +43,22 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
     render: (data, onChange) => (
       <div>
         <div className="flex items-center gap-2">
-          <NFCReaderButton onDataReceived={handleNFCData} inputRef={userIdInputRef} />
-          <input
-            ref={userIdInputRef}
-            name="user_id"
-            type="text"
-            value={data.user_id || ''}
-            onChange={onChange}
-            placeholder="User ID"
-            required
-            autoComplete="off"
-            className="w-full h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
-          />
+          <div className='flex-1'>
+            <NFCReaderButton onDataReceived={handleNFCData} inputRef={userIdInputRef} />
+          </div>
+          <div className='flex-2'>
+            <input
+              ref={userIdInputRef}
+              name="user_id"
+              type="text"
+              value={data.user_id || ''}
+              onChange={onChange}
+              placeholder="User ID"
+              required
+              autoComplete="off"
+              className="w-full h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+            />
+          </div>
         </div>
       </div>
     ),

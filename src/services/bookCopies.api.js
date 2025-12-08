@@ -15,6 +15,11 @@ export const getBookCopiesByBookId = async (bookId) => {
   return allCopies.filter(copy => copy.book_id === bookId);
 };
 
+export const getBookCopiesByBranchId = async (branchId) => {
+  const allCopies = await apiGet(BASE_ENDPOINT);
+  return allCopies.filter(copy => copy.branch_id === branchId);
+};
+
 export const createBookCopy = async (copyData) => {
   return await apiPost(BASE_ENDPOINT, copyData);
 };

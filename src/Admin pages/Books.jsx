@@ -197,6 +197,7 @@ function Books({ searchValue, setSearchValue }) {
         }}
         onConfirm={confirmDelete}
         title="Delete Book"
+        showNFCInput={true}
       />
       <ViewDetailsPopup
         show={showViewDetails}

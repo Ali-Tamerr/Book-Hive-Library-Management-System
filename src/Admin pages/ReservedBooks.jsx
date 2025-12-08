@@ -115,6 +115,27 @@ function ReservedBooks({ searchValue, setSearchValue, customTitle, hideButton = 
     { header: 'User Name', accessor: 'user_name' },
     { header: 'Reservation Date', accessor: 'reservation_date' },
     { header: 'Expiration Date', accessor: 'expiration_date' },
+    {
+      header: 'Expiration Status',
+      accessor: 'expiration_status',
+      render: (reservation) => {
+        if (!reservation.expiration_date) {
+          return <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">No Deadline</span>;
+        }
+        const now = new Date();
+        const expirationDate = new Date(reservation.expiration_date);
+        const isExpired = now > expirationDate;
+
+        return (
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${isExpired
+              ? 'bg-red-100 text-red-700'
+              : 'bg-green-100 text-green-700'
+            }`}>
+            {isExpired ? 'Expired' : 'Active'}
+          </span>
+        );
+      }
+    },
     { header: 'Status', accessor: 'status' },
     { header: 'Action', accessor: 'action' },
   ];

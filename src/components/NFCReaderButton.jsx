@@ -23,7 +23,7 @@ const NFCReaderButton = ({ onDataReceived, inputRef }) => {
         <button
             type="button"
             onClick={handleConnectClick}
-            className={`px-6 h-[50px] w-[180px] rounded-[12px] transition-colors text-[13px] font-medium ${isConnected
+            className={`px-6 h-[50px] w-full rounded-[12px] transition-colors text-[13px] font-medium ${isConnected
                     ? 'bg-red-200 text-red-900 hover:bg-red-300'
                     : 'bg-[#D7D7D7] hover:bg-gray-400'
                 }`}

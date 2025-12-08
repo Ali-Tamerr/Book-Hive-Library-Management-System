@@ -124,6 +124,18 @@ function Categories({ searchValue, setSearchValue }) {
     { header: 'ID', accessor: 'category_id' },
     { header: 'Name', accessor: 'category_name' },
     { header: 'Description', accessor: 'category_description' },
+    {
+      header: 'Book Count',
+      accessor: 'book_count',
+      render: (category) => {
+        const count = books.filter(b => b.category_id === category.category_id).length;
+        return (
+          <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
+            {count}
+          </span>
+        );
+      }
+    },
     { header: 'Action', accessor: 'action' },
   ];
 

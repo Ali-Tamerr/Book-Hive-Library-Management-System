@@ -1,14 +1,9 @@
-import { apiGet, apiPost, apiPut, apiDelete, unauthApiGet } from './api.config';
+import { apiGet, apiPost, apiPut, apiDelete } from './api.config';
 
 const BASE_ENDPOINT = '/Users';
 
-// Get all users
 export const getAllUsers = async () => {
   return await apiGet(BASE_ENDPOINT);
-};
-
-export const getAllUsersUnauthenticated = async () => {
-  return await unauthApiGet(BASE_ENDPOINT);
 };
 
 // Get user by ID

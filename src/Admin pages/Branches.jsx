@@ -5,6 +5,8 @@ import {
   useUpdateBranch,
   useDeleteBranch
 } from '../hooks/useBranches';
+import { useBookCopies } from '../hooks/useBookCopies';
+import { useBooks } from '../hooks/useBooks';
 import CommonLayout from '../Layouts/CommonLayout';
 import BranchFormPopup from '../components/BranchFormPopup';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
@@ -25,6 +27,8 @@ function Branches({ searchValue, setSearchValue }) {
   });
 
   const { data: branches = [], isLoading } = useBranches();
+  const { data: bookCopies = [] } = useBookCopies();
+  const { data: books = [] } = useBooks();
   const createBranchMutation = useCreateBranch();
   const updateBranchMutation = useUpdateBranch();
   const deleteBranchMutation = useDeleteBranch();
@@ -97,6 +101,18 @@ function Branches({ searchValue, setSearchValue }) {
     { header: 'Name', accessor: 'name' },
     { header: 'Location', accessor: 'location' },
     { header: 'Contact Number', accessor: 'contact_number' },
+    {
+      header: 'Book Count',
+      accessor: 'book_count',
+      render: (branch) => {
+        const count = bookCopies.filter(bc => bc.branch_id === branch.branch_id).length;
+        return (
+          <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
+            {count}
+          </span>
+        );
+      }
+    },
     { header: 'Action', accessor: 'action' },
   ];
 
@@ -148,7 +164,16 @@ function Branches({ searchValue, setSearchValue }) {
           'Branch ID': selectedBranch.branch_id,
           'Name': selectedBranch.name,
           'Location': selectedBranch.location,
-          'Contact Number': selectedBranch.contact_number
+          'Contact Number': selectedBranch.contact_number,
+          'Book Copies': (() => {
+            const branchCopies = bookCopies.filter(bc => bc.branch_id === selectedBranch.branch_id);
+            if (branchCopies.length === 0) return 'No books in this branch';
+            const bookDetails = branchCopies.map(bc => {
+              const book = books.find(b => b.book_id === bc.book_id);
+              return `${book?.name || 'Unknown'} (${bc.book_copy_id})`;
+            });
+            return bookDetails.join(', ');
+          })()
         } : null}
         savedBy={{
           name: 'Admin User',
