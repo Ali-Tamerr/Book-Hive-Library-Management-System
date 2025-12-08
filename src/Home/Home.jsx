@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/swiper-bundle.min.css';
 import './css/styles.css';
+import './css/stylesNew.css';
+
 
 const Home = () => {
    const navigate = useNavigate();
@@ -186,19 +188,19 @@ const Home = () => {
                      <div className="home__swiper swiper">
                         <div className="swiper-wrapper">
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/home-book-1.png" alt="image" className="home__img" />
+                              <img src="/home/assets/img/Jose Mourinho.png" alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/home-book-2.png" alt="image" className="home__img" />
+                              <img src="/home/assets/img/Juhan Cruyff.png" alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/home-book-3.png" alt="image" className="home__img" />
+                              <img src="/home/assets/img/Pep Guardiola.png" alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/home-book-4.png" alt="image" className="home__img" />
+                              <img src="/home/assets/img/Arsene Wenger.png" alt="image" className="home__img" />
                            </article>
                         </div>
                      </div>
@@ -248,7 +250,6 @@ const Home = () => {
                            </div>
 
                            <button className="button">Add To Card</button>
-
                            <div className="featured__actions">
                               <button><i className="ri-search-line"></i></button>
                               <button><i className="ri-heart-3-line"></i></button>
@@ -872,24 +873,67 @@ const Home = () => {
                </div>
             </section>
 
-            {/*==================== JOIN ====================*/}
-            <section className="join section">
-               <div className="join__container">
-                  <img src="/home/assets/img/join-bg.jpg" alt="image" className="join__bg" />
+{/* ===========CHOOSE THE BEST PLAN=========== */}
 
-                  <div className="join__data container grid">
-                     <h2 className="join__title section__title">
-                        Subscribe To Receive <br />
-                        The Latest Updates
-                     </h2>
+              <section className="section" aria-labelledby="pricing-heading">
+    <div className="container">
+      <h1 id="pricing-heading" className="heading">Choose The best Plan</h1>
+      <p className="subheading">choose a plan that's right for your growing team. Simple pricing &amp; No hidden charges.</p>
 
-                     <form action="" className="join__form">
-                        <input type="email" placeholder="Enter email" className="join__input" />
-                        <button type="button" className="join__button button">Subscribe</button>
-                     </form>
-                  </div>
-               </div>
-            </section>
+      <div className="plans" role="list">
+        {/* <!-- Left plan --> */}
+        <article className="plan" role="listitem" aria-labelledby="plan-discover">
+          <div id="plan-discover" className="plan-title">Discover</div>
+          <div className="price">
+            <span className="small-price">$99</span>
+            <small>/ Per Month</small>
+          </div>
+
+          <div className="features">
+            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+            <div className="feature"><span className="tick">✓</span>Borrow + 3 books Monthly</div>
+          </div>
+
+          <a className="btn" href="#" role="button" aria-label="Subscribe to Discover">Subscribe</a>
+        </article>
+
+        {/* <!-- Center plan - highlighted --> */}
+        <article className="plan center" role="listitem" aria-labelledby="plan-enterprise">
+          <div id="plan-enterprise" className="plan-title">Enterprise</div>
+          <div className="price">
+            <span>$299</span>
+            <small>/ Per Month</small>
+          </div>
+
+          <div className="features">
+            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+            <div className="feature"><span className="tick">✓</span>Borrow + 15 books Monthly</div>
+          </div>
+
+          <a className="btn" href="#" role="button" aria-label="Subscribe to Enterprise">Subscribe</a>
+        </article>
+
+        {/* <!-- Right plan --> */}
+        <article className="plan" role="listitem" aria-labelledby="plan-pro">
+          <div id="plan-pro" className="plan-title">Professional</div>
+          <div className="price">
+            <span className="small-price">$199</span>
+            <small>/ Per Month</small>
+          </div>
+
+          <div className="features">
+            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+            <div className="feature"><span className="tick">✓</span>Borrow + 10 books Monthly</div>
+          </div>
+
+          <a className="btn" href="#" role="button" aria-label="Subscribe to Professional">Subscribe</a>
+        </article>
+      </div>
+    </div>
+  </section>
 
             {/*==================== TESTIMONIAL ====================*/}
             <section className="testimonial section" id="testimonial">
