@@ -1,18 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { getAllOverdueBooks } from '../services/overdueBooks.api';
 
-// Query Key Factory
-export const overdueBooksKeys = {
+const overdueKeys = {
   all: ['overdueBooks'],
-  lists: () => [...overdueBooksKeys.all, 'list'],
-  list: (filters) => [...overdueBooksKeys.lists(), { filters }],
+  lists: () => [...overdueKeys.all, 'list'],
+  list: (filters) => [...overdueKeys.lists(), { filters }],
 };
 
-// Get all overdue books hook
 export const useOverdueBooks = () => {
   return useQuery({
-    queryKey: overdueBooksKeys.lists(),
+    queryKey: overdueKeys.lists(),
     queryFn: getAllOverdueBooks,
-    stleTime: 5 * 60 * 1000, 
+    staleTime: 5 * 60 * 1000,
   });
 };

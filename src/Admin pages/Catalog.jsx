@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import BorrowedBooks from './BorrowedBooks';
 import Overdue from './Overdue';
-import BoughtBooks from './BoughtBooks';
 import ReservedBooks from './ReservedBooks';
 import TabButton from '../components/TabButton';
 
@@ -28,12 +27,6 @@ function Catalog({ searchValue, setSearchValue }) {
         position="first"
       />
       {/* <TabButton
-        label="Bought Books"
-        isActive={localActiveTab === 'bought'}
-        onClick={() => setLocalActiveTab('bought')}
-        position="middle"
-      />
-      <TabButton
         label="Reserved Books"
         isActive={localActiveTab === 'reserved'}
         onClick={() => setLocalActiveTab('reserved')}
@@ -51,7 +44,6 @@ function Catalog({ searchValue, setSearchValue }) {
   return (
     <>
       {localActiveTab === 'borrowed' && <BorrowedBooks searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} hideButton={true} />}
-      {localActiveTab === 'bought' && <BoughtBooks searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} hideButton={true} />}
       {localActiveTab === 'reserved' && <ReservedBooks searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} hideButton={true} />}
       {localActiveTab === 'overdue' && <Overdue searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} />}
     </>

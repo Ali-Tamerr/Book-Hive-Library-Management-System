@@ -8,14 +8,12 @@ import { useBooks } from '../hooks/useBooks';
 import { useReservations } from '../hooks/useReservations';
 import { useBranches } from '../hooks/useBranches';
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
-import { useBookSales } from '../hooks/useBookSales';
 function Dashboard() {
   const { data: users = [], isLoading: usersLoading, refetch: refetchUsers } = useUsers();
   const { data: books = [], isLoading: booksLoading } = useBooks();
   const { data: reservations = [], isLoading: reservationsLoading } = useReservations();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
   const { data: overdueBooksData = [], isLoading: overdueLoading } = useOverdueBooks();
-  const { data: bookSales = [], isLoading: bookSalesLoading } = useBookSales();
   const loading = usersLoading || booksLoading || reservationsLoading || branchesLoading || overdueLoading;
   const totalBorrowed = reservations?.length || 0;
   const returnedBooks = reservations?.filter(r => r.returnDate || r.status === 'Returned').length || 0;

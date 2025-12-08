@@ -47,7 +47,7 @@ function Login() {
                     subtitle="Please enter your email and password to log in"
                     loginLayout={true}
                 >
-                    <form onSubmit={handleSubmit} className='w-full max-[856px]:px-[198px] px-[100px] items-center flex flex-col gap-6'>
+                    <form onSubmit={handleSubmit} className='w-full max-[856px]:px-[120px] px-[100px] items-center flex flex-col gap-6'>
                         <AuthInput
                             type="email"
                             placeholder="Email"

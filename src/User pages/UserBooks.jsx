@@ -59,18 +59,33 @@ function UserBooks() {
             columns={columns}
             formPopup={null}
             isUserPage={true}
-            customActionRenderer={(book) => (
-                <button
-                    onClick={() => handleBorrow(book)}
-                    disabled={book.quantity === 0}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${book.quantity > 0
-                        ? 'bg-[#0a0f33] text-white hover:bg-[#192261]'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        }`}
-                >
-                    {book.quantity > 0 ? 'Borrow' : 'Unavailable'}
-                </button>
-            )}
+            customActionRenderer={(book) => {
+                const canBorrow = book.quantity >= 2;
+                const buttonText = book.quantity === 0
+                    ? 'Unavailable'
+                    : book.quantity === 1
+                        ? 'Reserved'
+                        : 'Borrow';
+
+                return (
+                    <div className="flex flex-col items-center gap-1">
+                        <button
+                            onClick={() => handleBorrow(book)}
+                            disabled={!canBorrow}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${canBorrow
+                                ? 'bg-[#0a0f33] text-white hover:bg-[#192261]'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                }`}
+                            title={!canBorrow ? 'Minimum 2 copies required for borrowing' : ''}
+                        >
+                            {buttonText}
+                        </button>
+                        {book.quantity === 1 && (
+                            <span className="text-xs text-gray-500">Min. 2 required</span>
+                        )}
+                    </div>
+                );
+            }}
         />
     );
 }

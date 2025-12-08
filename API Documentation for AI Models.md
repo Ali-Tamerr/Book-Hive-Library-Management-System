@@ -2,168 +2,451 @@
 
 This README is the authoritative, machine- and frontend-consumable contract for API shapes, field names, types, validation rules and endpoints. It is written for frontend engineers and AI models that generate UI, validation logic and API clients. Use the exact property names and rules listed below when generating types or request/response shapes.
 
-Principles (must-follow)
+---
+
+## Principles (must-follow)
+
 - Use property names exactly as shown (including casing).
 - Send only scalar fields and foreign-key IDs in POST/PUT payloads. Do NOT send navigation objects or collections (no nested User/Category objects) except where the contract explicitly allows an array of FK-bearing objects (e.g. `BookCopies`).
 - Timestamps are ISO-8601 strings. If omitted and a default exists, the server will set the default value.
 - For enum-like columns, send one of the allowed string values exactly.
 - Respect required fields, string length limits and numeric types.
 
-Type definitions (canonical, exact names and types)
-- Branch
-  - `branch_id` (int, identity, PK)
-  - `name` (string, required)
-  - `location` (string, required)
-  - `contact_number` (string, nullable)
+---
 
-- Category
-  - `category_id` (int, identity, PK)
-  - `category_name` (string, required, unique)
+## Type Definitions (canonical, exact names and types)
 
-- User
-  - `user_id` (string, PK)
-  - `name` (string, nullable)
-  - `email` (string, required, unique)
-  - `password_hash` (string, nullable)
-  - `phone_number` (string, unique, nullable)
-  - `role` (string, required) — allowed: `"Super Admin"`, `"Admin"`, `"User"`
-  - `status` (string, required, default: `"Active"`) — allowed: `"Banned"`, `"Inactive"`, `"Active"`
-  - `plan` (string, nullable) — allowed: `"Discover"`, `"Enterprise"`, `"Professional"`
-  - `created_at` (timestamp, default: now())
-  - `updated_at` (timestamp, default: now())
-  - `last_activity_at` (timestamp, nullable)
+### Branch
 
-- BookDetail (represents the book meta)
-  - `book_id` (int, PK)
-  - `name` (string, required)
-  - `category_id` (int, FK -> `Categories.category_id`)
-  - `quantity` (short/int16, required) — invariant: must be >= 0
-  - `sale_price` (numeric, nullable)
-  - `image_url` (text, nullable)
-  - `created_at` (timestamp, default: now())
-  - `updated_at` (timestamp, default: now())
+| Field            | Type        | Constraints  |
+| ---------------- | ----------- | ------------ |
+| `branch_id`      | int         | PK, identity |
+| `name`           | string(50)  | **required** |
+| `location`       | string(100) | **required** |
+| `contact_number` | string(20)  | nullable     |
 
-- BookCopy (physical copy)
-  - `book_copy_id` (string, PK)
-  - `book_id` (int, FK -> `BookDetails.book_id`)
-  - `branch_id` (int, FK -> `Branches.branch_id`)
-  - Note: Row-Level Security (RLS) is enabled on this table in the DB. API enforces access rules as implemented in backend.
+### Category
 
-- BookReservation
-  - `reservation_id` (short/int16, identity, PK)
-  - `user_id` (string, FK -> `Users.user_id`)
-  - `book_id` (string, FK -> `BookCopies.book_copy_id`)
-  - `reservation_date` (timestamp, default: now())
-  - `expiration_date` (timestamp, nullable)
-  - `status` (string, default: `"Active"`) — allowed: `"Fulfilled"`, `"Cancelled"`, `"Active"`
-  - `reserved_quantity` (int, nullable)
-  - `is_confirmed` (boolean, nullable)
+| Field           | Type        | Constraints          |
+| --------------- | ----------- | -------------------- |
+| `category_id`   | int         | PK, identity         |
+| `category_name` | string(100) | **required**, unique |
 
-- BookTransaction
-  - `transaction_id` (short/int16, identity, PK)
-  - `user_id` (string, FK -> `Users.user_id`)
-  - `book_id` (string, FK -> `BookCopies.book_copy_id`)
-  - `transaction_type` (string, required) — allowed: `"Check-In"`, `"Check-Out"`
-  - `borrow_type` (string, default: `"Borrow"`) — allowed: `"Purchase"`, `"Borrow"`
-  - `status` (string, default: `"Pending"`) — allowed: `"Overdue"`, `"Pending"`, `"Completed"`
-  - `due_date` (timestamp, nullable)
-  - `return_date` (timestamp, nullable)
-  - `fine_amount` (numeric, default: 0.00)
-  - `created_at` (timestamp, default: now())
+### User
 
-Contract rules and validation (server-enforced)
+| Field              | Type        | Constraints                                                                       |
+| ------------------ | ----------- | --------------------------------------------------------------------------------- |
+| `user_id`          | string(20)  | PK                                                                                |
+| `name`             | string(50)  | **required**                                                                      |
+| `email`            | string(100) | **required**, unique                                                              |
+| `password_hash`    | string(255) | **required**                                                                      |
+| `phone_number`     | string(20)  | **required**, unique                                                              |
+| `role`             | string(20)  | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"`                      |
+| `status`           | string(20)  | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
+| `plan`             | string(50)  | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"`                |
+| `created_at`       | timestamp   | default: `now()`                                                                  |
+| `updated_at`       | timestamp   | default: `now()`                                                                  |
+| `last_activity_at` | timestamp   | nullable                                                                          |
+
+### BookDetail (represents the book meta)
+
+| Field         | Type             | Constraints                   |
+| ------------- | ---------------- | ----------------------------- |
+| `book_id`     | int              | PK, identity                  |
+| `name`        | string(255)      | **required**                  |
+| `category_id` | int              | FK → `Categories.category_id` |
+| `quantity`    | smallint (int16) | **required**, must be >= 0    |
+| `sale_price`  | numeric(10,2)    | nullable                      |
+| `image_url`   | text             | nullable                      |
+| `created_at`  | timestamp        | default: `now()`              |
+| `updated_at`  | timestamp        | default: `now()`              |
+
+### BookCopy (physical copy)
+
+| Field          | Type       | Constraints                |
+| -------------- | ---------- | -------------------------- |
+| `book_copy_id` | string(50) | PK                         |
+| `book_id`      | int        | FK → `BookDetails.book_id` |
+| `branch_id`    | int        | FK → `Branches.branch_id`  |
+
+> **Note:** Row-Level Security (RLS) is enabled on this table in the DB. API enforces access rules as implemented in backend.
+
+### BookReservation
+
+| Field               | Type             | Constraints                                                             |
+| ------------------- | ---------------- | ----------------------------------------------------------------------- |
+| `reservation_id`    | smallint (int16) | PK, identity                                                            |
+| `user_id`           | string(20)       | FK → `Users.user_id`                                                    |
+| `book_id`           | string(50)       | FK → `BookCopies.book_copy_id`                                          |
+| `reservation_date`  | timestamp        | default: `now()`                                                        |
+| `expiration_date`   | timestamp        | **required**                                                            |
+| `status`            | string(20)       | default: `"Active"` — allowed: `"Fulfilled"`, `"Cancelled"`, `"Active"` |
+| `reserved_quantity` | int              | nullable                                                                |
+| `is_confirmed`      | boolean          | nullable                                                                |
+
+> **Important:** The `book_id` column in BookReservations references `BookCopies.book_copy_id` (not BookDetails).
+
+### BookTransaction
+
+| Field              | Type             | Constraints                                                             |
+| ------------------ | ---------------- | ----------------------------------------------------------------------- |
+| `transaction_id`   | smallint (int16) | PK, identity                                                            |
+| `user_id`          | string(20)       | FK → `Users.user_id`                                                    |
+| `book_id`          | string(50)       | FK → `BookCopies.book_copy_id`                                          |
+| `transaction_type` | string(20)       | **required** — allowed: `"Check-In"`, `"Check-Out"`                     |
+| `borrow_type`      | string(20)       | default: `"Borrow"` — allowed: `"Purchase"`, `"Borrow"`                 |
+| `status`           | string(20)       | default: `"Pending"` — allowed: `"Overdue"`, `"Pending"`, `"Completed"` |
+| `due_date`         | timestamp        | nullable                                                                |
+| `return_date`      | timestamp        | nullable                                                                |
+| `fine_amount`      | numeric(10,2)    | default: `0.00`                                                         |
+| `created_at`       | timestamp        | default: `now()`                                                        |
+
+> **Important:** The `book_id` column in BookTransactions references `BookCopies.book_copy_id` (not BookDetails).
+
+---
+
+## Contract Rules and Validation (server-enforced)
+
 - Always send scalar fields and FK IDs only. Example: use `category_id` not a nested `Category` object.
-- BookDetail / BookCopies invariants:
+- **BookDetail / BookCopies invariants:**
   - If a BookDetail POST/PUT includes a `BookCopies` array, then `BookCopies.Count` MUST equal `quantity`. Each element in `BookCopies` must include `book_copy_id` (string) and `branch_id` (int).
   - If the BookDetail update changes `quantity` but `BookCopies` is omitted, the server will validate that the existing number of copies for that `book_id` equals the new `quantity`; otherwise the request will be rejected with 400 and the client must send `BookCopies` to reconcile.
   - `book_copy_id` values must be unique across `BookCopies`.
 - BookCopy operations (create/delete) update `BookDetail.quantity` atomically and are performed in transactions.
-- Deleting a BookCopy is blocked if the copy is referenced by reservations, transactions or other domain rules.
+- Deleting a BookCopy is blocked if the copy is referenced by reservations or transactions.
+- Deleting a BookDetail is blocked if any of its copies are referenced by reservations or transactions.
+- **User fields:** `password_hash` and `phone_number` are now **required** fields.
+- **BookReservation:** `expiration_date` is now **required**.
 
-API endpoints (canonical list)
-- Branches
-  - GET    `/api/Branches`                — returns `Branch[]`
-  - GET    `/api/Branches/{branch_id}`    — returns single `Branch`
-  - POST   `/api/Branches`                — create Branch; body: `{ name, location, contact_number? }`
-  - PUT    `/api/Branches/{branch_id}`    — update Branch
-  - DELETE `/api/Branches/{branch_id}`    — delete Branch
+---
 
-- Categories
-  - GET    `/api/Categories`
-  - POST   `/api/Categories`               — body: `{ category_name }`
+## API Endpoints (canonical list)
 
-- Users
-  - GET    `/api/Users`
-  - GET    `/api/Users/{user_id}`
-  - POST   `/api/Users`                    — body: `{ user_id, email, name?, password_hash?, phone_number?, role?, status?, plan? }`
-  - PUT    `/api/Users/{user_id}`
+### Branches
 
-- Books (BookDetail)
-  - GET    `/api/Books`                    — returns `BookDTO[]` (summary + optional aggregates)
-  - GET    `/api/Books/{book_id}`
-  - GET    `/api/Books/title/{t}`          — search by title
-  - POST   `/api/Books`                    — create BookDetail; body: scalar book fields and optional `BookCopies` array
-  - PUT    `/api/Books/{book_id}`          — update BookDetail; optional `BookCopies` array replaces existing copies (must match `quantity`)
-  - DELETE `/api/Books/{book_id}`          — delete BookDetail and its copies
+| Method | Endpoint                    | Description                                                |
+| ------ | --------------------------- | ---------------------------------------------------------- |
+| GET    | `/api/Branches`             | Returns `Branch[]`                                         |
+| GET    | `/api/Branches/{branch_id}` | Returns single `Branch`                                    |
+| POST   | `/api/Branches`             | Create Branch; body: `{ name, location, contact_number? }` |
+| PUT    | `/api/Branches/{branch_id}` | Update Branch                                              |
+| DELETE | `/api/Branches/{branch_id}` | Delete Branch                                              |
 
-- BookCopies
-  - GET    `/api/BookCopies`
-  - GET    `/api/BookCopies/{book_copy_id}`
-  - POST   `/api/BookCopies`                — create single copy; body: `{ "book_copy_id": "BC-0001", "book_id": 42, "branch_id": 1 }`
-  - DELETE `/api/BookCopies/{book_copy_id}`
+### Categories
 
-- BookReservations
-  - GET    `/api/BookReservations`
-  - GET    `/api/BookReservations/{reservation_id}`
-  - POST   `/api/BookReservations`          — body: `{ "user_id": "u-1", "book_id": "BC-0001", "expiration_date"?: "ISO-8601", "reserved_quantity"?: 1, "is_confirmed"?: true }`
-  - PUT    `/api/BookReservations/{reservation_id}`
-  - DELETE `/api/BookReservations/{reservation_id}`
+| Method | Endpoint                        | Description                                |
+| ------ | ------------------------------- | ------------------------------------------ |
+| GET    | `/api/Categories`               | Returns `Category[]`                       |
+| GET    | `/api/Categories/{category_id}` | Returns single `Category`                  |
+| POST   | `/api/Categories`               | Create Category; body: `{ category_name }` |
+| PUT    | `/api/Categories/{category_id}` | Update Category                            |
+| DELETE | `/api/Categories/{category_id}` | Delete Category                            |
 
-- BookTransactions
-  - GET    `/api/BookTransactions`
-  - GET    `/api/BookTransactions/{transaction_id}`
-  - POST   `/api/BookTransactions`          — body: `{ "user_id": "u-1", "book_id": "BC-0001", "transaction_type": "Check-Out", "borrow_type"?: "Borrow", "due_date"?: "ISO-8601" }`
-  - PUT    `/api/BookTransactions/{transaction_id}`
+### Users
 
-Examples (exact shapes)
-- Create BookDetail with copies (server will set timestamps):
+| Method | Endpoint                        | Description                                                                                       |
+| ------ | ------------------------------- | ------------------------------------------------------------------------------------------------- |
+| GET    | `/api/Users`                    | Returns `UserDTO[]` with related books info                                                       |
+| GET    | `/api/Users/byid/{user_id}`     | Returns single `UserDTO`                                                                          |
+| GET    | `/api/Users/{name}`             | Search users by name                                                                              |
+| POST   | `/api/Users`                    | Create User; body: `{ user_id, name, email, password_hash, phone_number, role?, status?, plan? }` |
+| PUT    | `/api/Users/{user_id}`          | Update User                                                                                       |
+| PUT    | `/api/Users/{user_id}/activity` | Update user's `last_activity_at` timestamp                                                        |
+| PUT    | `/api/Users/activity`           | Update activity by body: `{ user_id, LastActivityAt? }`                                           |
+| DELETE | `/api/Users/{user_id}`          | Delete User                                                                                       |
 
+### Books (BookDetail)
+
+| Method | Endpoint                   | Description                                                                          |
+| ------ | -------------------------- | ------------------------------------------------------------------------------------ |
+| GET    | `/api/Books`               | Returns `BookDTO[]` (summary + user names)                                           |
+| GET    | `/api/Books/{book_id}`     | Returns single `BookDTO`                                                             |
+| GET    | `/api/Books/title/{title}` | Search by title (partial match)                                                      |
+| POST   | `/api/Books`               | Create BookDetail; body: scalar fields + optional `BookCopies[]`                     |
+| PUT    | `/api/Books/{book_id}`     | Update BookDetail; optional `BookCopies[]` replaces existing (must match `quantity`) |
+| DELETE | `/api/Books/{book_id}`     | Delete BookDetail and its copies (blocked if referenced)                             |
+
+### BookCopies
+
+| Method | Endpoint                         | Description                                               |
+| ------ | -------------------------------- | --------------------------------------------------------- |
+| GET    | `/api/BookCopies`                | Returns `BookCopy[]` with related BookDetail              |
+| GET    | `/api/BookCopies/{book_copy_id}` | Returns single `BookCopy`                                 |
+| POST   | `/api/BookCopies`                | Create copy; body: `{ book_copy_id, book_id, branch_id }` |
+| PUT    | `/api/BookCopies/{book_copy_id}` | Update copy; body: `{ book_id, branch_id }`               |
+| DELETE | `/api/BookCopies/{book_copy_id}` | Delete copy (blocked if referenced)                       |
+
+### BookReservations
+
+| Method | Endpoint                                 | Description                                                                                          |
+| ------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| GET    | `/api/BookReservations`                  | Returns `BookReservation[]` with user and copy info                                                  |
+| GET    | `/api/BookReservations/{reservation_id}` | Returns single `BookReservation`                                                                     |
+| POST   | `/api/BookReservations`                  | Create reservation; body: `{ user_id, book_id, expiration_date, reserved_quantity?, is_confirmed? }` |
+| PUT    | `/api/BookReservations/{reservation_id}` | Update reservation                                                                                   |
+| DELETE | `/api/BookReservations/{reservation_id}` | Delete reservation                                                                                   |
+
+### BookTransactions
+
+| Method | Endpoint                                 | Description                                                                                 |
+| ------ | ---------------------------------------- | ------------------------------------------------------------------------------------------- |
+| GET    | `/api/BookTransactions`                  | Returns `BookTransaction[]` with user and copy info                                         |
+| GET    | `/api/BookTransactions/{transaction_id}` | Returns single `BookTransaction`                                                            |
+| POST   | `/api/BookTransactions`                  | Create transaction; body: `{ user_id, book_id, transaction_type, borrow_type?, due_date? }` |
+| PUT    | `/api/BookTransactions/{transaction_id}` | Update transaction                                                                          |
+| DELETE | `/api/BookTransactions/{transaction_id}` | Delete transaction                                                                          |
+
+---
+
+## Request/Response Examples (exact shapes)
+
+### Create User
+
+```json
+POST /api/Users
+{
+  "user_id": "user-001",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password_hash": "hashed_password_here",
+  "phone_number": "+1234567890",
+  "role": "User",
+  "status": "Active",
+  "plan": "Professional"
+}
+```
+
+### Create BookDetail with copies
+
+```json
+POST /api/Books
 {
   "name": "Clean Code",
   "category_id": 4,
   "quantity": 3,
   "sale_price": 39.99,
-  "image_url": "https://.../clean-code.jpg",
+  "image_url": "https://example.com/clean-code.jpg",
   "BookCopies": [
     { "book_copy_id": "BC-0001", "branch_id": 1 },
     { "book_copy_id": "BC-0002", "branch_id": 1 },
-    { "book_copy_id": "BC-0003", "branch_id": 1 }
+    { "book_copy_id": "BC-0003", "branch_id": 2 }
   ]
 }
+```
 
-- Create single BookCopy (increments parent quantity):
+### Create single BookCopy (increments parent quantity)
+
+```json
 POST /api/BookCopies
-{ "book_copy_id": "BC-0004", "book_id": 42, "branch_id": 1 }
+{
+  "book_copy_id": "BC-0004",
+  "book_id": 42,
+  "branch_id": 1
+}
+```
 
-- Create reservation:
+### Create BookReservation
+
+```json
 POST /api/BookReservations
-{ "user_id": "user-123", "book_id": "BC-0001", "expiration_date": "2025-12-31T23:59:59Z" }
+{
+  "user_id": "user-001",
+  "book_id": "BC-0001",
+  "expiration_date": "2025-12-31T23:59:59Z",
+  "reserved_quantity": 1,
+  "is_confirmed": false
+}
+```
 
-- Create transaction (checkout):
+### Create BookTransaction (checkout)
+
+```json
 POST /api/BookTransactions
-{ "user_id": "user-123", "book_id": "BC-0001", "transaction_type": "Check-Out", "due_date": "2025-12-15T00:00:00Z" }
+{
+  "user_id": "user-001",
+  "book_id": "BC-0001",
+  "transaction_type": "Check-Out",
+  "borrow_type": "Borrow",
+  "due_date": "2025-12-15T00:00:00Z"
+}
+```
 
-Behavior and implementation notes (for UI/AI generation)
-- Atomic operations: multi-step changes (BookDetail + BookCopies) use explicit transactions. UI should treat create/update as all-or-nothing and implement retry/error handling on 4xx/5xx.
-- Error handling: API returns 400 for validation failures (include readable error message), 409 for unique constraint violations, 404 for missing resources and 500 for server errors.
-- Pagination and filtering: long-list endpoints may implement pagination. Check OpenAPI or query params in real-time endpoints.
-- Row-Level Security: `BookCopies` has RLS in the database; API enforces access based on authenticated user and server rules.
+### Update User Activity
 
-Generating client code
+```json
+PUT /api/Users/user-001/activity
+{
+  "LastActivityAt": "2025-06-15T14:30:00Z"
+}
+```
+
+---
+
+## DTO Shapes (Response Objects)
+
+### UserDTO
+
+```typescript
+interface UserDTO {
+  user_id: string;
+  name: string;
+  email: string;
+  phone_number: string;
+  role: string;
+  password_hash: string;
+  booksReserved: string[]; // Book names or copy IDs
+  booksBought: string[]; // Book names from Purchase transactions
+  LastActivityAt: string | null;
+}
+```
+
+### BookDTO
+
+```typescript
+interface BookDTO {
+  book_id: number;
+  name: string;
+  category_id: number;
+  quantity: number;
+  user_names: string[]; // Users who have reservations/transactions
+}
+```
+
+---
+
+## Behavior and Implementation Notes (for UI/AI generation)
+
+- **Atomic operations:** Multi-step changes (BookDetail + BookCopies) use explicit transactions. UI should treat create/update as all-or-nothing and implement retry/error handling on 4xx/5xx.
+- **Error handling:** API returns:
+  - `400` for validation failures (include readable error message)
+  - `404` for missing resources
+  - `409` for unique constraint violations (e.g., duplicate `book_copy_id`)
+  - `500` for server errors
+- **Pagination and filtering:** Long-list endpoints may implement pagination. Check OpenAPI or query params in real-time endpoints.
+- **Row-Level Security:** `BookCopies` has RLS in the database; API enforces access based on authenticated user and server rules.
+- **Foreign Key Naming:** Note that `book_id` in `BookReservations` and `BookTransactions` refers to `BookCopies.book_copy_id`, not `BookDetails.book_id`.
+
+---
+
+## Generating Client Code
+
 - Use these exact property names and types when auto-generating TypeScript/Swift/Kotlin models.
-- Map `timestamp` to `string` in JSON models (ISO-8601). Map `numeric` to `number`/`decimal` in clients that support decimals.
+- Map `timestamp` to `string` in JSON models (ISO-8601).
+- Map `numeric(10,2)` to `number`/`decimal` in clients that support decimals.
+- String length constraints are enforced server-side but should be validated client-side for better UX.
+
+---
+
+## TypeScript Interfaces (for frontend)
+
+```typescript
+interface Branch {
+  branch_id: number;
+  name: string;
+  location: string;
+  contact_number?: string;
+}
+
+interface Category {
+  category_id: number;
+  category_name: string;
+}
+
+interface User {
+  user_id: string; // max 20 chars
+  name: string; // max 50 chars
+  email: string; // max 100 chars
+  password_hash: string; // max 255 chars
+  phone_number: string; // max 20 chars
+  role: "Super Admin" | "Admin" | "User";
+  status: "Active" | "Inactive" | "Banned";
+  plan?: "Discover" | "Enterprise" | "Professional";
+  created_at?: string;
+  updated_at?: string;
+  last_activity_at?: string;
+}
+
+interface BookDetail {
+  book_id: number;
+  name: string; // max 255 chars
+  category_id: number;
+  quantity: number; // smallint, >= 0
+  sale_price?: number; // numeric(10,2)
+  image_url?: string;
+  created_at?: string;
+  updated_at?: string;
+  BookCopies?: BookCopy[]; // Only in POST/PUT payloads
+}
+
+interface BookCopy {
+  book_copy_id: string; // max 50 chars
+  book_id: number;
+  branch_id: number;
+}
+
+interface BookReservation {
+  reservation_id: number; // smallint
+  user_id: string; // max 20 chars
+  book_id: string; // references BookCopy.book_copy_id, max 50 chars
+  reservation_date?: string;
+  expiration_date: string; // required
+  status?: "Active" | "Cancelled" | "Fulfilled";
+  reserved_quantity?: number;
+  is_confirmed?: boolean;
+}
+
+interface BookTransaction {
+  transaction_id: number; // smallint
+  user_id: string; // max 20 chars
+  book_id: string; // references BookCopy.book_copy_id, max 50 chars
+  transaction_type: "Check-In" | "Check-Out";
+  borrow_type?: "Borrow" | "Purchase";
+  status?: "Pending" | "Completed" | "Overdue";
+  due_date?: string;
+  return_date?: string;
+  fine_amount?: number; // numeric(10,2), default 0.00
+  created_at?: string;
+}
+```
+
+---
+
+## Schema Diagram (Foreign Key Relationships)
+
+```
+Categories
+    └──< BookDetails (category_id)
+              └──< BookCopies (book_id)
+                        ├──< BookReservations (book_id → book_copy_id)
+                        └──< BookTransactions (book_id → book_copy_id)
+
+Branches
+    └──< BookCopies (branch_id)
+
+Users
+    ├──< BookReservations (user_id)
+    ├──< BookTransactions (user_id)
+    └──< Reports (generated_by)
+```
+
+---
+
+## Changelog
+
+### Latest Update (Schema Alignment)
+
+- **User:** `user_id` is now `varchar(20)`. `password_hash` and `phone_number` are now **required** fields.
+- **BookReservation:** `expiration_date` is now **required**. The `book_id` column references `BookCopies.book_copy_id`.
+- **BookTransaction:** The `book_id` column references `BookCopies.book_copy_id`.
+- **BookCopy:** Primary key `book_copy_id` is `varchar(50)`.
+- **BookDetail:** `sale_price` type is `numeric(10,2)`.
+- **BookCopies endpoint:** Added `PUT` method for updating copies.
+- **All numeric types:** Properly aligned with database precision (e.g., `numeric(10,2)` for monetary values).
+
+---
 
 If you need machine-friendly artifacts I can generate:
+
 - OpenAPI (Swagger) operation descriptions for all endpoints.
 - TypeScript interfaces for all resources matching this contract.
 - JSON Schema or Protobuf definitions for use by AI models.
