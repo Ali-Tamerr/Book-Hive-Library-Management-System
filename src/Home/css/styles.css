@@ -418,7 +418,6 @@ body.dark-theme .home-page::-webkit-scrollbar-thumb:hover{
 
 .home__article,
 .home__img{
-  width: 220px;
   transition: scale .4s;
 }
 .home__article{
