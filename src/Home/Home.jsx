@@ -58,9 +58,9 @@ const Home = () => {
    return (
       <div className="home-page">
          <header className="header" id="header">
-            <nav className="nav container">
-               <a href="#" className="nav__logo" style={{ color: 'black' }}>
-                  <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
+            <nav className="nav">
+               <a href="#" className="nav__logo" >
+                  <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
                </a>
 
                <div className="nav__menu">
@@ -80,9 +80,9 @@ const Home = () => {
                      </li>
 
                      <li className="nav__item">
-                        <a href="#discount" className="nav__link">
-                           <i className="ri-price-tag-3-line"></i>
-                           <span>Discount</span>
+                        <a href="#about" className="nav__link">
+                           <i className="ri-information-line"></i>
+                           <span>About Us</span>
                         </a>
                      </li>
 
@@ -230,7 +230,48 @@ const Home = () => {
                   </article>
                </div>
             </section>
+            {/*==================== ABOUT US ====================*/}
+            <section className="about section" id="about">
+               <h2 className="about__title section__title">
+                  About Us
+               </h2>
+               <div className="about__container container">
 
+                  <div className="about__content">
+                     <div className="about__info">
+                        <p className="about__description">
+                           We are a smart, technology-driven library system that uses RFID to make book management faster and easier. Our platform helps students and staff search, borrow, and track books efficiently with a modern and user-friendly design.
+                        </p>
+
+                        <div className="about__stats">
+                           <div className="about__stat">
+                              <span className="about__stat-number">5+</span>
+                              <span className="about__stat-label">Branches</span>
+                           </div>
+                           <div className="about__stat">
+                              <span className="about__stat-number">1K+</span>
+                              <span className="about__stat-label">Books</span>
+                           </div>
+                           <div className="about__stat">
+                              <span className="about__stat-number">100+</span>
+                              <span className="about__stat-label">Category</span>
+                           </div>
+                        </div>
+
+                        <a href="#" className="about__button button">Where are we ?</a>
+                     </div>
+
+                     <div className="about__images">
+                        <div className="about__book about__book--left">
+                           <img src={new URL('./assets/img/Bobby Charlton.png', import.meta.url).href} alt="Book" className="about__book-img" />
+                        </div>
+                        <div className="about__book about__book--right">
+                           <img src={new URL('./assets/img/Arsene Wenger.png', import.meta.url).href} alt="Book" className="about__book-img" />
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
             {/*==================== FEATURED ====================*/}
             <section className="featured section" id="featured">
                <h2 className="section__title">
@@ -242,13 +283,7 @@ const Home = () => {
                      <div className="swiper-wrapper">
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-1.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
                            <div className="featured__actions">
                               <button><i className="ri-search-line"></i></button>
@@ -259,13 +294,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-2.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -277,13 +306,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-3.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -295,13 +318,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-4.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -313,13 +330,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-5.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -331,13 +342,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-6.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -349,13 +354,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-7.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -367,13 +366,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-8.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -385,13 +378,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-9.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -403,13 +390,7 @@ const Home = () => {
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-10.png', import.meta.url).href} alt="img" className="featured__img" />
-
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
                            <button className="button">Add To Card</button>
 
                            <div className="featured__actions">
@@ -431,452 +412,9 @@ const Home = () => {
                </div>
             </section>
 
-            {/*==================== DISCOUNT ====================*/}
-            <section className="discount section" id="discount">
-               <div className="discount__container container grid">
-                  <div className="dicount__data">
-                     <h2 className="discount__title section__title">
-                        Up To 50% Discount
-                     </h2>
-
-                     <p className="discount__discription">
-                        Take advantage of the discount days we
-                        have for you, buy books from your favorite
-                        writers, the more you buy, the more
-                        discounts we have for you.
-                     </p>
-
-                     <a href="#" className="button">Shop Now</a>
-                  </div>
-
-                  <div className="discount__images">
-                     <img src={new URL('./assets/img/discount-book-1.png', import.meta.url).href} alt="image" className="discount__img-1" />
-                     <img src={new URL('./assets/img/discount-book-2.png', import.meta.url).href} alt="image" className="discount__img-2" />
-                  </div>
-               </div>
-            </section>
-
-            {/*==================== NEW BOOKS ====================*/}
-            <section className="new section" id="new">
-               <h2 className="section__title">
-                  New Books
-               </h2>
-
-               <div className="new__container container">
-                  <div className="new__swiper swiper">
-                     <div className="swiper-wrapper">
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-1.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-2.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-3.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-4.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-5.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-6.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-7.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-8.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-9.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-10.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-                     </div>
-                  </div>
-
-                  <div className="new__swiper swiper">
-                     <div className="swiper-wrapper">
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-10.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-9.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-8.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-7.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-6.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-5.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-4.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-3.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-2.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src={new URL('./assets/img/book-1.png', import.meta.url).href} alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-                     </div>
-                  </div>
-               </div>
-            </section>
-
             {/* ===========CHOOSE THE BEST PLAN=========== */}
-
             <section className="section" aria-labelledby="pricing-heading">
-               <div className="container">
+               <div className="container container-best-plan">
                   <h1 id="pricing-heading" className="heading">Choose The best Plan</h1>
                   <p className="subheading">choose a plan that's right for your growing team. Simple pricing &amp; No hidden charges.</p>
 
@@ -885,8 +423,8 @@ const Home = () => {
                      <article className="plan" role="listitem" aria-labelledby="plan-discover">
                         <div id="plan-discover" className="plan-title">Discover</div>
                         <div className="price">
-                           <span className="small-price">$99</span>
-                           <small>/ Per Month</small>
+                           <span className="small-price">$99 <small>/ Per Month</small></span>
+
                         </div>
 
                         <div className="features">
@@ -899,11 +437,11 @@ const Home = () => {
                      </article>
 
                      {/* <!-- Center plan - highlighted --> */}
-                     <article className="plan center" role="listitem" aria-labelledby="plan-enterprise">
+                     <article className="plan plan-center" role="listitem" aria-labelledby="plan-enterprise">
                         <div id="plan-enterprise" className="plan-title">Enterprise</div>
                         <div className="price">
-                           <span>$299</span>
-                           <small>/ Per Month</small>
+                           <span>$299 <small>/ Per Month</small></span>
+
                         </div>
 
                         <div className="features">
@@ -919,8 +457,7 @@ const Home = () => {
                      <article className="plan" role="listitem" aria-labelledby="plan-pro">
                         <div id="plan-pro" className="plan-title">Professional</div>
                         <div className="price">
-                           <span className="small-price">$199</span>
-                           <small>/ Per Month</small>
+                           <span className="small-price">$199<small>/ Per Month</small></span>
                         </div>
 
                         <div className="features">
