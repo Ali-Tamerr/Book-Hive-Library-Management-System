@@ -54,7 +54,7 @@ window.addEventListener('scroll', shadowHeader)
 */
 let swiperHome = new Swiper('.home__swiper', {
     loop: true,
-    spaceBetween: -24,
+    spaceBetween: 16,
     grabCursor: true,
     slidesPerView: 'auto',
     centeredSlides: 'auto',
@@ -66,7 +66,7 @@ let swiperHome = new Swiper('.home__swiper', {
 
     breakpoints: {
         1220: {
-            spaceBetween: -32,
+            spaceBetween: 20,
         }
     }
 })
