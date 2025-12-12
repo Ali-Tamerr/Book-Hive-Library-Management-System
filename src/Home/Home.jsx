@@ -28,11 +28,11 @@ const Home = () => {
 
       const initScripts = async () => {
          try {
-            await loadScript('/home/js/scrollreveal.min.js', 'scrollreveal');
-            await loadScript('/home/js/swiper-bundle.min.js', 'swiper');
+            await loadScript(new URL('./js/scrollreveal.min.js', import.meta.url).href, 'scrollreveal');
+            await loadScript(new URL('./js/swiper-bundle.min.js', import.meta.url).href, 'swiper');
 
             setTimeout(async () => {
-               await loadScript('/home/js/main.js', 'main');
+               await loadScript(new URL('./js/main.js', import.meta.url).href, 'main');
 
                setTimeout(() => {
                   const themeButton = document.getElementById('theme-button');
@@ -60,7 +60,7 @@ const Home = () => {
          <header className="header" id="header">
             <nav className="nav container">
                <a href="#" className="nav__logo" style={{ color: 'black' }}>
-                  <img src="/home/assets/logo.svg" alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
+                  <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
                </a>
 
                <div className="nav__menu">
@@ -188,19 +188,19 @@ const Home = () => {
                      <div className="home__swiper swiper">
                         <div className="swiper-wrapper">
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/Jose Mourinho.png" alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Jose Mourinho.png', import.meta.url).href} alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/Juhan Cruyff.png" alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Juhan Cruyff.png', import.meta.url).href} alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/Pep Guardiola.png" alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Pep Guardiola.png', import.meta.url).href} alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/Arsene Wenger.png" alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Arsene Wenger.png', import.meta.url).href} alt="image" className="home__img" />
                            </article>
                         </div>
                      </div>
@@ -241,7 +241,7 @@ const Home = () => {
                   <div className="featured__swiper swiper">
                      <div className="swiper-wrapper">
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-1.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-1.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -258,25 +258,7 @@ const Home = () => {
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-2.png" alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
-
-                           <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
-                           </div>
-                        </article>
-
-                        <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-3.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-2.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -294,7 +276,7 @@ const Home = () => {
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-4.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-3.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -312,7 +294,7 @@ const Home = () => {
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-5.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-4.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -330,7 +312,7 @@ const Home = () => {
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-6.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-5.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -348,7 +330,7 @@ const Home = () => {
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-7.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-6.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -366,7 +348,7 @@ const Home = () => {
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-8.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-7.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -384,7 +366,7 @@ const Home = () => {
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-9.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-8.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -402,7 +384,25 @@ const Home = () => {
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-10.png" alt="img" className="featured__img" />
+                           <img src={new URL('./assets/img/book-9.png', import.meta.url).href} alt="img" className="featured__img" />
+
+                           <h2 className="featured__title">Featured Book</h2>
+                           <div className="featured__prices">
+                              <span className="featured__discount">$11.99</span>
+                              <span className="featured__price">$19.99</span>
+                           </div>
+
+                           <button className="button">Add To Card</button>
+
+                           <div className="featured__actions">
+                              <button><i className="ri-search-line"></i></button>
+                              <button><i className="ri-heart-3-line"></i></button>
+                              <button><i className="ri-eye-line"></i></button>
+                           </div>
+                        </article>
+
+                        <article className="featured__card swiper-slide">
+                           <img src={new URL('./assets/img/book-10.png', import.meta.url).href} alt="img" className="featured__img" />
 
                            <h2 className="featured__title">Featured Book</h2>
                            <div className="featured__prices">
@@ -450,8 +450,8 @@ const Home = () => {
                   </div>
 
                   <div className="discount__images">
-                     <img src="/home/assets/img/discount-book-1.png" alt="image" className="discount__img-1" />
-                     <img src="/home/assets/img/discount-book-2.png" alt="image" className="discount__img-2" />
+                     <img src={new URL('./assets/img/discount-book-1.png', import.meta.url).href} alt="image" className="discount__img-1" />
+                     <img src={new URL('./assets/img/discount-book-2.png', import.meta.url).href} alt="image" className="discount__img-2" />
                   </div>
                </div>
             </section>
@@ -466,7 +466,7 @@ const Home = () => {
                   <div className="new__swiper swiper">
                      <div className="swiper-wrapper">
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-1.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-1.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -486,7 +486,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-2.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-2.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -506,7 +506,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-3.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-3.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -526,7 +526,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-4.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-4.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -546,7 +546,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-5.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-5.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -566,7 +566,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-6.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-6.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -586,7 +586,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-7.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-7.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -606,7 +606,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-8.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-8.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -626,7 +626,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-9.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-9.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -646,7 +646,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-10.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-10.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -670,7 +670,7 @@ const Home = () => {
                   <div className="new__swiper swiper">
                      <div className="swiper-wrapper">
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-10.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-10.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -690,7 +690,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-9.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-9.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -710,7 +710,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-8.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-8.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -730,7 +730,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-7.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-7.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -750,7 +750,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-6.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-6.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -770,7 +770,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-5.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-5.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -790,7 +790,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-4.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-4.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -810,7 +810,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-3.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-3.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -830,7 +830,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-2.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-2.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -850,7 +850,7 @@ const Home = () => {
                         </a>
 
                         <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-1.png" alt="image" className="new__img" />
+                           <img src={new URL('./assets/img/book-1.png', import.meta.url).href} alt="image" className="new__img" />
 
                            <div>
                               <h2 className="new__title">New Book</h2>
@@ -873,67 +873,67 @@ const Home = () => {
                </div>
             </section>
 
-{/* ===========CHOOSE THE BEST PLAN=========== */}
+            {/* ===========CHOOSE THE BEST PLAN=========== */}
 
-              <section className="section" aria-labelledby="pricing-heading">
-    <div className="container">
-      <h1 id="pricing-heading" className="heading">Choose The best Plan</h1>
-      <p className="subheading">choose a plan that's right for your growing team. Simple pricing &amp; No hidden charges.</p>
+            <section className="section" aria-labelledby="pricing-heading">
+               <div className="container">
+                  <h1 id="pricing-heading" className="heading">Choose The best Plan</h1>
+                  <p className="subheading">choose a plan that's right for your growing team. Simple pricing &amp; No hidden charges.</p>
 
-      <div className="plans" role="list">
-        {/* <!-- Left plan --> */}
-        <article className="plan" role="listitem" aria-labelledby="plan-discover">
-          <div id="plan-discover" className="plan-title">Discover</div>
-          <div className="price">
-            <span className="small-price">$99</span>
-            <small>/ Per Month</small>
-          </div>
+                  <div className="plans" role="list">
+                     {/* <!-- Left plan --> */}
+                     <article className="plan" role="listitem" aria-labelledby="plan-discover">
+                        <div id="plan-discover" className="plan-title">Discover</div>
+                        <div className="price">
+                           <span className="small-price">$99</span>
+                           <small>/ Per Month</small>
+                        </div>
 
-          <div className="features">
-            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Borrow + 3 books Monthly</div>
-          </div>
+                        <div className="features">
+                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Borrow + 3 books Monthly</div>
+                        </div>
 
-          <a className="btn" href="#" role="button" aria-label="Subscribe to Discover">Subscribe</a>
-        </article>
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Discover">Subscribe</a>
+                     </article>
 
-        {/* <!-- Center plan - highlighted --> */}
-        <article className="plan center" role="listitem" aria-labelledby="plan-enterprise">
-          <div id="plan-enterprise" className="plan-title">Enterprise</div>
-          <div className="price">
-            <span>$299</span>
-            <small>/ Per Month</small>
-          </div>
+                     {/* <!-- Center plan - highlighted --> */}
+                     <article className="plan center" role="listitem" aria-labelledby="plan-enterprise">
+                        <div id="plan-enterprise" className="plan-title">Enterprise</div>
+                        <div className="price">
+                           <span>$299</span>
+                           <small>/ Per Month</small>
+                        </div>
 
-          <div className="features">
-            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Borrow + 15 books Monthly</div>
-          </div>
+                        <div className="features">
+                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Borrow + 15 books Monthly</div>
+                        </div>
 
-          <a className="btn" href="#" role="button" aria-label="Subscribe to Enterprise">Subscribe</a>
-        </article>
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Enterprise">Subscribe</a>
+                     </article>
 
-        {/* <!-- Right plan --> */}
-        <article className="plan" role="listitem" aria-labelledby="plan-pro">
-          <div id="plan-pro" className="plan-title">Professional</div>
-          <div className="price">
-            <span className="small-price">$199</span>
-            <small>/ Per Month</small>
-          </div>
+                     {/* <!-- Right plan --> */}
+                     <article className="plan" role="listitem" aria-labelledby="plan-pro">
+                        <div id="plan-pro" className="plan-title">Professional</div>
+                        <div className="price">
+                           <span className="small-price">$199</span>
+                           <small>/ Per Month</small>
+                        </div>
 
-          <div className="features">
-            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Borrow + 10 books Monthly</div>
-          </div>
+                        <div className="features">
+                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Borrow + 10 books Monthly</div>
+                        </div>
 
-          <a className="btn" href="#" role="button" aria-label="Subscribe to Professional">Subscribe</a>
-        </article>
-      </div>
-    </div>
-  </section>
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Professional">Subscribe</a>
+                     </article>
+                  </div>
+               </div>
+            </section>
 
             {/*==================== TESTIMONIAL ====================*/}
             <section className="testimonial section" id="testimonial">
@@ -945,7 +945,7 @@ const Home = () => {
                   <div className="testimonial__swiper swiper">
                      <div className="swiper-wrapper">
                         <article className="testimonial__card swiper-slide">
-                           <img src="/home/assets/img/testimonial-perfil-1.png" alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-1.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
@@ -963,7 +963,7 @@ const Home = () => {
                         </article>
 
                         <article className="testimonial__card swiper-slide">
-                           <img src="/home/assets/img/testimonial-perfil-2.png" alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-2.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
@@ -981,7 +981,7 @@ const Home = () => {
                         </article>
 
                         <article className="testimonial__card swiper-slide">
-                           <img src="/home/assets/img/testimonial-perfil-3.png" alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-3.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
@@ -999,7 +999,7 @@ const Home = () => {
                         </article>
 
                         <article className="testimonial__card swiper-slide">
-                           <img src="/home/assets/img/testimonial-perfil-4.png" alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-4.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
@@ -1026,7 +1026,7 @@ const Home = () => {
             <div className="footer__container container grid">
                <div>
                   <a href="#" className="footer__logo" style={{ color: 'black' }}>
-                     <img src="/home/assets/logo.svg" alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
+                     <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
                   </a>
 
                   <p className="footer__description">
