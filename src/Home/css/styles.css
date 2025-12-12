@@ -421,9 +421,8 @@ body.dark-theme .home-page::-webkit-scrollbar-thumb:hover{
   width: 220px;
   transition: scale .4s;
 }
-
 .home__article{
-  scale: .8;
+  scale: .7;
 }
 /* Swiper class */
 .swiper-slide-active,
