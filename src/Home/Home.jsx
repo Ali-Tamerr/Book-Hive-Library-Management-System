@@ -1,5 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoginPopup from '../shared/LoginPopup';
+import SignupPopup from '../shared/SignupPopup';
+import ForgotPasswordPopup from '../shared/ForgotPasswordPopup';
+import OTPPopup from '../shared/OTPPopup';
+import ResetPasswordPopup from '../shared/ResetPasswordPopup';
 import './css/swiper-bundle.min.css';
 import './css/styles.css';
 import './css/stylesNew.css';
@@ -7,6 +12,11 @@ import './css/stylesNew.css';
 
 const Home = () => {
    const navigate = useNavigate();
+   const [isLoginOpen, setIsLoginOpen] = useState(false);
+   const [isSignupOpen, setIsSignupOpen] = useState(false);
+   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+   const [isOTPOpen, setIsOTPOpen] = useState(false);
+   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
 
    useEffect(() => {
       const loadScript = (src, id) => {
@@ -110,7 +120,7 @@ const Home = () => {
                   <i
                      className="ri-user-line login-button"
                      id="login-button"
-                     onClick={() => navigate('/login')}
+                     onClick={() => setIsLoginOpen(true)}
                      style={{ cursor: 'pointer' }}
                   ></i>
 
@@ -666,6 +676,37 @@ const Home = () => {
          <a href="#" className="scrollup" id="scroll-up">
             <i className="ri-arrow-up-line"></i>
          </a>
+
+         {/*========== AUTH POPUPS ==========*/}
+         <LoginPopup
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+            onForgotPassword={() => setIsForgotPasswordOpen(true)}
+            onSignup={() => setIsSignupOpen(true)}
+         />
+         <SignupPopup
+            isOpen={isSignupOpen}
+            onClose={() => setIsSignupOpen(false)}
+            onLogin={() => setIsLoginOpen(true)}
+         />
+         <ForgotPasswordPopup
+            isOpen={isForgotPasswordOpen}
+            onClose={() => setIsForgotPasswordOpen(false)}
+            onOTP={() => setIsOTPOpen(true)}
+            onBack={() => setIsLoginOpen(true)}
+         />
+         <OTPPopup
+            isOpen={isOTPOpen}
+            onClose={() => setIsOTPOpen(false)}
+            onResetPassword={() => setIsResetPasswordOpen(true)}
+            onBack={() => setIsForgotPasswordOpen(true)}
+         />
+         <ResetPasswordPopup
+            isOpen={isResetPasswordOpen}
+            onClose={() => setIsResetPasswordOpen(false)}
+            onLogin={() => setIsLoginOpen(true)}
+            onBack={() => setIsOTPOpen(true)}
+         />
       </div>
    );
 };
