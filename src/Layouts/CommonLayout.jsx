@@ -96,7 +96,7 @@ const CommonLayout = ({
                       } else if (col.render) {
                         cellContent = col.render(item);
                       } else {
-                        cellContent = item[col.accessor] || 'N/A';
+                        cellContent = item[col.accessor] || '-';
                       }
                       return <td key={col.accessor} className="p-3 text-center whitespace-nowrap">{cellContent}</td>;
                     })}

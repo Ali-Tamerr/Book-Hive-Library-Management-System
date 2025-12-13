@@ -216,13 +216,21 @@ function UserManagement({ searchValue, setSearchValue }) {
         onClose={() => setShowRequestsPopup(false)}
         requests={userRequests}
         isLoading={isLoadingRequests}
-        onApprove={async (request) => {
-          try {
-            await approveRequestMutation.mutateAsync(request.request_id);
-          } catch (error) {
-            console.error('Failed to approve request:', error);
-            alert('Failed to approve request. Please try again.');
-          }
+        onApprove={(request) => {
+          setFormData({
+            id: '',
+            user_id: '',
+            name: request.name || '',
+            email: request.email || '',
+            phone_number: request.phone_number || '',
+            plan: request.plan || '',
+            status: 'Active',
+            password: '',
+            password_hash: ''
+          });
+          setShowRequestsPopup(false);
+          setEditMode(false);
+          setShowPopup(true);
         }}
         onReject={async (request) => {
           try {

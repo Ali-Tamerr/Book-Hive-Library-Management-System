@@ -65,7 +65,7 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
                     />
                 </div>
 
-                <div className='border border-[#828282] rounded-[10px] overflow-hidden'>
+                <div className='border border-[#8787A3] rounded-[10px] overflow-hidden'>
                     <div className='max-h-[400px]  min-w-[100px] overflow-auto'>
                         {isLoading ? (
                             <div className='p-8 text-center text-gray-500'>
@@ -77,14 +77,14 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
                             </div>
                         ) : (
                             <table className='w-full'>
-                                <thead className='bg-[#f5f5f5] sticky top-0'>
+                                <thead className='sticky top-0'>
                                     <tr>
-                                        <th className='p-4 text-left text-sm font-semibold text-[#333]'>Name</th>
-                                        <th className='p-4 text-left text-sm font-semibold text-[#333]'>Email</th>
-                                        <th className='p-4 text-left text-sm font-semibold text-[#333]'>Contact No</th>
-                                        <th className='p-4 text-left text-sm font-semibold text-[#333]'>Plan</th>
-                                        <th className='p-4 text-left text-sm font-semibold text-[#333]'>Sent At</th>
-                                        <th className='p-4 text-left text-sm font-semibold text-[#333]'>Status</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Name</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Email</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Contact No</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Plan</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Sent At</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Status</th>
                                         <th className='p-4 text-center text-sm font-semibold text-[#333]'>Actions</th>
                                     </tr>
                                 </thead>
@@ -92,28 +92,28 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
                                     {filteredAndSortedRequests.map((request, index) => (
                                         <tr
                                             key={request.request_id || index}
-                                            className='border-t border-[#e5e5e5] hover:bg-[#fafafa] transition-colors'
+                                            className='border-t border-[#0a0f33] transition-colors'
                                         >
-                                            <td className='p-4 text-sm whitespace-nowrap text-[#333]'>{request.name}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-[#333]'>{request.email}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-[#333]'>{request.phone_number}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-[#333]'>{request.plan || 'N/A'}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-[#666]'>{formatDate(request.created_at)}</td>
-                                            <td className='p-4 whitespace-nowrap'>{getStatusBadge(request.status)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{request.name}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{request.email}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{request.phone_number}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{request.plan || 'N/A'}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
+                                            <td className='p-4 whitespace-nowrap text-center'>{getStatusBadge(request.status)}</td>
                                             <td className='p-4'>
                                                 <div className='flex justify-center gap-2'>
                                                     {request.status === 'Pending' && (
                                                         <>
                                                             <button
                                                                 onClick={() => onApprove && onApprove(request)}
-                                                                className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg hover:bg-green-600 transition-colors'
+                                                                className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
                                                                 title="Approve"
                                                             >
                                                                 <Check size={16} />
                                                             </button>
                                                             <button
                                                                 onClick={() => onReject && onReject(request)}
-                                                                className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg hover:bg-red-600 transition-colors'
+                                                                className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
                                                                 title="Reject"
                                                             >
                                                                 <X size={16} />

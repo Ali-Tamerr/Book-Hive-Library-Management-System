@@ -24,7 +24,7 @@ const FormSelect = ({ label, name, value, onChange, options, placeholder, requir
           onClick={handleSelectClick}
           onBlur={() => setIsOpen(false)}
           required={required}
-          className="w-full text-[#727374] h-[50px] px-4 py-3 pr-10 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px] appearance-none"
+          className="w-full text-[#0a0f33] h-[50px] px-4 py-3 pr-10 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px] appearance-none"
         >
           {placeholder && (
             <option value="" disabled hidden>
