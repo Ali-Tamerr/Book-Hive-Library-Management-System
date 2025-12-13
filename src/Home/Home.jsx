@@ -141,7 +141,7 @@ const Home = () => {
          </div>
 
          {/*==================== LOGIN ====================*/}
-         <div className="login grid" id="login-content">
+         {/* <div className="login grid" id="login-content">
             <form action="" className="login__form grid">
                <h3 className="login__title">Log In</h3>
 
@@ -171,7 +171,7 @@ const Home = () => {
             </form>
 
             <i className="ri-close-line login__close" id="login-close"></i>
-         </div>
+         </div> */}
 
          {/*==================== MAIN ====================*/}
          <main className="main">
