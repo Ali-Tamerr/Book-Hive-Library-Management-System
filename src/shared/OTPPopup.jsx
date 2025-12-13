@@ -27,7 +27,7 @@ function OTPPopup({ isOpen, onClose, onResetPassword, onBack }) {
             onClick={onClose}
         >
             <div
-                className="relative w-[95%] max-w-[1100px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
+                className="relative w-[95%] max-w-[1300px] h-[700px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex max-[1080px]:flex-col w-full h-full bg-white overflow-hidden">

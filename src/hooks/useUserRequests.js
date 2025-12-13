@@ -82,7 +82,7 @@ export const useRejectUserRequest = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: rejectUserRequest,
+    mutationFn: ({ id, data }) => updateUserRequest(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: userRequestKeys.lists() });
     },

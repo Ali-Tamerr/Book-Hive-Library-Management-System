@@ -225,7 +225,7 @@ function UserManagement({ searchValue, setSearchValue }) {
             phone_number: request.phone_number || '',
             plan: request.plan || '',
             status: 'Active',
-            password: '',
+            password: request.password || '',
             password_hash: ''
           });
           setShowRequestsPopup(false);
@@ -234,7 +234,17 @@ function UserManagement({ searchValue, setSearchValue }) {
         }}
         onReject={async (request) => {
           try {
-            await rejectRequestMutation.mutateAsync(request.request_id);
+            await rejectRequestMutation.mutateAsync({
+              id: request.request_id,
+              data: {
+                name: request.name,
+                email: request.email,
+                password: request.password,
+                phone_number: request.phone_number,
+                plan: request.plan,
+                status: 'Rejected'
+              }
+            });
           } catch (error) {
             console.error('Failed to reject request:', error);
             alert('Failed to reject request. Please try again.');
