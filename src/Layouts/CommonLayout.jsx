@@ -79,16 +79,16 @@ const CommonLayout = ({
                           <div className='w-max mx-auto flex justify-center items-center'>
                             <button
                               onClick={() => handleEdit(item)}
-                              className="mr-2 text-lg hover:scale-125 transition-transform"
+                              className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer"
                               title="Edit"><FilePenLine size={20} /></button>
                             <button
                               onClick={() => handleDelete(item.id || item.user_id || item.book_id || item.category_id)}
-                              className="mr-2 text-lg hover:scale-125 transition-transform"
+                              className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer"
                               title="Delete"><Trash2 size={20} /></button>
                             {handleView && (
                               <button
                                 onClick={() => handleView(item)}
-                                className="text-lg hover:scale-125 transition-transform"
+                                className="text-lg hover:scale-125 transition-transform cursor-pointer"
                                 title="View"><ReceiptText size={20} /></button>
                             )}
                           </div>

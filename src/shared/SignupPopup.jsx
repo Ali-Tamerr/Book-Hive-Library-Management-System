@@ -136,7 +136,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                                 {loading ? 'SIGNING UP...' : 'SIGN UP'}
                             </PrimaryButton>
                         </form>
-                        <p className="text-lg max-[1080px]:block hidden text-gray-400">Already have Account? <button onClick={handleLogin} className='underline text-gray-900'>Sign In now.</button></p>
+                        <p className="text-lg max-[1080px]:block hidden text-gray-400">Already have Account? <button onClick={handleLogin} className='underline text-gray-900 cursor-pointer'>Sign In now.</button></p>
                     </WhiteBgSection>
                 </div>
             </div>
