@@ -123,14 +123,13 @@ function Categories({ searchValue, setSearchValue }) {
   const columns = [
     { header: 'ID', accessor: 'category_id' },
     { header: 'Name', accessor: 'category_name' },
-    { header: 'Description', accessor: 'category_description' },
     {
       header: 'Book Count',
       accessor: 'book_count',
       render: (category) => {
         const count = books.filter(b => b.category_id === category.category_id).length;
         return (
-          <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
+          <span className=" text-sm font-medium ">
             {count}
           </span>
         );
@@ -190,7 +189,6 @@ function Categories({ searchValue, setSearchValue }) {
         data={selectedCategory ? {
           'Category ID': selectedCategory.category_id,
           'Name': selectedCategory.category_name,
-          'Description': selectedCategory.category_description
         } : null}
         savedBy={{
           name: 'Admin User',
