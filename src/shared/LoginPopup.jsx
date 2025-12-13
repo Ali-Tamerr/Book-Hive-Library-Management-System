@@ -59,7 +59,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
             onClick={onClose}
         >
             <div
-                className="relative w-[95%] max-w-[1100px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
+                className="relative w-[95%] max-w-[1300px] h-[700px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex max-[1080px]:flex-col justify-stretch w-full h-full bg-white overflow-hidden">
@@ -106,9 +106,11 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
                     </WhiteBgSection>
 
                     <DarkBgSection
-                        message="New to our platform? Sign Up now."
-                        buttonText="SIGN UP"
-                        onButtonClick={handleSignup}
+                        message="New to our platform? Please visit any of our branches to complete the registration process."
+                        buttonText="Where are we ?"
+                        onButtonClick={() => window.open('https://maps.google.com', '_blank')}
+                        secondButtonText="Fill your form"
+                        onSecondButtonClick={handleSignup}
                         position="right"
                     />
                 </div>

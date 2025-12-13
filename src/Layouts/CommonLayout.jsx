@@ -69,7 +69,7 @@ const CommonLayout = ({
                 </tr>
               ) : (
                 data.map((item, index) => (
-                  <tr key={index} className="border-b font-medium border-gray-200">
+                  <tr key={index} className="font-medium h-[68px]">
                     {columns.map(col => {
                       let cellContent;
                       if (col.accessor === 'action') {

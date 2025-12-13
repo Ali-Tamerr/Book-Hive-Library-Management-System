@@ -85,9 +85,11 @@ function Login() {
                 </WhiteBgSection>
 
                 <DarkBgSection
-                    message="New to our platform? Sign Up now."
-                    buttonText="SIGN UP"
-                    onButtonClick={() => navigate('/signup')}
+                    message="New to our platform? Please visit any of our branches to complete the registration process."
+                    buttonText="Where are we ?"
+                    onButtonClick={() => window.open('https://maps.google.com', '_blank')}
+                    secondButtonText="Fill your form"
+                    onSecondButtonClick={() => navigate('/signup')}
                     position="right"
                 />
             </div>

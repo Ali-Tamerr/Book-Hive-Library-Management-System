@@ -101,6 +101,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `request_id` | int | PK, identity (auto-generated) |
 | `name` | string(50) | **required** |
 | `email` | string(100) | **required**, unique |
+| `password` | string(200) | **required** |
 | `phone_number` | string(20) | **required** |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
 | `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
@@ -199,7 +200,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 |--------|----------|-------------|
 | GET | `/api/UserRequests` | Returns `UserRequest[]` ordered by `created_at` descending |
 | GET | `/api/UserRequests/{request_id}` | Returns single `UserRequest` |
-| POST | `/api/UserRequests` | Create request; body: `{ name, email, phone_number, plan? }` |
+| POST | `/api/UserRequests` | Create request; body: `{ name, email, password, phone_number, plan? }` |
 | PUT | `/api/UserRequests/{request_id}` | Update request (approve/reject); body: `{ status?, name?, email?, phone_number?, plan? }` |
 | DELETE | `/api/UserRequests/{request_id}` | Delete request |
 
@@ -287,6 +288,7 @@ POST /api/UserRequests
 {
   "name": "Jane Smith",
   "email": "jane@example.com",
+  "password": "user_password_here",
   "phone_number": "+1987654321",
   "plan": "Discover"
 }
@@ -452,6 +454,7 @@ interface UserRequest {
   request_id: number;        // auto-generated, do not send in POST
   name: string;              // max 50 chars
   email: string;             // max 100 chars, unique
+  password: string;          // max 200 chars, required
   phone_number: string;      // max 20 chars
   plan?: 'Discover' | 'Enterprise' | 'Professional';
   status?: 'Pending' | 'Approved' | 'Rejected';  // default: 'Pending'
@@ -487,7 +490,7 @@ UserRequests (standalone, no FK relationships)
 
 ### Latest Update (UserRequests Feature)
 - **UserRequest:** Added new `UserRequests` table and API for handling user registration requests pending admin approval.
-  - Fields: `request_id` (auto-generated), `name`, `email` (unique), `phone_number`, `plan`, `status`, `created_at`
+  - Fields: `request_id` (auto-generated), `name`, `email` (unique), `password`, `phone_number`, `plan`, `status`, `created_at`
   - Status workflow: `Pending` → `Approved` or `Rejected`
   - Admins manually create Users after approving requests
 - **New endpoints:** Full CRUD for `/api/UserRequests`

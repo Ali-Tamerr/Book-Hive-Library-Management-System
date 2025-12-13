@@ -5,13 +5,20 @@ import { Users, Search, Check, X } from 'lucide-react';
 
 const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, isLoading = false }) => {
     const [searchValue, setSearchValue] = useState('');
+    const [showRejected, setShowRejected] = useState(false);
 
     const filteredAndSortedRequests = useMemo(() => {
-        let filtered = requests;
+        let filtered = requests.filter(request => {
+            if (showRejected) {
+                return request.status === 'Rejected';
+            } else {
+                return request.status !== 'Rejected';
+            }
+        });
 
         if (searchValue.trim()) {
             const searchLower = searchValue.toLowerCase();
-            filtered = requests.filter(
+            filtered = filtered.filter(
                 (request) =>
                     request.name?.toLowerCase().includes(searchLower) ||
                     request.email?.toLowerCase().includes(searchLower)
@@ -23,7 +30,7 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
             const dateB = new Date(b.created_at || 0);
             return dateB - dateA;
         });
-    }, [requests, searchValue]);
+    }, [requests, searchValue, showRejected]);
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -52,28 +59,41 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
             title="User Requests"
             icon={<Users size={30} />}
             maxWidthClass="max-w-[1100px] max-[856px]:scale-80"
+            heightClass="h-[90vh]"
         >
-            <div className='flex flex-col gap-6'>
-                <div className='relative'>
-                    <Search className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400' size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search by name or email..."
-                        value={searchValue}
-                        onChange={(e) => setSearchValue(e.target.value)}
-                        className="w-full h-[50px] pl-12 pr-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
-                    />
+            <div className='flex flex-col gap-6 h-full'>
+                <div className='flex gap-3 items-center'>
+                    <div className='relative flex-1'>
+                        <Search className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400' size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search by name or email..."
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                            className="w-full h-[50px] pl-12 pr-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+                        />
+                    </div>
+                    <button
+                        onClick={() => setShowRejected(!showRejected)}
+                        className="bg-[#0b0b3b] cursor-pointer h-[50px] px-6 text-white rounded-xl hover:bg-[#1a1a6a] transition-colors text-sm font-medium whitespace-nowrap"
+                    >
+                        {showRejected ? 'Pending Requests' : 'Rejected Requests'}
+                    </button>
                 </div>
 
-                <div className='border border-[#8787A3] rounded-[10px] overflow-hidden'>
-                    <div className='max-h-[400px]  min-w-[100px] overflow-auto'>
+                <div className='border border-[#8787A3] rounded-[10px] overflow-hidden flex-1 flex flex-col'>
+                    <div className='flex-1 min-w-[100px] overflow-auto'>
                         {isLoading ? (
                             <div className='p-8 text-center text-gray-500'>
                                 Loading requests...
                             </div>
                         ) : filteredAndSortedRequests.length === 0 ? (
                             <div className='p-8 text-center text-gray-500'>
-                                {searchValue ? 'No requests match your search.' : 'No pending requests.'}
+                                {searchValue
+                                    ? 'No requests match your search.'
+                                    : showRejected
+                                        ? 'No rejected requests.'
+                                        : 'No pending requests.'}
                             </div>
                         ) : (
                             <table className='w-full'>
@@ -88,11 +108,11 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
                                         <th className='p-4 text-center text-sm font-semibold text-[#333]'>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className='border-t border-[#0a0f33]'>
                                     {filteredAndSortedRequests.map((request, index) => (
                                         <tr
                                             key={request.request_id || index}
-                                            className='border-t border-[#0a0f33] transition-colors'
+                                            className=''
                                         >
                                             <td className='p-4 text-sm whitespace-nowrap text-center'>{request.name}</td>
                                             <td className='p-4 text-sm whitespace-nowrap text-center'>{request.email}</td>
