@@ -74,13 +74,20 @@ function Dashboard() {
     };
   }) || [];
 
-  // Get admin users for display
-  const displayAdmins = adminUsers.slice(0, 4).map(user => ({
-    id: user.user_id,
-    name: user.name || 'Unknown',
-    adminId: user.user_id,
-    isOnline: isUserOnline(user)
-  }));
+  const displayAdmins = adminUsers
+    .map(user => ({
+      id: user.user_id,
+      name: user.name || 'Unknown',
+      adminId: user.user_id,
+      isOnline: isUserOnline(user)
+    }))
+    .sort((a, b) => {
+      if (a.isOnline !== b.isOnline) {
+        return b.isOnline - a.isOnline;
+      }
+      return a.name.localeCompare(b.name);
+    })
+    .slice(0, 4);
 
   return (
     <div className="max-[1540px]:py-5 px-10 max-[1080px]:px-12 max-[430px]:px-0 flex-1 w-full overflow-y-auto h-full relative max-[430px]:w-dvw ">
