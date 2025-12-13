@@ -10,27 +10,24 @@ export const login = async (email, password) => {
     console.log('Total users fetched:', users.length);
 
     const user = users.find(u => {
-      console.log('Checking user:', {
-        email: u.email
-      });
-      
       const emailMatch = u.email?.toLowerCase() === email?.toLowerCase();
-      
-      console.log('Match results:', {
-        emailMatch
-      });
-      
       return emailMatch;
     });
 
     if (!user) {
-      console.error('User not found. Available users:', users.map(u => ({
-        email: u.email
-      })));
+      console.error('User not found for email:', email);
       throw new Error('User not found. Please check your email.');
     }
 
     console.log('User found:', { email: user.email, role: user.role });
+
+    const storedPassword = user.password_hash || user.password || '';
+    if (storedPassword !== password) {
+      console.error('Password mismatch for user:', email);
+      throw new Error('Incorrect password. Please try again.');
+    }
+
+    console.log('Password verified successfully');
 
     localStorage.setItem('authToken', JSON.stringify(user));
     localStorage.setItem('currentUser', JSON.stringify(user));
