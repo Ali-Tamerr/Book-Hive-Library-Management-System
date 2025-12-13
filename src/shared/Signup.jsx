@@ -118,7 +118,7 @@ function Signup() {
                                 {loading ? 'SIGNING UP...' : 'SIGN UP'}
                             </PrimaryButton>
                         </div>
-                        <p className="hidden max-[1080px]:block text-lg text-[#0a0f33] mb-8 text-center">Already have Account? <button className='underline text-[#0a0f33]' onClick={() => navigate('/login')}>Sign In now.</button></p>
+                        <p className="hidden max-[1080px]:block text-lg text-[#0a0f33] mb-8 text-center">Already have Account? <button className='underline text-[#0a0f33] cursor-pointer' onClick={() => navigate('/login')}>Sign In now.</button></p>
                     </form>
                 </WhiteBgSection>
 
@@ -200,7 +200,7 @@ function Signup() {
                                 {loading ? 'SIGNING UP...' : 'SIGN UP'}
                             </PrimaryButton>
                         </div>
-                        <p className="hidden max-[1080px]:block text-lg text-[#0a0f33] mb-8 text-center">Already have Account? <button className='underline text-[#0a0f33]' onClick={() => navigate('/login')}>Sign In now.</button></p>
+                        <p className="hidden max-[1080px]:block text-lg text-[#0a0f33] mb-8 text-center">Already have Account? <button className='underline text-[#0a0f33] cursor-pointer' onClick={() => navigate('/login')}>Sign In now.</button></p>
                     </form>
                 </WhiteBgSection>
             </div>

@@ -45,7 +45,7 @@ function GlobalSearchPopup({ show, onClose }) {
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-[#0b0b3b] hover:text-red-600 transition-colors"
+                        className="text-[#0b0b3b] hover:text-red-600 transition-colors cursor-pointer"
                         type="button"
                     >
                         <X size={24} strokeWidth={2.9} className="border-[2px] p-1 rounded-[7px] text-[#525252]" />

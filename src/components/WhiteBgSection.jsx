@@ -32,7 +32,7 @@ const WhiteBgSection = ({
             {backButton && (
                 <button
                     onClick={backButton.onClick}
-                    className={`absolute ${backButton.position === 'left' ? 'top-8 left-8' : 'top-8 right-8'} border border-[#0a0f33] text-[#0a0f33] rounded-[30px] px-6 py-2 text-base hover:bg-[#0a0f33] hover:text-white transition-colors`}
+                    className={`absolute ${backButton.position === 'left' ? 'top-8 left-8' : 'top-8 right-8'} border border-[#0a0f33] text-[#0a0f33] rounded-[30px] px-6 py-2 text-base hover:bg-[#0a0f33] hover:text-white transition-colors cursor-pointer`}
                 >
                     {backButton.text}
                 </button>

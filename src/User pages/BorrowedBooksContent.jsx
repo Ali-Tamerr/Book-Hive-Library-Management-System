@@ -50,7 +50,7 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
             customActionRenderer={(book) => (
                 <button
                     onClick={() => handleReturn(book)}
-                    className="px-4 py-2 bg-[#0a0f33] text-white rounded-lg text-sm font-medium hover:bg-[#192261] transition-all flex items-center gap-2"
+                    className="px-4 py-2 bg-[#0a0f33] text-white rounded-lg text-sm font-medium hover:bg-[#192261] transition-all flex items-center gap-2 cursor-pointer"
                 >
                     <ArrowLeft size={16} />
                     Return

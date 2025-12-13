@@ -166,7 +166,7 @@ const Home = () => {
                      You forgot your password
                   </a>
 
-                  <button type="submit" className="login__button button">Log In</button>
+                  <button type="submit" className="login__button button cursor-pointer">Log In</button>
                </div>
             </form>
 
@@ -294,119 +294,119 @@ const Home = () => {
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-1.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-2.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-3.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-4.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-5.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-6.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-7.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-8.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-9.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/book-10.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
                      </div>

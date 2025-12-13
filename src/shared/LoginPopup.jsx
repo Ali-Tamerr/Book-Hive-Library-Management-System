@@ -102,7 +102,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
                                 {loading ? 'SIGNING IN...' : 'SIGN IN'}
                             </PrimaryButton>
                         </form>
-                        <p className="text-lg max-[1080px]:block hidden text-gray-400">New to our platform? <button onClick={handleSignup} className='underline text-gray-900'>Sign Up now.</button></p>
+                        <p className="text-lg max-[1080px]:block hidden text-gray-400">New to our platform? <button onClick={handleSignup} className='underline text-gray-900 cursor-pointer'>Sign Up now.</button></p>
                     </WhiteBgSection>
 
                     <DarkBgSection

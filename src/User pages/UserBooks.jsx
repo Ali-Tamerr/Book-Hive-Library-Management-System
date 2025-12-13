@@ -73,7 +73,7 @@ function UserBooks() {
                             onClick={() => handleBorrow(book)}
                             disabled={!canBorrow}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${canBorrow
-                                ? 'bg-[#0a0f33] text-white hover:bg-[#192261]'
+                                ? 'bg-[#0a0f33] text-white hover:bg-[#192261] cursor-pointer'
                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 }`}
                             title={!canBorrow ? 'Minimum 2 copies required for borrowing' : ''}

@@ -17,7 +17,7 @@ const DarkBgSection = ({ message, buttonText, onButtonClick, position = "left" }
             {buttonText && onButtonClick && (
                 <button
                     onClick={onButtonClick}
-                    className="border-2 border-white text-white font-semibold text-lg w-full max-w-[300px] px-10 py-4 rounded-[20px] hover:bg-white hover:text-[#0a0f33] transition-colors"
+                    className="border-2 border-white text-white font-semibold text-lg w-full max-w-[300px] px-10 py-4 rounded-[20px] hover:bg-white hover:text-[#0a0f33] transition-colors cursor-pointer"
                 >
                     {buttonText}
                 </button>
