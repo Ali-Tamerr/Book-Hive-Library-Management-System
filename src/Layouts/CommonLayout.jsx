@@ -19,16 +19,27 @@ const CommonLayout = ({
   customActionRenderer,
   isUserPage = false,
   customTitle,
+  secondaryButton,
 }) => {
   const FormPopupComponent = formPopup;
 
   return (
     <div className='flex flex-col h-full p-7 pb-0 pr-0 gap-5 max-[1080px]:p-0 max-[1080px]:pt-5'>
-      <div className="flex justify-between items-center pr-7 max-[1080px]:px-5">
-        {customTitle ? customTitle : <h2 className="text-xl max-[856px]:text-sm font-semibold">{title}</h2>}
-        <div className='flex gap-2 h-10'>
-          {buttonText && <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />}
-          <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
+      <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
+        <div className="flex justify-between items-center max-[856px]:gap-2">
+          {customTitle ? customTitle : <h2 className="text-xl max-[856px]:text-sm font-semibold whitespace-nowrap">{title}</h2>}
+          <div className='hidden max-[856px]:flex flex-1 h-10'>
+            <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
+          </div>
+          <div className='flex gap-2 h-10 max-[856px]:hidden'>
+            {secondaryButton}
+            {buttonText && <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />}
+            <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
+          </div>
+        </div>
+        <div className='hidden max-[856px]:flex gap-2 h-10'>
+          {secondaryButton && <div className='flex-1 [&>button]:w-full [&>button]:justify-center'>{secondaryButton}</div>}
+          {buttonText && <div className='flex-1'><ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} /></div>}
         </div>
       </div>
 
