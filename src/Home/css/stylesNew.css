@@ -117,6 +117,11 @@ body.dark-theme{
 	Color changes in some parts of 
 	the website, in dark theme
 ==========*/
+.dark-theme .home-page {
+  background-color: hsl(230, 12%, 8%);
+  color: hsl(230, 16%, 70%);
+}
+
 .dark-theme .shadow-header{
   box-shadow: 0 2px 16px hsla(0, 0%, 0%, .4);
 }
@@ -145,6 +150,88 @@ body.dark-theme{
 .dark-theme::-webkit-scrollbar-thumb:hover{
   background-color: hsl(230, 16%, 35%);
 }
+.dark-theme .featured__card,
+.dark-theme .testimonial__card {
+  border-color: var(--border-color);
+}
+
+.dark-theme .swiper-button-prev,
+.dark-theme .swiper-button-next {
+  border-color: var(--border-color);
+}
+
+.dark-theme .footer-links a,
+.dark-theme .footer-links li,
+.dark-theme .footer-description,
+.dark-theme .footer-copy {
+  color: hsl(230, 16%, 65%);
+}
+
+.dark-theme .footer-title,
+.dark-theme .footer-logo {
+  color: var(--title-color);
+}
+
+.dark-theme .about-title,
+.dark-theme .heading {
+  color: var(--title-color);
+}
+
+.dark-theme .about-text,
+.dark-theme .subheading {
+  color: hsl(230, 16%, 65%);
+}
+
+.dark-theme .stat .num {
+  color: var(--title-color);
+}
+
+.dark-theme .stat .label {
+  color: hsl(230, 16%, 65%);
+}
+
+.dark-theme .plan {
+  border: 1px solid var(--border-color);
+}
+
+.dark-theme .nav__logo img,
+.dark-theme .footer-logo img {
+  filter: invert(1) brightness(1.2);
+}
+
+.dark-theme .book {
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme .button,
+.dark-theme .about-cta,
+.dark-theme .btn {
+  background-color: hsl(230, 70%, 45%);
+  color: var(--white-color);
+}
+
+.dark-theme .button:hover,
+.dark-theme .about-cta:hover,
+.dark-theme .btn:hover {
+  background-color: hsl(230, 70%, 50%);
+  box-shadow: 0 4px 32px hsla(230, 70%, 45%, .4);
+}
+
+.dark-theme .services__card i,
+.dark-theme .featured__actions button i {
+  color: hsl(230, 70%, 50%);
+}
+
+.dark-theme .testimonial__stars i {
+  color: hsl(230, 70%, 45%);
+}
+
+.dark-theme .footer-social a,
+.dark-theme .footer-social i {
+  color: hsl(230, 70%, 45%);
+}
+
+
 /*=============== REUSABLE CSS CLASSES ===============*/
 .container {
   max-width: 1220px;
@@ -1197,7 +1284,6 @@ body.dark-theme{
   }
 }
 .footer {
-  background: #e9ecff;
   padding: 60px 20px 30px;
   font-family: "Montserrat", sans-serif;
   color: #0a0b2b;

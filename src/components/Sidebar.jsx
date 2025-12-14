@@ -11,6 +11,7 @@ import {
     LogOut,
     Settings, Book, RotateCcw,
     Globe,
+    MapPin,
 
 } from "lucide-react";
 import { logout, getCurrentUser } from '../services/auth.api';
@@ -142,7 +143,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                                 setActiveTab('/admin/branches');
                                 navigate('/admin/branches');
                             }}
-                            icon={<Library size={18} strokeWidth={2.3} />}
+                            icon={<MapPin size={18} strokeWidth={2.3} />}
                             text="Branches"
                             toggleSidebar={toggleSidebar}
                         />
@@ -158,7 +159,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                             text="Categories"
                             toggleSidebar={toggleSidebar}
                         />
-                     
+
                     </nav>
                     <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#0a0f33] to-transparent pointer-events-none" />
                 </div>}
