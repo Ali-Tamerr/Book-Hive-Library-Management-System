@@ -1,17 +1,18 @@
 import React from 'react'
 import { Settings, Menu, UserRound, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getCurrentUser } from '../services/auth.api';
 import SearchBar from './SearchBar';
 import GlobalSearchPopup from './GlobalSearchPopup';
+import SettingsPopup from './SettingsPopup';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('');
-  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -63,14 +64,18 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           >
             <Search className='h-full w-full' />
           </button>
-          <button className=" max-[1080px]:hidden w-8 h-8 cursor-pointer" onClick={() => {
-            setActiveTab('/settings');
-            navigate('/settings');
-          }}><Settings className='h-full w-full' /></button>
+          <button
+            className="max-[1080px]:hidden w-8 h-8 cursor-pointer hover:text-[#1e255e] transition-colors"
+            onClick={() => setShowSettings(true)}
+            title="Settings"
+          >
+            <Settings className='h-full w-full' />
+          </button>
           <button onClick={toggleSidebar} className=" hidden max-[1080px]:block cursor-pointer"><Menu className='h-full w-full' /></button>
         </div>
       </header>
       <GlobalSearchPopup show={showGlobalSearch} onClose={() => setShowGlobalSearch(false)} />
+      <SettingsPopup show={showSettings} onClose={() => setShowSettings(false)} />
     </>
   );
 }
