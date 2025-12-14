@@ -496,7 +496,29 @@ UserRequests (standalone, no FK relationships)
 
 ## Changelog
 
-### Latest Update (ValidateNever Attribute Fix)
+### Latest Update (PostgreSQL Timestamp Fix)
+- **Bug fix:** Fixed `Cannot write DateTime with Kind=UTC to PostgreSQL type 'timestamp without time zone'` error when updating users and other entities with timestamp fields.
+- **Root cause:** Npgsql 6.0+ enforces strict timestamp handling. When code uses `DateTime.UtcNow` (which has `Kind=UTC`), it cannot be written to PostgreSQL `timestamp without time zone` columns directly.
+- **Fix applied:** Added `AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true)` at the start of `Program.cs` to enable legacy timestamp behavior, allowing UTC DateTimes to be written to `timestamp without time zone` columns.
+- **No database changes required.**
+- **No frontend changes required.**
+
+### Previous Update (PUT/Update Methods Fix)
+- **Bug fix:** Fixed `500 Internal Server Error` when updating Users, Branches, and Categories.
+- **Root cause:** The PUT methods were using `EntityState.Modified` on a detached entity, which caused EF Core tracking issues. Navigation properties were also not being cleared.
+- **Fix applied:** Rewrote PUT methods in controllers to:
+  1. Find the existing entity first (ensuring it's tracked by EF Core)
+  2. Clear navigation properties on the incoming entity
+  3. Update only scalar properties on the tracked entity
+  4. Add proper error handling with meaningful error messages
+- **Affected controllers:** `UsersController`, `BranchesController`, `CategoriesController`
+- **Additional improvements:**
+  - `UsersController.edit()` now URL-decodes the user ID to handle IDs with special characters
+  - All PUT methods now return proper error messages instead of generic 500 errors
+- **No database changes required.**
+- **No frontend changes required.**
+
+### Previous Update (ValidateNever Attribute Fix)
 - **Bug fix:** Fixed `400 Bad Request` error `"The created_byNavigation field is required"` when creating Branches, Categories, Users, Books, BookCopies, BookReservations, and BookTransactions.
 - **Root cause:** ASP.NET's model validation was requiring navigation properties before the request even reached the controller. The previous fix using `.IsRequired(false)` in EF Core only affected database operations, not API model validation.
 - **Fix applied:** Added `[ValidateNever]` attribute from `Microsoft.AspNetCore.Mvc.ModelBinding.Validation` to all navigation properties in model classes:
