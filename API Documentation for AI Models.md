@@ -22,12 +22,14 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `name` | string(50) | **required** |
 | `location` | string(100) | **required** |
 | `contact_number` | string(20) | nullable |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 
 ### Category
 | Field | Type | Constraints |
 |-------|------|-------------|
 | `category_id` | int | PK, identity |
 | `category_name` | string(100) | **required**, unique |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 
 ### User
 | Field | Type | Constraints |
@@ -40,6 +42,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `role` | string(20) | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"` |
 | `status` | string(20) | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
+| `created_by` | string(20) | nullable, FK → `Users.user_id` (self-referential), ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
 | `last_activity_at` | timestamp | nullable |
@@ -53,6 +56,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `quantity` | smallint (int16) | **required**, must be >= 0 |
 | `sale_price` | numeric(10,2) | nullable |
 | `image_url` | text | nullable |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
 
@@ -133,7 +137,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 |--------|----------|-------------|
 | GET | `/api/Branches` | Returns `Branch[]` |
 | GET | `/api/Branches/{branch_id}` | Returns single `Branch` |
-| POST | `/api/Branches` | Create Branch; body: `{ name, location, contact_number? }` |
+| POST | `/api/Branches` | Create Branch; body: `{ name, location, contact_number?, created_by? }` |
 | PUT | `/api/Branches/{branch_id}` | Update Branch |
 | DELETE | `/api/Branches/{branch_id}` | Delete Branch |
 
@@ -142,7 +146,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 |--------|----------|-------------|
 | GET | `/api/Categories` | Returns `Category[]` |
 | GET | `/api/Categories/{category_id}` | Returns single `Category` |
-| POST | `/api/Categories` | Create Category; body: `{ category_name }` |
+| POST | `/api/Categories` | Create Category; body: `{ category_name, created_by? }` |
 | PUT | `/api/Categories/{category_id}` | Update Category |
 | DELETE | `/api/Categories/{category_id}` | Delete Category |
 
@@ -152,7 +156,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | GET | `/api/Users` | Returns `UserDTO[]` with related books info |
 | GET | `/api/Users/byid/{user_id}` | Returns single `UserDTO` |
 | GET | `/api/Users/{name}` | Search users by name |
-| POST | `/api/Users` | Create User; body: `{ user_id, name, email, password_hash, phone_number, role?, status?, plan? }` |
+| POST | `/api/Users` | Create User; body: `{ user_id, name, email, password_hash, phone_number, role?, status?, plan?, created_by? }` |
 | PUT | `/api/Users/{user_id}` | Update User |
 | PUT | `/api/Users/{user_id}/activity` | Update user's `last_activity_at` timestamp |
 | PUT | `/api/Users/activity` | Update activity by body: `{ user_id, LastActivityAt? }` |
@@ -366,11 +370,13 @@ interface Branch {
   name: string;
   location: string;
   contact_number?: string;
+  created_by?: string;       // max 20 chars, FK to Users.user_id
 }
 
 interface Category {
   category_id: number;
   category_name: string;
+  created_by?: string;       // max 20 chars, FK to Users.user_id
 }
 
 interface User {
@@ -382,6 +388,7 @@ interface User {
   role: 'Super Admin' | 'Admin' | 'User';
   status: 'Active' | 'Inactive' | 'Banned';
   plan?: 'Discover' | 'Enterprise' | 'Professional';
+  created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;
   updated_at?: string;
   last_activity_at?: string;
@@ -407,6 +414,7 @@ interface BookDetail {
   quantity: number;          // smallint, >= 0
   sale_price?: number;       // numeric(10,2)
   image_url?: string;
+  created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;
   updated_at?: string;
   BookCopies?: BookCopy[];   // Only in POST/PUT payloads
@@ -488,7 +496,16 @@ UserRequests (standalone, no FK relationships)
 
 ## Changelog
 
-### Latest Update (UserRequests Feature)
+### Latest Update (created_by Tracking)
+- **created_by column:** Added `created_by` field to `Users`, `BookDetails`, `Categories`, and `Branches` tables.
+  - Type: `VARCHAR(20)`, nullable
+  - FK: References `Users.user_id` with `ON DELETE SET NULL`
+  - Purpose: Track which admin/user created each record
+  - Indexed: B-tree index on each table for efficient filtering
+  - Note: `Users.created_by` is self-referential (admin who created the user)
+- **Backend behavior:** When the referenced admin user is deleted, `created_by` values are automatically set to NULL.
+
+### Previous Update (UserRequests Feature)
 - **UserRequest:** Added new `UserRequests` table and API for handling user registration requests pending admin approval.
   - Fields: `request_id` (auto-generated), `name`, `email` (unique), `password`, `phone_number`, `plan`, `status`, `created_at`
   - Status workflow: `Pending` → `Approved` or `Rejected`

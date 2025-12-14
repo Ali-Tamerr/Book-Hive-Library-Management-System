@@ -7,13 +7,15 @@ import {
 } from '../hooks/useBranches';
 import { useBookCopies } from '../hooks/useBookCopies';
 import { useBooks } from '../hooks/useBooks';
+import { useUsers } from '../hooks/useUsers';
 import CommonLayout from '../Layouts/CommonLayout';
 import BranchFormPopup from '../components/BranchFormPopup';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
+import { getCurrentUser } from '../services/auth.api';
 
 function Branches({ searchValue, setSearchValue }) {
-  // Search searches: Name, Location
+  const currentUser = getCurrentUser();
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -29,6 +31,7 @@ function Branches({ searchValue, setSearchValue }) {
   const { data: branches = [], isLoading } = useBranches();
   const { data: bookCopies = [] } = useBookCopies();
   const { data: books = [] } = useBooks();
+  const { data: users = [] } = useUsers();
   const createBranchMutation = useCreateBranch();
   const updateBranchMutation = useUpdateBranch();
   const deleteBranchMutation = useDeleteBranch();
@@ -36,10 +39,14 @@ function Branches({ searchValue, setSearchValue }) {
   const handleAddBranch = async (e) => {
     e.preventDefault();
     try {
+      const apiData = {
+        ...formData,
+        created_by: currentUser?.user_id || null
+      };
       if (editMode && formData.branch_id) {
-        await updateBranchMutation.mutateAsync({ id: formData.branch_id, data: formData });
+        await updateBranchMutation.mutateAsync({ id: formData.branch_id, data: apiData });
       } else {
-        await createBranchMutation.mutateAsync(formData);
+        await createBranchMutation.mutateAsync(apiData);
       }
       setFormData({ name: '', location: '', contact_number: '' });
       setShowPopup(false);
@@ -84,6 +91,12 @@ function Branches({ searchValue, setSearchValue }) {
     setFormData({ name: '', location: '', contact_number: '' });
     setEditMode(false);
     setShowPopup(true);
+  };
+
+  const getCreatorName = (createdById) => {
+    if (!createdById) return null;
+    const creator = users.find(u => u.user_id === createdById);
+    return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
   };
 
   const filteredBranches = searchValue
@@ -175,10 +188,7 @@ function Branches({ searchValue, setSearchValue }) {
             return bookDetails.join(', ');
           })()
         } : null}
-        savedBy={{
-          name: 'Admin User',
-          role: 'Admin'
-        }}
+        savedBy={selectedBranch?.created_by ? getCreatorName(selectedBranch.created_by) : null}
       >
       </ViewDetailsPopup>
     </>

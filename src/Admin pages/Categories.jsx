@@ -5,15 +5,17 @@ import {
   useUpdateCategory,
   useDeleteCategory
 } from '../hooks/useCategories.js';
+import { useUsers } from '../hooks/useUsers.js';
 import CategoryFormPopup from '../components/CategoryFormPopup.jsx';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
+import { getCurrentUser } from '../services/auth.api';
 
 import { useBooks } from '../hooks/useBooks.js';
 
 function Categories({ searchValue, setSearchValue }) {
-  // Search searches: Name, Description
+  const currentUser = getCurrentUser();
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -30,6 +32,7 @@ function Categories({ searchValue, setSearchValue }) {
 
   const { data: categories = [], isLoading } = useCategories();
   const { data: books = [] } = useBooks();
+  const { data: users = [] } = useUsers();
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
   const deleteCategoryMutation = useDeleteCategory();
@@ -39,7 +42,8 @@ function Categories({ searchValue, setSearchValue }) {
     try {
       const apiData = {
         category_name: formData.name,
-        category_description: formData.description
+        category_description: formData.description,
+        created_by: currentUser?.user_id || null
       };
 
       if (editMode && formData.id) {
@@ -105,6 +109,12 @@ function Categories({ searchValue, setSearchValue }) {
     setFormData({ name: '', description: '' });
     setEditMode(false);
     setShowPopup(true);
+  };
+
+  const getCreatorName = (createdById) => {
+    if (!createdById) return null;
+    const creator = users.find(u => u.user_id === createdById);
+    return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
   };
 
   const filteredCategories = searchValue
@@ -190,10 +200,7 @@ function Categories({ searchValue, setSearchValue }) {
           'Category ID': selectedCategory.category_id,
           'Name': selectedCategory.category_name,
         } : null}
-        savedBy={{
-          name: 'Admin User',
-          role: 'Admin'
-        }}
+        savedBy={selectedCategory?.created_by ? getCreatorName(selectedCategory.created_by) : null}
       >
       </ViewDetailsPopup>
     </>
