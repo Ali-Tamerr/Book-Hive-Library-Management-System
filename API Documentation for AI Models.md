@@ -496,7 +496,39 @@ UserRequests (standalone, no FK relationships)
 
 ## Changelog
 
-### Latest Update (created_by Tracking)
+### Latest Update (ValidateNever Attribute Fix)
+- **Bug fix:** Fixed `400 Bad Request` error `"The created_byNavigation field is required"` when creating Branches, Categories, Users, Books, BookCopies, BookReservations, and BookTransactions.
+- **Root cause:** ASP.NET's model validation was requiring navigation properties before the request even reached the controller. The previous fix using `.IsRequired(false)` in EF Core only affected database operations, not API model validation.
+- **Fix applied:** Added `[ValidateNever]` attribute from `Microsoft.AspNetCore.Mvc.ModelBinding.Validation` to all navigation properties in model classes:
+  - `Branch.cs` - `created_byNavigation`, `BookCopies`
+  - `Category.cs` - `created_byNavigation`, `BookDetails`
+  - `BookDetail.cs` - `created_byNavigation`, `category`, `BookCopies`
+  - `User.cs` - All navigation properties (reservations, transactions, reports, created entities)
+  - `BookCopy.cs` - `book`, `branch`, `BookTransactions`, `BookReservations`
+  - `BookReservation.cs` - `user`, `book_copy`
+  - `BookTransaction.cs` - `user`, `book_copy`
+  - `Report.cs` - `generated_byNavigation`
+- **No database changes required.**
+- **No frontend changes required** - the frontend should NOT send navigation properties.
+
+### Previous Update (Navigation Property Fix)
+- **Bug fix:** Fixed `400 Bad Request` error when creating Branches, Categories, and Users where the API was incorrectly requiring navigation properties (e.g., `created_byNavigation`).
+- **Root cause:** With nullable reference types enabled in .NET 9, EF Core and ASP.NET model validation treated non-nullable navigation properties as required, even though they should be optional.
+- **Fix applied:**
+  1. Added `.IsRequired(false)` to all `created_by` navigation property configurations in `LibraryManagementSystemContext.cs`
+  2. Updated controllers (`BranchesController`, `CategoriesController`, `UsersController`) to clear navigation properties before saving to prevent EF from trying to insert related entities
+- **Affected entities:** `BookDetail`, `Category`, `Branch`, `User`
+- **No database changes required.**
+- **No frontend changes required** - the frontend should NOT send navigation properties.
+
+### Previous Update (EF Core Identity Column Fix)
+- **Bug fix:** Fixed `null value in column "book_id" violates not-null constraint` error when creating books, reservations, transactions, categories, branches, and reports.
+- **Root cause:** Entity Framework Core configuration was missing `.UseIdentityByDefaultColumn()` for PostgreSQL identity columns, causing EF Core to send NULL instead of letting the database auto-generate the primary key.
+- **Affected tables:** `BookDetails`, `BookReservations`, `BookTransactions`, `Categories`, `Branches`, `Reports`
+- **Backend-only fix:** No database schema changes required. The database identity columns were already configured correctly; only the EF Core model configuration needed updating.
+- **No frontend changes required:** API contract remains unchanged.
+
+### Previous Update (created_by Tracking)
 - **created_by column:** Added `created_by` field to `Users`, `BookDetails`, `Categories`, and `Branches` tables.
   - Type: `VARCHAR(20)`, nullable
   - FK: References `Users.user_id` with `ON DELETE SET NULL`
