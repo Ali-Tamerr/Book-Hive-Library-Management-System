@@ -112,7 +112,7 @@ function Categories({ searchValue, setSearchValue }) {
   };
 
   const getCreatorName = (createdById) => {
-    if (!createdById) return null;
+    if (!createdById) return { name: 'Unknown', role: "Created before 'Saved by' update" };
     const creator = users.find(u => u.user_id === createdById);
     return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
   };
@@ -200,7 +200,7 @@ function Categories({ searchValue, setSearchValue }) {
           'Category ID': selectedCategory.category_id,
           'Name': selectedCategory.category_name,
         } : null}
-        savedBy={selectedCategory?.created_by ? getCreatorName(selectedCategory.created_by) : null}
+        savedBy={selectedCategory ? getCreatorName(selectedCategory.created_by) : null}
       >
       </ViewDetailsPopup>
     </>
