@@ -63,7 +63,7 @@ html {
 
 body,
 input,
-button {
+button, h1, h2 {
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
 }
@@ -437,6 +437,7 @@ body.dark-theme{
   background-color: var(--first-color);
   color: var(--white-color);
   font-weight: var(--font-semi-bold);
+  font-family: var(--body-font);
   padding: 1rem 1.5rem;
   transition: box-shadow .4s;
   border-radius: 5px;
@@ -444,6 +445,17 @@ body.dark-theme{
 
 .button:hover{
   box-shadow: 0 4px 32px hsla(230, 72%, 32%, .4);
+}
+
+/* Ensure all text fields on the Home page use the same font as buttons */
+.home-page input,
+.home-page textarea,
+.home-page select,
+.home-page h1,
+.home-page h2,
+.home-page .search__input,
+.home-page .login__input{
+  font-family: var(--body-font);
 }
 
 
