@@ -40,7 +40,9 @@ function Branches({ searchValue, setSearchValue }) {
     e.preventDefault();
     try {
       const apiData = {
-        ...formData,
+        name: formData.name,
+        location: formData.location,
+        contact_number: formData.contact_number || null,
         created_by: currentUser?.user_id || null
       };
       if (editMode && formData.branch_id) {
@@ -58,7 +60,12 @@ function Branches({ searchValue, setSearchValue }) {
   };
 
   const handleEdit = (branch) => {
-    setFormData(branch);
+    setFormData({
+      branch_id: branch.branch_id,
+      name: branch.name || '',
+      location: branch.location || '',
+      contact_number: branch.contact_number || ''
+    });
     setEditMode(true);
     setShowPopup(true);
   };
