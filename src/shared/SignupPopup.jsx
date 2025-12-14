@@ -140,6 +140,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                                         value={formData.plan}
                                         onChange={handleChange}
                                         placeholder="Select Plan (Optional)"
+                                        variant="auth"
                                         options={[
                                             { value: 'Discover', label: 'Discover' },
                                             { value: 'Enterprise', label: 'Enterprise' },
