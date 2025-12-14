@@ -57,17 +57,17 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           </div>
           <div className='w-0.5 max-[1080px]:hidden h-10 rounded-full bg-[#0b0b3b]'></div>
           <button
-            className="max-[1080px]:hidden w-8 h-8 hover:text-[#1e255e] transition-colors"
+            className="max-[1080px]:hidden w-8 h-8 hover:text-[#1e255e] transition-colors cursor-pointer"
             onClick={() => setShowGlobalSearch(true)}
             title="Global Search"
           >
             <Search className='h-full w-full' />
           </button>
-          <button className=" max-[1080px]:hidden w-8 h-8" onClick={() => {
+          <button className=" max-[1080px]:hidden w-8 h-8 cursor-pointer" onClick={() => {
             setActiveTab('/settings');
             navigate('/settings');
           }}><Settings className='h-full w-full' /></button>
-          <button onClick={toggleSidebar} className=" hidden max-[1080px]:block"><Menu className='h-full w-full' /></button>
+          <button onClick={toggleSidebar} className=" hidden max-[1080px]:block cursor-pointer"><Menu className='h-full w-full' /></button>
         </div>
       </header>
       <GlobalSearchPopup show={showGlobalSearch} onClose={() => setShowGlobalSearch(false)} />

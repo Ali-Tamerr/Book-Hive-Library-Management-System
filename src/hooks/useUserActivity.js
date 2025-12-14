@@ -27,6 +27,7 @@ export const useUserActivity = () => {
 
     const events = [
       { name: 'mousedown', options: undefined },
+      { name: 'mousemove', options: { passive: true } },
       { name: 'keydown', options: undefined },
       { name: 'scroll', options: { passive: true } },
       { name: 'touchstart', options: { passive: true } },

@@ -107,7 +107,7 @@ function Branches({ searchValue, setSearchValue }) {
       render: (branch) => {
         const count = bookCopies.filter(bc => bc.branch_id === branch.branch_id).length;
         return (
-          <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
+          <span className=" text-sm font-medium">
             {count}
           </span>
         );

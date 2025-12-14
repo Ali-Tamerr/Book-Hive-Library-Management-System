@@ -24,7 +24,7 @@ const FormSelect = ({ label, name, value, onChange, options, placeholder, requir
           onClick={handleSelectClick}
           onBlur={() => setIsOpen(false)}
           required={required}
-          className="w-full text-[#727374] h-[50px] px-4 py-3 pr-10 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px] appearance-none"
+          className="w-full p-5 rounded-xl border-2 border-solid border-[#3D3E3E] bg-white outline-none focus:border-[#1e255e] text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none"
         >
           {placeholder && (
             <option value="" disabled hidden>
@@ -38,7 +38,7 @@ const FormSelect = ({ label, name, value, onChange, options, placeholder, requir
           ))}
         </select>
         <ChevronUp
-          className={`absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#727374] pointer-events-none transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'
+          className={`absolute right-4 max-[1080px]:right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#727374] pointer-events-none transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'
             }`}
         />
       </div>

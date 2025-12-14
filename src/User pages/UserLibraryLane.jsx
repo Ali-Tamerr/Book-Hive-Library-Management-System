@@ -14,7 +14,7 @@ function UserLibraryLane() {
         <h2>Library Lane Books</h2>
 
         <div className={styles.actions}>
-          <button className={styles.addUserBtn}>
+          <button className={`${styles.addUserBtn} cursor-pointer`}>
             <Plus size={15} /> Add User
           </button>
         </div>
@@ -47,7 +47,7 @@ function UserLibraryLane() {
                   </span>
                 </td>
                 <td className={styles.td}>
-                  <button className={styles.iconBtn} title="Add to Cart">
+                  <button className={`${styles.iconBtn} cursor-pointer`} title="Add to Cart">
                     <Plus size={20} />
                   </button>
                 </td>

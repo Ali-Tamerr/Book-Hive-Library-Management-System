@@ -5,9 +5,15 @@ import {
   useUpdateUser,
   useDeleteUser
 } from '../hooks/useUsers.js';
+import {
+  useUserRequests,
+  useApproveUserRequest,
+  useRejectUserRequest
+} from '../hooks/useUserRequests.js';
 import UserFormPopup from '../components/UserFormPopup.jsx';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
+import ViewRequestsPopup from '../components/ViewRequestsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 import { getCurrentUser } from '../services/auth.api';
@@ -22,6 +28,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [userToDelete, setUserToDelete] = useState(null);
   const [showViewDetails, setShowViewDetails] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showRequestsPopup, setShowRequestsPopup] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -37,6 +44,10 @@ function UserManagement({ searchValue, setSearchValue }) {
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
+
+  const { data: userRequests = [], isLoading: isLoadingRequests } = useUserRequests();
+  const approveRequestMutation = useApproveUserRequest();
+  const rejectRequestMutation = useRejectUserRequest();
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -162,6 +173,14 @@ function UserManagement({ searchValue, setSearchValue }) {
         buttonText={buttonText}
         columns={columns}
         formPopup={formPopup}
+        secondaryButton={
+          <button
+            onClick={() => setShowRequestsPopup(true)}
+            className="bg-white border border-[#0b0b3b] cursor-pointer h-full max-[856px]:text-xs text-[#0b0b3b] min-w-[150px] rounded-xl hover:bg-[#F0F0FF] transition-colors text-sm font-medium flex items-center justify-center gap-2"
+          >
+            View Requests
+          </button>
+        }
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}
@@ -192,6 +211,46 @@ function UserManagement({ searchValue, setSearchValue }) {
         }}
       >
       </ViewDetailsPopup>
+      <ViewRequestsPopup
+        show={showRequestsPopup}
+        onClose={() => setShowRequestsPopup(false)}
+        requests={userRequests}
+        isLoading={isLoadingRequests}
+        onApprove={(request) => {
+          setFormData({
+            id: '',
+            user_id: '',
+            name: request.name || '',
+            email: request.email || '',
+            phone_number: request.phone_number || '',
+            plan: request.plan || '',
+            status: 'Active',
+            password: request.password || '',
+            password_hash: ''
+          });
+          setShowRequestsPopup(false);
+          setEditMode(false);
+          setShowPopup(true);
+        }}
+        onReject={async (request) => {
+          try {
+            await rejectRequestMutation.mutateAsync({
+              id: request.request_id,
+              data: {
+                name: request.name,
+                email: request.email,
+                password: request.password,
+                phone_number: request.phone_number,
+                plan: request.plan,
+                status: 'Rejected'
+              }
+            });
+          } catch (error) {
+            console.error('Failed to reject request:', error);
+            alert('Failed to reject request. Please try again.');
+          }
+        }}
+      />
     </>
   );
 }

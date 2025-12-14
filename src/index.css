@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
-
-* {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
@@ -62,22 +60,34 @@ text-orientation: sideways;
 }
 
 
+html {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Montserrat', sans-serif;
   margin: 0;
+  padding: 0;
   min-height: 100vh;
   background: #f4f6fb;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 #root {
   min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .NoBorderBox {
   box-sizing: none;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar{
     border-radius: 4px;
   width: 0.6rem;
