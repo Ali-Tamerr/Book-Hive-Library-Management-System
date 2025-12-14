@@ -191,7 +191,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const getCreatorName = (createdById) => {
-    if (!createdById) return null;
+    if (!createdById) return { name: 'Unknown', role: "Created before 'Saved by' update" };
     const creator = users.find(u => u.user_id === createdById);
     return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
   };
@@ -257,7 +257,7 @@ function UserManagement({ searchValue, setSearchValue }) {
           'Phone Number': selectedUser.phone_number,
           'Plan': selectedUser.plan || 'N/A',
         } : null}
-        savedBy={selectedUser?.created_by ? getCreatorName(selectedUser.created_by) : null}
+        savedBy={selectedUser ? getCreatorName(selectedUser.created_by) : null}
       >
       </ViewDetailsPopup>
       <ViewRequestsPopup

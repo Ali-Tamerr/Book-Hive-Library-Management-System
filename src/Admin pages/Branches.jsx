@@ -101,7 +101,7 @@ function Branches({ searchValue, setSearchValue }) {
   };
 
   const getCreatorName = (createdById) => {
-    if (!createdById) return null;
+    if (!createdById) return { name: 'Unknown', role: "Created before 'Saved by' update" };
     const creator = users.find(u => u.user_id === createdById);
     return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
   };
@@ -195,7 +195,7 @@ function Branches({ searchValue, setSearchValue }) {
             return bookDetails.join(', ');
           })()
         } : null}
-        savedBy={selectedBranch?.created_by ? getCreatorName(selectedBranch.created_by) : null}
+        savedBy={selectedBranch ? getCreatorName(selectedBranch.created_by) : null}
       >
       </ViewDetailsPopup>
     </>

@@ -131,7 +131,7 @@ function Books({ searchValue, setSearchValue }) {
   };
 
   const getCreatorName = (createdById) => {
-    if (!createdById) return null;
+    if (!createdById) return { name: 'Unknown', role: "Created before 'Saved by' update" };
     const creator = users.find(u => u.user_id === createdById);
     return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
   };
@@ -223,7 +223,7 @@ function Books({ searchValue, setSearchValue }) {
           'Quantity': selectedBook.quantity,
           'Availability': selectedBook.quantity > 0 ? 'Available' : 'Borrowed',
         } : null}
-        savedBy={selectedBook?.created_by ? getCreatorName(selectedBook.created_by) : null}
+        savedBy={selectedBook ? getCreatorName(selectedBook.created_by) : null}
       >
       </ViewDetailsPopup>
     </>
