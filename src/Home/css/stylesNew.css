@@ -418,11 +418,15 @@ body.dark-theme{
 
 .home__article,
 .home__img{
-  width: 220px;
   transition: scale .4s;
 }
-
+.home__img{
+    width:300px;
+    height: 100%;
+}
 .home__article{
+      width: 150px;
+height:400px;
   scale: .8;
 }
 /* Swiper class */
