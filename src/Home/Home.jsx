@@ -140,38 +140,7 @@ const Home = () => {
             <i className="ri-close-line search__close" id="search-close"></i>
          </div>
 
-         {/*==================== LOGIN ====================*/}
-         {/* <div className="login grid" id="login-content">
-            <form action="" className="login__form grid">
-               <h3 className="login__title">Log In</h3>
 
-               <div className="login__group grid">
-                  <div>
-                     <label htmlFor="login-mail" className="login__label">Email</label>
-                     <input type="email" placeholder="Write your email" className="login__input" id="login-email" />
-                  </div>
-
-                  <div>
-                     <label htmlFor="login-pass" className="login__label">Password</label>
-                     <input type="password" placeholder="Enter your password" className="login__input" id="login-pass" />
-                  </div>
-               </div>
-
-               <div>
-                  <span className="login__signup">
-                     You do not have an account? <a href="#">Sign up</a>
-                  </span>
-
-                  <a href="#" className="login__forgot">
-                     You forgot your password
-                  </a>
-
-                  <button type="submit" className="login__button button cursor-pointer">Log In</button>
-               </div>
-            </form>
-
-            <i className="ri-close-line login__close" id="login-close"></i>
-         </div> */}
 
              {/*==================== MAIN ====================*/}
              <main className="main">
@@ -517,7 +486,7 @@ const Home = () => {
     {/* LEFT: LOGO + TEXT */}
       <div className="footer-col footer-brand">
          <a href="#" className="footer-logo">
-            <img src="logo.png" alt="BookHive Logo" />
+                  <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
             <div className="logo-text">
                <span className="name">BookHive</span>
                <span className="sub">Library</span>

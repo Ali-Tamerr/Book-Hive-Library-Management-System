@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital@0;1&display=swap');
 /*=============== VARIABLES CSS ===============*/
 :root {
-  --header-height: 3.5rem;
+  --header-height: 4.5rem;
 
   /*========== Colors ==========*/
   /*Color mode HSL(hue, saturation, lightness)*/
@@ -51,50 +51,52 @@
 }
 
 /*=============== BASE ===============*/
-* {
+.home-page * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-html {
+.home-page html {
   scroll-behavior: smooth;
 }
 
-body,
-input,
-button, h1, h2 {
+.home-page,
+.home-page input,
+.home-page button {
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
 }
 
-body {
+.home-page {
   background-color: var(--body-color);
   color: var(--text-color);
   transition: background-color .4s;
 }
 
-input,
-button {
+.home-page input,
+.home-page button {
   border: none;
   outline: none;
 }
 
-h1, h2, h3, h4 {
+.home-page h1, 
+.home-page h2, 
+.home-page h3, 
+.home-page h4 {
   color: var(--title-color);
   font-family: var(--second-font);
-  font-weight: var(--font-medium);
 }
 
-ul {
+.home-page ul {
   list-style: none;
 }
 
-a {
+.home-page a {
   text-decoration: none;
 }
 
-img {
+.home-page img {
   display: block;
   max-width: 100%;
   height: auto;
@@ -184,6 +186,7 @@ body.dark-theme{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 4.5rem;
 }
 
 .nav__logo{
@@ -495,8 +498,8 @@ body.dark-theme{
     --max-w:1180px;
   }
 
-  *{box-sizing:border-box}
-  body{
+  .home-page *{box-sizing:border-box}
+  .home-page{
     margin:0;
     font-family:"Montserrat",system-ui,Arial,sans-serif;
     background:var(--page-bg);
@@ -725,8 +728,8 @@ body.dark-theme{
       --gap: 36px;
     }
 
-    *{box-sizing:border-box}
-    body{
+    .home-page *{box-sizing:border-box}
+    .home-page{
       margin:0;
       font-family: "Montserrat", system-ui, Arial, sans-serif;
       background:var(--page-bg);
@@ -1054,10 +1057,13 @@ body.dark-theme{
   }
   .nav__menu{
     width: initial;
-    margin-inline: auto 0;
+    margin-inline: auto;
+    flex: 1;
+    display: flex;
+    justify-content: center;
   }
   .nav__list{
-    column-gap: 4rem;
+    column-gap: 6rem;
   }
   .nav__link{
     font-weight: var(--font-medium);
