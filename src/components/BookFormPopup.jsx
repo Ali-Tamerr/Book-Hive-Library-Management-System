@@ -38,10 +38,10 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
             onClick={() => setShowCopiesPopup(true)}
             disabled={qty < 1}
             className={`w-full h-[50px] px-4 py-3 rounded-xl border flex items-center justify-center gap-2 text-[13px] font-medium transition-colors ${qty < 1
-                ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
-                : isValid
-                  ? 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100'
-                  : 'border-[#1e255e] bg-[#f0f1ff] text-[#1e255e] hover:bg-[#e0e2ff]'
+              ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
+              : isValid
+                ? 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100 cursor-pointer'
+                : 'border-[#1e255e] bg-[#f0f1ff] text-[#1e255e] hover:bg-[#e0e2ff] cursor-pointer'
               }`}
           >
             <Copy size={18} />

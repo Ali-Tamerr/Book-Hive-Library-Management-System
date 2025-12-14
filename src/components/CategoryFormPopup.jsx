@@ -9,7 +9,6 @@ function CategoryFormPopup({ showPopup, editMode, formData, setFormData, handleA
 
   const inputs = [
     { name: 'name', type: 'text', placeholder: 'Name', required: true },
-    { name: 'description', type: 'text', placeholder: 'Description' },
   ];
 
   return (

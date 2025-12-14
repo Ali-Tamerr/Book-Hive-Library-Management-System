@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 
-function Popup({ show, onClose, title, children, maxWidthClass, icon }) {
+function Popup({ show, onClose, title, children, maxWidthClass, heightClass, icon }) {
   if (!show) return null;
 
   return (
@@ -8,7 +8,7 @@ function Popup({ show, onClose, title, children, maxWidthClass, icon }) {
     // onClick={onClose}
     >
 
-      <div className={`bg-white flex flex-col gap-12 h-max w-11/12 ${maxWidthClass || 'max-w-[627px]'} rounded-lg p-12 max-[856px]:p-5`} onClick={(e) => e.stopPropagation()}>
+      <div className={`bg-white flex flex-col gap-12 ${heightClass || 'h-max'} w-11/12 ${maxWidthClass || 'max-w-[627px]'} rounded-lg p-12 max-[856px]:p-5`} onClick={(e) => e.stopPropagation()}>
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -17,7 +17,7 @@ function Popup({ show, onClose, title, children, maxWidthClass, icon }) {
             </div>
             <button
               onClick={onClose}
-              className="pr-2 text-[#0b0b3b] hover:text-red-600 transition-colors"
+              className="pr-2 text-[#0b0b3b] hover:text-red-600 transition-colors cursor-pointer"
               type="button"
             >
               <X size={24} strokeWidth={2.9} className='border-[2px] p-1 rounded-[7px] text-[#525252] mr-6' />

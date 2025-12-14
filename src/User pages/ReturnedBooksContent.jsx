@@ -52,7 +52,7 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
             customActionRenderer={(book) => (
                 <button
                     onClick={() => handleView(book)}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all flex items-center gap-2"
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer"
                 >
                     <Eye size={16} />
                     View

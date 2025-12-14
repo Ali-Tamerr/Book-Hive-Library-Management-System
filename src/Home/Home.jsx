@@ -1,5 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoginPopup from '../shared/LoginPopup';
+import SignupPopup from '../shared/SignupPopup';
+import ForgotPasswordPopup from '../shared/ForgotPasswordPopup';
+import OTPPopup from '../shared/OTPPopup';
+import ResetPasswordPopup from '../shared/ResetPasswordPopup';
 import './css/swiper-bundle.min.css';
 import './css/styles.css';
 import './css/stylesNew.css';
@@ -7,6 +12,11 @@ import './css/stylesNew.css';
 
 const Home = () => {
    const navigate = useNavigate();
+   const [isLoginOpen, setIsLoginOpen] = useState(false);
+   const [isSignupOpen, setIsSignupOpen] = useState(false);
+   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+   const [isOTPOpen, setIsOTPOpen] = useState(false);
+   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
 
    useEffect(() => {
       const loadScript = (src, id) => {
@@ -28,11 +38,11 @@ const Home = () => {
 
       const initScripts = async () => {
          try {
-            await loadScript('/home/js/scrollreveal.min.js', 'scrollreveal');
-            await loadScript('/home/js/swiper-bundle.min.js', 'swiper');
+            await loadScript(new URL('./js/scrollreveal.min.js', import.meta.url).href, 'scrollreveal');
+            await loadScript(new URL('./js/swiper-bundle.min.js', import.meta.url).href, 'swiper');
 
             setTimeout(async () => {
-               await loadScript('/home/js/main.js', 'main');
+               await loadScript(new URL('./js/main.js', import.meta.url).href, 'main');
 
                setTimeout(() => {
                   const themeButton = document.getElementById('theme-button');
@@ -58,9 +68,9 @@ const Home = () => {
    return (
       <div className="home-page">
          <header className="header" id="header">
-            <nav className="nav container">
-               <a href="#" className="nav__logo" style={{ color: 'black' }}>
-                  <img src="/home/assets/logo.svg" alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
+            <nav className="nav">
+               <a href="#" className="nav__logo" >
+                  <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
                </a>
 
                <div className="nav__menu">
@@ -80,9 +90,9 @@ const Home = () => {
                      </li>
 
                      <li className="nav__item">
-                        <a href="#discount" className="nav__link">
-                           <i className="ri-price-tag-3-line"></i>
-                           <span>Discount</span>
+                        <a href="#about" className="nav__link">
+                           <i className="ri-information-line"></i>
+                           <span>About Us</span>
                         </a>
                      </li>
 
@@ -110,7 +120,7 @@ const Home = () => {
                   <i
                      className="ri-user-line login-button"
                      id="login-button"
-                     onClick={() => navigate('/login')}
+                     onClick={() => setIsLoginOpen(true)}
                      style={{ cursor: 'pointer' }}
                   ></i>
 
@@ -131,7 +141,7 @@ const Home = () => {
          </div>
 
          {/*==================== LOGIN ====================*/}
-         <div className="login grid" id="login-content">
+         {/* <div className="login grid" id="login-content">
             <form action="" className="login__form grid">
                <h3 className="login__title">Log In</h3>
 
@@ -156,12 +166,12 @@ const Home = () => {
                      You forgot your password
                   </a>
 
-                  <button type="submit" className="login__button button">Log In</button>
+                  <button type="submit" className="login__button button cursor-pointer">Log In</button>
                </div>
             </form>
 
             <i className="ri-close-line login__close" id="login-close"></i>
-         </div>
+         </div> */}
 
          {/*==================== MAIN ====================*/}
          <main className="main">
@@ -188,19 +198,19 @@ const Home = () => {
                      <div className="home__swiper swiper">
                         <div className="swiper-wrapper">
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/Jose Mourinho.png" alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Jose Mourinho.png', import.meta.url).href} alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/Juhan Cruyff.png" alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Juhan Cruyff.png', import.meta.url).href} alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/Pep Guardiola.png" alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Pep Guardiola.png', import.meta.url).href} alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src="/home/assets/img/Arsene Wenger.png" alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Arsene Wenger.png', import.meta.url).href} alt="image" className="home__img" />
                            </article>
                         </div>
                      </div>
@@ -230,7 +240,48 @@ const Home = () => {
                   </article>
                </div>
             </section>
+            {/*==================== ABOUT US ====================*/}
+            <section className="about section" id="about">
+               <h2 className="about__title section__title">
+                  About Us
+               </h2>
+               <div className="about__container container">
 
+                  <div className="about__content">
+                     <div className="about__info">
+                        <p className="about__description">
+                           We are a smart, technology-driven library system that uses RFID to make book management faster and easier. Our platform helps students and staff search, borrow, and track books efficiently with a modern and user-friendly design.
+                        </p>
+
+                        <div className="about__stats">
+                           <div className="about__stat">
+                              <span className="about__stat-number">5+</span>
+                              <span className="about__stat-label">Branches</span>
+                           </div>
+                           <div className="about__stat">
+                              <span className="about__stat-number">1K+</span>
+                              <span className="about__stat-label">Books</span>
+                           </div>
+                           <div className="about__stat">
+                              <span className="about__stat-number">100+</span>
+                              <span className="about__stat-label">Category</span>
+                           </div>
+                        </div>
+
+                        <a href="#" className="about__button button">Where are we ?</a>
+                     </div>
+
+                     <div className="about__images">
+                        <div className="about__book about__book--left">
+                           <img src={new URL('./assets/img/Bobby Charlton.png', import.meta.url).href} alt="Book" className="about__book-img" />
+                        </div>
+                        <div className="about__book about__book--right">
+                           <img src={new URL('./assets/img/Arsene Wenger.png', import.meta.url).href} alt="Book" className="about__book-img" />
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
             {/*==================== FEATURED ====================*/}
             <section className="featured section" id="featured">
                <h2 className="section__title">
@@ -241,181 +292,121 @@ const Home = () => {
                   <div className="featured__swiper swiper">
                      <div className="swiper-wrapper">
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-1.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-1.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-2.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-2.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-3.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-3.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-4.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-4.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-5.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-5.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-6.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-6.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-7.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-7.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-8.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-8.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-9.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-9.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
-                           <img src="/home/assets/img/book-10.png" alt="img" className="featured__img" />
-
+                           <img src={new URL('./assets/img/book-10.png', import.meta.url).href} alt="img" className="featured__img" />
                            <h2 className="featured__title">Featured Book</h2>
-                           <div className="featured__prices">
-                              <span className="featured__discount">$11.99</span>
-                              <span className="featured__price">$19.99</span>
-                           </div>
-
-                           <button className="button">Add To Card</button>
+                           <button className="button cursor-pointer">Add To Card</button>
 
                            <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-search-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-heart-3-line"></i></button>
+                              <button className="cursor-pointer"><i className="ri-eye-line"></i></button>
                            </div>
                         </article>
                      </div>
@@ -431,509 +422,65 @@ const Home = () => {
                </div>
             </section>
 
-            {/*==================== DISCOUNT ====================*/}
-            <section className="discount section" id="discount">
-               <div className="discount__container container grid">
-                  <div className="dicount__data">
-                     <h2 className="discount__title section__title">
-                        Up To 50% Discount
-                     </h2>
-
-                     <p className="discount__discription">
-                        Take advantage of the discount days we
-                        have for you, buy books from your favorite
-                        writers, the more you buy, the more
-                        discounts we have for you.
-                     </p>
-
-                     <a href="#" className="button">Shop Now</a>
-                  </div>
-
-                  <div className="discount__images">
-                     <img src="/home/assets/img/discount-book-1.png" alt="image" className="discount__img-1" />
-                     <img src="/home/assets/img/discount-book-2.png" alt="image" className="discount__img-2" />
-                  </div>
-               </div>
-            </section>
-
-            {/*==================== NEW BOOKS ====================*/}
-            <section className="new section" id="new">
-               <h2 className="section__title">
-                  New Books
-               </h2>
-
-               <div className="new__container container">
-                  <div className="new__swiper swiper">
-                     <div className="swiper-wrapper">
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-1.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-2.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-3.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-4.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-5.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-6.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-7.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-8.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-9.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-10.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-                     </div>
-                  </div>
-
-                  <div className="new__swiper swiper">
-                     <div className="swiper-wrapper">
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-10.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-9.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-8.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-7.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-6.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-5.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-4.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-3.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-2.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-
-                        <a href="#" className="new__card swiper-slide">
-                           <img src="/home/assets/img/book-1.png" alt="image" className="new__img" />
-
-                           <div>
-                              <h2 className="new__title">New Book</h2>
-                              <div className="new__prices">
-                                 <span className="new__discount">$7.99</span>
-                                 <span className="new__price">$14.99</span>
-                              </div>
-
-                              <div className="new__stars">
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-fill"></i>
-                                 <i className="ri-star-half-fill"></i>
-                              </div>
-                           </div>
-                        </a>
-                     </div>
+            {/* ===========CHOOSE THE BEST PLAN=========== */}
+            <section className="section" aria-labelledby="pricing-heading">
+               <div className="container container-best-plan">
+                  <h1 id="pricing-heading" className="heading">Choose The best Plan</h1>
+                  <p className="subheading">choose a plan that's right for your growing team. Simple pricing &amp; No hidden charges.</p>
+
+                  <div className="plans" role="list">
+                     {/* <!-- Left plan --> */}
+                     <article className="plan" role="listitem" aria-labelledby="plan-discover">
+                        <div id="plan-discover" className="plan-title">Discover</div>
+                        <div className="price">
+                           <span className="small-price">$99 <small>/ Per Month</small></span>
+
+                        </div>
+
+                        <div className="features">
+                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Borrow + 3 books Monthly</div>
+                        </div>
+
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Discover">Subscribe</a>
+                     </article>
+
+                     {/* <!-- Center plan - highlighted --> */}
+                     <article className="plan plan-center" role="listitem" aria-labelledby="plan-enterprise">
+                        <div id="plan-enterprise" className="plan-title">Enterprise</div>
+                        <div className="price">
+                           <span>$299 <small>/ Per Month</small></span>
+
+                        </div>
+
+                        <div className="features">
+                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Borrow + 15 books Monthly</div>
+                        </div>
+
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Enterprise">Subscribe</a>
+                     </article>
+
+                     {/* <!-- Right plan --> */}
+                     <article className="plan" role="listitem" aria-labelledby="plan-pro">
+                        <div id="plan-pro" className="plan-title">Professional</div>
+                        <div className="price">
+                           <span className="small-price">$199<small>/ Per Month</small></span>
+                        </div>
+
+                        <div className="features">
+                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
+                           <div className="feature"><span className="tick">✓</span>Borrow + 10 books Monthly</div>
+                        </div>
+
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Professional">Subscribe</a>
+                     </article>
                   </div>
                </div>
             </section>
-
-{/* ===========CHOOSE THE BEST PLAN=========== */}
-
-              <section className="section" aria-labelledby="pricing-heading">
-    <div className="container">
-      <h1 id="pricing-heading" className="heading">Choose The best Plan</h1>
-      <p className="subheading">choose a plan that's right for your growing team. Simple pricing &amp; No hidden charges.</p>
-
-      <div className="plans" role="list">
-        {/* <!-- Left plan --> */}
-        <article className="plan" role="listitem" aria-labelledby="plan-discover">
-          <div id="plan-discover" className="plan-title">Discover</div>
-          <div className="price">
-            <span className="small-price">$99</span>
-            <small>/ Per Month</small>
-          </div>
-
-          <div className="features">
-            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Borrow + 3 books Monthly</div>
-          </div>
-
-          <a className="btn" href="#" role="button" aria-label="Subscribe to Discover">Subscribe</a>
-        </article>
-
-        {/* <!-- Center plan - highlighted --> */}
-        <article className="plan center" role="listitem" aria-labelledby="plan-enterprise">
-          <div id="plan-enterprise" className="plan-title">Enterprise</div>
-          <div className="price">
-            <span>$299</span>
-            <small>/ Per Month</small>
-          </div>
-
-          <div className="features">
-            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Borrow + 15 books Monthly</div>
-          </div>
-
-          <a className="btn" href="#" role="button" aria-label="Subscribe to Enterprise">Subscribe</a>
-        </article>
-
-        {/* <!-- Right plan --> */}
-        <article className="plan" role="listitem" aria-labelledby="plan-pro">
-          <div id="plan-pro" className="plan-title">Professional</div>
-          <div className="price">
-            <span className="small-price">$199</span>
-            <small>/ Per Month</small>
-          </div>
-
-          <div className="features">
-            <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-            <div className="feature"><span className="tick">✓</span>Borrow + 10 books Monthly</div>
-          </div>
-
-          <a className="btn" href="#" role="button" aria-label="Subscribe to Professional">Subscribe</a>
-        </article>
-      </div>
-    </div>
-  </section>
 
             {/*==================== TESTIMONIAL ====================*/}
             <section className="testimonial section" id="testimonial">
@@ -945,7 +492,7 @@ const Home = () => {
                   <div className="testimonial__swiper swiper">
                      <div className="swiper-wrapper">
                         <article className="testimonial__card swiper-slide">
-                           <img src="/home/assets/img/testimonial-perfil-1.png" alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-1.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
@@ -963,7 +510,7 @@ const Home = () => {
                         </article>
 
                         <article className="testimonial__card swiper-slide">
-                           <img src="/home/assets/img/testimonial-perfil-2.png" alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-2.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
@@ -981,7 +528,7 @@ const Home = () => {
                         </article>
 
                         <article className="testimonial__card swiper-slide">
-                           <img src="/home/assets/img/testimonial-perfil-3.png" alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-3.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
@@ -999,7 +546,7 @@ const Home = () => {
                         </article>
 
                         <article className="testimonial__card swiper-slide">
-                           <img src="/home/assets/img/testimonial-perfil-4.png" alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-4.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
@@ -1026,7 +573,7 @@ const Home = () => {
             <div className="footer__container container grid">
                <div>
                   <a href="#" className="footer__logo" style={{ color: 'black' }}>
-                     <img src="/home/assets/logo.svg" alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
+                     <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '30px', height: 'auto' }} /> Book Hive
                   </a>
 
                   <p className="footer__description">
@@ -1129,6 +676,37 @@ const Home = () => {
          <a href="#" className="scrollup" id="scroll-up">
             <i className="ri-arrow-up-line"></i>
          </a>
+
+         {/*========== AUTH POPUPS ==========*/}
+         <LoginPopup
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+            onForgotPassword={() => setIsForgotPasswordOpen(true)}
+            onSignup={() => setIsSignupOpen(true)}
+         />
+         <SignupPopup
+            isOpen={isSignupOpen}
+            onClose={() => setIsSignupOpen(false)}
+            onLogin={() => setIsLoginOpen(true)}
+         />
+         <ForgotPasswordPopup
+            isOpen={isForgotPasswordOpen}
+            onClose={() => setIsForgotPasswordOpen(false)}
+            onOTP={() => setIsOTPOpen(true)}
+            onBack={() => setIsLoginOpen(true)}
+         />
+         <OTPPopup
+            isOpen={isOTPOpen}
+            onClose={() => setIsOTPOpen(false)}
+            onResetPassword={() => setIsResetPasswordOpen(true)}
+            onBack={() => setIsForgotPasswordOpen(true)}
+         />
+         <ResetPasswordPopup
+            isOpen={isResetPasswordOpen}
+            onClose={() => setIsResetPasswordOpen(false)}
+            onLogin={() => setIsLoginOpen(true)}
+            onBack={() => setIsOTPOpen(true)}
+         />
       </div>
    );
 };

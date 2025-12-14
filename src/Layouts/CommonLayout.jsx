@@ -19,16 +19,27 @@ const CommonLayout = ({
   customActionRenderer,
   isUserPage = false,
   customTitle,
+  secondaryButton,
 }) => {
   const FormPopupComponent = formPopup;
 
   return (
     <div className='flex flex-col h-full p-7 pb-0 pr-0 gap-5 max-[1080px]:p-0 max-[1080px]:pt-5'>
-      <div className="flex justify-between items-center pr-7 max-[1080px]:px-5">
-        {customTitle ? customTitle : <h2 className="text-xl max-[856px]:text-sm font-semibold">{title}</h2>}
-        <div className='flex gap-2 h-10'>
-          {buttonText && <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />}
-          <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
+      <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
+        <div className="flex justify-between items-center max-[856px]:gap-2">
+          {customTitle ? customTitle : <h2 className="text-xl max-[856px]:text-sm font-semibold whitespace-nowrap">{title}</h2>}
+          <div className='hidden max-[856px]:flex flex-1 h-10'>
+            <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
+          </div>
+          <div className='flex gap-2 h-10 max-[856px]:hidden'>
+            {secondaryButton}
+            {buttonText && <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />}
+            <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
+          </div>
+        </div>
+        <div className='hidden max-[856px]:flex gap-2 h-10'>
+          {secondaryButton && <div className='flex-1 [&>button]:w-full [&>button]:justify-center'>{secondaryButton}</div>}
+          {buttonText && <div className='flex-1'><ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} /></div>}
         </div>
       </div>
 
@@ -58,7 +69,7 @@ const CommonLayout = ({
                 </tr>
               ) : (
                 data.map((item, index) => (
-                  <tr key={index} className="border-b font-medium border-gray-200">
+                  <tr key={index} className="font-medium h-[68px]">
                     {columns.map(col => {
                       let cellContent;
                       if (col.accessor === 'action') {
@@ -68,16 +79,16 @@ const CommonLayout = ({
                           <div className='w-max mx-auto flex justify-center items-center'>
                             <button
                               onClick={() => handleEdit(item)}
-                              className="mr-2 text-lg hover:scale-125 transition-transform"
+                              className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer"
                               title="Edit"><FilePenLine size={20} /></button>
                             <button
                               onClick={() => handleDelete(item.id || item.user_id || item.book_id || item.category_id)}
-                              className="mr-2 text-lg hover:scale-125 transition-transform"
+                              className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer"
                               title="Delete"><Trash2 size={20} /></button>
                             {handleView && (
                               <button
                                 onClick={() => handleView(item)}
-                                className="text-lg hover:scale-125 transition-transform"
+                                className="text-lg hover:scale-125 transition-transform cursor-pointer"
                                 title="View"><ReceiptText size={20} /></button>
                             )}
                           </div>
@@ -85,7 +96,7 @@ const CommonLayout = ({
                       } else if (col.render) {
                         cellContent = col.render(item);
                       } else {
-                        cellContent = item[col.accessor] || 'N/A';
+                        cellContent = item[col.accessor] || '-';
                       }
                       return <td key={col.accessor} className="p-3 text-center whitespace-nowrap">{cellContent}</td>;
                     })}
