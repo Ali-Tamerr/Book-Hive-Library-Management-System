@@ -21,13 +21,10 @@ export const createUser = async (userData) => {
   return await apiPost(BASE_ENDPOINT, userData);
 };
 
-// Update user
 export const updateUser = async (id, userData) => {
-  return await apiPut(`${BASE_ENDPOINT}/${id}`, userData);
+  return await apiPut(`${BASE_ENDPOINT}/${encodeURIComponent(id)}`, userData);
 };
 
-// Delete user
 export const deleteUser = async (id) => {
-  return await apiDelete(`${BASE_ENDPOINT}/${id}`);
+  return await apiDelete(`${BASE_ENDPOINT}/${encodeURIComponent(id)}`);
 };
-

@@ -110,6 +110,12 @@ export const getCurrentUser = () => {
   return userStr ? JSON.parse(userStr) : null;
 };
 
+export const setCurrentUser = (user) => {
+  localStorage.setItem('authToken', JSON.stringify(user));
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  window.dispatchEvent(new Event('userUpdated'));
+};
+
 export const isAuthenticated = () => {
   return !!localStorage.getItem('authToken');
 };

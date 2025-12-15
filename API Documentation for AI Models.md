@@ -22,12 +22,14 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `name` | string(50) | **required** |
 | `location` | string(100) | **required** |
 | `contact_number` | string(20) | nullable |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 
 ### Category
 | Field | Type | Constraints |
 |-------|------|-------------|
 | `category_id` | int | PK, identity |
 | `category_name` | string(100) | **required**, unique |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 
 ### User
 | Field | Type | Constraints |
@@ -40,6 +42,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `role` | string(20) | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"` |
 | `status` | string(20) | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
+| `created_by` | string(20) | nullable, FK → `Users.user_id` (self-referential), ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
 | `last_activity_at` | timestamp | nullable |
@@ -53,6 +56,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `quantity` | smallint (int16) | **required**, must be >= 0 |
 | `sale_price` | numeric(10,2) | nullable |
 | `image_url` | text | nullable |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
 
@@ -133,7 +137,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 |--------|----------|-------------|
 | GET | `/api/Branches` | Returns `Branch[]` |
 | GET | `/api/Branches/{branch_id}` | Returns single `Branch` |
-| POST | `/api/Branches` | Create Branch; body: `{ name, location, contact_number? }` |
+| POST | `/api/Branches` | Create Branch; body: `{ name, location, contact_number?, created_by? }` |
 | PUT | `/api/Branches/{branch_id}` | Update Branch |
 | DELETE | `/api/Branches/{branch_id}` | Delete Branch |
 
@@ -142,7 +146,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 |--------|----------|-------------|
 | GET | `/api/Categories` | Returns `Category[]` |
 | GET | `/api/Categories/{category_id}` | Returns single `Category` |
-| POST | `/api/Categories` | Create Category; body: `{ category_name }` |
+| POST | `/api/Categories` | Create Category; body: `{ category_name, created_by? }` |
 | PUT | `/api/Categories/{category_id}` | Update Category |
 | DELETE | `/api/Categories/{category_id}` | Delete Category |
 
@@ -152,7 +156,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | GET | `/api/Users` | Returns `UserDTO[]` with related books info |
 | GET | `/api/Users/byid/{user_id}` | Returns single `UserDTO` |
 | GET | `/api/Users/{name}` | Search users by name |
-| POST | `/api/Users` | Create User; body: `{ user_id, name, email, password_hash, phone_number, role?, status?, plan? }` |
+| POST | `/api/Users` | Create User; body: `{ user_id, name, email, password_hash, phone_number, role?, status?, plan?, created_by? }` |
 | PUT | `/api/Users/{user_id}` | Update User |
 | PUT | `/api/Users/{user_id}/activity` | Update user's `last_activity_at` timestamp |
 | PUT | `/api/Users/activity` | Update activity by body: `{ user_id, LastActivityAt? }` |
@@ -329,6 +333,11 @@ interface BookDTO {
   name: string;
   category_id: number;
   quantity: number;
+  sale_price?: number;        // numeric(10,2)
+  image_url?: string;
+  created_by?: string;        // User ID who created this book
+  created_at?: string;        // ISO-8601 timestamp
+  updated_at?: string;        // ISO-8601 timestamp
   user_names: string[];       // Users who have reservations/transactions
 }
 ```
@@ -366,11 +375,13 @@ interface Branch {
   name: string;
   location: string;
   contact_number?: string;
+  created_by?: string;       // max 20 chars, FK to Users.user_id
 }
 
 interface Category {
   category_id: number;
   category_name: string;
+  created_by?: string;       // max 20 chars, FK to Users.user_id
 }
 
 interface User {
@@ -382,6 +393,7 @@ interface User {
   role: 'Super Admin' | 'Admin' | 'User';
   status: 'Active' | 'Inactive' | 'Banned';
   plan?: 'Discover' | 'Enterprise' | 'Professional';
+  created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;
   updated_at?: string;
   last_activity_at?: string;
@@ -407,6 +419,7 @@ interface BookDetail {
   quantity: number;          // smallint, >= 0
   sale_price?: number;       // numeric(10,2)
   image_url?: string;
+  created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;
   updated_at?: string;
   BookCopies?: BookCopy[];   // Only in POST/PUT payloads
@@ -488,7 +501,125 @@ UserRequests (standalone, no FK relationships)
 
 ## Changelog
 
-### Latest Update (UserRequests Feature)
+### Latest Update (Database Identity Column Fix - ROOT CAUSE FOUND)
+- **Bug fix:** Fixed `null value in column "book_id" violates not-null constraint` error when creating books.
+- **ROOT CAUSE:** The PostgreSQL database column `BookDetails.book_id` was **NOT configured as an identity column** in the database schema itself. The EF Core configuration was correct, but the actual database didn't have the identity property.
+- **Database fix applied:**
+  ```sql
+  ALTER TABLE public."BookDetails" ALTER COLUMN book_id ADD GENERATED BY DEFAULT AS IDENTITY;
+  SELECT setval(pg_get_serial_sequence('public."BookDetails"','book_id'), COALESCE((SELECT MAX(book_id) FROM public."BookDetails"), 1));
+  ```
+- **Backend code:** Reverted to clean EF Core approach (no raw SQL needed) since the database is now properly configured.
+- **Lesson learned:** When EF Core identity columns aren't working, check the actual database schema - the column itself might not be configured as an identity column.
+
+### Previous Update (Complete Identity Column Fix)
+- **Bug fix:** Fixed persistent `null value in column "book_id" violates not-null constraint` error when creating books and other entities.
+- **Root cause:** EF Core wasn't properly recognizing identity columns due to missing configuration in both the model classes and Fluent API.
+- **Complete fix applied:** Added BOTH data annotations AND Fluent API configuration:
+  1. **Model classes** - Added `[DatabaseGenerated(DatabaseGeneratedOption.Identity)]` attribute to:
+     - `BookDetail.book_id`
+     - `Category.category_id`
+     - `Branch.branch_id`
+     - `BookReservation.reservation_id`
+     - `BookTransaction.transaction_id`
+     - `Report.report_id`
+     - `UserRequest.request_id` (already had it)
+  2. **DbContext Fluent API** - Added `.ValueGeneratedOnAdd().UseIdentityByDefaultColumn()` to all identity columns
+- **No database changes required.**
+- **No frontend changes required.**
+- **IMPORTANT:** After deploying, ensure the application is fully restarted to pick up the new model configuration.
+
+### Previous Update (Identity Column ValueGeneratedOnAdd Fix)
+- **Bug fix:** Fixed persistent `null value in column "book_id" violates not-null constraint` error when creating books and other entities with identity columns.
+- **Root cause:** The EF Core configuration was missing `.ValueGeneratedOnAdd()` before `.UseIdentityByDefaultColumn()`. Without both, EF Core wasn't properly recognizing the column as database-generated.
+- **Fix applied:** Updated all identity column configurations in `LibraryManagementSystemContext.cs` to include both `.ValueGeneratedOnAdd()` and `.UseIdentityByDefaultColumn()`:
+  - `BookDetail.book_id`
+  - `BookReservation.reservation_id`
+  - `BookTransaction.transaction_id`
+  - `Category.category_id`
+  - `Branch.branch_id`
+  - `Report.report_id`
+  - `UserRequest.request_id`
+- **Also added:** `[DatabaseGenerated(DatabaseGeneratedOption.Identity)]` attribute to `BookDetail.book_id` in the model class for extra clarity.
+- **No database changes required.**
+- **No frontend changes required.**
+
+### Previous Update (Clear Navigation Properties in All Controllers)
+- **Bug fix:** Fixed `null value in column "book_id" violates not-null constraint` error when creating Books, BookCopies, BookReservations, and BookTransactions.
+- **Root cause:** Navigation properties were not being cleared in all controller POST methods, causing EF Core tracking issues that prevented proper identity column generation.
+- **Fix applied:** Added explicit clearing of all navigation properties before adding entities to the database:
+  - `BooksController.Add()` - clears `category`, `BookCopies`, `created_byNavigation`; also clears navigation properties on incoming BookCopy objects
+  - `BooksController.Edit()` - clears navigation properties and also updates `created_by`
+  - `BookCopiesController.Create()` - clears `book`, `branch`, `BookTransactions`, `BookReservations`
+  - `BookReservationsController.CreateReservation()` - clears `user`, `book_copy`
+  - `BookTransactionsController.CreateTransaction()` - clears `user`, `book_copy`
+- **No database changes required.**
+- **No frontend changes required.**
+
+### Previous Update (PostgreSQL Timestamp Fix)
+- **Bug fix:** Fixed `Cannot write DateTime with Kind=UTC to PostgreSQL type 'timestamp without time zone'` error when updating users and other entities with timestamp fields.
+- **Root cause:** Npgsql 6.0+ enforces strict timestamp handling. When code uses `DateTime.UtcNow` (which has `Kind=UTC`), it cannot be written to PostgreSQL `timestamp without time zone` columns directly.
+- **Fix applied:** Added `AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true)` at the start of `Program.cs` to enable legacy timestamp behavior, allowing UTC DateTimes to be written to `timestamp without time zone` columns.
+- **No database changes required.**
+- **No frontend changes required.**
+
+### Previous Update (PUT/Update Methods Fix)
+- **Bug fix:** Fixed `500 Internal Server Error` when updating Users, Branches, and Categories.
+- **Root cause:** The PUT methods were using `EntityState.Modified` on a detached entity, which caused EF Core tracking issues. Navigation properties were also not being cleared.
+- **Fix applied:** Rewrote PUT methods in controllers to:
+  1. Find the existing entity first (ensuring it's tracked by EF Core)
+  2. Clear navigation properties on the incoming entity
+  3. Update only scalar properties on the tracked entity
+  4. Add proper error handling with meaningful error messages
+- **Affected controllers:** `UsersController`, `BranchesController`, `CategoriesController`
+- **Additional improvements:**
+  - `UsersController.edit()` now URL-decodes the user ID to handle IDs with special characters
+  - All PUT methods now return proper error messages instead of generic 500 errors
+- **No database changes required.**
+- **No frontend changes required.**
+
+### Previous Update (ValidateNever Attribute Fix)
+- **Bug fix:** Fixed `400 Bad Request` error `"The created_byNavigation field is required"` when creating Branches, Categories, Users, Books, BookCopies, BookReservations, and BookTransactions.
+- **Root cause:** ASP.NET's model validation was requiring navigation properties before the request even reached the controller. The previous fix using `.IsRequired(false)` in EF Core only affected database operations, not API model validation.
+- **Fix applied:** Added `[ValidateNever]` attribute from `Microsoft.AspNetCore.Mvc.ModelBinding.Validation` to all navigation properties in model classes:
+  - `Branch.cs` - `created_byNavigation`, `BookCopies`
+  - `Category.cs` - `created_byNavigation`, `BookDetails`
+  - `BookDetail.cs` - `created_byNavigation`, `category`, `BookCopies`
+  - `User.cs` - All navigation properties (reservations, transactions, reports, created entities)
+  - `BookCopy.cs` - `book`, `branch`, `BookTransactions`, `BookReservations`
+  - `BookReservation.cs` - `user`, `book_copy`
+  - `BookTransaction.cs` - `user`, `book_copy`
+  - `Report.cs` - `generated_byNavigation`
+- **No database changes required.**
+- **No frontend changes required** - the frontend should NOT send navigation properties.
+
+### Previous Update (Navigation Property Fix)
+- **Bug fix:** Fixed `400 Bad Request` error when creating Branches, Categories, and Users where the API was incorrectly requiring navigation properties (e.g., `created_byNavigation`).
+- **Root cause:** With nullable reference types enabled in .NET 9, EF Core and ASP.NET model validation treated non-nullable navigation properties as required, even though they should be optional.
+- **Fix applied:**
+  1. Added `.IsRequired(false)` to all `created_by` navigation property configurations in `LibraryManagementSystemContext.cs`
+  2. Updated controllers (`BranchesController`, `CategoriesController`, `UsersController`) to clear navigation properties before saving to prevent EF from trying to insert related entities
+- **Affected entities:** `BookDetail`, `Category`, `Branch`, `User`
+- **No database changes required.**
+- **No frontend changes required** - the frontend should NOT send navigation properties.
+
+### Previous Update (EF Core Identity Column Fix)
+- **Bug fix:** Fixed `null value in column "book_id" violates not-null constraint` error when creating books, reservations, transactions, categories, branches, and reports.
+- **Root cause:** Entity Framework Core configuration was missing `.UseIdentityByDefaultColumn()` for PostgreSQL identity columns, causing EF Core to send NULL instead of letting the database auto-generate the primary key.
+- **Affected tables:** `BookDetails`, `BookReservations`, `BookTransactions`, `Categories`, `Branches`, `Reports`
+- **Backend-only fix:** No database schema changes required. The database identity columns were already configured correctly; only the EF Core model configuration needed updating.
+- **No frontend changes required:** API contract remains unchanged.
+
+### Previous Update (created_by Tracking)
+- **created_by column:** Added `created_by` field to `Users`, `BookDetails`, `Categories`, and `Branches` tables.
+  - Type: `VARCHAR(20)`, nullable
+  - FK: References `Users.user_id` with `ON DELETE SET NULL`
+  - Purpose: Track which admin/user created each record
+  - Indexed: B-tree index on each table for efficient filtering
+  - Note: `Users.created_by` is self-referential (admin who created the user)
+- **Backend behavior:** When the referenced admin user is deleted, `created_by` values are automatically set to NULL.
+
+### Previous Update (UserRequests Feature)
 - **UserRequest:** Added new `UserRequests` table and API for handling user registration requests pending admin approval.
   - Fields: `request_id` (auto-generated), `name`, `email` (unique), `password`, `phone_number`, `plan`, `status`, `created_at`
   - Status workflow: `Pending` → `Approved` or `Rejected`
