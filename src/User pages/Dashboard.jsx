@@ -122,8 +122,8 @@ function Dashboard() {
                     setCurrentPage(0);
                   }}
                   className={`pb-2 text-sm font-medium transition-colors relative ${activeTab === 'recommended'
-                      ? 'text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28]'
-                      : 'text-gray-400 hover:text-gray-600'
+                    ? 'text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28]'
+                    : 'text-gray-400 hover:text-gray-600'
                     }`}
                 >
                   Recommended
@@ -134,8 +134,8 @@ function Dashboard() {
                     setCurrentPage(0);
                   }}
                   className={`pb-2 text-sm font-medium transition-colors relative ${activeTab === 'recently'
-                      ? 'text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28]'
-                      : 'text-gray-400 hover:text-gray-600'
+                    ? 'text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28]'
+                    : 'text-gray-400 hover:text-gray-600'
                     }`}
                 >
                   Recently added
@@ -218,9 +218,9 @@ function Dashboard() {
           </div>
 
           {/* Pie chart inspired by admin/pages/Dashboard.jsx */}
-          <div className={`${styles.cards} h-full max-[1540px]:h-50 w-full [1540px]:mt-10 items-center max-[1540px]:mx-0 ml-20 scale-90 `}>
-            <div className="h-full rounded-lg w-full flex flex-col items-center justify-between [1200px]:mb-15">
-              <div className="flex max-[1540px]:flex-row flex-col gap-15 pb-20 justify-between max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
+          <div className={`${styles.cards} flex-1 max-[1540px]:h-80 max-[1540px]:flex-none w-full items-center max-[1540px]:mx-0 ml-20`}>
+            <div className="h-full rounded-lg w-full flex flex-col items-center justify-center">
+              <div className="flex max-[1540px]:flex-row flex-col gap-15 justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 [430px]:mx-0 -ml-10 max-[380px]:w-[110%]">
                 <div className="gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
                   <div className="flex flex-col gap-6">
                     <div className="flex items-center gap-2">
@@ -237,10 +237,10 @@ function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[140px] max-[1080px]:h-[140px] max-[340px]:-ml-10'>
+                <div className='flex-1 h-full aspect-square max-w-full max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1540px]:flex-none max-[1080px]:w-[140px] max-[1080px]:h-[140px] max-[340px]:-ml-10'>
                   <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
                 </div>
-                <div className="max-[1540px]:hidden  flex gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg scale-110">
+                <div className="max-[1540px]:hidden flex gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg scale-110">
                   <div className='max-[1650px]:hidden block'>
                     <LogoIcon className="w-16 h-16 text-[#0a0f33]" />
                   </div>
