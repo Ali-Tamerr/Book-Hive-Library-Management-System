@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 
 const Home = lazy(() => import('./Home/Home'));
 import Login from './shared/Login';
@@ -27,12 +27,23 @@ const UserCatalog = lazy(() => import('./User pages/UserCatalog'));
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import { NFCReaderProvider } from './contexts/NFCReaderContext';
+import { getCurrentUser } from './services/auth.api';
 
 function Layout({ children, activeTab, setActiveTab, isSidebarOpen, toggleSidebar, searchValue, setSearchValue }) {
   const location = useLocation();
   const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
   const isAuthRoute = authRoutes.includes(location.pathname);
   const isHomePage = location.pathname === '/';
+  const isProtectedRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/user');
+  const currentUser = getCurrentUser();
+
+  useEffect(() => {
+    window.dispatchEvent(new Event('userUpdated'));
+  }, [location.pathname]);
+
+  if (isProtectedRoute && !currentUser) {
+    return <Navigate to="/" replace />;
+  }
 
   if (isHomePage) {
     return (
@@ -55,13 +66,14 @@ function Layout({ children, activeTab, setActiveTab, isSidebarOpen, toggleSideba
   return (
     <div className="flex h-screen bg-[#F2F2F2] text-[#0a0f33]">
       <Sidebar
+        key={`sidebar-${location.pathname}`}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
       />
       <main className="flex-1 h-full flex flex-col overflow-hidden montserrat-regular">
-        <Navbar searchValue={searchValue} setSearchValue={setSearchValue} toggleSidebar={toggleSidebar} />
+        <Navbar key={`navbar-${location.pathname}`} searchValue={searchValue} setSearchValue={setSearchValue} toggleSidebar={toggleSidebar} />
         <div className="flex-99 h-full">
           <Suspense fallback={<div className="h-full bg-[#F2F2F2]"></div>}>
             {children}

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { login, logout } from '../services/auth.api';
+import { login } from '../services/auth.api';
 import AuthInput from '../components/AuthInput';
 import PrimaryButton from '../components/PrimaryButton';
 import DarkBgSection from '../components/DarkBgSection';
@@ -13,10 +13,6 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        logout();
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

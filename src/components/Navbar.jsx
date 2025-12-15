@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Settings, Menu, UserRound, Search } from 'lucide-react';
-import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getCurrentUser } from '../services/auth.api';
 import SearchBar from './SearchBar';
@@ -8,29 +7,34 @@ import GlobalSearchPopup from './GlobalSearchPopup';
 import SettingsPopup from './SettingsPopup';
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
-  const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [, setForceUpdate] = useState(0);
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState('');
 
+  const currentUser = getCurrentUser();
 
   useEffect(() => {
-    const updateAuth = () => {
-      const user = getCurrentUser();
-      setCurrentUser(user);
+    const handleUpdate = () => {
+      setForceUpdate(prev => prev + 1);
     };
 
-    updateAuth();
+    const handlePageShow = (event) => {
+      if (event.persisted) {
+        setForceUpdate(prev => prev + 1);
+      }
+    };
 
-    window.addEventListener('storage', updateAuth);
-    window.addEventListener('userUpdated', updateAuth);
+    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener('userUpdated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
 
     return () => {
-      window.removeEventListener('storage', updateAuth);
-      window.removeEventListener('userUpdated', updateAuth);
+      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener('userUpdated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
     };
-  }, [location.pathname]);
+  }, []);
 
   const isDashboard = location.pathname === '/dashboard';
   const showSearchInput = !isDashboard;
