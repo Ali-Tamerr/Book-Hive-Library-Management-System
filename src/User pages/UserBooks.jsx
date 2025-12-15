@@ -48,7 +48,6 @@ function UserBooks() {
         : books;
 
     const columns = [
-        { header: 'ID', accessor: 'book_id' },
         { header: 'Name', accessor: 'name' },
         {
             header: 'Category',
@@ -253,7 +252,7 @@ function UserBooks() {
             )}
             <button
                 onClick={handleAcquireSelectedClick}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors cursor-pointer font-medium ${selectionMode && selectedCount === 0
+                className={`flex items-center whitespace-nowrap gap-2 px-4 py-2 rounded-lg transition-colors cursor-pointer font-medium ${selectionMode && selectedCount === 0
                     ? 'bg-gray-300 text-gray-500'
                     : 'bg-[#0a0f33] text-white hover:bg-[#192261]'
                     }`}

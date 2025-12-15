@@ -90,7 +90,7 @@
 ===================== */
 .cards {
   display: flex;
-  height:max-content;
+  height: 100%;
   flex-direction: column;
   flex: 1;
   gap: 20px;
