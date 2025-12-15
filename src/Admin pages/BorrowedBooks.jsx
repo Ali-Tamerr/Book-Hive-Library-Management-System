@@ -126,7 +126,7 @@ function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = 
     { header: 'User ID', accessor: 'user_id' },
     { header: 'Amount', accessor: 'fine_amount' },
     { header: 'Due Date', accessor: 'due_date' },
-    { header: 'Date & Time', accessor: 'transaction_date' },
+    { header: 'Borrowed On', accessor: 'created_at' },
     { header: 'Action', accessor: 'action' },
   ];
 
