@@ -169,7 +169,7 @@ const Home = () => {
                         50% discount and much more.
                      </p>
 
-                     <a href="#" className="button">Explore Now</a>
+                     <a href="#featured" className="button" onClick={(e) => scrollToSection(e, 'featured')}>Explore Now</a>
                   </div>
 
                   <div className="home__images">
@@ -279,53 +279,30 @@ const Home = () => {
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="img" className="featured__img" />
 
-                           <h2 className="featured__title">Featured Book</h2>
+                           <h2 className="featured__title">My Turn</h2>
                            <button className="button">Explore Now</button>
 
-                           <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
-                           </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/23036917.jpg', import.meta.url).href} alt="img" className="featured__img" />
 
-                           <h2 className="featured__title">Featured Book</h2>
+                           <h2 className="featured__title">The Second Half</h2>
                            <button className="button">Explore Now</button>
-
-                           <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
-                           </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/61WcybNpt9L.jpg', import.meta.url).href} alt="img" className="featured__img" />
 
-                           <h2 className="featured__title">Featured Book</h2>
+                           <h2 className="featured__title">I Think Therefore I Play </h2>
                            <button className="button">Explore Now</button>
-
-                           <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
-                           </div>
                         </article>
 
                         <article className="featured__card swiper-slide">
                            <img src={new URL('./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="img" className="featured__img" />
 
-                           <h2 className="featured__title">Featured Book</h2>
+                           <h2 className="featured__title">My Autobiography</h2>
                            <button className="button">Explore Now</button>
-
-                           <div className="featured__actions">
-                              <button><i className="ri-search-line"></i></button>
-                              <button><i className="ri-heart-3-line"></i></button>
-                              <button><i className="ri-eye-line"></i></button>
-                           </div>
                         </article>
                      </div>
 
@@ -444,27 +421,8 @@ const Home = () => {
                               <i className="ri-star-half-fill"></i>
                            </div>
                         </article>
-
                         <article className="testimonial__card swiper-slide">
-                           <img src={new URL('./assets/img/WhatsApp Image 2025-03-07 at 22.33.54_3c91cbcf.jpg', import.meta.url).href} alt="image" className="testimonial__img" />
-
-                           <h2 className="testimonial__title">Mohammed Hussein</h2>
-                           <p className="testimonial__description">
-                              The best website to buy books, the purchase
-                              is very easy to make and has great discounts.
-                           </p>
-
-                           <div className="testimonial__stars">
-                              <i className="ri-star-fill"></i>
-                              <i className="ri-star-fill"></i>
-                              <i className="ri-star-fill"></i>
-                              <i className="ri-star-fill"></i>
-                              <i className="ri-star-half-fill"></i>
-                           </div>
-                        </article>
-
-                        <article className="testimonial__card swiper-slide">
-                           <img src={new URL('./assets/img/WhatsApp Image 2025-03-07 at 22.33.54_3c91cbcf.jpg', import.meta.url).href} alt="image" className="testimonial__img" />
+                           <img src={new URL('./assets/img/testimonial-perfil-2.png', import.meta.url).href} alt="image" className="testimonial__img" />
 
                            <h2 className="testimonial__title">Rial Loz</h2>
                            <p className="testimonial__description">
