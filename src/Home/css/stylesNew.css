@@ -444,7 +444,9 @@ body.dark-theme{
 }
 
 .button:hover{
-  box-shadow: 0 4px 32px hsla(230, 72%, 32%, .4);
+  box-shadow: 0 4px 32px hsla(0, 72%, 32%, 0.4);
+  
+
 }
 
 /* Ensure all text fields on the Home page use the same font as buttons */
