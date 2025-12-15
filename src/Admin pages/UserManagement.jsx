@@ -15,6 +15,7 @@ import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import ViewRequestsPopup from '../components/ViewRequestsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
+import { FilePenLine, Trash2, ReceiptText } from 'lucide-react';
 
 import { getCurrentUser } from '../services/auth.api';
 
@@ -35,6 +36,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     email: '',
     phone_number: '',
     plan: '',
+    role: 'User',
     status: 'Active',
     password: '',
     password_hash: ''
@@ -52,15 +54,17 @@ function UserManagement({ searchValue, setSearchValue }) {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
+      const selectedRole = isSuperAdmin && formData.role ? formData.role : 'User';
       const apiData = {
         user_id: formData.user_id,
         name: formData.name,
         email: formData.email,
         phone_number: formData.phone_number,
-        role: 'User',
+        role: selectedRole,
         plan: formData.plan || null,
         status: formData.status,
-        password_hash: formData.password
+        password_hash: formData.password,
+        created_by: currentUser?.user_id || null
       };
 
       if (editMode && formData.user_id) {
@@ -71,7 +75,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       } else {
         await createUserMutation.mutateAsync(apiData);
       }
-      setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', status: 'Active', password: '', password_hash: '' });
+      setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', role: 'User', status: 'Active', password: '', password_hash: '' });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
@@ -88,6 +92,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       email: user.email || '',
       phone_number: user.phone_number || '',
       plan: user.plan || '',
+      role: user.role || 'User',
       status: user.status || 'Active',
       password: '',
       password_hash: user.password_hash || ''
@@ -121,7 +126,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', status: 'Active', password: '', password_hash: '' });
+    setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', role: 'User', status: 'Active', password: '', password_hash: '' });
     setEditMode(false);
     setShowPopup(true);
   };
@@ -146,6 +151,51 @@ function UserManagement({ searchValue, setSearchValue }) {
     { header: 'Action', accessor: 'action' },
   ];
 
+  const customActionRenderer = (user) => {
+    const isAdminOrSuperAdmin = user.role === 'Admin' || user.role === 'Super Admin';
+
+    return (
+      <div className='w-max mx-auto flex justify-center items-center'>
+        <button
+          onClick={() => handleEdit(user)}
+          className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer"
+          title="Edit"
+        >
+          <FilePenLine size={20} />
+        </button>
+        <button
+          onClick={() => {
+            if (isAdminOrSuperAdmin) {
+              alert('Cannot delete admin or super admin accounts. Only regular users can be deleted.');
+              return;
+            }
+            handleDelete(user.user_id);
+          }}
+          className={`mr-2 text-lg transition-transform ${isAdminOrSuperAdmin
+            ? 'opacity-40 cursor-not-allowed'
+            : 'hover:scale-125 cursor-pointer'
+            }`}
+          title={isAdminOrSuperAdmin ? 'Cannot delete admin accounts' : 'Delete'}
+        >
+          <Trash2 size={20} />
+        </button>
+        <button
+          onClick={() => handleView(user)}
+          className="text-lg hover:scale-125 transition-transform cursor-pointer"
+          title="View"
+        >
+          <ReceiptText size={20} />
+        </button>
+      </div>
+    );
+  };
+
+  const getCreatorName = (createdById) => {
+    if (!createdById) return { name: 'N/A', role: 'Not recorded' };
+    const creator = users.find(u => u.user_id === createdById);
+    return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
+  };
+
   const formPopup = (
     <UserFormPopup
       showPopup={showPopup}
@@ -155,6 +205,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       handleAddUser={handleAddUser}
       setShowPopup={setShowPopup}
       setEditMode={setEditMode}
+      isSuperAdmin={isSuperAdmin}
     />
   );
 
@@ -173,6 +224,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         buttonText={buttonText}
         columns={columns}
         formPopup={formPopup}
+        customActionRenderer={customActionRenderer}
         secondaryButton={
           <button
             onClick={() => setShowRequestsPopup(true)}
@@ -205,10 +257,7 @@ function UserManagement({ searchValue, setSearchValue }) {
           'Phone Number': selectedUser.phone_number,
           'Plan': selectedUser.plan || 'N/A',
         } : null}
-        savedBy={{
-          name: 'Admin User',
-          role: 'Admin'
-        }}
+        savedBy={selectedUser ? getCreatorName(selectedUser.created_by) : null}
       >
       </ViewDetailsPopup>
       <ViewRequestsPopup
@@ -224,6 +273,7 @@ function UserManagement({ searchValue, setSearchValue }) {
             email: request.email || '',
             phone_number: request.phone_number || '',
             plan: request.plan || '',
+            role: 'User',
             status: 'Active',
             password: request.password || '',
             password_hash: ''

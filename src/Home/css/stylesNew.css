@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital@0;1&display=swap');
 /*=============== VARIABLES CSS ===============*/
 :root {
-  --header-height: 3.5rem;
+  --header-height: 4.5rem;
 
   /*========== Colors ==========*/
   /*Color mode HSL(hue, saturation, lightness)*/
@@ -51,50 +51,52 @@
 }
 
 /*=============== BASE ===============*/
-* {
+.home-page * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-html {
+.home-page html {
   scroll-behavior: smooth;
 }
 
-body,
-input,
-button, h1, h2 {
+.home-page,
+.home-page input,
+.home-page button {
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
 }
 
-body {
+.home-page {
   background-color: var(--body-color);
   color: var(--text-color);
   transition: background-color .4s;
 }
 
-input,
-button {
+.home-page input,
+.home-page button {
   border: none;
   outline: none;
 }
 
-h1, h2, h3, h4 {
+.home-page h1, 
+.home-page h2, 
+.home-page h3, 
+.home-page h4 {
   color: var(--title-color);
   font-family: var(--second-font);
-  font-weight: var(--font-medium);
 }
 
-ul {
+.home-page ul {
   list-style: none;
 }
 
-a {
+.home-page a {
   text-decoration: none;
 }
 
-img {
+.home-page img {
   display: block;
   max-width: 100%;
   height: auto;
@@ -115,6 +117,11 @@ body.dark-theme{
 	Color changes in some parts of 
 	the website, in dark theme
 ==========*/
+.dark-theme .home-page {
+  background-color: hsl(230, 12%, 8%);
+  color: hsl(230, 16%, 70%);
+}
+
 .dark-theme .shadow-header{
   box-shadow: 0 2px 16px hsla(0, 0%, 0%, .4);
 }
@@ -143,6 +150,88 @@ body.dark-theme{
 .dark-theme::-webkit-scrollbar-thumb:hover{
   background-color: hsl(230, 16%, 35%);
 }
+.dark-theme .featured__card,
+.dark-theme .testimonial__card {
+  border-color: var(--border-color);
+}
+
+.dark-theme .swiper-button-prev,
+.dark-theme .swiper-button-next {
+  border-color: var(--border-color);
+}
+
+.dark-theme .footer-links a,
+.dark-theme .footer-links li,
+.dark-theme .footer-description,
+.dark-theme .footer-copy {
+  color: hsl(230, 16%, 65%);
+}
+
+.dark-theme .footer-title,
+.dark-theme .footer-logo {
+  color: var(--title-color);
+}
+
+.dark-theme .about-title,
+.dark-theme .heading {
+  color: var(--title-color);
+}
+
+.dark-theme .about-text,
+.dark-theme .subheading {
+  color: hsl(230, 16%, 65%);
+}
+
+.dark-theme .stat .num {
+  color: var(--title-color);
+}
+
+.dark-theme .stat .label {
+  color: hsl(230, 16%, 65%);
+}
+
+.dark-theme .plan {
+  border: 1px solid var(--border-color);
+}
+
+.dark-theme .nav__logo img,
+.dark-theme .footer-logo img {
+  filter: invert(1) brightness(1.2);
+}
+
+.dark-theme .book {
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme .button,
+.dark-theme .about-cta,
+.dark-theme .btn {
+  background-color: hsl(230, 70%, 45%);
+  color: var(--white-color);
+}
+
+.dark-theme .button:hover,
+.dark-theme .about-cta:hover,
+.dark-theme .btn:hover {
+  background-color: hsl(230, 70%, 50%);
+  box-shadow: 0 4px 32px hsla(230, 70%, 45%, .4);
+}
+
+.dark-theme .services__card i,
+.dark-theme .featured__actions button i {
+  color: hsl(230, 70%, 50%);
+}
+
+.dark-theme .testimonial__stars i {
+  color: hsl(230, 70%, 45%);
+}
+
+.dark-theme .footer-social a,
+.dark-theme .footer-social i {
+  color: hsl(230, 70%, 45%);
+}
+
+
 /*=============== REUSABLE CSS CLASSES ===============*/
 .container {
   max-width: 1220px;
@@ -184,6 +273,7 @@ body.dark-theme{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 4.5rem;
 }
 
 .nav__logo{
@@ -498,8 +588,8 @@ body.dark-theme{
     --max-w:1180px;
   }
 
-  *{box-sizing:border-box}
-  body{
+  .home-page *{box-sizing:border-box}
+  .home-page{
     margin:0;
     font-family:"Montserrat",system-ui,Arial,sans-serif;
     background:var(--page-bg);
@@ -733,8 +823,8 @@ body.dark-theme{
       --gap: 36px;
     }
 
-    *{box-sizing:border-box}
-    body{
+    .home-page *{box-sizing:border-box}
+    .home-page{
       margin:0;
       font-family: "Montserrat", system-ui, Arial, sans-serif;
       background:var(--page-bg);
@@ -1062,10 +1152,13 @@ body.dark-theme{
   }
   .nav__menu{
     width: initial;
-    margin-inline: auto 0;
+    margin-inline: auto;
+    flex: 1;
+    display: flex;
+    justify-content: center;
   }
   .nav__list{
-    column-gap: 4rem;
+    column-gap: 6rem;
   }
   .nav__link{
     font-weight: var(--font-medium);
@@ -1199,7 +1292,6 @@ body.dark-theme{
   }
 }
 .footer {
-  background: #e9ecff;
   padding: 60px 20px 30px;
   font-family: "Montserrat", sans-serif;
   color: #0a0b2b;

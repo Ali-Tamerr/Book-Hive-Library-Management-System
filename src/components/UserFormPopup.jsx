@@ -3,7 +3,7 @@ import { Users } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
 import NFCReaderButton from './NFCReaderButton.jsx';
 
-function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUser, setShowPopup, setEditMode }) {
+function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUser, setShowPopup, setEditMode, isSuperAdmin = false }) {
   const userIdInputRef = React.useRef(null);
 
   const onFormChange = (e) => {
@@ -34,6 +34,18 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
     ],
   };
 
+  const roleInput = {
+    name: 'role',
+    type: 'select',
+    placeholder: 'Role',
+    required: true,
+    autocomplete: 'off',
+    options: [
+      { value: 'User', label: 'User' },
+      { value: 'Admin', label: 'Admin' },
+    ],
+  };
+
   const userIdInput = {
     name: 'user_id',
     type: 'custom',
@@ -61,19 +73,34 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
     ),
   };
 
-  const inputs = [...baseInputs, planInput, userIdInput];
+  const inputs = isSuperAdmin
+    ? [...baseInputs, planInput, roleInput, userIdInput]
+    : [...baseInputs, planInput, userIdInput];
 
-  const customLayout = [
-    { columns: 3, inputs: ['name', 'phone_number', 'plan'] },
-    {
-      type: 'flex',
-      inputs: [
-        { name: 'email', flex: 2 },
-        { name: 'password', flex: 1 }
-      ]
-    },
-    { columns: 1, inputs: ['user_id'] },
-  ];
+  const customLayout = isSuperAdmin
+    ? [
+      { columns: 2, inputs: ['name', 'phone_number'] },
+      { columns: 2, inputs: ['plan', 'role'] },
+      {
+        type: 'flex',
+        inputs: [
+          { name: 'email', flex: 2 },
+          { name: 'password', flex: 1 }
+        ]
+      },
+      { columns: 1, inputs: ['user_id'] },
+    ]
+    : [
+      { columns: 3, inputs: ['name', 'phone_number', 'plan'] },
+      {
+        type: 'flex',
+        inputs: [
+          { name: 'email', flex: 2 },
+          { name: 'password', flex: 1 }
+        ]
+      },
+      { columns: 1, inputs: ['user_id'] },
+    ];
 
   return (
     <FormLayout

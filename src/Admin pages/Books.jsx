@@ -6,13 +6,15 @@ import {
   useDeleteBook
 } from '../hooks/useBooks.js';
 import { useCategories } from '../hooks/useCategories.js';
+import { useUsers } from '../hooks/useUsers.js';
 import BookFormPopup from '../components/BookFormPopup.jsx';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
+import { getCurrentUser } from '../services/auth.api';
 
 function Books({ searchValue, setSearchValue }) {
-  // Search searches: Name, Book ID
+  const currentUser = getCurrentUser();
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -31,6 +33,7 @@ function Books({ searchValue, setSearchValue }) {
 
   const { data: books = [], isLoading } = useBooks();
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
+  const { data: users = [] } = useUsers();
   const createBookMutation = useCreateBook();
   const updateBookMutation = useUpdateBook();
   const deleteBookMutation = useDeleteBook();
@@ -53,7 +56,8 @@ function Books({ searchValue, setSearchValue }) {
         category_id: isNaN(category_id) ? null : category_id,
         quantity: isNaN(quantity) ? 1 : quantity,
         sale_price: isNaN(sale_price) ? null : sale_price,
-        BookCopies: formData.BookCopies
+        BookCopies: formData.BookCopies,
+        created_by: currentUser?.user_id || null
       };
 
       if (editMode && formData.book_id) {
@@ -124,6 +128,12 @@ function Books({ searchValue, setSearchValue }) {
     setFormData({ book_id: '', name: '', category_id: '', quantity: '', sale_price: '', BookCopies: [] });
     setEditMode(false);
     setShowPopup(true);
+  };
+
+  const getCreatorName = (createdById) => {
+    if (!createdById) return { name: 'N/A', role: 'Not recorded' };
+    const creator = users.find(u => u.user_id === createdById);
+    return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
   };
 
   const filteredBooks = searchValue
@@ -213,10 +223,7 @@ function Books({ searchValue, setSearchValue }) {
           'Quantity': selectedBook.quantity,
           'Availability': selectedBook.quantity > 0 ? 'Available' : 'Borrowed',
         } : null}
-        savedBy={{
-          name: 'Admin User',
-          role: 'Admin'
-        }}
+        savedBy={selectedBook ? getCreatorName(selectedBook.created_by) : null}
       >
       </ViewDetailsPopup>
     </>
