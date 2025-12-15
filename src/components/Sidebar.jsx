@@ -21,20 +21,39 @@ import NavLink from './NavLink';
 
 const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
     const [isExpanded, setIsExpanded] = useState(true);
+    const [, setForceUpdate] = useState(0);
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState(getCurrentUser());
     const location = useLocation();
 
-    const isAdmin = (currentUser && currentUser.role === 'Admin');
+    const currentUser = getCurrentUser();
+    const isAdmin = currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Super Admin');
+
+    useEffect(() => {
+        const handleUpdate = () => {
+            setForceUpdate(prev => prev + 1);
+        };
+
+        const handlePageShow = (event) => {
+            if (event.persisted) {
+                setForceUpdate(prev => prev + 1);
+            }
+        };
+
+        window.addEventListener('pageshow', handlePageShow);
+        window.addEventListener('userUpdated', handleUpdate);
+        window.addEventListener('storage', handleUpdate);
+
+        return () => {
+            window.removeEventListener('pageshow', handlePageShow);
+            window.removeEventListener('userUpdated', handleUpdate);
+            window.removeEventListener('storage', handleUpdate);
+        };
+    }, []);
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/');
     };
-
-    useEffect(() => {
-        setCurrentUser(getCurrentUser());
-    }, [location.pathname]);
 
     return (
         <>
