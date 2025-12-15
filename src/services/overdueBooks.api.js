@@ -1,7 +1,8 @@
 import { apiGet } from './api.config';
 
-const BASE_ENDPOINT = '/BookReservations';
+const BASE_ENDPOINT = '/BookTransactions';
 
 export const getAllOverdueBooks = async () => {
-  return await apiGet(`${BASE_ENDPOINT}?filter=overdue`);
+  const transactions = await apiGet(BASE_ENDPOINT);
+  return transactions.filter(t => t.status === 'Overdue');
 };
