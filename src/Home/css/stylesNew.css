@@ -1,6 +1,6 @@
 /*=============== GOOGLE FONTS ===============*/
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital@0;1&family=Mynerve&display=swap');
 /*=============== VARIABLES CSS ===============*/
 :root {
   --header-height: 4.5rem;
@@ -18,11 +18,11 @@
   /*========== Font and typography ==========*/
   /*.5rem = 8px | 1rem = 16px ...*/
   --body-font: "Montserrat", sans-serif;
-  --second-font: "Montagu Slab", serif;
+  --second-font: "Mynerve", serif;
   --biggest-font-size: 2rem;
   --h1-font-size: 1.5rem;
   --h2-font-size: 1.25rem;
-  --h3-font-size: 1rem;
+  --h3-font-size: 2rem;
   --normal-font-size: .938rem;
   --small-font-size: .813rem;
   --smaller-font-size: .75rem;
@@ -105,7 +105,7 @@
 /*=============== THEME ===============*/
 /*========== Variables Dark theme ==========*/
 body.dark-theme{
-  --title-color: hsl(230, 48%, 85%);
+  --title-color: #ffff;
   --text-color: hsl(230, 16%, 4570%);
   --border-color: hsl(230, 12%, 18%);
   --white-color: hsl(0, 0%, 100%);
@@ -360,7 +360,7 @@ body.dark-theme{
   height: 100%;
   z-index: var(--z-fixed);
   background-color: hsla(230, 12%, 96%, .6);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(12px);
   padding: 8rem 1.5rem;
   transition: top .4s;
 }
@@ -370,7 +370,8 @@ body.dark-theme{
   align-items: center;
   column-gap: .5rem;
   background-color: var(--container-color);
-  border: 2px solid var(--border-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
   padding-inline: 1rem;
 }
 
@@ -537,7 +538,7 @@ body.dark-theme{
 .button:hover{
   background-color: #E3E3E3;
   color : #000035;
-  border: #000035 solid;
+  border: 1px #000035 solid;
 }
 
 /* Ensure all text fields on the Home page use the same font as buttons */
@@ -569,6 +570,8 @@ body.dark-theme{
 }
 
 .services__title{
+  font-family: var(--body-font)!important;
+  font-weight: var(--font-semi-bold);
   font-size: var(--h3-font-size);
   margin-bottom: .5rem;
 }
@@ -666,7 +669,7 @@ body.dark-theme{
  
      background-color: #E3E3E3;
   color : #000035;
-  border: #000035 solid;
+  border: 1px #000035 solid;
   }
 
   /* RIGHT column: safe container for decorative books */
@@ -742,9 +745,12 @@ body.dark-theme{
   
 }
 
-.featured__title{
-  font-size: var(--h2-font-size);
+ h2.featured__title{
+  font-size: 15px;
+  font-weight: var(--font-semi-bold);
+  color: #525252;
   margin-bottom: .5rem;
+  
 }
 
 .featured__prices{
@@ -766,7 +772,8 @@ body.dark-theme{
 
 .featured__card .button{
   cursor: pointer;
-   border-radius: 5px;
+  border: 1px var(--first-color) solid;
+  border-radius: 12px;
 }
 
 .featured__actions{
@@ -891,6 +898,10 @@ body.dark-theme{
       border-radius:18px;
     }
 
+    .plan.center:hover{
+      transform:translateY(-6px); box-shadow: 0 18px 30px rgba(10,10,35,0.06);
+    }
+
     .plan-title{
       font-weight:800;
       letter-spacing:1px;
@@ -942,19 +953,29 @@ body.dark-theme{
       display:inline-block;
       text-decoration:none;
       padding:12px 28px;
-      border-radius:9px;
-      border:1px solid rgba(255,255,255,0.28);
-      background:transparent;
+      border-radius:12px;
+      background-color: transparent;
       color:var(--white);
+      border: 1px solid rgba(255,255,255,0.28);
       font-weight:600;
       margin:10px auto 0;
       transition:background .18s ease, color .18s ease, transform .12s ease;
+    
     }
     .plan.center .btn{
       background:transparent;
       border:1px solid rgba(255,255,255,0.22);
     }
-    .btn:hover{ transform:translateY(-3px); background:rgba(255,255,255,0.06) }
+    
+    .plan.center .btn:hover{
+      background-color: #E3E3E3;
+      color: #000035;
+    }
+
+    .plan .btn:hover{ 
+      background-color:#E3E3E3;
+      color : var(--card-bg);
+    }
 
     /* subtle label inside grey cards to mimic the screenshot font sizes */
     .plan.small-price{ font-size:22px; font-weight:500; }
@@ -994,6 +1015,7 @@ body.dark-theme{
 
 .testimonial__title{
   font-size: var(--h2-font-size);
+  font-weight: var(--font-semi-bold);
   margin-bottom: .75rem;
 }
 
@@ -1246,6 +1268,7 @@ body.dark-theme{
   }
   .footer__logo,
   .footer__title{
+    font-family: var(--body-font)!important;
     font-size: var(--h2-font-size);
     margin-bottom: 1.5rem;
   }
@@ -1294,7 +1317,7 @@ body.dark-theme{
 .footer {
   padding: 60px 20px 30px;
   font-family: "Montserrat", sans-serif;
-  color: #0a0b2b;
+  color: #525252;
 }
 
 .footer-container {
@@ -1340,11 +1363,15 @@ body.dark-theme{
 
 /* COLUMNS */
 .footer-col .footer-title {
+  font-family: var(--body-font);
   font-size: 18px;
   font-weight: 800;
   margin-bottom: 15px;
 }
 
+.sub{
+  font-family: var(--second-font);
+}
 .footer-links li {
   list-style: none;
   margin-bottom: 10px;
@@ -1359,7 +1386,7 @@ body.dark-theme{
 }
 
 .footer-links a:hover {
-  color: #000;
+  color: #000035;
 }
 
 /* SOCIAL */
