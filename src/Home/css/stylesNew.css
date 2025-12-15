@@ -440,13 +440,14 @@ body.dark-theme{
   font-family: var(--body-font);
   padding: 1rem 1.5rem;
   transition: box-shadow .4s;
-  border-radius: 5px;
+  border: 1px var(--first-color) solid;
+  border-radius: 12px;
 }
 
 .button:hover{
-  box-shadow: 0 4px 32px hsla(0, 72%, 32%, 0.4);
-  
-
+  background-color: #E3E3E3;
+  color : #000035;
+  border: #000035 solid;
 }
 
 /* Ensure all text fields on the Home page use the same font as buttons */
@@ -565,13 +566,17 @@ body.dark-theme{
     color: var(--white-color);
     font-weight: var(--font-semi-bold);
     transition: box-shadow .4s;
-    border-radius: 5px;
     text-decoration: none;
     padding: 12px 24px;
+      border: 1px var(--first-color) solid;
+  border-radius: 12px;
   }
 
   .about-cta:hover{
-    box-shadow: 0 4px 32px hsla(230, 72%, 32%, .4);
+ 
+     background-color: #E3E3E3;
+  color : #000035;
+  border: #000035 solid;
   }
 
   /* RIGHT column: safe container for decorative books */
@@ -689,6 +694,7 @@ body.dark-theme{
   font-size: 1.25rem;
   color: var(--first-color);
   cursor: pointer;
+ 
 }
 
 .featured__card:hover .featured__actions{
