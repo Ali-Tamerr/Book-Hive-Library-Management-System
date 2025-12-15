@@ -5,13 +5,15 @@ import {
   useUpdateBorrowedBook,
   useDeleteBorrowedBook
 } from '../hooks/useBorrowedBooks.js';
+import { useBooks } from '../hooks/useBooks.js';
+import { useUsers } from '../hooks/useUsers.js';
+import { useBookCopies } from '../hooks/useBookCopies.js';
 import BorrowedBookFormPopup from '../components/BorrowedBookFormPopup.jsx';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
 import CommonLayout from '../Layouts/CommonLayout.jsx';
 
 function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = false }) {
-  // Search searches: Book Title, User Name, Transaction ID
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -32,9 +34,28 @@ function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = 
   });
 
   const { data: borrowedBooks = [], isLoading } = useBorrowedBooks();
+  const { data: books = [] } = useBooks();
+  const { data: users = [] } = useUsers();
+  const { data: bookCopies = [] } = useBookCopies();
   const createBorrowedBookMutation = useCreateBorrowedBook();
   const updateBorrowedBookMutation = useUpdateBorrowedBook();
   const deleteBorrowedBookMutation = useDeleteBorrowedBook();
+
+  const getBookName = (bookCopyId) => {
+    const copy = bookCopies.find(c => c.book_copy_id === bookCopyId || c.id === bookCopyId);
+    const actualBookId = copy?.book_id;
+    if (actualBookId) {
+      const book = books.find(b => b.book_id === actualBookId || b.id === actualBookId);
+      return book?.name || book?.title || '-';
+    }
+    const directBook = books.find(b => b.book_id === bookCopyId || b.id === bookCopyId);
+    return directBook?.name || directBook?.title || '-';
+  };
+
+  const getUserName = (userId) => {
+    const user = users.find(u => u.user_id === userId || u.id === userId);
+    return user?.full_name || user?.name || user?.username || '-';
+  };
 
   const handleAddBorrowedBook = async (e) => {
     e.preventDefault();
@@ -112,6 +133,12 @@ function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = 
     setShowPopup(true);
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
   const filteredBorrowedBooks = searchValue
     ? borrowedBooks.filter(
       (book) =>
@@ -121,12 +148,19 @@ function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = 
     )
     : borrowedBooks;
 
+  const tableData = filteredBorrowedBooks.map(book => ({
+    ...book,
+    book_name: getBookName(book.book_id),
+    user_name_display: getUserName(book.user_id),
+    due_date_formatted: formatDate(book.due_date),
+    borrowed_on_formatted: formatDate(book.created_at)
+  }));
+
   const columns = [
-    { header: 'ID', accessor: 'transaction_id' },
-    { header: 'User ID', accessor: 'user_id' },
-    { header: 'Amount', accessor: 'fine_amount' },
-    { header: 'Due Date', accessor: 'due_date' },
-    { header: 'Borrowed On', accessor: 'created_at' },
+    { header: 'Book Name', accessor: 'book_name' },
+    { header: 'User Name', accessor: 'user_name_display' },
+    { header: 'Due Date', accessor: 'due_date_formatted' },
+    { header: 'Borrowed On', accessor: 'borrowed_on_formatted' },
     { header: 'Action', accessor: 'action' },
   ];
 
@@ -149,7 +183,7 @@ function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = 
         setSearchValue={setSearchValue}
         buttonBehaviour={handleButtonClick}
         isLoading={isLoading}
-        data={filteredBorrowedBooks}
+        data={tableData}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
         handleView={handleView}
