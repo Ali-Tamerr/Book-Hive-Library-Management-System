@@ -191,7 +191,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const getCreatorName = (createdById) => {
-    if (!createdById) return { name: 'Unknown', role: "Created before 'Saved by' update" };
+    if (!createdById) return { name: 'N/A', role: 'Not recorded' };
     const creator = users.find(u => u.user_id === createdById);
     return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
   };

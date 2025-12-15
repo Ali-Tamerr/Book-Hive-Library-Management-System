@@ -28,7 +28,7 @@ const ViewDetailsPopup = ({ show, onClose, title = "View Details", children, dat
                                     </div>
                                 ))}
                             </div>
-                            {savedBy && (
+                            {isSuperAdmin && savedBy && (
                                 <>
                                     <div className='w-[1px] self-stretch bg-[#828282]'></div>
                                     <div className='flex flex-1 justify-center items-center'>
