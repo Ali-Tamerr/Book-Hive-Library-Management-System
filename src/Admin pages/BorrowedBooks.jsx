@@ -150,8 +150,8 @@ function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = 
 
   const tableData = filteredBorrowedBooks.map(book => ({
     ...book,
-    book_name: book.book_title || getBookName(book.book_id),
-    user_name_display: book.user_name || getUserName(book.user_id),
+    book_name: getBookName(book.book_id),
+    user_name_display: getUserName(book.user_id),
     due_date_formatted: formatDate(book.due_date),
     borrowed_on_formatted: formatDate(book.created_at)
   }));
