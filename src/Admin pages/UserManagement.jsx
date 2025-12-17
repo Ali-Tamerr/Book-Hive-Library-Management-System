@@ -152,7 +152,22 @@ function UserManagement({ searchValue, setSearchValue }) {
   ];
 
   const customActionRenderer = (user) => {
-    const isAdminOrSuperAdmin = user.role === 'Admin' || user.role === 'Super Admin';
+    const isSuperAdminAccount = user.role === 'Super Admin';
+    const isAdminAccount = user.role === 'Admin';
+
+    const canDelete = isSuperAdmin
+      ? !isSuperAdminAccount
+      : !isAdminAccount && !isSuperAdminAccount;
+
+    const getDeleteMessage = () => {
+      if (isSuperAdminAccount) {
+        return 'Super Admin accounts cannot be deleted.';
+      }
+      if (isAdminAccount && !isSuperAdmin) {
+        return 'Only Super Admins can delete Admin accounts.';
+      }
+      return '';
+    };
 
     return (
       <div className='w-max mx-auto flex justify-center items-center'>
@@ -165,17 +180,17 @@ function UserManagement({ searchValue, setSearchValue }) {
         </button>
         <button
           onClick={() => {
-            if (isAdminOrSuperAdmin) {
-              alert('Cannot delete admin or super admin accounts. Only regular users can be deleted.');
+            if (!canDelete) {
+              alert(getDeleteMessage());
               return;
             }
             handleDelete(user.user_id);
           }}
-          className={`mr-2 text-lg transition-transform ${isAdminOrSuperAdmin
+          className={`mr-2 text-lg transition-transform ${!canDelete
             ? 'opacity-40 cursor-not-allowed'
             : 'hover:scale-125 cursor-pointer'
             }`}
-          title={isAdminOrSuperAdmin ? 'Cannot delete admin accounts' : 'Delete'}
+          title={!canDelete ? getDeleteMessage() : 'Delete'}
         >
           <Trash2 size={20} />
         </button>
