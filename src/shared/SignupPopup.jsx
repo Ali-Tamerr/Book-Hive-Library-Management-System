@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { createUserRequest } from '../services/userRequests.api';
+import { createUserRequest, getAllUserRequests } from '../services/userRequests.api';
+import { getAllUsers } from '../services/users.api';
 import AuthInput from '../components/AuthInput';
 import PrimaryButton from '../components/PrimaryButton';
 import DarkBgSection from '../components/DarkBgSection';
@@ -19,6 +20,8 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [existingUsers, setExistingUsers] = useState([]);
+    const [existingRequests, setExistingRequests] = useState([]);
 
     useEffect(() => {
         const checkTheme = () => {
@@ -30,16 +33,79 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
         return () => observer.disconnect();
     }, []);
 
+    useEffect(() => {
+        const fetchExistingData = async () => {
+            try {
+                const [users, requests] = await Promise.all([
+                    getAllUsers(),
+                    getAllUserRequests()
+                ]);
+                setExistingUsers(users || []);
+                setExistingRequests(requests || []);
+            } catch (err) {
+                console.error('Failed to fetch existing data:', err);
+            }
+        };
+        if (isOpen) {
+            fetchExistingData();
+        }
+    }, [isOpen]);
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
+        setError('');
+    };
+
+    const validateUniqueFields = () => {
+        const emailLower = formData.email.toLowerCase().trim();
+        const phoneTrimmed = formData.phone_number.trim();
+
+        const emailExistsInUsers = existingUsers.some(
+            user => user.email?.toLowerCase() === emailLower
+        );
+        if (emailExistsInUsers) {
+            setError('This email is already registered. Please use a different email or sign in.');
+            return false;
+        }
+
+        const emailExistsInRequests = existingRequests.some(
+            request => request.email?.toLowerCase() === emailLower && request.status === 'Pending'
+        );
+        if (emailExistsInRequests) {
+            setError('A registration request with this email is already pending.');
+            return false;
+        }
+
+        const phoneExistsInUsers = existingUsers.some(
+            user => user.phone_number === phoneTrimmed
+        );
+        if (phoneExistsInUsers) {
+            setError('This phone number is already registered. Please use a different number.');
+            return false;
+        }
+
+        const phoneExistsInRequests = existingRequests.some(
+            request => request.phone_number === phoneTrimmed && request.status === 'Pending'
+        );
+        if (phoneExistsInRequests) {
+            setError('A registration request with this phone number is already pending.');
+            return false;
+        }
+
+        return true;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!validateUniqueFields()) {
+            return;
+        }
+
         setLoading(true);
 
         try {
