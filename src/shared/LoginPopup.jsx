@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/auth.api';
@@ -13,6 +13,17 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        const checkTheme = () => {
+            setIsDarkMode(document.body.classList.contains('dark-theme'));
+        };
+        checkTheme();
+        const observer = new MutationObserver(checkTheme);
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -58,11 +69,17 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
                 className="relative w-[95%] max-w-[1300px] h-[700px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex max-[1080px]:flex-col justify-stretch w-full h-full bg-white overflow-hidden">
+                <div className={`flex max-[1080px]:flex-col justify-stretch w-full h-full ${isDarkMode ? 'bg-[#121317]' : 'bg-white'} overflow-hidden`}>
                     <WhiteBgSection
                         title="Welcome Back !!"
-                        subtitle="Please enter your email and password to log in"
+                        subtitle="Please enter your credentials to log in"
                         loginLayout={true}
+                        isDarkMode={isDarkMode}
+                        backButton={{
+                            text: 'BACK',
+                            position: 'left',
+                            onClick: onClose
+                        }}
                     >
                         <form onSubmit={handleSubmit} className='w-full px-[100px] max-[856px]:px-[120px] items-center flex flex-col gap-6'>
                             <AuthInput
@@ -71,6 +88,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                isDarkMode={isDarkMode}
                             />
                             <AuthInput
                                 type="password"
@@ -78,6 +96,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                isDarkMode={isDarkMode}
                             />
 
                             {error && (
@@ -87,27 +106,29 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
                             <a
                                 href="#"
                                 onClick={handleForgotPassword}
-                                className="block text-lg self-start font-medium text-[#0a0f33] mb-6 hover:underline"
+                                className={`block text-lg self-start font-medium ${isDarkMode ? 'text-white' : 'text-[#0a0f33]'} mb-6 hover:underline`}
                             >
                                 Forgot password?
                             </a>
                             <PrimaryButton
                                 type="submit"
                                 disabled={loading}
+                                isDarkMode={isDarkMode}
                             >
                                 {loading ? 'SIGNING IN...' : 'SIGN IN'}
                             </PrimaryButton>
                         </form>
-                        <p className="text-lg max-[1080px]:block hidden text-gray-400">New to our platform? <button onClick={handleSignup} className='underline text-gray-900 cursor-pointer'>Sign Up now.</button></p>
+                        <p className={`text-lg max-[1080px]:block hidden ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`}>New to our platform? <button onClick={handleSignup} className={`underline ${isDarkMode ? 'text-white' : 'text-gray-900'} cursor-pointer`}>Sign Up now.</button></p>
                     </WhiteBgSection>
 
                     <DarkBgSection
-                        message="New to our platform? Please visit any of our branches to complete the registration process."
-                        buttonText="Where are we ?"
-                        onButtonClick={() => window.open('https://maps.google.com', '_blank')}
-                        secondButtonText="Fill your form"
-                        onSecondButtonClick={handleSignup}
+                        message="New to our platform? Please fill your form and visit any of our branches to complete the registration process."
+                        buttonText="Registration Form"
+                        onButtonClick={handleSignup}
+                        secondButtonText="Where are we ?"
+                        onSecondButtonClick={() => window.open('https://maps.google.com', '_blank')}
                         position="right"
+                        isDarkMode={isDarkMode}
                     />
                 </div>
             </div>

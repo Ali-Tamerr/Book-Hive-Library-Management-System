@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { createUserRequest } from '../services/userRequests.api';
 import AuthInput from '../components/AuthInput';
@@ -18,6 +18,17 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        const checkTheme = () => {
+            setIsDarkMode(document.body.classList.contains('dark-theme'));
+        };
+        checkTheme();
+        const observer = new MutationObserver(checkTheme);
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
+    }, []);
 
     const handleChange = (e) => {
         setFormData({
@@ -69,25 +80,32 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                 className="relative w-[95%] max-w-[1300px] h-[700px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex max-[1080px]:flex-col w-full h-full bg-white overflow-hidden">
+                <div className={`flex max-[1080px]:flex-col w-full h-full ${isDarkMode ? 'bg-[#121317]' : 'bg-white'} overflow-hidden`}>
                     <DarkBgSection
-                        message="Already have Account? Sign In now."
+                        message="Already have account ? Sign in now !"
                         buttonText="SIGN IN"
                         onButtonClick={handleLogin}
                         position="left"
+                        isDarkMode={isDarkMode}
                     />
 
                     <WhiteBgSection
                         title="Registration Request"
-                        subtitle="Fill out the form below to request an account. An admin will review your request."
+                        subtitle="Fill out the form below to request an account. and visit any of our branches to complete the registration process.."
                         logoWithTitle={true}
+                        isDarkMode={isDarkMode}
+                        backButton={{
+                            text: 'BACK',
+                            position: 'right',
+                            onClick: onClose
+                        }}
                     >
                         {success ? (
                             <div className="w-full text-center py-8">
                                 <div className="text-green-600 text-xl font-semibold mb-4">
                                     ✓ Request Submitted Successfully!
                                 </div>
-                                <p className="text-gray-600">
+                                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                                     Your registration request has been sent to the admin for approval.
                                     You will be notified once your account is approved.
                                 </p>
@@ -103,6 +121,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                                         onChange={handleChange}
                                         required
                                         autoComplete="name"
+                                        isDarkMode={isDarkMode}
                                     />
                                 </div>
                                 <div className="flex w-full gap-4">
@@ -114,18 +133,8 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                                         onChange={handleChange}
                                         required
                                         autoComplete="email"
+                                        isDarkMode={isDarkMode}
                                     />
-                                    <AuthInput
-                                        type="text"
-                                        name="phone_number"
-                                        placeholder="Contact No"
-                                        value={formData.phone_number}
-                                        onChange={handleChange}
-                                        required
-                                        autoComplete="tel"
-                                    />
-                                </div>
-                                <div className="flex w-full gap-4">
                                     <AuthInput
                                         type="password"
                                         name="password"
@@ -134,13 +143,27 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                                         onChange={handleChange}
                                         required
                                         autoComplete="new-password"
+                                        isDarkMode={isDarkMode}
+                                    />
+                                </div>
+                                <div className="flex w-full gap-4">
+                                    <AuthInput
+                                        type="text"
+                                        name="phone_number"
+                                        placeholder="Contact No"
+                                        value={formData.phone_number}
+                                        onChange={handleChange}
+                                        required
+                                        autoComplete="tel"
+                                        isDarkMode={isDarkMode}
                                     />
                                     <FormSelect
                                         name="plan"
                                         value={formData.plan}
                                         onChange={handleChange}
-                                        placeholder="Select Plan (Optional)"
+                                        placeholder="Select Plan"
                                         variant="auth"
+                                        isDarkMode={isDarkMode}
                                         options={[
                                             { value: 'Discover', label: 'Discover' },
                                             { value: 'Enterprise', label: 'Enterprise' },
@@ -154,12 +177,13 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                                 <PrimaryButton
                                     type="submit"
                                     disabled={loading}
+                                    isDarkMode={isDarkMode}
                                 >
-                                    {loading ? 'SUBMITTING...' : 'SUBMIT REQUEST'}
+                                    {loading ? 'SUBMITTING...' : 'Submit Request'}
                                 </PrimaryButton>
                             </form>
                         )}
-                        <p className="text-lg max-[1080px]:block hidden text-gray-400">Already have Account? <button onClick={handleLogin} className='underline text-gray-900 cursor-pointer'>Sign In now.</button></p>
+                        <p className={`text-lg max-[1080px]:block hidden ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`}>Already have Account? <button onClick={handleLogin} className={`underline ${isDarkMode ? 'text-white' : 'text-gray-900'} cursor-pointer`}>Sign In now.</button></p>
                     </WhiteBgSection>
                 </div>
             </div>
