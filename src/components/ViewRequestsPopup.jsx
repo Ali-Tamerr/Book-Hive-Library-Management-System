@@ -3,16 +3,35 @@ import Popup from './Popup.jsx';
 import FormButton from './FormButton.jsx';
 import { Users, Search, Check, X } from 'lucide-react';
 
+const EXPIRATION_DAYS = 7;
+
 const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, isLoading = false }) => {
     const [searchValue, setSearchValue] = useState('');
     const [showRejected, setShowRejected] = useState(false);
+
+    const isExpired = (createdAt) => {
+        if (!createdAt) return false;
+        const createdDate = new Date(createdAt);
+        const expirationDate = new Date(createdDate.getTime() + EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
+        return new Date() > expirationDate;
+    };
+
+    const getDaysRemaining = (createdAt) => {
+        if (!createdAt) return 0;
+        const createdDate = new Date(createdAt);
+        const expirationDate = new Date(createdDate.getTime() + EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
+        const remaining = Math.ceil((expirationDate - new Date()) / (24 * 60 * 60 * 1000));
+        return Math.max(0, remaining);
+    };
 
     const filteredAndSortedRequests = useMemo(() => {
         let filtered = requests.filter(request => {
             if (showRejected) {
                 return request.status === 'Rejected';
             } else {
-                return request.status !== 'Rejected';
+                if (request.status === 'Rejected') return false;
+                if (request.status === 'Pending' && isExpired(request.created_at)) return false;
+                return true;
             }
         });
 
@@ -44,10 +63,21 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
         });
     };
 
-    const getStatusBadge = (status) => {
+    const getStatusBadge = (request) => {
+        if (request.status === 'Pending') {
+            const daysLeft = getDaysRemaining(request.created_at);
+            if (daysLeft <= 0) {
+                return <span className="text-xs font-medium text-red-500">Expired</span>;
+            }
+            return (
+                <span className="text-xs font-medium">
+                    Pending ({daysLeft}d left)
+                </span>
+            );
+        }
         return (
-            <span className={`text-xs font-medium`}>
-                {status || 'Pending'}
+            <span className="text-xs font-medium">
+                {request.status || 'Pending'}
             </span>
         );
     };
@@ -105,7 +135,9 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
                                         <th className='p-4 text-center text-sm font-semibold text-[#333]'>Plan</th>
                                         <th className='p-4 text-center text-sm font-semibold text-[#333]'>Sent At</th>
                                         <th className='p-4 text-center text-sm font-semibold text-[#333]'>Status</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Actions</th>
+                                        {!showRejected && (
+                                            <th className='p-4 text-center text-sm font-semibold text-[#333]'>Actions</th>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody className='border-t border-[#0a0f33]'>
@@ -119,32 +151,34 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
                                             <td className='p-4 text-sm whitespace-nowrap text-center'>{request.phone_number}</td>
                                             <td className='p-4 text-sm whitespace-nowrap text-center'>{request.plan || 'N/A'}</td>
                                             <td className='p-4 text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
-                                            <td className='p-4 whitespace-nowrap text-center'>{getStatusBadge(request.status)}</td>
-                                            <td className='p-4'>
-                                                <div className='flex justify-center gap-2'>
-                                                    {request.status === 'Pending' && (
-                                                        <>
-                                                            <button
-                                                                onClick={() => onApprove && onApprove(request)}
-                                                                className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
-                                                                title="Approve"
-                                                            >
-                                                                <Check size={16} />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => onReject && onReject(request)}
-                                                                className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
-                                                                title="Reject"
-                                                            >
-                                                                <X size={16} />
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                    {request.status !== 'Pending' && (
-                                                        <span className='text-sm text-gray-400 italic'>Processed</span>
-                                                    )}
-                                                </div>
-                                            </td>
+                                            <td className='p-4 whitespace-nowrap text-center'>{getStatusBadge(request)}</td>
+                                            {!showRejected && (
+                                                <td className='p-4'>
+                                                    <div className='flex justify-center gap-2'>
+                                                        {request.status === 'Pending' && (
+                                                            <>
+                                                                <button
+                                                                    onClick={() => onApprove && onApprove(request)}
+                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                                    title="Approve"
+                                                                >
+                                                                    <Check size={16} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => onReject && onReject(request)}
+                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                                    title="Reject"
+                                                                >
+                                                                    <X size={16} />
+                                                                </button>
+                                                            </>
+                                                        )}
+                                                        {request.status !== 'Pending' && (
+                                                            <span className='text-sm text-gray-400 italic'>Processed</span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>
@@ -154,7 +188,10 @@ const ViewRequestsPopup = ({ show, onClose, requests = [], onApprove, onReject, 
                 </div>
 
                 <div className='text-sm text-gray-500 text-center'>
-                    Showing {filteredAndSortedRequests.length} of {requests.length} requests
+                    <div>Showing {filteredAndSortedRequests.length} of {requests.length} requests</div>
+                    {!showRejected && (
+                        <div className='text-xs mt-1'>Request expiration = {EXPIRATION_DAYS} days</div>
+                    )}
                 </div>
 
                 <div className="flex justify-center gap-3">
