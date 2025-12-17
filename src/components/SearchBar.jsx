@@ -29,7 +29,6 @@ const SearchBar = ({ searchValue, setSearchValue }) => {
       <button className="h-full text-grey-500 px-2 py-1 cursor-pointer"><Search size={15} /></button>
       <input
         type="text"
-        id="searchInput"
         placeholder="Search by ID or Name"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}

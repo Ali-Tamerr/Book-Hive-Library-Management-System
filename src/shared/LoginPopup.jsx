@@ -6,6 +6,7 @@ import AuthInput from '../components/AuthInput';
 import PrimaryButton from '../components/PrimaryButton';
 import DarkBgSection from '../components/DarkBgSection';
 import WhiteBgSection from '../components/WhiteBgSection';
+import BranchesPopup from '../components/BranchesPopup';
 
 function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [showBranchesPopup, setShowBranchesPopup] = useState(false);
 
     useEffect(() => {
         const checkTheme = () => {
@@ -126,7 +128,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
                         buttonText="Registration Form"
                         onButtonClick={handleSignup}
                         secondButtonText="Where are we ?"
-                        onSecondButtonClick={() => window.open('https://maps.google.com', '_blank')}
+                        onSecondButtonClick={() => setShowBranchesPopup(true)}
                         position="right"
                         isDarkMode={isDarkMode}
                     />
@@ -135,7 +137,15 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
         </div>
     );
 
-    return createPortal(popupContent, document.body);
+    return (
+        <>
+            {createPortal(popupContent, document.body)}
+            <BranchesPopup
+                isOpen={showBranchesPopup}
+                onClose={() => setShowBranchesPopup(false)}
+            />
+        </>
+    );
 }
 
 export default LoginPopup;

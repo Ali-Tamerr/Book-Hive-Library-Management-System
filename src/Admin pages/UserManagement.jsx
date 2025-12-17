@@ -8,7 +8,8 @@ import {
 import {
   useUserRequests,
   useApproveUserRequest,
-  useRejectUserRequest
+  useRejectUserRequest,
+  useDeleteUserRequest
 } from '../hooks/useUserRequests.js';
 import UserFormPopup from '../components/UserFormPopup.jsx';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
@@ -30,6 +31,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [showViewDetails, setShowViewDetails] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showRequestsPopup, setShowRequestsPopup] = useState(false);
+  const [pendingRequestId, setPendingRequestId] = useState(null);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -50,22 +52,38 @@ function UserManagement({ searchValue, setSearchValue }) {
   const { data: userRequests = [], isLoading: isLoadingRequests } = useUserRequests();
   const approveRequestMutation = useApproveUserRequest();
   const rejectRequestMutation = useRejectUserRequest();
+  const deleteRequestMutation = useDeleteUserRequest();
 
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
+      if (!editMode && (!formData.user_id || formData.user_id.trim() === '')) {
+        alert('User ID is required.');
+        return;
+      }
+      if (!editMode && (!formData.password || formData.password.trim() === '')) {
+        alert('Password is required for new users.');
+        return;
+      }
+      if (!formData.phone_number || formData.phone_number.trim() === '') {
+        alert('Phone number is required.');
+        return;
+      }
+
       const selectedRole = isSuperAdmin && formData.role ? formData.role : 'User';
       const apiData = {
-        user_id: formData.user_id,
+        user_id: formData.user_id.trim(),
         name: formData.name,
         email: formData.email,
         phone_number: formData.phone_number,
         role: selectedRole,
         plan: formData.plan || null,
-        status: formData.status,
+        status: formData.status || 'Active',
         password_hash: formData.password,
         created_by: currentUser?.user_id || null
       };
+
+      console.log('Sending user data:', JSON.stringify(apiData, null, 2));
 
       if (editMode && formData.user_id) {
         if (!formData.password || formData.password.trim() === '') {
@@ -74,6 +92,15 @@ function UserManagement({ searchValue, setSearchValue }) {
         await updateUserMutation.mutateAsync({ id: formData.user_id, data: apiData });
       } else {
         await createUserMutation.mutateAsync(apiData);
+        if (pendingRequestId) {
+          try {
+            await deleteRequestMutation.mutateAsync(pendingRequestId);
+            console.log('Request deleted successfully:', pendingRequestId);
+          } catch (deleteError) {
+            console.error('Failed to delete request:', deleteError);
+          }
+          setPendingRequestId(null);
+        }
       }
       setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', role: 'User', status: 'Active', password: '', password_hash: '' });
       setShowPopup(false);
@@ -127,6 +154,7 @@ function UserManagement({ searchValue, setSearchValue }) {
 
   const buttonBehaviour = () => {
     setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', role: 'User', status: 'Active', password: '', password_hash: '' });
+    setPendingRequestId(null);
     setEditMode(false);
     setShowPopup(true);
   };
@@ -293,6 +321,7 @@ function UserManagement({ searchValue, setSearchValue }) {
             password: request.password || '',
             password_hash: ''
           });
+          setPendingRequestId(request.request_id);
           setShowRequestsPopup(false);
           setEditMode(false);
           setShowPopup(true);
