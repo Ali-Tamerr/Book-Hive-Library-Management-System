@@ -34,7 +34,7 @@ const DarkBgSection = ({
             <h1 className={`text-[64px] text-center -mt-12 ${textColor}`}>
                 BookHive
                 <br />
-                <span className="block font-['Caveat',cursive] text-[64px] -mt-6 font-medium">Library</span>
+                <span className="block font-['Mynerve',cursive] text-[45px] -mt-6 font-medium">Library</span>
             </h1>
             <p className={`text-xl ${textColor} max-w-100 text-center cursor-default`}>{message}</p>
             <div className="flex flex-col gap-4 w-full max-w-[300px]">
