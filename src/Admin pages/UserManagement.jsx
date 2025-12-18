@@ -11,6 +11,13 @@ import {
   useRejectUserRequest,
   useDeleteUserRequest
 } from '../hooks/useUserRequests.js';
+import {
+  useBookTransactions,
+  useUpdateBookTransaction,
+  useDeleteBookTransaction
+} from '../hooks/useBookTransactions.js';
+import { useBooks } from '../hooks/useBooks.js';
+import { useBookCopies } from '../hooks/useBookCopies.js';
 import UserFormPopup from '../components/UserFormPopup.jsx';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
@@ -53,6 +60,16 @@ function UserManagement({ searchValue, setSearchValue }) {
   const approveRequestMutation = useApproveUserRequest();
   const rejectRequestMutation = useRejectUserRequest();
   const deleteRequestMutation = useDeleteUserRequest();
+
+  const { data: bookTransactions = [], isLoading: isLoadingBookTransactions } = useBookTransactions();
+  const updateBookTransactionMutation = useUpdateBookTransaction();
+  const deleteBookTransactionMutation = useDeleteBookTransaction();
+  const { data: books = [] } = useBooks();
+  const { data: bookCopies = [] } = useBookCopies();
+
+  const pendingBookRequests = bookTransactions.filter(
+    t => t.status === 'Pending' && t.transaction_type === 'Check-Out'
+  );
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -342,6 +359,33 @@ function UserManagement({ searchValue, setSearchValue }) {
           } catch (error) {
             console.error('Failed to reject request:', error);
             alert('Failed to reject request. Please try again.');
+          }
+        }}
+        bookRequests={pendingBookRequests}
+        isLoadingBooks={isLoadingBookTransactions}
+        users={users}
+        books={books}
+        bookCopies={bookCopies}
+        onApproveBook={async (request) => {
+          try {
+            await updateBookTransactionMutation.mutateAsync({
+              id: request.transaction_id,
+              data: {
+                ...request,
+                status: 'Completed'
+              }
+            });
+          } catch (error) {
+            console.error('Failed to approve book request:', error);
+            alert('Failed to approve book request. Please try again.');
+          }
+        }}
+        onRejectBook={async (request) => {
+          try {
+            await deleteBookTransactionMutation.mutateAsync(request.transaction_id);
+          } catch (error) {
+            console.error('Failed to reject book request:', error);
+            alert('Failed to reject book request. Please try again.');
           }
         }}
       />
