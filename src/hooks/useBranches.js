@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getBranches, createBranch, updateBranch, deleteBranch } from '../services/branches.api';
+import { adminQueryOptions } from './queryConfig';
 
 export const useBranches = () => {
     return useQuery({
         queryKey: ['branches'],
         queryFn: getBranches,
+        ...adminQueryOptions,
     });
 };
 
