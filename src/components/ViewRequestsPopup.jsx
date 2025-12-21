@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import Popup from './Popup.jsx';
 import FormButton from './FormButton.jsx';
 import TabButton from './TabButton.jsx';
-import { Users, Search, Check, X, BookOpen } from 'lucide-react';
+import { Users, Search, Check, X, BookOpen, RotateCcw } from 'lucide-react';
 
 const EXPIRATION_DAYS = 7;
 
@@ -17,6 +17,10 @@ const ViewRequestsPopup = ({
     onApproveBook,
     onRejectBook,
     isLoadingBooks = false,
+    returnRequests = [],
+    onApproveReturn,
+    onRejectReturn,
+    isLoadingReturns = false,
     users = [],
     books = [],
     bookCopies = []
@@ -95,6 +99,30 @@ const ViewRequestsPopup = ({
         });
     }, [bookRequests, searchValue, showRejected, users, books, bookCopies]);
 
+    const filteredReturnRequests = useMemo(() => {
+        let filtered = returnRequests.filter(request => {
+            return request.status === 'Pending';
+        });
+
+        if (searchValue.trim()) {
+            const searchLower = searchValue.toLowerCase();
+            filtered = filtered.filter((request) => {
+                const user = users.find(u => u.user_id === request.user_id);
+                const bookCopy = bookCopies.find(bc => bc.book_copy_id === request.book_id);
+                const book = bookCopy ? books.find(b => b.book_id === bookCopy.book_id) : null;
+                const userName = user?.name?.toLowerCase() || '';
+                const bookName = book?.name?.toLowerCase() || '';
+                return userName.includes(searchLower) || bookName.includes(searchLower);
+            });
+        }
+
+        return [...filtered].sort((a, b) => {
+            const dateA = new Date(a.created_at || 0);
+            const dateB = new Date(b.created_at || 0);
+            return dateB - dateA;
+        });
+    }, [returnRequests, searchValue, users, books, bookCopies]);
+
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
@@ -167,16 +195,49 @@ const ViewRequestsPopup = ({
         return book?.name || bookCopyId || 'Unknown';
     };
 
-    const currentData = activeTab === 'users' ? filteredUserRequests : filteredBookRequests;
-    const totalData = activeTab === 'users' ? requests : bookRequests;
-    const currentLoading = activeTab === 'users' ? isLoading : isLoadingBooks;
+    const getCurrentData = () => {
+        if (activeTab === 'users') return filteredUserRequests;
+        if (activeTab === 'books') return filteredBookRequests;
+        if (activeTab === 'returns') return filteredReturnRequests;
+        return [];
+    };
+
+    const getTotalData = () => {
+        if (activeTab === 'users') return requests;
+        if (activeTab === 'books') return bookRequests;
+        if (activeTab === 'returns') return returnRequests;
+        return [];
+    };
+
+    const getCurrentLoading = () => {
+        if (activeTab === 'users') return isLoading;
+        if (activeTab === 'books') return isLoadingBooks;
+        if (activeTab === 'returns') return isLoadingReturns;
+        return false;
+    };
+
+    const getTabIcon = () => {
+        if (activeTab === 'users') return <Users size={30} />;
+        if (activeTab === 'books') return <BookOpen size={30} />;
+        if (activeTab === 'returns') return <RotateCcw size={30} />;
+        return <Users size={30} />;
+    };
+
+    const getSearchPlaceholder = () => {
+        if (activeTab === 'users') return "Search by name or email...";
+        return "Search by user or book name...";
+    };
+
+    const currentData = getCurrentData();
+    const totalData = getTotalData();
+    const currentLoading = getCurrentLoading();
 
     return (
         <Popup
             show={show}
             onClose={onClose}
             title="Requests"
-            icon={activeTab === 'users' ? <Users size={30} /> : <BookOpen size={30} />}
+            icon={getTabIcon()}
             maxWidthClass="max-w-[1100px] max-[856px]:scale-80"
             heightClass="h-[90vh]"
         >
@@ -189,9 +250,15 @@ const ViewRequestsPopup = ({
                         position="first"
                     />
                     <TabButton
-                        label="Book Requests"
+                        label="Borrow Requests"
                         isActive={activeTab === 'books'}
                         onClick={() => { setActiveTab('books'); setShowRejected(false); }}
+                        position="middle"
+                    />
+                    <TabButton
+                        label="Return Requests"
+                        isActive={activeTab === 'returns'}
+                        onClick={() => { setActiveTab('returns'); setShowRejected(false); }}
                         position="last"
                     />
                 </div>
@@ -201,18 +268,20 @@ const ViewRequestsPopup = ({
                         <Search className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400' size={18} />
                         <input
                             type="text"
-                            placeholder={activeTab === 'users' ? "Search by name or email..." : "Search by user or book name..."}
+                            placeholder={getSearchPlaceholder()}
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
                             className="w-full h-[50px] pl-12 pr-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
                         />
                     </div>
-                    <button
-                        onClick={() => setShowRejected(!showRejected)}
-                        className="bg-[#0b0b3b] cursor-pointer h-[50px] px-6 text-white rounded-xl hover:bg-[#1a1a6a] transition-colors text-sm font-medium whitespace-nowrap"
-                    >
-                        {showRejected ? 'Pending Requests' : 'Rejected Requests'}
-                    </button>
+                    {activeTab !== 'returns' && (
+                        <button
+                            onClick={() => setShowRejected(!showRejected)}
+                            className="bg-[#0b0b3b] cursor-pointer h-[50px] px-6 text-white rounded-xl hover:bg-[#1a1a6a] transition-colors text-sm font-medium whitespace-nowrap"
+                        >
+                            {showRejected ? 'Pending Requests' : 'Rejected Requests'}
+                        </button>
+                    )}
                 </div>
 
                 <div className='border border-[#8787A3] rounded-[10px] overflow-hidden flex-1 flex flex-col'>
@@ -284,7 +353,7 @@ const ViewRequestsPopup = ({
                                     ))}
                                 </tbody>
                             </table>
-                        ) : (
+                        ) : activeTab === 'books' ? (
                             <table className='w-full'>
                                 <thead className='sticky top-0 bg-white'>
                                     <tr>
@@ -330,6 +399,48 @@ const ViewRequestsPopup = ({
                                                     </div>
                                                 </td>
                                             )}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <table className='w-full'>
+                                <thead className='sticky top-0 bg-white'>
+                                    <tr>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>User Name</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Book Name</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Requested At</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Status</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className='border-t border-[#0a0f33]'>
+                                    {filteredReturnRequests.map((request, index) => (
+                                        <tr key={request.transaction_id || index}>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{getUserName(request.user_id)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{getBookName(request.book_id)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
+                                            <td className='p-4 whitespace-nowrap text-center'>
+                                                <span className="text-xs font-medium text-yellow-600">Pending Return</span>
+                                            </td>
+                                            <td className='p-4'>
+                                                <div className='flex justify-center gap-2'>
+                                                    <button
+                                                        onClick={() => onApproveReturn && onApproveReturn(request)}
+                                                        className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                        title="Approve Return"
+                                                    >
+                                                        <Check size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => onRejectReturn && onRejectReturn(request)}
+                                                        className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                        title="Reject Return"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
