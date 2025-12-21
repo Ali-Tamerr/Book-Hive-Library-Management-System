@@ -19,8 +19,8 @@ const Branches = lazy(() => import('./Admin pages/Branches'));
 
 const UserDashboard = lazy(() => import('./User pages/Dashboard'));
 const UserBooks = lazy(() => import('./User pages/UserBooks'));
-const BorrowedBooksContent = lazy(() => import('./User pages/BorrowedBooksContent'));
-const ReturnedBooksContent = lazy(() => import('./User pages/ReturnedBooksContent'));
+const UserBorrowedBooks = lazy(() => import('./User pages/UserBorrowedBooks'));
+const UserReturnedBooks = lazy(() => import('./User pages/UserReturnedBooks'));
 const UserLibraryLane = lazy(() => import('./User pages/UserLibraryLane'));
 const UserCatalog = lazy(() => import('./User pages/UserCatalog'));
 
@@ -123,8 +123,8 @@ function App() {
             <Route path="/user/dashboard" element={<UserDashboard />} />
             <Route path="/user/books" element={<UserBooks />} />
             <Route path="/user/catalog" element={<UserCatalog />} />
-            <Route path="/user/catalog/borrowed" element={<BorrowedBooksContent />} />
-            <Route path="/user/catalog/returned" element={<ReturnedBooksContent />} />
+            <Route path="/user/catalog/borrowed" element={<UserBorrowedBooks />} />
+            <Route path="/user/catalog/returned" element={<UserReturnedBooks />} />
             <Route path="/user/library" element={<UserLibraryLane />} />
           </Routes>
         </Layout>
