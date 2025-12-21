@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getAllOverdueBooks } from '../services/overdueBooks.api';
+import { adminQueryOptions } from './queryConfig';
 
 const overdueKeys = {
   all: ['overdueBooks'],
@@ -11,6 +12,6 @@ export const useOverdueBooks = () => {
   return useQuery({
     queryKey: overdueKeys.lists(),
     queryFn: getAllOverdueBooks,
-    staleTime: 5 * 60 * 1000,
+    ...adminQueryOptions,
   });
 };

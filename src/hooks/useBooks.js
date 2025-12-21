@@ -7,7 +7,8 @@ import {
   updateBook,
   deleteBook
 } from '../services/books.api';
-// Query Key Factory
+import { adminQueryOptions } from './queryConfig';
+
 export const bookKeys = {
   all: ['books'],
   lists: () => [...bookKeys.all, 'list'],
@@ -16,12 +17,11 @@ export const bookKeys = {
   detail: (id) => [...bookKeys.details(), id],
 };
 
-// Get all books hook
 export const useBooks = () => {
   return useQuery({
     queryKey: bookKeys.lists(),
     queryFn: getAllBooks,
-    staleTime: 5 * 60 * 1000,
+    ...adminQueryOptions,
   });
 };
 

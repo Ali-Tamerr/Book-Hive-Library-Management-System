@@ -6,6 +6,7 @@ import {
   updateTransaction, 
   deleteTransaction 
 } from '../services/bookTransactions.api';
+import { adminQueryOptions } from './queryConfig';
 
 export const bookTransactionKeys = {
   all: ['bookTransactions'],
@@ -19,7 +20,7 @@ export const useBookTransactions = () => {
   return useQuery({
     queryKey: bookTransactionKeys.lists(),
     queryFn: getAllTransactions,
-    staleTime: 2 * 60 * 1000,
+    ...adminQueryOptions,
   });
 };
 

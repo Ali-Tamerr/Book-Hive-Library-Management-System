@@ -16,7 +16,7 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
     const columns = [
         { header: 'ID', accessor: 'transaction_id' },
         { header: 'User ID', accessor: 'user_id' },
-        { header: 'Amount', accessor: 'fine_amount' },
+        // { header: 'Amount', accessor: 'fine_amount' },
         { header: 'Due Date', accessor: 'due_date' },
         { header: 'Date & Time', accessor: 'created_at' },
         { header: 'Action', accessor: 'action' },
@@ -50,7 +50,7 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
             customActionRenderer={(book) => (
                 <button
                     onClick={() => handleReturn(book)}
-                    className="px-4 py-2 bg-[#0a0f33] text-white rounded-lg text-sm font-medium hover:bg-[#192261] transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-4 py-2 bg-[#0a0f33] text-white rounded-lg text-sm font-medium hover:bg-[#192261] transition-all flex items-center gap-2 self-center cursor-pointer"
                 >
                     <ArrowLeft size={16} />
                     Return
