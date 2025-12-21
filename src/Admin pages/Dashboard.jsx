@@ -6,6 +6,7 @@ import { useBooks } from '../hooks/useBooks';
 import { useReservations } from '../hooks/useReservations';
 import { useBranches } from '../hooks/useBranches';
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
+import { useBookTransactions } from '../hooks/useBookTransactions';
 import { getCurrentUser } from '../services/auth.api';
 import DashboardCard from '../components/DashboardCard';
 import DashboardInfoCard from '../components/DashboardInfoCard';
@@ -36,6 +37,7 @@ function Dashboard() {
   const { data: reservations = [], isLoading: reservationsLoading } = useReservations();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
   const { data: overdueBooksData = [], isLoading: overdueLoading } = useOverdueBooks();
+  const { data: bookTransactions = [], isLoading: transactionsLoading } = useBookTransactions();
 
   const handleRefreshAdmins = (adminId) => {
     setLoadingAdmins(prev => ({ ...prev, [adminId]: true }));
@@ -45,14 +47,16 @@ function Dashboard() {
   };
 
   // Calculate stats from data
-  const loading = usersLoading || booksLoading || reservationsLoading || branchesLoading || overdueLoading;
+  const loading = usersLoading || booksLoading || reservationsLoading || branchesLoading || overdueLoading || transactionsLoading;
 
   const adminUsers = users.filter(user => user.role === 'Admin');
 
-  // Calculate borrowed vs returned
-  const totalBorrowed = reservations?.length || 0;
-  const returnedBooks = reservations?.filter(r => r.returnDate || r.status === 'Returned').length || 0;
-  const currentlyBorrowed = totalBorrowed - returnedBooks;
+  const borrowedTransactions = bookTransactions.filter(
+    t => t.transaction_type === 'Check-Out' && t.status === 'Completed'
+  );
+  const returnedBooks = borrowedTransactions.filter(t => t.return_date).length;
+  const currentlyBorrowed = borrowedTransactions.filter(t => !t.return_date).length;
+  const totalBorrowed = borrowedTransactions.length;
 
   const stats = {
     totalUsers: users?.length || 0,

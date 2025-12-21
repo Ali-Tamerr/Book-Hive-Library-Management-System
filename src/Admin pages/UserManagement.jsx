@@ -71,6 +71,10 @@ function UserManagement({ searchValue, setSearchValue }) {
     t => t.status === 'Pending' && t.transaction_type === 'Check-Out'
   );
 
+  const pendingReturnRequests = bookTransactions.filter(
+    t => t.status === 'Pending' && t.transaction_type === 'Check-In'
+  );
+
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
@@ -386,6 +390,49 @@ function UserManagement({ searchValue, setSearchValue }) {
           } catch (error) {
             console.error('Failed to reject book request:', error);
             alert('Failed to reject book request. Please try again.');
+          }
+        }}
+        returnRequests={pendingReturnRequests}
+        isLoadingReturns={isLoadingBookTransactions}
+        onApproveReturn={async (request) => {
+          try {
+            const originalBorrow = bookTransactions.find(
+              t => t.book_id === request.book_id &&
+                t.user_id === request.user_id &&
+                t.transaction_type === 'Check-Out' &&
+                t.status === 'Completed' &&
+                !t.return_date
+            );
+
+            if (originalBorrow) {
+              await updateBookTransactionMutation.mutateAsync({
+                id: originalBorrow.transaction_id,
+                data: {
+                  ...originalBorrow,
+                  return_date: new Date().toISOString(),
+                  status: 'Completed'
+                }
+              });
+            }
+
+            await updateBookTransactionMutation.mutateAsync({
+              id: request.transaction_id,
+              data: {
+                ...request,
+                status: 'Completed'
+              }
+            });
+          } catch (error) {
+            console.error('Failed to approve return request:', error);
+            alert('Failed to approve return request. Please try again.');
+          }
+        }}
+        onRejectReturn={async (request) => {
+          try {
+            await deleteBookTransactionMutation.mutateAsync(request.transaction_id);
+          } catch (error) {
+            console.error('Failed to reject return request:', error);
+            alert('Failed to reject return request. Please try again.');
           }
         }}
       />
