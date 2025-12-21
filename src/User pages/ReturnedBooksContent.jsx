@@ -2,20 +2,26 @@ import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
 import CommonLayout from '../Layouts/CommonLayout';
 import { useReturnedBooks } from '../hooks/useReturnedBooks';
+import { getCurrentUser } from '../services/auth.api';
 
 function ReturnedBooksContent({ searchValue, customTitle }) {
+    const currentUser = getCurrentUser();
     const { data: returnedBooks = [], isLoading, error } = useReturnedBooks();
 
+    const userReturnedBooks = returnedBooks.filter(
+        book => String(book.user_id) === String(currentUser?.user_id)
+    );
+
     const filteredBooks = searchValue
-        ? returnedBooks.filter(book =>
+        ? userReturnedBooks.filter(book =>
             book.book_id?.toString().includes(searchValue) ||
-            book.user_id?.toString().includes(searchValue)
+            book.transaction_id?.toString().includes(searchValue)
         )
-        : returnedBooks;
+        : userReturnedBooks;
 
     const columns = [
         { header: 'ID', accessor: 'transaction_id' },
-        { header: 'User ID', accessor: 'user_id' },
+        { header: 'Book ID', accessor: 'book_id' },
         { header: 'Amount', accessor: 'fine_amount' },
         { header: 'Due Date', accessor: 'due_date' },
         { header: 'Date & Time', accessor: 'created_at' },
@@ -43,20 +49,22 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
             data={tableData}
             handleEdit={() => { }}
             handleDelete={() => { }}
-            title="Returned Books"
+            title="My Returned Books"
             buttonText=""
             columns={columns}
             formPopup={null}
             isUserPage={true}
             customTitle={customTitle}
             customActionRenderer={(book) => (
-                <button
-                    onClick={() => handleView(book)}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer"
-                >
-                    <Eye size={16} />
-                    View
-                </button>
+                <div className="flex justify-center">
+                    <button
+                        onClick={() => handleView(book)}
+                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer"
+                    >
+                        <Eye size={16} />
+                        View
+                    </button>
+                </div>
             )}
         />
     );
