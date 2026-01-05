@@ -180,7 +180,8 @@ const ViewRequestsPopup = ({
             <span className="text-xs font-medium">
                 {request.status || 'Pending'}
             </span>
-        );
+        ); 
+        
     };
 
     const getUserName = (userId) => {
