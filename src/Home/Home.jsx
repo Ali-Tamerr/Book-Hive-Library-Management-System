@@ -5,6 +5,7 @@ import SignupPopup from '../shared/SignupPopup';
 import ForgotPasswordPopup from '../shared/ForgotPasswordPopup';
 import OTPPopup from '../shared/OTPPopup';
 import ResetPasswordPopup from '../shared/ResetPasswordPopup';
+import BranchesModal from '../components/BranchesModal';
 import './css/swiper-bundle.min.css';
 import './css/styles.css';
 import './css/stylesNew.css';
@@ -17,6 +18,7 @@ const Home = () => {
    const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
    const [isOTPOpen, setIsOTPOpen] = useState(false);
    const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+   const [activePopup, setActivePopup] = useState(null);
 
    const scrollToSection = (e, sectionId) => {
       e.preventDefault();
@@ -248,7 +250,16 @@ const Home = () => {
                         </div>
 
                         <div>
-                           <a className="about-cta" href="#">Where are we?</a>
+                           <a
+                              className="about-cta"
+                              href="#"
+                              onClick={(e) => {
+                                    e.preventDefault();
+                                    setActivePopup('branches');
+                                 }}
+                           >
+                              Where are we?
+                           </a>
                         </div>
                      </div>
 
@@ -338,7 +349,15 @@ const Home = () => {
                            <div className="feature"><span className="tick">✓</span>Borrow + 3 books Monthly</div>
                         </div>
 
-                        <a className="btn" href="#" role="button" aria-label="Subscribe to Discover">Subscribe</a>
+                        <a
+                           className="btn"
+                           href="#"
+                           role="button"
+                           aria-label="Subscribe to Discover"
+                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
+                        >
+                           Subscribe
+                        </a>
                      </article>
 
                      {/* Center plan - highlighted */}
@@ -355,7 +374,15 @@ const Home = () => {
                            <div className="feature"><span className="tick">✓</span>Borrow + 15 books Monthly</div>
                         </div>
 
-                        <a className="btn" href="#" role="button" aria-label="Subscribe to Enterprise">Subscribe</a>
+                        <a
+                           className="btn"
+                           href="#"
+                           role="button"
+                           aria-label="Subscribe to Enterprise"
+                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
+                        >
+                           Subscribe
+                        </a>
                      </article>
 
                      {/* Right plan */}
@@ -372,7 +399,15 @@ const Home = () => {
                            <div className="feature"><span className="tick">✓</span>Borrow + 10 books Monthly</div>
                         </div>
 
-                        <a className="btn" href="#" role="button" aria-label="Subscribe to Professional">Subscribe</a>
+                        <a
+                           className="btn"
+                           href="#"
+                           role="button"
+                           aria-label="Subscribe to Professional"
+                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
+                        >
+                           Subscribe
+                        </a>
                      </article>
                   </div>
                </div>
@@ -536,6 +571,7 @@ const Home = () => {
             onLogin={() => setIsLoginOpen(true)}
             onBack={() => setIsOTPOpen(true)}
          />
+         <BranchesModal isOpen={activePopup === 'branches'} onClose={() => setActivePopup(null)} />
       </div>
    );
 };
