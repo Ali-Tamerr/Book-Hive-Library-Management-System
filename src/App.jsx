@@ -17,6 +17,7 @@ const Categories = lazy(() => import('./Admin pages/Categories'));
 const Settings = lazy(() => import('./shared/Settings'));
 const Branches = lazy(() => import('./Admin pages/Branches'));
 
+
 const UserDashboard = lazy(() => import('./User pages/Dashboard'));
 const UserBooks = lazy(() => import('./User pages/UserBooks'));
 const UserBorrowedBooks = lazy(() => import('./User pages/UserBorrowedBooks'));
