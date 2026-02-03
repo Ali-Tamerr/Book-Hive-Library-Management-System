@@ -49,27 +49,27 @@ function Dashboard() {
   // Calculate stats from data
   const loading = usersLoading || booksLoading || reservationsLoading || branchesLoading || overdueLoading || transactionsLoading;
 
-  const adminUsers = users.filter(user => user.role === 'Admin');
+  const adminUsers = Array.isArray(users) ? users.filter(user => user.role === 'Admin') : [];
 
-  const borrowedTransactions = bookTransactions.filter(
+  const borrowedTransactions = Array.isArray(bookTransactions) ? bookTransactions.filter(
     t => t.transaction_type === 'Check-Out' && t.status === 'Completed'
-  );
+  ) : [];
   const returnedBooks = borrowedTransactions.filter(t => t.return_date).length;
   const currentlyBorrowed = borrowedTransactions.filter(t => !t.return_date).length;
   const totalBorrowed = borrowedTransactions.length;
 
   const stats = {
-    totalUsers: users?.length || 0,
-    totalBooks: books?.reduce((sum, book) => sum + (book.quantity || 0), 0) || 0,
-    branchCount: branches?.length || 0,
+    totalUsers: Array.isArray(users) ? users.length : 0,
+    totalBooks: Array.isArray(books) ? books.reduce((sum, book) => sum + (book.quantity || 0), 0) : 0,
+    branchCount: Array.isArray(branches) ? branches.length : 0,
     totalBorrowed: totalBorrowed,
     currentlyBorrowed: currentlyBorrowed,
     returnedBooks: returnedBooks
   };
 
   // Get overdue borrowers with user info
-  const overdueBorrowers = overdueBooksData?.slice(0, 5).map(book => {
-    const user = users.find(u => u.id === book.user_id || u.first_name + ' ' + u.last_name === book.user_name);
+  const overdueBorrowers = (Array.isArray(overdueBooksData) ? overdueBooksData.slice(0, 5) : []).map(book => {
+    const user = Array.isArray(users) ? users.find(u => u.id === book.user_id || u.first_name + ' ' + u.last_name === book.user_name) : null;
     return {
       id: book.id,
       borrowedId: book.id,
@@ -99,42 +99,42 @@ function Dashboard() {
         <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 '>
           <div className=" rounded-lg w-full flex flex-col items-center justify-center [1200px]:mb-15">
             <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-60 max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
-              <div className="gap-8 items-center bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
+              <div className="gap-8 items-center bg-white dark:bg-[#121317] border dark:border-[#292D32] p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#4b5563" />
+                      <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#9CA3AF]" />
                     </svg>
-                    <p className="text-sm text-[#000035] font-medium max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
+                    <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#0a0f33" />
+                      <circle cx="8" cy="8" r="6" fill="#0a0f33" className="dark:fill-[#E8E8E8]" />
                     </svg>
-                    <p className="text-sm text-[#000035] font-medium max-[340px]:whitespace-nowrap">Total Returned Books</p>
+                    <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium max-[340px]:whitespace-nowrap">Total Returned Books</p>
                   </div>
                 </div>
               </div>
               <div className='w-[120%] max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1080px]:w-[200px] max-[1080px]:h-full max-[340px]:-ml-10'>
                 <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
               </div>
-              <div className="max-[1540px]:hidden flex gap-8 items-center bg-white p-6 rounded-lg scale-110">
+              <div className="max-[1540px]:hidden flex gap-8 items-center bg-white dark:bg-[#121317] border dark:border-[#292D32] p-6 rounded-lg scale-110">
                 <div className='max-[1650px]:hidden block'>
-                  <LogoIcon className="w-16 h-16 text-[#0a0f33]" />
+                  <LogoIcon className="w-16 h-16 text-[#0a0f33] dark:text-[#E8E8E8]" />
                 </div>
-                <div className='h-16 bg-[#0a0f33] w-1 rounded-full block max-[1650px]:hidden'></div>
+                <div className='h-16 bg-[#0a0f33] dark:bg-[#E8E8E8] w-1 rounded-full block max-[1650px]:hidden'></div>
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#4b5563" />
+                      <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#9CA3AF]" />
                     </svg>
-                    <p className="text-sm text-[#000035] font-medium">Total Borrowed Books</p>
+                    <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium">Total Borrowed Books</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#0a0f33" />
+                      <circle cx="8" cy="8" r="6" fill="#0a0f33" className="dark:fill-[#E8E8E8]" />
                     </svg>
-                    <p className="text-sm text-[#000035] font-medium">Total Returned Books</p>
+                    <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium">Total Returned Books</p>
                   </div>
                 </div>
               </div>
@@ -185,15 +185,15 @@ function Dashboard() {
                 <li className="text-xs p-3 rounded-lg flex items-center gap-3">Loading...</li>
               ) : overdueBorrowers.length > 0 ? (
                 overdueBorrowers.map((borrower) => (
-                  <li key={borrower.id} className="text-xs bg-transparent border border-[#0a0f33] px-3 py-4 rounded-lg flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-[#0a0f33] rounded-lg flex items-center justify-center shrink-0">
+                  <li key={borrower.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#292D32] px-3 py-4 rounded-lg flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 bg-[#0a0f33] dark:bg-[#292D32] rounded-lg flex items-center justify-center shrink-0">
                       <User size={16} className="text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-[#0a0f33]">{borrower.userName}</p>
-                      <p className="text-xs text-[#6f7390]">Borrowed ID: {borrower.borrowedId}</p>
+                      <p className="text-sm font-medium text-[#0a0f33] dark:text-[#E8E8E8]">{borrower.userName}</p>
+                      <p className="text-xs text-[#6f7390] dark:text-[#9CA3AF]">Borrowed ID: {borrower.borrowedId}</p>
                     </div>
-                    <RefreshCw size={20} className="text-[#0a0f33] cursor-pointer" />
+                    <RefreshCw size={20} className="text-[#0a0f33] dark:text-[#E8E8E8] cursor-pointer" />
                   </li>
                 ))
               ) : (
@@ -206,16 +206,16 @@ function Dashboard() {
             <DashboardCard title="Branch Network">
               {branchesLoading ? (
                 <li className="text-xs  p-3 rounded-lg flex items-center gap-3">Loading...</li>
-              ) : branches.length > 0 ? (
+              ) : Array.isArray(branches) && branches.length > 0 ? (
                 branches.map((branch) => (
-                  <li key={branch.id} className="text-xs bg-transparent border border-[#0a0f33] px-3 py-2 h-18 rounded-lg flex items-center gap-3 mb-2">
+                  <li key={branch.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#292D32] px-3 py-2 h-18 rounded-lg flex items-center gap-3 mb-2">
                     <div className="w-10 h-8 p4 rounded-lg flex items-center justify-center shrink-0">
-                      <Building2 className="text-[#0a0f33] h-full w-full" />
+                      <Building2 className="text-[#0a0f33] dark:text-[#E8E8E8] h-full w-full" />
                     </div>
-                    <div className='w-[2px] h-full bg-[#0b0b3b] rounded-full'></div>
+                    <div className='w-[2px] h-full bg-[#0b0b3b] dark:bg-[#E8E8E8] rounded-full'></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-[#0a0f33]">{branch.name}</p>
-                      <p className="text-xs text-[#0a0f33]">{branch.location || branch.address || 'Location not specified'}</p>
+                      <p className="text-sm font-medium text-[#0a0f33] dark:text-[#E8E8E8]">{branch.name}</p>
+                      <p className="text-xs text-[#0a0f33] dark:text-[#E8E8E8]">{branch.location || branch.address || 'Location not specified'}</p>
                     </div>
                   </li>
                 ))

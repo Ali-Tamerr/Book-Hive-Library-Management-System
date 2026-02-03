@@ -91,7 +91,7 @@ function Dashboard() {
                     setSearchValue(e.target.value);
                     setCurrentPage(0);
                   }}
-                  className="w-full pl-11 pr-4 py-3 rounded-full border border-gray-200 bg-white text-sm focus:outline-none focus:border-[#0b0c28] transition-colors"
+                  className="w-full pl-11 pr-4 py-3 rounded-full border border-gray-200 bg-white dark:bg-[#121317] dark:text-white dark:border-[#292D32] text-sm focus:outline-none focus:border-[#0b0c28] transition-colors"
                 />
               </div>
               <div className="relative min-w-[180px]">
@@ -101,7 +101,7 @@ function Dashboard() {
                     setSelectedCategory(e.target.value);
                     setCurrentPage(0);
                   }}
-                  className="w-full appearance-none px-4 py-3 pr-10 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:border-[#0b0c28] transition-colors cursor-pointer"
+                  className="w-full appearance-none px-4 py-3 pr-10 rounded-lg border border-gray-200 bg-white dark:bg-[#121317] dark:text-white dark:border-[#292D32] text-sm focus:outline-none focus:border-[#0b0c28] transition-colors cursor-pointer"
                 >
                   <option value="">Category</option>
                   {categories.map(cat => (
@@ -122,8 +122,8 @@ function Dashboard() {
                     setCurrentPage(0);
                   }}
                   className={`pb-2 text-sm font-medium transition-colors relative ${activeTab === 'recommended'
-                    ? 'text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28]'
-                    : 'text-gray-400 hover:text-gray-600'
+                    ? 'text-[#0b0c28] dark:text-white after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28] dark:after:bg-white'
+                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                     }`}
                 >
                   Recommended
@@ -134,8 +134,8 @@ function Dashboard() {
                     setCurrentPage(0);
                   }}
                   className={`pb-2 text-sm font-medium transition-colors relative ${activeTab === 'recently'
-                    ? 'text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28]'
-                    : 'text-gray-400 hover:text-gray-600'
+                    ? 'text-[#0b0c28] dark:text-white after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28] dark:after:bg-white'
+                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                     }`}
                 >
                   Recently added
@@ -179,7 +179,7 @@ function Dashboard() {
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id || book.id}
-                    className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col items-center"
+                    className="bg-white dark:bg-[#121317] rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col items-center"
                   >
                     <div className="w-full h-36 bg-gradient-to-br from-[#f97316] to-[#ea580c] rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                       {book.cover_image ? (
@@ -195,7 +195,7 @@ function Dashboard() {
                         </div>
                       )}
                     </div>
-                    <h3 className="text-sm font-semibold text-[#0b0c28] text-center line-clamp-1 mb-2">
+                    <h3 className="text-sm font-semibold text-[#0b0c28] dark:text-[#E8E8E8] text-center line-clamp-1 mb-2">
                       {book.title || 'MY TURN'}
                     </h3>
                     <button className="bg-[#0b0c28] text-white text-xs px-4 py-2 rounded-md hover:bg-[#1a1b4b] transition-colors">
@@ -206,12 +206,12 @@ function Dashboard() {
               )}
             </div>
 
-            <div className="bg-white rounded-xl p-5 shadow-sm border-l-4 border-[#0b0c28] mt-2">
-              <p className="text-sm text-[#0b0c28]">
+            <div className="bg-white dark:bg-[#121317] rounded-xl p-5 shadow-sm border-l-4 border-[#0b0c28] dark:border-[#E8E8E8] mt-2">
+              <p className="text-sm text-[#0b0c28] dark:text-[#E8E8E8]">
                 Dear {currentUser?.name || 'Ahmed'}, please note that your subscription will expire on{' '}
                 <span className="font-semibold">1/1/2026</span>.
               </p>
-              <p className="text-sm text-[#0b0c28] mt-1">
+              <p className="text-sm text-[#0b0c28] dark:text-[#E8E8E8] mt-1">
                 To renew your subscription, kindly visit the nearest branch.
               </p>
             </div>
@@ -221,42 +221,42 @@ function Dashboard() {
           <div className={`${styles.cards} flex-1 max-[1540px]:h-80 max-[1540px]:flex-none w-full items-center max-[1540px]:mx-0 ml-20`}>
             <div className="h-full rounded-lg w-full flex flex-col items-center justify-center">
               <div className="flex max-[1540px]:flex-row flex-col gap-15 justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 [430px]:mx-0 -ml-10 max-[380px]:w-[110%]">
-                <div className="gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
+                <div className="gap-8 items-center border border-[#0a0f3373] dark:border-[#292D32] bg-white dark:bg-[#121317] p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
                   <div className="flex flex-col gap-6">
                     <div className="flex items-center gap-2">
                       <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#4b5563" />
+                        <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#9CA3AF]" />
                       </svg>
-                      <p className="text-sm text-[#6f7390] max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
+                      <p className="text-sm text-[#6f7390] dark:text-[#9CA3AF] max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#0a0f33" />
+                        <circle cx="8" cy="8" r="6" fill="#0a0f33" className="dark:fill-[#E8E8E8]" />
                       </svg>
-                      <p className="text-sm text-[#6f7390] max-[340px]:whitespace-nowrap">Total Returned Books</p>
+                      <p className="text-sm text-[#6f7390] dark:text-[#9CA3AF] max-[340px]:whitespace-nowrap">Total Returned Books</p>
                     </div>
                   </div>
                 </div>
                 <div className='flex-1 h-full aspect-square max-w-full max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1540px]:flex-none max-[1080px]:w-[140px] max-[1080px]:h-[140px] max-[340px]:-ml-10'>
                   <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
                 </div>
-                <div className="max-[1540px]:hidden flex gap-8 items-center border border-[#0a0f3373] bg-white p-6 rounded-lg scale-110">
+                <div className="max-[1540px]:hidden flex gap-8 items-center border border-[#0a0f3373] dark:border-[#292D32] bg-white dark:bg-[#121317] p-6 rounded-lg scale-110">
                   <div className='max-[1650px]:hidden block'>
-                    <LogoIcon className="w-16 h-16 text-[#0a0f33]" />
+                    <LogoIcon className="w-16 h-16 text-[#0a0f33] dark:text-[#E8E8E8]" />
                   </div>
-                  <div className='h-16 bg-[#0a0f33] w-1 rounded-full block max-[1650px]:hidden'></div>
+                  <div className='h-16 bg-[#0a0f33] dark:bg-[#E8E8E8] w-1 rounded-full block max-[1650px]:hidden'></div>
                   <div className="flex flex-col gap-6">
                     <div className="flex items-center gap-2">
                       <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#4b5563" />
+                        <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#9CA3AF]" />
                       </svg>
-                      <p className="text-sm text-[#6f7390]">Total Borrowed Books</p>
+                      <p className="text-sm text-[#6f7390] dark:text-[#9CA3AF]">Total Borrowed Books</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#0a0f33" />
+                        <circle cx="8" cy="8" r="6" fill="#0a0f33" className="dark:fill-[#E8E8E8]" />
                       </svg>
-                      <p className="text-sm text-[#6f7390]">Total Returned Books</p>
+                      <p className="text-sm text-[#6f7390] dark:text-[#9CA3AF]">Total Returned Books</p>
                     </div>
                   </div>
                 </div>
