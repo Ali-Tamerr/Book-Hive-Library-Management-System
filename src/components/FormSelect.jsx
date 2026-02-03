@@ -19,7 +19,7 @@ const FormSelect = ({ label, name, value, onChange, options, placeholder, requir
         ? "w-full p-5 rounded-xl border border-solid border-gray-500 bg-transparent text-white outline-none focus:border-white text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none"
         : "w-full p-5 rounded-xl border border-solid border-[#3D3E3E] bg-white text-[#0a0f33] outline-none focus:border-[#1e255e] text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none";
     }
-    return "w-full text-[#0a0f33] h-[50px] px-4 py-3 pr-10 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px] appearance-none";
+    return "w-full text-[#0a0f33] dark:text-[#E8E8E8] h-[50px] px-4 py-3 pr-10 rounded-xl border border-[#3D3E3E] dark:border-[#292D32] bg-white dark:bg-[#121317] outline-none focus:border-[#1e255e] dark:focus:border-[#E8E8E8] text-[13px] appearance-none";
   };
 
   const getChevronStyles = () => {

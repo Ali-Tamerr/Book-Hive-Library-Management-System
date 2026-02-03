@@ -40,7 +40,26 @@ function Layout({ children, activeTab, setActiveTab, isSidebarOpen, toggleSideba
 
   useEffect(() => {
     window.dispatchEvent(new Event('userUpdated'));
+
+    // Enforce theme sync on route change
+    const selectedTheme = localStorage.getItem('selected-theme');
+    if (selectedTheme === 'dark') {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
   }, [location.pathname]);
+
+  // Global Theme Initialization
+  useEffect(() => {
+    const selectedTheme = localStorage.getItem('selected-theme');
+    if (selectedTheme === 'dark') {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+  }, []);
+
 
   if (isProtectedRoute && !currentUser) {
     return <Navigate to="/" replace />;
@@ -65,7 +84,7 @@ function Layout({ children, activeTab, setActiveTab, isSidebarOpen, toggleSideba
   }
 
   return (
-    <div className="flex h-screen bg-[#F2F2F2] text-[#0a0f33]">
+    <div className="flex h-screen bg-[#F2F2F2] dark:bg-[#121317] text-[#0a0f33] dark:text-[#E8E8E8] transition-colors duration-300">
       <Sidebar
         key={`sidebar-${location.pathname}`}
         activeTab={activeTab}
@@ -105,7 +124,7 @@ function App() {
           setSearchValue={setSearchValue}
         >
           <Routes>
-            
+
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />

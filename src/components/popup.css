@@ -139,3 +139,29 @@
     font-size: 16px;
     cursor: pointer;
   }
+
+/* Dark Theme Overrides */
+body.dark-theme .popup,
+body.dark-theme .branches-popup {
+  background: #121317;
+  color: #E8E8E8;
+}
+
+body.dark-theme .branches-header h2,
+body.dark-theme .popup h2 {
+  color: #E8E8E8;
+}
+
+body.dark-theme .branches-table th {
+  color: #E8E8E8;
+  border-bottom: 1px solid #292D32;
+}
+
+body.dark-theme .branches-table tr:hover {
+  background: #202020;
+}
+
+body.dark-theme .popup-close {
+  background: #292D32;
+  color: #E8E8E8;
+}
