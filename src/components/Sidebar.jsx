@@ -64,12 +64,13 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                 onClick={toggleSidebar}
             ></div>
             <aside
-                className={`bg-[#0a0f33] dark:bg-white text-white dark:text-black justify-start flex flex-col items-start pt-6 pb-3 overflow-hidden transition-all duration-300 ${isExpanded ? 'w-55' : 'w-24'} max-[1080px]:fixed max-[1080px]:w-64 max-[1080px]:h-full max-[1080px]:z-50 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? 'max-[1080px]:translate-x-0' : 'max-[1080px]:translate-x-full'} max-[1080px]:right-0 border-r border-gray-200 dark:border-gray-200 shadow-lg`}
+                className={`bg-[#0a0f33] dark:bg-white text-white dark:text-black justify-start flex flex-col items-stretch pt-6 pb-3 overflow-hidden transition-all duration-300 ${isExpanded ? 'w-55' : 'w-24'} max-[1080px]:fixed max-[1080px]:w-64 max-[1080px]:h-full max-[1080px]:z-50 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? 'max-[1080px]:translate-x-0' : 'max-[1080px]:translate-x-full'} max-[1080px]:right-0 shadow-lg relative`}
                 onMouseEnter={() => setIsExpanded(true)}
                 onMouseLeave={() => setIsExpanded(true)}
             >
+                <div className="absolute right-0 top-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200 z-0 pointer-events-none" />
 
-                <div className="text-center self-center px-4 h-40">
+                <div className="text-center self-center px-4 h-40 z-10 relative">
                     <LogoIcon className={`mx-auto transition-all duration-300 ${isExpanded ? 'w-20 h-22' : 'w-12 h-14'} max-[1080px]:w-20 max-[1080px]:h-22`} />
 
                     <h2 className={`text-2xl text-center leading-tight transition-all duration-300 mt-2 ${isExpanded ? 'opacity-100 scale-100 max-w-full' : 'opacity-0 scale-50 overflow-hidden max-w-0'} max-[1080px]:text-center max-[1080px]:mt-2 max-[1080px]:opacity-100 max-[1080px]:scale-100 max-[1080px]:max-w-full whitespace-nowrap`}>
@@ -79,8 +80,8 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
 
                 </div>
 
-                {!isAdmin && <div className="mt-10 flex flex-col w-full flex-1 overflow-hidden relative">
-                    <nav className="w-full h-full overflow-y-auto pb-10">
+                {!isAdmin && <div className="mt-10 flex flex-col w-full flex-1 overflow-hidden relative z-10">
+                    <nav className="w-full h-full overflow-y-auto overflow-x-hidden pb-10 ">
                         <NavLink
                             isExpanded={isExpanded}
                             onClick={() => { navigate('/user/dashboard') }}
@@ -108,8 +109,8 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                     </nav>
                     <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-[#0a0f33] dark:from-white to-transparent pointer-events-none" />
                 </div>}
-                {isAdmin && <div className="mt-10 flex flex-col w-full flex-1 overflow-hidden relative">
-                    <nav className="w-full h-full overflow-y-auto pb-3 flex flex-col gap-2">
+                {isAdmin && <div className="mt-10 flex flex-col w-full flex-1 overflow-hidden relative z-10">
+                    <nav className="w-full h-full overflow-y-auto overflow-x-hidden pb-3 flex flex-col gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
                         <NavLink
                             isExpanded={isExpanded}
                             active={location.pathname === '/admin/dashboard'}
