@@ -62,7 +62,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                 onClick={toggleSidebar}
             ></div>
             <aside
-                className={`bg-[#0a0f33] text-white justify-start flex flex-col items-start pt-6 pb-3 overflow-hidden transition-all duration-300 ${isExpanded ? 'w-55' : 'w-24'} max-[1080px]:fixed max-[1080px]:w-64 max-[1080px]:h-full max-[1080px]:z-50 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? 'max-[1080px]:translate-x-0' : 'max-[1080px]:translate-x-full'} max-[1080px]:right-0`}
+                className={`bg-[#0a0f33] dark:bg-[#121317] text-white dark:text-[#E8E8E8] justify-start flex flex-col items-start pt-6 pb-3 overflow-hidden transition-all duration-300 ${isExpanded ? 'w-55' : 'w-24'} max-[1080px]:fixed max-[1080px]:w-64 max-[1080px]:h-full max-[1080px]:z-50 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? 'max-[1080px]:translate-x-0' : 'max-[1080px]:translate-x-full'} max-[1080px]:right-0 border-r border-gray-200 dark:border-[#292D32] shadow-lg`}
                 onMouseEnter={() => setIsExpanded(true)}
                 onMouseLeave={() => setIsExpanded(true)}
             >
@@ -104,7 +104,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                             text="Catalog"
                         />
                     </nav>
-                    <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-[#0a0f33] to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-[#0a0f33] dark:from-[#121317] to-transparent pointer-events-none" />
                 </div>}
                 {isAdmin && <div className="mt-10 flex flex-col w-full flex-1 overflow-hidden relative">
                     <nav className="w-full h-full overflow-y-auto pb-3 flex flex-col gap-2">
@@ -180,7 +180,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                         />
 
                     </nav>
-                    <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#0a0f33] to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#0a0f33] dark:from-[#121317] to-transparent pointer-events-none" />
                 </div>}
                 <div className={`transition-all flex flex-col gap-2 w-full mt-auto duration-300 ${isExpanded ? '' : 'flex justify-center'}`}>
                     <div className="max-[1080px]:block hidden">

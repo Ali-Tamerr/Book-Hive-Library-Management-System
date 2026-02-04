@@ -41,7 +41,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
 
   return (
     <>
-      <header className="bg-white text-[#0a0f33] flex-1 flex items-center justify-between h-min px-4 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
+      <header className="bg-white dark:bg-[#121317] text-[#0a0f33] dark:text-[#E8E8E8] flex-1 flex items-center justify-between h-min px-4 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
         <div className="flex items-center gap-3 flex-2">
           <UserRound className="w-12 h-12" />
           <div>
