@@ -292,7 +292,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         secondaryButton={
           <button
             onClick={() => setShowRequestsPopup(true)}
-            className="bg-white border border-[#0b0b3b] cursor-pointer h-full max-[856px]:text-xs text-[#0b0b3b] min-w-[150px] rounded-xl hover:bg-[#F0F0FF] transition-colors text-sm font-medium flex items-center justify-center gap-2"
+            className="bg-white border border-[#0b0b3b] dark:border-[#121317] cursor-pointer h-full max-[856px]:text-xs text-[#0b0b3b] dark:bg-[#E8E8E8] dark:text-[#121317] min-w-[150px] rounded-xl hover:bg-[#F0F0FF] transition-colors text-sm font-medium flex items-center justify-center hover:bg-[#1a1a6a] dark:hover:bg-[#d4d4d4] gap-2"
           >
             View Requests
           </button>
