@@ -12,8 +12,8 @@ const NavLink = ({ isExpanded, active, onClick, icon, text, toggleSidebar }) => 
       onClick={handleClick}
       className={`h-12 min-h-12 w-full my-1 transition-all duration-300 flex justify-start items-center font-bold cursor-pointer ${isExpanded ? 'px-8 gap-2' : 'px-[39px] gap-0'
         } ${active
-          ? 'bg-white text-[#0a0f33] '
-          : 'text-[#b5b8d1] hover:bg-white/10'
+          ? 'bg-white text-[#0a0f33] dark:bg-black dark:text-white'
+          : 'text-[#b5b8d1] dark:text-black hover:bg-white/10 dark:hover:bg-black/5'
         } max-[1080px]:gap-2 max-[1080px]:px-8`}
     >
       <span className="flex items-center" style={{ width: 20, height: 20 }}>
