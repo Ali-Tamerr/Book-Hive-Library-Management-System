@@ -8,7 +8,7 @@ const FormInput = ({ label, name, type = 'text', value, onChange, placeholder, r
     placeholder,
     required,
     autoComplete: autocomplete || 'off',
-    className: 'w-full h-[50px] px-4 py-3 rounded-xl border-1 border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]',
+    className: 'w-full h-[50px] px-4 py-3 rounded-xl border-1 border-[#3D3E3E] dark:border-[#292D32] bg-white dark:bg-[#121317] dark:text-[#E8E8E8] outline-none focus:border-[#1e255e] dark:focus:border-[#E8E8E8] text-[13px]',
   };
 
   if (step) {

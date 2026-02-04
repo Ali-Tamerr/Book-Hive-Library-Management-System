@@ -19,6 +19,40 @@ const Home = () => {
    const [isOTPOpen, setIsOTPOpen] = useState(false);
    const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
    const [activePopup, setActivePopup] = useState(null);
+   const [themeIcon, setThemeIcon] = useState('ri-moon-line');
+
+   // Initialize theme on mount
+   useEffect(() => {
+      const selectedTheme = localStorage.getItem('selected-theme');
+
+      // If dark theme is selected, apply it and set icon to sun
+      if (selectedTheme === 'dark') {
+         document.body.classList.add('dark-theme');
+         setThemeIcon('ri-sun-line');
+      } else {
+         document.body.classList.remove('dark-theme');
+         setThemeIcon('ri-moon-line');
+      }
+   }, []);
+
+   const toggleTheme = () => {
+      const body = document.body;
+      const isDark = body.classList.contains('dark-theme');
+
+      if (isDark) {
+         // Switch to light
+         body.classList.remove('dark-theme');
+         setThemeIcon('ri-moon-line');
+         localStorage.setItem('selected-theme', 'light');
+         localStorage.setItem('selected-icon', 'ri-moon-line');
+      } else {
+         // Switch to dark
+         body.classList.add('dark-theme');
+         setThemeIcon('ri-sun-line');
+         localStorage.setItem('selected-theme', 'dark');
+         localStorage.setItem('selected-icon', 'ri-sun-line');
+      }
+   };
 
    const scrollToSection = (e, sectionId) => {
       e.preventDefault();
@@ -51,22 +85,7 @@ const Home = () => {
             await loadScript(new URL('./js/scrollreveal.min.js', import.meta.url).href, 'scrollreveal');
             await loadScript(new URL('./js/swiper-bundle.min.js', import.meta.url).href, 'swiper');
 
-            setTimeout(async () => {
-               await loadScript(new URL('./js/main.js', import.meta.url).href, 'main');
-
-               setTimeout(() => {
-                  const themeButton = document.getElementById('theme-button');
-                  const selectedTheme = localStorage.getItem('selected-theme');
-                  const selectedIcon = localStorage.getItem('selected-icon');
-
-                  if (selectedTheme) {
-                     document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove']('dark-theme');
-                     if (themeButton) {
-                        themeButton.classList[selectedIcon === 'ri-moon-line' ? 'add' : 'remove']('ri-sun-line');
-                     }
-                  }
-               }, 200);
-            }, 300);
+            await loadScript(new URL('./js/main.js', import.meta.url).href, 'main');
          } catch (error) {
             console.error('Error loading scripts:', error);
          }
@@ -135,7 +154,11 @@ const Home = () => {
                   ></i>
 
                   {/* Theme button */}
-                  <i className="ri-moon-line change-theme" id="theme-button"></i>
+                  <i
+                     className={`${themeIcon} change-theme`}
+                     onClick={toggleTheme}
+                     style={{ cursor: 'pointer' }}
+                  ></i>
                </div>
             </nav>
          </header>
@@ -254,9 +277,9 @@ const Home = () => {
                               className="about-cta"
                               href="#"
                               onClick={(e) => {
-                                    e.preventDefault();
-                                    setActivePopup('branches');
-                                 }}
+                                 e.preventDefault();
+                                 setActivePopup('branches');
+                              }}
                            >
                               Where are we?
                            </a>

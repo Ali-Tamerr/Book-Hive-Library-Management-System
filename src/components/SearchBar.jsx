@@ -25,14 +25,14 @@ const SearchBar = ({ searchValue, setSearchValue }) => {
   const isDashboard = location.pathname === '/dashboard';
   const showSearchInput = !isDashboard;
   return (
-    <div className='flex w-full bg-white border h-full border-zinc-400 rounded-2xl'>
-      <button className="h-full text-grey-500 px-2 py-1 cursor-pointer"><Search size={15} /></button>
+    <div className='flex w-full bg-white dark:bg-[#121317] border h-full border-zinc-400 dark:border-[#292D32] rounded-2xl'>
+      <button className="h-full text-gray-500 dark:text-[#E8E8E8] px-2 py-1 cursor-pointer"><Search size={15} /></button>
       <input
         type="text"
         placeholder="Search by ID or Name"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
-        className="px-3 py-1 w-full h-full bg-transparent outline-none text-xs"
+        className="px-3 py-1 w-full h-full bg-transparent outline-none text-xs dark:text-[#E8E8E8] dark:placeholder-gray-500"
       />
     </div>
   )
