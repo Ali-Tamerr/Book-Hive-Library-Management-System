@@ -32,7 +32,7 @@ const SearchBar = ({ searchValue, setSearchValue }) => {
         placeholder="Search by Name"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
-        className="pl-3 pr-15 py-1 w-full h-full bg-transparent outline-none text-xs dark:text-[#E8E8E8] dark:placeholder-[#121317]"
+        className="pl-3 pr-15 py-1 w-full h-full bg-transparent outline-none text-xs dark:text-[#121317] dark:placeholder-[#121317]"
       />
     </div>
   )
