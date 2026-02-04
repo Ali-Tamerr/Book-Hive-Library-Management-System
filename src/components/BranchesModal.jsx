@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Popup from './Popup';
+import BranchDetailsPopup from './BranchDetailsPopup';
 import './popup.css';
 
 const branches = [
@@ -63,7 +63,7 @@ const BranchesModal = ({ isOpen, onClose }) => {
           </tbody>
         </table>
 
-        <Popup isOpen={isDetailOpen} onClose={closeDetail} branch={selectedBranch} />
+        <BranchDetailsPopup isOpen={isDetailOpen} onClose={closeDetail} branch={selectedBranch} />
       </div>
     </div>
   );
