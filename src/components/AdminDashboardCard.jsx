@@ -20,7 +20,7 @@ const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadi
                                 <p className="max-[1540px]:text-[10px] text-[14px] text-[#6f7390] dark:text-black">Admin ID: {admin.adminId}</p>
                                 <div className="flex justify-end absolute right-2 bottom-1 items-center gap-1 mt-1">
                                     <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-[#0a0f33] dark:bg-black' : 'bg-gray-400'}`}></span>
-                                    <span className={`text-[10px] text-[#0a0f33] dark:text-black ${admin.isOnline ? 'font-bold' : 'font-normal'} `}>{admin.isOnline ? 'Active' : 'Not Active'}</span>
+                                    <span className={`text-[10px] text-[#0a0f33] dark:text-black font-medium `}>{admin.isOnline ? 'Active' : 'Not Active'}</span>
                                 </div>
                             </div>
                         </div>
