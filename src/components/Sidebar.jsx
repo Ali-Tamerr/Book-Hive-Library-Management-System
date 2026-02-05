@@ -22,13 +22,14 @@ import NavLink from './NavLink';
 
 
 const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
-    const [isExpanded, setIsExpanded] = useState(true);
+    const currentUser = getCurrentUser();
+    const isAdmin = currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Super Admin');
+    // Sidebar behavior: Always expanded for Admins, Always collapsed for Users (no hover)
+    const isExpanded = isAdmin;
+
     const [, setForceUpdate] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
-
-    const currentUser = getCurrentUser();
-    const isAdmin = currentUser && (currentUser.role === 'Admin' || currentUser.role === 'Super Admin');
 
     useEffect(() => {
         const handleUpdate = () => {
@@ -65,8 +66,6 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
             ></div>
             <aside
                 className={`bg-[#0a0f33] dark:bg-white text-white dark:text-black justify-start flex flex-col items-stretch pt-6 pb-3 overflow-hidden transition-all duration-300 ${isExpanded ? 'w-55' : 'w-24'} max-[1080px]:fixed max-[1080px]:w-64 max-[1080px]:h-full max-[1080px]:z-50 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? 'max-[1080px]:translate-x-0' : 'max-[1080px]:translate-x-full'} max-[1080px]:right-0 shadow-lg relative`}
-                onMouseEnter={() => setIsExpanded(true)}
-                onMouseLeave={() => setIsExpanded(true)}
             >
                 <div className="absolute right-0 top-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200 z-0 pointer-events-none" />
 
@@ -84,12 +83,14 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                     <nav className="w-full h-full overflow-y-auto overflow-x-hidden pb-10 ">
                         <NavLink
                             isExpanded={isExpanded}
+                            active={location.pathname === '/user/dashboard'}
                             onClick={() => { navigate('/user/dashboard') }}
                             icon={<Home size={18} strokeWidth={2.3} />}
                             text="Dashboard"
                         />
                         <NavLink
                             isExpanded={isExpanded}
+                            active={location.pathname === '/user/books'}
                             onClick={() => {
                                 setActiveTab('/user/books');
                                 navigate('/user/books');
@@ -99,6 +100,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                         />
                         <NavLink
                             isExpanded={isExpanded}
+                            active={location.pathname === '/user/catalog'}
                             onClick={() => {
                                 setActiveTab('/user/catalog');
                                 navigate('/user/catalog');
@@ -107,7 +109,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                             text="Catalog"
                         />
                     </nav>
-                    <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-[#0a0f33] dark:from-white to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 -ml-[0.6px] w-full h-20 bg-gradient-to-t from-[#0a0f33] dark:from-white to-transparent pointer-events-none" />
                 </div>}
                 {isAdmin && <div className="mt-10 flex flex-col w-full flex-1 overflow-hidden relative z-10">
                     <nav className="w-full h-full overflow-y-auto overflow-x-hidden pb-3 flex flex-col gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
@@ -183,7 +185,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                         />
 
                     </nav>
-                    <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#0a0f33] dark:from-white to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0  w-full h-16 bg-gradient-to-t from-[#0a0f33] dark:from-white to-transparent pointer-events-none" />
                 </div>}
                 <div className={`transition-all flex flex-col gap-2 w-full mt-auto duration-300 ${isExpanded ? '' : 'flex justify-center'}`}>
                     <div className="max-[1080px]:block hidden">
