@@ -3,12 +3,14 @@ import { Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './Styles/Dashboard.module.css';
 import LogoIcon from '../assets/logo.svg?react';
 import PieChart from '../components/PieChart';
+import PieChartLegend from '../components/PieChartLegend';
 import { useUsers } from '../hooks/useUsers';
 import { useBooks } from '../hooks/useBooks';
 import { useCategories } from '../hooks/useCategories';
 import { useReservations } from '../hooks/useReservations';
 import { useBranches } from '../hooks/useBranches';
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
+import { useBookTransactions } from '../hooks/useBookTransactions';
 import { getCurrentUser } from '../services/auth.api';
 
 function Dashboard() {
@@ -19,6 +21,7 @@ function Dashboard() {
   const { data: reservations = [], isLoading: reservationsLoading } = useReservations();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
   const { data: overdueBooksData = [], isLoading: overdueLoading } = useOverdueBooks();
+  const { data: bookTransactions = [], isLoading: transactionsLoading } = useBookTransactions();
 
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -26,18 +29,23 @@ function Dashboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const booksPerPage = 8;
 
-  const loading = usersLoading || booksLoading || reservationsLoading || branchesLoading || overdueLoading || categoriesLoading;
-  const totalBorrowed = reservations?.length || 0;
-  const returnedBooks = reservations?.filter(r => r.returnDate || r.status === 'Returned').length || 0;
-  const currentlyBorrowed = totalBorrowed - returnedBooks;
+  const loading = usersLoading || booksLoading || reservationsLoading || branchesLoading || overdueLoading || categoriesLoading || transactionsLoading;
+
+  // Filter transactions for the current user only
+  const userBorrowedTransactions = Array.isArray(bookTransactions) ? bookTransactions.filter(
+    t => t.transaction_type === 'Check-Out' && t.status === 'Completed' && t.user_id === currentUser?.user_id
+  ) : [];
+  const userReturnedBooks = userBorrowedTransactions.filter(t => t.return_date).length;
+  const userCurrentlyBorrowed = userBorrowedTransactions.filter(t => !t.return_date).length;
+  const userTotalBorrowed = userBorrowedTransactions.length;
 
   const stats = {
     totalUsers: users?.length || 0,
     totalBooks: books?.length || 0,
     branchCount: branches?.length || 0,
-    totalBorrowed: totalBorrowed,
-    currentlyBorrowed: currentlyBorrowed,
-    returnedBooks: returnedBooks
+    totalBorrowed: userTotalBorrowed,
+    currentlyBorrowed: userCurrentlyBorrowed,
+    returnedBooks: userReturnedBooks
   };
 
   const filteredBooks = useMemo(() => {
@@ -219,47 +227,13 @@ function Dashboard() {
 
           {/* Pie chart inspired by admin/pages/Dashboard.jsx */}
           <div className={`${styles.cards} flex-1 max-[1540px]:h-80 max-[1540px]:flex-none w-full items-center max-[1540px]:mx-0 ml-20`}>
-            <div className="h-full rounded-lg w-full flex flex-col items-center justify-center">
-              <div className="flex max-[1540px]:flex-row flex-col gap-15 justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-min max-[430px]:scale-80 [430px]:mx-0 -ml-10 max-[380px]:w-[110%]">
-                <div className="gap-8 items-center border border-[#0a0f3373] dark:border-[#292D32] bg-white dark:bg-[#121317] p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#9CA3AF]" />
-                      </svg>
-                      <p className="text-sm text-[#6f7390] dark:text-[#9CA3AF] max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#0a0f33" className="dark:fill-[#E8E8E8]" />
-                      </svg>
-                      <p className="text-sm text-[#6f7390] dark:text-[#9CA3AF] max-[340px]:whitespace-nowrap">Total Returned Books</p>
-                    </div>
-                  </div>
-                </div>
-                <div className='flex-1 h-full aspect-square max-w-full max-[1540px]:w-[180px] max-[1540px]:h-[180px] max-[1540px]:flex-none max-[1080px]:w-[140px] max-[1080px]:h-[140px] max-[340px]:-ml-10'>
+            <div className="h-full rounded-lg w-full flex flex-col items-center justify-center min-[1200px]:mb-15">
+              <div className="flex max-[1540px]:flex-row flex-col gap-16 justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full max-w-[700px] h-full max-[1080px]:h-60 max-[430px]:scale-80 [430px]:mx-0 -ml-10 max-[380px]:w-[110%]">
+                <PieChartLegend variant="mobile" />
+                <div className='max-[1540px]:w-[180px] w-full h-fit max-[1540px]:min-h-[180px] max-[1080px]:w-[200px] max-[1080px]:h-full max-[340px]:-ml-10'>
                   <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
                 </div>
-                <div className="max-[1540px]:hidden flex gap-8 items-center border border-[#0a0f3373] dark:border-[#292D32] bg-white dark:bg-[#121317] p-6 rounded-lg scale-110">
-                  <div className='max-[1650px]:hidden block'>
-                    <LogoIcon className="w-16 h-16 text-[#0a0f33] dark:text-[#E8E8E8]" />
-                  </div>
-                  <div className='h-16 bg-[#0a0f33] dark:bg-[#E8E8E8] w-1 rounded-full block max-[1650px]:hidden'></div>
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#9CA3AF]" />
-                      </svg>
-                      <p className="text-sm text-[#6f7390] dark:text-[#9CA3AF]">Total Borrowed Books</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 16 16">
-                        <circle cx="8" cy="8" r="6" fill="#0a0f33" className="dark:fill-[#E8E8E8]" />
-                      </svg>
-                      <p className="text-sm text-[#6f7390] dark:text-[#9CA3AF]">Total Returned Books</p>
-                    </div>
-                  </div>
-                </div>
+                <PieChartLegend variant="desktop" />
               </div>
             </div>
           </div>
