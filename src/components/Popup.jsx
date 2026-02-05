@@ -1,7 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-const Popup = ({ show, isOpen, onClose, title, icon, children }) => {
+const Popup = ({ show, isOpen, onClose, title, icon, children, maxWidthClass }) => {
   const isVisible = show !== undefined ? show : isOpen;
 
   if (!isVisible) return null;
@@ -11,9 +11,9 @@ const Popup = ({ show, isOpen, onClose, title, icon, children }) => {
       {/* Overlay click to close */}
       <div className="absolute inset-0" onClick={onClose}></div>
 
-      <div className="relative w-full max-w-2xl bg-white  rounded-2xl shadow-xl max-h-[90vh] flex flex-col">
+      <div className={`relative ${maxWidthClass ? maxWidthClass : 'max-w-2xl'} w-full bg-white  rounded-2xl shadow-xl max-h-[90vh] flex flex-col`}>
         <div className="flex items-center justify-between p-6  shrink-0">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4"> 
             {icon && <div className="text-[#0a0f33] bg-[#D7D7D7] p-[15px] rounded-lg">{icon}</div>}
             <h2 className="text-xl font-bold text-[#0a0f33] ">{title}</h2>
           </div>
