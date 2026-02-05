@@ -68,6 +68,7 @@ html {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 body {
@@ -78,6 +79,7 @@ body {
   background: #f4f6fb;
   width: 100%;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 

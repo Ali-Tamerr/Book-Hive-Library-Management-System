@@ -11,8 +11,8 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
 
   if (totalForChart === 0 || (currentlyBorrowed === 0 && returnedBooks === 0)) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <svg viewBox={`0 0 ${size} ${size}`} className="block w-full h-full max-h-[600px]">
+      <div className="w-full h-fit flex items-center justify-center">
+        <svg viewBox={`0 0 ${size} ${size}`} className="block w-full h-full">
           <circle cx={center} cy={center} r={radius} className="fill-[#4b5563] dark:fill-[#292D32]" />
         </svg>
       </div>
@@ -55,7 +55,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
   const isReturnedFullCircle = returnedDegrees >= 359.99;
 
   return (
-    <div className="w-full h-full max-h-[600px] flex items-center justify-center">
+    <div className="w-full h-fit flex items-center justify-center">
       <svg viewBox={`0 0 ${size} ${size}`} className="block w-full h-full">
         {isBorrowedFullCircle ? (
           <circle cx={center} cy={center} r={radius} className="fill-[#4b5563] dark:fill-[#D7D7D7]" />
@@ -66,11 +66,11 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
           />
         )}
         {isReturnedFullCircle ? (
-          <circle cx={center} cy={center} r={radius} className="fill-[#0a0f33] dark:fill-[#292D32]" />
+          <circle cx={center} cy={center} r={radius} className="fill-[#000035] dark:fill-[#292D32]" />
         ) : returnedDegrees > 0 && (
           <path
             d={describeArc(center, center, radius, returnedStart, returnedEnd)}
-            className="fill-[#0a0f33] dark:fill-[#D7D7D7]"
+            className="fill-[#000035] dark:fill-[#D7D7D7]"
           />
         )}
       </svg>
