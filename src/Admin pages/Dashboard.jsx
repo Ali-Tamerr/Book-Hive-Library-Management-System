@@ -6,6 +6,7 @@ import { useBooks } from '../hooks/useBooks';
 import { useReservations } from '../hooks/useReservations';
 import { useBranches } from '../hooks/useBranches';
 import { useOverdueBooks } from '../hooks/useOverdueBooks';
+import { useBookCopies } from '../hooks/useBookCopies';
 import { useBookTransactions } from '../hooks/useBookTransactions';
 import { getCurrentUser } from '../services/auth.api';
 import DashboardCard from '../components/DashboardCard';
@@ -15,12 +16,24 @@ import { isUserOnline } from '../services/userActivity.api';
 import LogoIcon from "../assets/logo.svg?react";
 import PieChart from '../components/PieChart';
 import AdminDashboardCard from '../components/AdminDashboardCard.jsx';
+import ViewDetailsPopup from '../components/ViewDetailsPopup';
+import MaximizeIcon from '../assets/icons/maximize-circle.svg?react';
 
 function Dashboard() {
   const location = useLocation();
   const [loadingAdmins, setLoadingAdmins] = useState({});
   const [currentUser] = useState(getCurrentUser());
   useUserActivity();
+
+  const [viewDetailsItem, setViewDetailsItem] = useState(null);
+  const [viewDetailsType, setViewDetailsType] = useState(null);
+  const [showViewDetails, setShowViewDetails] = useState(false);
+
+  const handleViewDetails = (item, type) => {
+    setViewDetailsItem(item);
+    setViewDetailsType(type);
+    setShowViewDetails(true);
+  };
 
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -33,9 +46,16 @@ function Dashboard() {
 
   // Use React Query hooks - much cleaner!
   const { data: users = [], isLoading: usersLoading, refetch: refetchUsers } = useUsers();
+
+  const getCreatorName = (createdById) => {
+    if (!createdById || !Array.isArray(users)) return { name: 'N/A', role: 'Not recorded' };
+    const creator = users.find(u => u.user_id === createdById);
+    return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
+  };
   const { data: books = [], isLoading: booksLoading } = useBooks();
   const { data: reservations = [], isLoading: reservationsLoading } = useReservations();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
+  const { data: bookCopies = [] } = useBookCopies();
   const { data: overdueBooksData = [], isLoading: overdueLoading } = useOverdueBooks();
   const { data: bookTransactions = [], isLoading: transactionsLoading } = useBookTransactions();
 
@@ -94,11 +114,11 @@ function Dashboard() {
     .slice(0, 4);
 
   return (
-    <div className="max-[1540px]:py-5 pt-8 px-10 max-[1080px]:px-12 max-[430px]:px-0 flex-1 w-full overflow-y-auto h-full relative max-[430px]:w-dvw ">
-      <section className="h-full flex max-[1540px]:flex-col flex-row justify-between gap-14 max-[1540px]:gap-0 ">
-        <div className='flex h-full max-[1540px]:h-50 [1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 '>
-          <div className=" rounded-lg w-full flex flex-col items-center justify-center [1200px]:mb-15">
-            <div className="flex max-[1540px]:flex-row flex-col gap-15 max-[1540px]:justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-60 max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
+    <div className="max-[1540px]:py-5 py-8 px-10 max-[1080px]:px-12 max-[430px]:px-0 flex-1 w-full overflow-hidden relative max-[430px]:w-dvw flex flex-col h-full">
+      <section className="flex-1 flex max-[1540px]:flex-col flex-row justify-between gap-14 max-[1540px]:gap-0 min-h-0">
+        <div className='flex max-[1540px]:h-50 min-[1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 self-stretch'>
+          <div className=" rounded-lg w-full h-full flex flex-col items-center justify-center min-[1200px]:mb-15">
+            <div className="flex max-[1540px]:flex-row flex-col gap-15 justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-60 max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
               <div className="gap-8 items-center bg-white dark:bg-[#121317] border dark:border-[#292D32] p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-2">
@@ -109,16 +129,16 @@ function Dashboard() {
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#0a0f33" className="dark:fill-[#D7D7D7]" />
+                      <circle cx="8" cy="8" r="6" fill="#000035" className="dark:fill-[#D7D7D7]" />
                     </svg>
                     <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium max-[340px]:whitespace-nowrap">Total Returned Books</p>
                   </div>
                 </div>
               </div>
-              <div className='max-[1540px]:w-[180px] w-full max-w-[660px] h-full max-[1540px]:min-h-[180px] max-[1080px]:w-[200px] max-[1080px]:h-full max-[340px]:-ml-10'>
+              <div className='max-[1540px]:w-[180px] w-full h-fit max-[1540px]:min-h-[180px] max-[1080px]:w-[200px] max-[1080px]:h-full max-[340px]:-ml-10 flex-1'>
                 <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
               </div>
-              <div className="max-[1540px]:hidden flex gap-8 items-center bg-white dark:bg-[#121317] border dark:border-[#292D32] p-6 rounded-lg scale-110">
+              <div className="max-[1540px]:hidden flex gap-8 items-center bg-white dark:bg-[#121317]  -mt-10  p-6 rounded-lg scale-110">
                 <div className='max-[1650px]:hidden block'>
                   <LogoIcon className="w-16 h-16 text-[#0a0f33] dark:text-[#E8E8E8]" />
                 </div>
@@ -132,7 +152,7 @@ function Dashboard() {
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#0a0f33" className="dark:fill-[#D7D7D7]" />
+                      <circle cx="8" cy="8" r="6" fill="#000035" className="dark:fill-[#D7D7D7]" />
                     </svg>
                     <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium">Total Returned Books</p>
                   </div>
@@ -142,24 +162,24 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex flex-col gap-15 pb-7 h-full max-h-[890px] justify-between items-end max-[1540px]:items-center w-[424px]'>
-          <div className='flex  max-[1540px]:mr-0 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1540px]:justify-center max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-5 max-[1080px]:gap-2 [1080px]:p-0 max-[650px]:p-0 max-[650px]:w-screen max-[1540px]:w-[90%] flex-2 h-full max-h-103 max-[856px]:scale-90 max-[1080px]:w-[110%]'>
+        <div className='flex flex-col gap-15 self-stretch justify-start items-end max-[1540px]:items-center  max-[1540px]:max-h-[150px] max-[1540px]:w-full max-[1540px]:items-center'>
+          <div className='flex max-[1540px]:mr-0 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1540px]:justify-center max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-9 max-[1080px]:gap-2 min-[1080px]:p-0 max-[650px]:p-0 max-[650px]:w-screen max-[1540px]:w-[90%] max-[856px]:scale-90 max-[1080px]:w-[110%]'>
 
-            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center">
+            <div className="max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
                 icon={<User className="text-[#0a0f33] h-full w-full" />}
                 title="Total User Base"
                 value={stats.totalUsers}
                 loading={loading} />
             </div>
-            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center">
+            <div className="max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
                 icon={<Book className="text-[#0a0f33] h-full w-full" />}
                 title="Total Book Count"
                 value={stats.totalBooks}
                 loading={loading} />
             </div>
-            <div className="flex-1 max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
+            <div className="max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:col-span-2 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
                 icon={<Building2 className="text-[#0a0f33] h-full w-full" />}
                 title="Branch Count"
@@ -167,7 +187,7 @@ function Dashboard() {
                 loading={loading} />
             </div>
           </div>
-          <div className='flex-1 w-full h-full block max-[1540px]:hidden'>
+          <div className='flex-1 mr-6 w-[440px] h-full block max-[1540px]:hidden'>
             <AdminDashboardCard
               loading={loading}
               displayAdmins={displayAdmins}
@@ -177,24 +197,27 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex max-[640px]:-mb-8 max-[1540px]:flex-row flex-col gap-10  w-max pb-10 min-w-[200px] max-w-[450px] max-[1540px]:w-full max-[1540px]:max-w-full max-[1080px]:mt-2 overflow-x-auto max-[1540px]:flex-20 align-center  max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-5  max-[856px]:scale-90 snap-x snap-mandatory'>
+        <div className='flex self-stretch max-[640px]:-mb-8 max-[1540px]:flex-row flex-col gap-10 w-max min-w-[200px] max-w-[450px] max-[1540px]:w-full max-[1540px]:max-w-full max-[1080px]:mt-2 overflow-x-auto max-[1540px]:flex-20 max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-5 max-[856px]:scale-90 snap-x snap-mandatory pr-4'>
 
-          <div className='flex-1 min-h-[200px] h-full flex flex-col justify-end snap-start'>
+          <div className='flex-1 flex flex-col snap-start min-h-0'>
             <DashboardCard title="Overdue Borrowers">
               {loading ? (
                 <li className="text-xs p-3 rounded-lg flex items-center gap-3">Loading...</li>
               ) : overdueBorrowers.length > 0 ? (
                 overdueBorrowers.map((borrower) => (
-                  <li key={borrower.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#929292] px-3 py-4 rounded-lg flex items-center gap-3 mb-2 dark:bg-[#929292]">
+                  <li key={borrower.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#929292] px-3 py-4 h-16 rounded-2xl flex items-center gap-3 mb-2 dark:bg-[#929292]">
                     <div className="w-8 h-8 bg-[#0a0f33] dark:bg-[#929292] rounded-lg flex items-center justify-center shrink-0">
                       <User size={16} className="text-white dark:text-black" />
                     </div>
-                    <div className='w-[2px] h-full bg-[#0b0b3b] dark:bg-black rounded-full'></div>
+                    <div className='w-[1.8px] h-full bg-[#0b0b3b] dark:bg-black rounded-full'></div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-[#0a0f33] dark:text-black">{borrower.userName}</p>
-                      <p className="text-xs text-[#6f7390] dark:text-black">Borrowed ID: {borrower.borrowedId}</p>
+                      <p className="text-xs font-medium text-[#6f7390] dark:text-black">Borrowed ID: {borrower.borrowedId}</p>
                     </div>
-                    <RefreshCw size={20} className="text-[#0a0f33] dark:text-black cursor-pointer" />
+                    <MaximizeIcon
+                      className="w-6 h-6 text-[#0a0f33] dark:text-black cursor-pointer"
+                      onClick={() => handleViewDetails(borrower, 'overdue')}
+                    />
                   </li>
                 ))
               ) : (
@@ -203,21 +226,25 @@ function Dashboard() {
             </DashboardCard>
           </div>
 
-          <div className="flex-1 min-h-[200px] flex flex-col justify-end snap-center">
+          <div className="flex-1 flex flex-col snap-center min-h-0">
             <DashboardCard title="Branch Network">
               {branchesLoading ? (
                 <li className="text-xs  p-3 rounded-lg flex items-center gap-3">Loading...</li>
               ) : Array.isArray(branches) && branches.length > 0 ? (
                 branches.map((branch) => (
-                  <li key={branch.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#292D32] px-3 py-2 h-18 rounded-lg flex items-center gap-3 mb-2 dark:bg-[#929292]">
+                  <li key={branch.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#292D32] px-3 py-2 h-16 rounded-2xl flex items-center gap-3 mb-2 dark:bg-[#929292]">
                     <div className="w-10 h-8 p4 rounded-lg flex items-center justify-center shrink-0">
                       <Building2 className="text-[#0a0f33] dark:text-black  h-full w-full" />
                     </div>
-                    <div className='w-[2px] h-full bg-[#0b0b3b] dark:bg-black rounded-full'></div>
+                    <div className='w-[1.8px] h-full bg-[#0b0b3b] dark:bg-black '></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-[#0a0f33] dark:text-black ">{branch.name}</p>
-                      <p className="text-xs text-[#0a0f33] dark:text-black">{branch.location || branch.address || 'Location not specified'}</p>
+                      <p className="text-sm font-medium text-[#0a0f33] dark:text-black">{branch.name}</p>
+                      <p className="text-xs font-medium text-[#0a0f33] dark:text-black">{branch.location || branch.address || 'Location not specified'}</p>
                     </div>
+                    <MaximizeIcon
+                      className="w-10 h-10 text-[#0a0f33] dark:text-black cursor-pointer"
+                      onClick={() => handleViewDetails(branch, 'branch')}
+                    />
                   </li>
                 ))
               ) : (
@@ -226,7 +253,7 @@ function Dashboard() {
             </DashboardCard>
           </div>
 
-          <div className=' h-[380px] max-[1540px]:h-full max-[1540px]:flex-1 max-[1540px]:flex hidden  flex-col justify-end snap-end '>
+          <div className='h-[380px] max-[1540px]:h-full max-[1540px]:flex-1 max-[1540px]:flex hidden flex-col snap-end'>
             <AdminDashboardCard
               loading={loading}
               displayAdmins={displayAdmins}
@@ -236,6 +263,44 @@ function Dashboard() {
           </div>
         </div>
       </section>
+
+      {showViewDetails && (
+        <ViewDetailsPopup
+          show={showViewDetails}
+          onClose={() => {
+            setShowViewDetails(false);
+            setViewDetailsItem(null);
+            setViewDetailsType(null);
+          }}
+          title={viewDetailsType === 'branch' ? "View Branch" : "Overdue Details"}
+          data={(() => {
+            if (!viewDetailsItem) return null;
+            if (viewDetailsType === 'overdue') {
+              return {
+                "Borrower Name": viewDetailsItem.userName,
+                "Book ID": viewDetailsItem.borrowedId,
+                "User ID": viewDetailsItem.userId || 'N/A'
+              };
+            }
+            return {
+              "Branch ID": viewDetailsItem.branch_id,
+              "Name": viewDetailsItem.name,
+              "Location": viewDetailsItem.location,
+              "Contact Number": viewDetailsItem.contact_number,
+              'Book Copies': (() => {
+                const branchCopies = bookCopies.filter(bc => bc.branch_id === viewDetailsItem.branch_id);
+                if (branchCopies.length === 0) return 'No books in this branch';
+                const bookDetails = branchCopies.map(bc => {
+                  const book = books.find(b => b.book_id === bc.book_id);
+                  return `${book?.name || 'Unknown'} (${bc.book_copy_id})`;
+                });
+                return bookDetails.join(', ');
+              })()
+            };
+          })()}
+          savedBy={viewDetailsType === 'branch' && viewDetailsItem ? getCreatorName(viewDetailsItem.created_by) : null}
+        />
+      )}
     </div>
   );
 }
