@@ -9,7 +9,7 @@ const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadi
                 <li className="text-xs  p-3 rounded-lg flex items-center gap-3">Loading...</li>
             ) : displayAdmins.length > 0 ? (
                 displayAdmins.map((admin) => (
-                    <li key={admin.id} className="text-xs dark:bg-[#929292] h-18 p-1 rounded-lg flex items-center justify-between gap-3 mb-2 border border-[1.5px] border-[#0a0f33] dark:border-[#121317]">
+                    <li key={admin.id} className="text-xs dark:bg-[#929292] h-18 p-1 rounded-xl flex items-center justify-between gap-3 mb-2 border border-[2px] border-[#0a0f33] dark:border-[#121317]">
                         <div className="bg-[#C7C7C7]/48 dark:bg-[#929292] relative flex gap-3 h-full items-center flex-1 p-2 rounded-xl px-2 py-1">
                             <div className="w-12 h-12 p-2 rounded-lg flex items-center justify-center shrink-0 ">
                                 <ShieldCheck className="text-[#0a0f33] dark:text-black h-full w-full" />
