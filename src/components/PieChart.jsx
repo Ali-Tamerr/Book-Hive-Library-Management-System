@@ -62,7 +62,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
         ) : borrowedDegrees > 0 && (
           <path
             d={describeArc(center, center, radius, borrowedStart, borrowedEnd)}
-            className="fill-[#4b5563] dark:fill-[#292D32]"
+            className="fill-[#4b5563] dark:fill-[#D7D7D7]"
           />
         )}
         {isReturnedFullCircle ? (
@@ -70,7 +70,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
         ) : returnedDegrees > 0 && (
           <path
             d={describeArc(center, center, radius, returnedStart, returnedEnd)}
-            className="fill-[#000035] dark:fill-[#D7D7D7]"
+            className="fill-[#000035] dark:fill-[#292D32]"
           />
         )}
       </svg>
