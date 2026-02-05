@@ -119,42 +119,42 @@ function Dashboard() {
         <div className='flex max-[1540px]:h-50 min-[1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 self-stretch'>
           <div className=" rounded-lg w-full h-full flex flex-col items-center justify-center min-[1200px]:mb-15">
             <div className="flex max-[1540px]:flex-row flex-col gap-15 justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full h-full max-[1080px]:h-60 max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
-              <div className="gap-8 items-center bg-white dark:bg-[#121317] border dark:border-[#292D32] p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
+              <div className="gap-8 items-center bg-white dark:bg-[#D7D7D7] border dark:border-[#292D32] dark:text-black p-6 rounded-lg hidden max-[1540px]:flex max-[1080px]:scale-90 max-[340px]:scale-70 ">
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#292D32]" />
+                      <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#121317]" />
                     </svg>
-                    <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
+                    <p className="text-sm text-[#000035] dark:text-black font-medium max-[340px]:whitespace-nowrap">Total Borrowed Books</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#000035" className="dark:fill-[#D7D7D7]" />
+                      <circle cx="8" cy="8" r="6" fill="#000035" className="dark:fill-[#292D32]" />
                     </svg>
-                    <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium max-[340px]:whitespace-nowrap">Total Returned Books</p>
+                    <p className="text-sm text-[#000035] dark:text-black font-medium max-[340px]:whitespace-nowrap">Total Returned Books</p>
                   </div>
                 </div>
               </div>
               <div className='max-[1540px]:w-[180px] w-full h-fit max-[1540px]:min-h-[180px] max-[1080px]:w-[200px] max-[1080px]:h-full max-[340px]:-ml-10 flex-1'>
                 <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
               </div>
-              <div className="max-[1540px]:hidden flex gap-8 items-center bg-white dark:bg-[#121317]  -mt-10  p-6 rounded-lg scale-110">
+              <div className="max-[1540px]:hidden flex gap-8 items-center bg-white dark:bg-[#D7D7D7]  -mt-10  p-6 rounded-lg scale-110">
                 <div className='max-[1650px]:hidden block'>
-                  <LogoIcon className="w-16 h-16 text-[#0a0f33] dark:text-[#E8E8E8]" />
+                  <LogoIcon className="w-16 h-16 text-[#0a0f33] dark:text-black " />
                 </div>
-                <div className='h-16 bg-[#0a0f33] dark:bg-[#E8E8E8] w-1 rounded-full block max-[1650px]:hidden'></div>
+                <div className='h-[125%] bg-[#0a0f33] dark:bg-black w-0.5 rounded-full block max-[1650px]:hidden'></div>
                 <div className="flex flex-col gap-6">
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#292D32]" />
+                      <circle cx="8" cy="8" r="6" fill="#4b5563" className="dark:fill-[#121317]" />
                     </svg>
-                    <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium">Total Borrowed Books</p>
+                    <p className="text-sm text-[#000035] dark:text-black  font-medium">Total Borrowed Books</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <svg width="16" height="16" viewBox="0 0 16 16">
-                      <circle cx="8" cy="8" r="6" fill="#000035" className="dark:fill-[#D7D7D7]" />
+                      <circle cx="8" cy="8" r="6" fill="#000035" className="dark:fill-[#292D32]" />
                     </svg>
-                    <p className="text-sm text-[#000035] dark:text-[#E8E8E8] font-medium">Total Returned Books</p>
+                    <p className="text-sm text-[#000035] dark:text-black  font-medium">Total Returned Books</p>
                   </div>
                 </div>
               </div>
@@ -215,7 +215,7 @@ function Dashboard() {
                       <p className="text-xs font-medium text-[#6f7390] dark:text-black">Borrowed ID: {borrower.borrowedId}</p>
                     </div>
                     <MaximizeIcon
-                      className="w-6 h-6 text-[#0a0f33] dark:text-black cursor-pointer"
+                      className="w-8 h-8 text-[#0a0f33] dark:text-black cursor-pointer"
                       onClick={() => handleViewDetails(borrower, 'overdue')}
                     />
                   </li>
@@ -242,7 +242,7 @@ function Dashboard() {
                       <p className="text-xs font-medium text-[#0a0f33] dark:text-black">{branch.location || branch.address || 'Location not specified'}</p>
                     </div>
                     <MaximizeIcon
-                      className="w-10 h-10 text-[#0a0f33] dark:text-black cursor-pointer"
+                      className="w-8 h-8 text-[#0a0f33] dark:text-black cursor-pointer"
                       onClick={() => handleViewDetails(branch, 'branch')}
                     />
                   </li>
