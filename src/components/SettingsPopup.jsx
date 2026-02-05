@@ -101,7 +101,7 @@ const SettingsPopup = ({ show, onClose }) => {
             icon={<Settings size={28} strokeWidth={2.3} />}
             maxWidthClass="max-w-[700px]"
         >
-            <form onSubmit={handleSubmit} className='flex flex-col gap-14'>
+            <form onSubmit={handleSubmit} className='flex text-[#0a0f33]  flex-col gap-14'>
                 <div className='px-10 space-y-6'>
                     <div className='flex items-center gap-6'>
                         <label className='text-sm font-medium w-[180px] text-left whitespace-nowrap'>
