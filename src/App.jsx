@@ -17,7 +17,6 @@ const Categories = lazy(() => import('./Admin pages/Categories'));
 const Settings = lazy(() => import('./shared/Settings'));
 const Branches = lazy(() => import('./Admin pages/Branches'));
 
-
 const UserDashboard = lazy(() => import('./User pages/Dashboard'));
 const UserBooks = lazy(() => import('./User pages/UserBooks'));
 const UserBorrowedBooks = lazy(() => import('./User pages/UserBorrowedBooks'));
@@ -40,26 +39,7 @@ function Layout({ children, activeTab, setActiveTab, isSidebarOpen, toggleSideba
 
   useEffect(() => {
     window.dispatchEvent(new Event('userUpdated'));
-
-    // Enforce theme sync on route change
-    const selectedTheme = localStorage.getItem('selected-theme');
-    if (selectedTheme === 'dark') {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
-    }
   }, [location.pathname]);
-
-  // Global Theme Initialization
-  useEffect(() => {
-    const selectedTheme = localStorage.getItem('selected-theme');
-    if (selectedTheme === 'dark') {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
-    }
-  }, []);
-
 
   if (isProtectedRoute && !currentUser) {
     return <Navigate to="/" replace />;
@@ -84,7 +64,7 @@ function Layout({ children, activeTab, setActiveTab, isSidebarOpen, toggleSideba
   }
 
   return (
-    <div className="flex h-screen bg-[#F2F2F2] dark:bg-[#121317] text-[#0a0f33] dark:text-[#E8E8E8] transition-colors duration-300">
+    <div className="flex h-screen bg-[#F2F2F2] text-[#0a0f33]">
       <Sidebar
         key={`sidebar-${location.pathname}`}
         activeTab={activeTab}
@@ -124,7 +104,6 @@ function App() {
           setSearchValue={setSearchValue}
         >
           <Routes>
-
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -144,8 +123,8 @@ function App() {
             <Route path="/user/dashboard" element={<UserDashboard />} />
             <Route path="/user/books" element={<UserBooks />} />
             <Route path="/user/catalog" element={<UserCatalog />} />
-            <Route path="/user/catalog/borrowed" element={<UserBorrowedBooks />} />
-            <Route path="/user/catalog/returned" element={<UserReturnedBooks />} />
+            <Route path="/user/borrowed" element={<UserBorrowedBooks />} />
+            <Route path="/user/returned" element={<UserReturnedBooks />} />
             <Route path="/user/library" element={<UserLibraryLane />} />
           </Routes>
         </Layout>

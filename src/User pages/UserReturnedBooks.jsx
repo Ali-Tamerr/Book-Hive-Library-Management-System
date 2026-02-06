@@ -2,39 +2,21 @@ import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
 import CommonLayout from '../Layouts/CommonLayout';
 import { useReturnedBooks } from '../hooks/useReturnedBooks';
-import { useBooks } from '../hooks/useBooks';
-import { useBookCopies } from '../hooks/useBookCopies';
-import { getCurrentUser } from '../services/auth.api';
 
-function ReturnedBooksContent({ searchValue, customTitle }) {
-  const currentUser = getCurrentUser();
+function UserReturnedBooks() {
   const { data: returnedBooks = [], isLoading, error } = useReturnedBooks();
-  const { data: books = [] } = useBooks();
-  const { data: bookCopies = [] } = useBookCopies();
-
-  const getBookName = (bookCopyId) => {
-    const copy = bookCopies.find(c => c.book_copy_id === bookCopyId);
-    if (copy) {
-      const book = books.find(b => b.book_id === copy.book_id);
-      return book?.name || 'Unknown';
-    }
-    return 'Unknown';
-  };
-
-  const userReturnedBooks = returnedBooks.filter(
-    book => String(book.user_id) === String(currentUser?.user_id)
-  );
+  const [searchValue, setSearchValue] = useState('');
 
   const filteredBooks = searchValue
-    ? userReturnedBooks.filter(book =>
-      getBookName(book.book_id)?.toLowerCase().includes(searchValue.toLowerCase()) ||
-      book.transaction_id?.toString().includes(searchValue)
+    ? returnedBooks.filter(book =>
+      book.book_id?.toString().includes(searchValue) ||
+      book.user_id?.toString().includes(searchValue)
     )
-    : userReturnedBooks;
+    : returnedBooks;
 
   const columns = [
-    // { header: 'ID', accessor: 'transaction_id' },
-    { header: 'Book Name', accessor: 'book_name' },
+    { header: 'ID', accessor: 'transaction_id' },
+    { header: 'User ID', accessor: 'user_id' },
     { header: 'Amount', accessor: 'fine_amount' },
     { header: 'Due Date', accessor: 'due_date' },
     { header: 'Date & Time', accessor: 'created_at' },
@@ -48,7 +30,6 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
 
   const tableData = filteredBooks.map(book => ({
     ...book,
-    book_name: getBookName(book.book_id),
     created_at: book.created_at ? new Date(book.created_at).toLocaleDateString() : 'N/A',
     due_date: book.due_date ? new Date(book.due_date).toLocaleDateString() : 'N/A',
     return_date: book.return_date ? new Date(book.return_date).toLocaleDateString() : 'N/A',
@@ -63,25 +44,22 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
       data={tableData}
       handleEdit={() => { }}
       handleDelete={() => { }}
-      title="My Returned Books"
+      title="Returned Books"
       buttonText=""
       columns={columns}
       formPopup={null}
       isUserPage={true}
-      customTitle={customTitle}
       customActionRenderer={(book) => (
-        <div className="flex justify-center">
-          <button
-            onClick={() => handleView(book)}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer"
-          >
-            <Eye size={16} />
-            View
-          </button>
-        </div>
+        <button
+          onClick={() => handleView(book)}
+          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer"
+        >
+          <Eye size={16} />
+          View
+        </button>
       )}
     />
   );
 }
 
-export default ReturnedBooksContent;
+export default UserReturnedBooks;

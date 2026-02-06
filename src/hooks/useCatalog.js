@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAllBooks, getBookById, createBook, updateBook, deleteBook } from '../services/books.api';
-import { adminQueryOptions } from './queryConfig';
 
+// Query Key Factory
 export const newBooksKeys = {
   all: ['newBooks'],
   lists: () => [...newBooksKeys.all, 'list'],
@@ -10,11 +10,12 @@ export const newBooksKeys = {
   detail: (id) => [...newBooksKeys.details(), id],
 };
 
+// Get all books hook
 export const useNewBooks = () => {
   return useQuery({
     queryKey: newBooksKeys.lists(),
     queryFn: getAllBooks,
-    ...adminQueryOptions,
+    staleTime: 5 * 60 * 1000, 
   });
 };
 

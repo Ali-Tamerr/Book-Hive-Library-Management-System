@@ -7,7 +7,6 @@ import {
   deleteBookCopy
 } from '../services/bookCopies.api';
 import { bookKeys } from './useBooks';
-import { adminQueryOptions } from './queryConfig';
 
 export const bookCopyKeys = {
   all: ['bookCopies'],
@@ -20,7 +19,7 @@ export const useBookCopies = () => {
   return useQuery({
     queryKey: bookCopyKeys.lists(),
     queryFn: getAllBookCopies,
-    ...adminQueryOptions,
+    staleTime: 5 * 60 * 1000,
   });
 };
 

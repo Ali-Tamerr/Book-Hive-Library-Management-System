@@ -185,15 +185,15 @@ function Branches({ searchValue, setSearchValue }) {
           'Name': selectedBranch.name,
           'Location': selectedBranch.location,
           'Contact Number': selectedBranch.contact_number,
-          // 'Book Copies': (() => {
-          //   const branchCopies = bookCopies.filter(bc => bc.branch_id === selectedBranch.branch_id);
-          //   if (branchCopies.length === 0) return 'No books in this branch';
-          //   const bookDetails = branchCopies.map(bc => {
-          //     const book = books.find(b => b.book_id === bc.book_id);
-          //     return `${book?.name || 'Unknown'} (${bc.book_copy_id})`;
-          //   });
-          //   return bookDetails.join(', ');
-          // })()
+          'Book Copies': (() => {
+            const branchCopies = bookCopies.filter(bc => bc.branch_id === selectedBranch.branch_id);
+            if (branchCopies.length === 0) return 'No books in this branch';
+            const bookDetails = branchCopies.map(bc => {
+              const book = books.find(b => b.book_id === bc.book_id);
+              return `${book?.name || 'Unknown'} (${bc.book_copy_id})`;
+            });
+            return bookDetails.join(', ');
+          })()
         } : null}
         savedBy={selectedBranch ? getCreatorName(selectedBranch.created_by) : null}
       >

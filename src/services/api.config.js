@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-const rawApiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-export const API_BASE_URL = rawApiUrl.replace(/^['"]|['"]$/g, '');
-console.log('API_BASE_URL configured as:', API_BASE_URL);
+// API Configuration
+export const API_BASE_URL = 'https://library-management-system-bqdmafdqfdamdefv.uaenorth-01.azurewebsites.net/api';
 
 // Create Axios instance with default config
 const axiosInstance = axios.create({

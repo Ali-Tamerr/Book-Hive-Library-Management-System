@@ -1,14 +1,58 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginPopup from '../shared/LoginPopup';
 import SignupPopup from '../shared/SignupPopup';
 import ForgotPasswordPopup from '../shared/ForgotPasswordPopup';
 import OTPPopup from '../shared/OTPPopup';
 import ResetPasswordPopup from '../shared/ResetPasswordPopup';
-import BranchesModal from '../components/BranchesModal';
+import AboutBranchesPopup from '../components/AboutBranchesPopup';
+import FeaturedBookPopup from '../components/FeaturedBookPopup';
 import './css/swiper-bundle.min.css';
 import './css/styles.css';
 import './css/stylesNew.css';
+
+const FEATURED_BOOKS = [
+   {
+      id: 'my-turn',
+      name: 'My Turn',
+      version: 'Version',
+      category: 'Education',
+      language: 'English',
+      availability: 'Available',
+      branch: 'Cairo',
+      image: new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
+   },
+   {
+      id: 'second-half',
+      name: 'The Second Half',
+      version: 'Version',
+      category: 'Biography',
+      language: 'English',
+      availability: 'Available',
+      branch: 'Cairo',
+      image: new URL('./assets/img/23036917.jpg', import.meta.url).href,
+   },
+   {
+      id: 'think-play',
+      name: 'I Think Therefore I Play',
+      version: 'Version',
+      category: 'Sports',
+      language: 'English',
+      availability: 'Available',
+      branch: 'Cairo',
+      image: new URL('./assets/img/61WcybNpt9L.jpg', import.meta.url).href,
+   },
+   {
+      id: 'autobiography',
+      name: 'My Autobiography',
+      version: 'Version',
+      category: 'Autobiography',
+      language: 'English',
+      availability: 'Available',
+      branch: 'Cairo',
+      image: new URL('./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
+   },
+];
 
 
 const Home = () => {
@@ -18,41 +62,19 @@ const Home = () => {
    const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
    const [isOTPOpen, setIsOTPOpen] = useState(false);
    const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
-   const [activePopup, setActivePopup] = useState(null);
-   const [themeIcon, setThemeIcon] = useState('ri-moon-line');
+   const [isBranchesOpen, setIsBranchesOpen] = useState(false);
+   const [isFeaturedPopupOpen, setIsFeaturedPopupOpen] = useState(false);
+   const [selectedFeaturedBook, setSelectedFeaturedBook] = useState(null);
 
-   // Initialize theme on mount
-   useEffect(() => {
-      const selectedTheme = localStorage.getItem('selected-theme');
-
-      // If dark theme is selected, apply it and set icon to sun
-      if (selectedTheme === 'dark') {
-         document.body.classList.add('dark-theme');
-         setThemeIcon('ri-sun-line');
-      } else {
-         document.body.classList.remove('dark-theme');
-         setThemeIcon('ri-moon-line');
-      }
+   const openFeaturedPopup = useCallback((book) => {
+      setSelectedFeaturedBook(book);
+      setIsFeaturedPopupOpen(true);
    }, []);
 
-   const toggleTheme = () => {
-      const body = document.body;
-      const isDark = body.classList.contains('dark-theme');
-
-      if (isDark) {
-         // Switch to light
-         body.classList.remove('dark-theme');
-         setThemeIcon('ri-moon-line');
-         localStorage.setItem('selected-theme', 'light');
-         localStorage.setItem('selected-icon', 'ri-moon-line');
-      } else {
-         // Switch to dark
-         body.classList.add('dark-theme');
-         setThemeIcon('ri-sun-line');
-         localStorage.setItem('selected-theme', 'dark');
-         localStorage.setItem('selected-icon', 'ri-sun-line');
-      }
-   };
+   const closeFeaturedPopup = useCallback(() => {
+      setIsFeaturedPopupOpen(false);
+      setSelectedFeaturedBook(null);
+   }, []);
 
    const scrollToSection = (e, sectionId) => {
       e.preventDefault();
@@ -85,7 +107,22 @@ const Home = () => {
             await loadScript(new URL('./js/scrollreveal.min.js', import.meta.url).href, 'scrollreveal');
             await loadScript(new URL('./js/swiper-bundle.min.js', import.meta.url).href, 'swiper');
 
-            await loadScript(new URL('./js/main.js', import.meta.url).href, 'main');
+            setTimeout(async () => {
+               await loadScript(new URL('./js/main.js', import.meta.url).href, 'main');
+
+               setTimeout(() => {
+                  const themeButton = document.getElementById('theme-button');
+                  const selectedTheme = localStorage.getItem('selected-theme');
+                  const selectedIcon = localStorage.getItem('selected-icon');
+
+                  if (selectedTheme) {
+                     document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove']('dark-theme');
+                     if (themeButton) {
+                        themeButton.classList[selectedIcon === 'ri-moon-line' ? 'add' : 'remove']('ri-sun-line');
+                     }
+                  }
+               }, 200);
+            }, 300);
          } catch (error) {
             console.error('Error loading scripts:', error);
          }
@@ -93,6 +130,28 @@ const Home = () => {
 
       initScripts();
    }, [navigate]);
+
+   useEffect(() => {
+      const container = document.querySelector('.featured__swiper');
+      if (!container) return undefined;
+
+      const handleClick = (event) => {
+         if (!(event.target instanceof Element)) return;
+         const trigger = event.target.closest('[data-featured-id]');
+         if (!trigger) return;
+         event.preventDefault();
+         const bookId = trigger.getAttribute('data-featured-id');
+         const book = FEATURED_BOOKS.find((item) => item.id === bookId);
+         if (book) {
+            openFeaturedPopup(book);
+         }
+      };
+
+      container.addEventListener('click', handleClick);
+      return () => {
+         container.removeEventListener('click', handleClick);
+      };
+   }, [openFeaturedPopup]);
 
    return (
       <div className="home-page">
@@ -154,11 +213,7 @@ const Home = () => {
                   ></i>
 
                   {/* Theme button */}
-                  <i
-                     className={`${themeIcon} change-theme`}
-                     onClick={toggleTheme}
-                     style={{ cursor: 'pointer' }}
-                  ></i>
+                  <i className="ri-moon-line change-theme" id="theme-button"></i>
                </div>
             </nav>
          </header>
@@ -278,7 +333,7 @@ const Home = () => {
                               href="#"
                               onClick={(e) => {
                                  e.preventDefault();
-                                 setActivePopup('branches');
+                                 setIsBranchesOpen(true);
                               }}
                            >
                               Where are we?
@@ -308,36 +363,19 @@ const Home = () => {
                <div className="featured__container container">
                   <div className="featured__swiper swiper">
                      <div className="swiper-wrapper">
-
-
-                        <article className="featured__card swiper-slide">
-                           <img src={new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">My Turn</h2>
-                           <button className="button">Explore Now</button>
-
-                        </article>
-
-                        <article className="featured__card swiper-slide">
-                           <img src={new URL('./assets/img/23036917.jpg', import.meta.url).href} alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">The Second Half</h2>
-                           <button className="button">Explore Now</button>
-                        </article>
-
-                        <article className="featured__card swiper-slide">
-                           <img src={new URL('./assets/img/61WcybNpt9L.jpg', import.meta.url).href} alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">I Think Therefore I Play </h2>
-                           <button className="button">Explore Now</button>
-                        </article>
-
-                        <article className="featured__card swiper-slide">
-                           <img src={new URL('./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">My Autobiography</h2>
-                           <button className="button">Explore Now</button>
-                        </article>
+                        {FEATURED_BOOKS.map((book) => (
+                           <article key={book.id} className="featured__card swiper-slide">
+                              <img src={book.image} alt={book.name} className="featured__img" />
+                              <h2 className="featured__title">{book.name}</h2>
+                              <button
+                                 type="button"
+                                 className="button"
+                                 data-featured-id={book.id}
+                              >
+                                 Explore Now
+                              </button>
+                           </article>
+                        ))}
                      </div>
 
                      <div className="swiper-button-prev">
@@ -372,15 +410,7 @@ const Home = () => {
                            <div className="feature"><span className="tick">✓</span>Borrow + 3 books Monthly</div>
                         </div>
 
-                        <a
-                           className="btn"
-                           href="#"
-                           role="button"
-                           aria-label="Subscribe to Discover"
-                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
-                        >
-                           Subscribe
-                        </a>
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Discover">Subscribe</a>
                      </article>
 
                      {/* Center plan - highlighted */}
@@ -397,15 +427,7 @@ const Home = () => {
                            <div className="feature"><span className="tick">✓</span>Borrow + 15 books Monthly</div>
                         </div>
 
-                        <a
-                           className="btn"
-                           href="#"
-                           role="button"
-                           aria-label="Subscribe to Enterprise"
-                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
-                        >
-                           Subscribe
-                        </a>
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Enterprise">Subscribe</a>
                      </article>
 
                      {/* Right plan */}
@@ -422,15 +444,7 @@ const Home = () => {
                            <div className="feature"><span className="tick">✓</span>Borrow + 10 books Monthly</div>
                         </div>
 
-                        <a
-                           className="btn"
-                           href="#"
-                           role="button"
-                           aria-label="Subscribe to Professional"
-                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
-                        >
-                           Subscribe
-                        </a>
+                        <a className="btn" href="#" role="button" aria-label="Subscribe to Professional">Subscribe</a>
                      </article>
                   </div>
                </div>
@@ -565,6 +579,19 @@ const Home = () => {
          </a>
 
          {/*========== AUTH POPUPS ==========*/}
+         {isBranchesOpen && (
+            <AboutBranchesPopup
+               isOpen={isBranchesOpen}
+               onClose={() => setIsBranchesOpen(false)}
+            />
+         )}
+         {isFeaturedPopupOpen && (
+            <FeaturedBookPopup
+               isOpen={isFeaturedPopupOpen}
+               book={selectedFeaturedBook}
+               onClose={closeFeaturedPopup}
+            />
+         )}
          <LoginPopup
             isOpen={isLoginOpen}
             onClose={() => setIsLoginOpen(false)}
@@ -594,7 +621,6 @@ const Home = () => {
             onLogin={() => setIsLoginOpen(true)}
             onBack={() => setIsOTPOpen(true)}
          />
-         <BranchesModal isOpen={activePopup === 'branches'} onClose={() => setActivePopup(null)} />
       </div>
    );
 };
