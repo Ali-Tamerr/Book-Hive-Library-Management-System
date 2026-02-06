@@ -1,10 +1,6 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark-theme, .dark-theme *));
-
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
@@ -50,41 +46,35 @@
 }
 
 .text-sideways {
-  text-orientation: sideways;
+text-orientation: sideways;
 }
-.text-upright {
+.text-upright{
   text-orientation: upright;
   writing-mode: vertical-lr;
 }
-.text-mixed {
+.text-mixed{
   text-orientation: mixed;
 }
-.text-sideways-right {
+.text-sideways-right{
   text-orientation: sideways-right;
 }
+
 
 html {
   width: 100%;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  overscroll-behavior-x: none;
 }
 
 body {
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;
   background: #f4f6fb;
   width: 100%;
   overflow-x: hidden;
-  overscroll-behavior-x: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-body.dark-theme {
-  background: #121317;
 }
 
 #root {
@@ -98,17 +88,17 @@ body.dark-theme {
   box-sizing: none;
 }
 
-::-webkit-scrollbar {
-  border-radius: 4px;
+::-webkit-scrollbar{
+    border-radius: 4px;
   width: 0.6rem;
   background-color: hsl(24, 32%, 75%);
 }
 
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb{
   border-radius: 4px;
   background-color: hsl(24, 32%, 65%);
 }
 
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover{
   background-color: hsl(24, 32%, 55%);
 }

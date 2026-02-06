@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Settings, Menu, UserRound, Search, Sun, Moon } from 'lucide-react';
+import { Settings, Menu, UserRound, Search } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { getCurrentUser } from '../services/auth.api';
 import SearchBar from './SearchBar';
@@ -9,7 +9,6 @@ import SettingsPopup from './SettingsPopup';
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [, setForceUpdate] = useState(0);
   const location = useLocation();
 
@@ -26,58 +25,23 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
       }
     };
 
-    const handleStorageChange = () => {
-      const theme = localStorage.getItem('selected-theme');
-      setIsDarkMode(theme === 'dark');
-    };
-
     window.addEventListener('pageshow', handlePageShow);
     window.addEventListener('userUpdated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
-    window.addEventListener('storage', handleStorageChange); // Listen for theme changes
 
     return () => {
       window.removeEventListener('pageshow', handlePageShow);
       window.removeEventListener('userUpdated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
-      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
-
-  // Initialize theme state
-  useEffect(() => {
-    const selectedTheme = localStorage.getItem('selected-theme');
-    if (selectedTheme === 'dark') {
-      setIsDarkMode(true);
-      document.body.classList.add('dark-theme');
-    } else {
-      setIsDarkMode(false);
-      document.body.classList.remove('dark-theme');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    if (isDarkMode) {
-      document.body.classList.remove('dark-theme');
-      localStorage.setItem('selected-theme', 'light');
-      setIsDarkMode(false);
-    } else {
-      document.body.classList.add('dark-theme');
-      localStorage.setItem('selected-theme', 'dark');
-      setIsDarkMode(true);
-    }
-    // Dispatch storage event to sync across tabs/windows if needed, 
-    // though 'storage' event fires naturally on other tabs.
-    // To sync same-page components immediately if they relied on listener:
-    window.dispatchEvent(new Event('storage'));
-  };
 
   const isDashboard = location.pathname === '/dashboard';
   const showSearchInput = !isDashboard;
 
   return (
     <>
-      <header className="bg-white dark:bg-[#121317] text-[#0a0f33] dark:text-[#E8E8E8] flex-1 flex items-center justify-between h-min px-4 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
+      <header className="bg-white text-[#0a0f33] flex-1 flex items-center justify-between h-min px-4 py-4 shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
         <div className="flex items-center gap-3 flex-2">
           <UserRound className="w-12 h-12" />
           <div>
@@ -96,16 +60,16 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
               {new Date().toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
             </p>
           </div>
-          <div className='w-0.5 max-[1080px]:hidden h-10 rounded-full bg-[#0b0b3b] dark:bg-white'></div>
+          <div className='w-0.5 max-[1080px]:hidden h-10 rounded-full bg-[#0b0b3b]'></div>
           <button
-            className="max-[1080px]:hidden w-8 h-8 hover:text-[#1e255e] dark:hover:text-[#9CA3AF] transition-colors cursor-pointer"
-            onClick={toggleTheme}
-            title="Toggle Theme"
+            className="max-[1080px]:hidden w-8 h-8 hover:text-[#1e255e] transition-colors cursor-pointer"
+            onClick={() => setShowGlobalSearch(true)}
+            title="Global Search"
           >
-            {isDarkMode ? <Sun className='h-full w-full' /> : <Moon className='h-full w-full' />}
+            <Search className='h-full w-full' />
           </button>
           <button
-            className="max-[1080px]:hidden w-8 h-8 cursor-pointer hover:text-[#1e255e] dark:hover:text-[#9CA3AF] transition-colors"
+            className="max-[1080px]:hidden w-8 h-8 cursor-pointer hover:text-[#1e255e] transition-colors"
             onClick={() => setShowSettings(true)}
             title="Settings"
           >

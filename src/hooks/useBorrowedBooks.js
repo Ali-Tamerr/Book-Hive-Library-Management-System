@@ -6,8 +6,8 @@ import {
   updateBorrowedBook, 
   deleteBorrowedBook 
 } from '../services/borrowedBooks.api';
-import { adminQueryOptions } from './queryConfig';
 
+// Query Key Factory
 export const borrowedBooksKeys = {
   all: ['borrowedBooks'],
   lists: () => [...borrowedBooksKeys.all, 'list'],
@@ -16,11 +16,12 @@ export const borrowedBooksKeys = {
   detail: (id) => [...borrowedBooksKeys.details(), id],
 };
 
+// Get all borrowed books hook
 export const useBorrowedBooks = () => {
   return useQuery({
     queryKey: borrowedBooksKeys.lists(),
     queryFn: getAllBorrowedBooks,
-    ...adminQueryOptions,
+    staleTime: 5 * 60 * 1000, 
   });
 };
 

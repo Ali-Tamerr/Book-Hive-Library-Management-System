@@ -7,10 +7,6 @@ export const login = async (email, password) => {
   try {
     const users = await getAllUsers();
     
-    if (!Array.isArray(users)) {
-      throw new Error('Failed to fetch users. Please try again.');
-    }
-    
     console.log('Total users fetched:', users.length);
 
     const user = users.find(u => {
@@ -48,9 +44,6 @@ export const login = async (email, password) => {
 export const signup = async (userData) => {
   try {
     const users = await getAllUsers();
-    if (!Array.isArray(users)) {
-      throw new Error('Failed to fetch users. Please try again.');
-    }
     const existingUser = users.find(u => u.email.toLowerCase() === userData.email.toLowerCase());
 
     if (existingUser) {
@@ -84,7 +77,7 @@ export const signup = async (userData) => {
     if (!createdUser || createdUser === '' || typeof createdUser === 'string') {
       console.log('API returned empty/invalid response, fetching user by email...');
       const allUsers = await getAllUsers();
-      user = Array.isArray(allUsers) ? allUsers.find(u => u.email.toLowerCase() === userData.email.toLowerCase()) : null;
+      user = allUsers.find(u => u.email.toLowerCase() === userData.email.toLowerCase());
       console.log('Found user after fetch:', user);
     }
 
