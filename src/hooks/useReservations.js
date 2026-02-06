@@ -6,7 +6,8 @@ import {
   updateReservation,
   deleteReservation
 } from '../services/bookReservations.api';
-// Query Key Factory
+import { adminQueryOptions } from './queryConfig';
+
 export const reservationKeys = {
   all: ['reservations'],
   lists: () => [...reservationKeys.all, 'list'],
@@ -15,12 +16,11 @@ export const reservationKeys = {
   detail: (id) => [...reservationKeys.details(), id],
 };
 
-// Get all reservations hook
 export const useReservations = () => {
   return useQuery({
     queryKey: reservationKeys.lists(),
     queryFn: getAllReservations,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    ...adminQueryOptions,
   });
 };
 

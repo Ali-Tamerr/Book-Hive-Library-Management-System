@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import BorrowedBooksContent from './BorrowedBooksContent';
-import ReturnedBooksContent from './ReturnedBooksContent';
+import BorrowedBooksContent from './UserBorrowedBooks';
+import ReturnedBooksContent from './UserReturnedBooks';
 import TabButton from '../components/TabButton';
 
 function UserCatalog({ searchValue }) {

@@ -27,7 +27,7 @@ const CommonLayout = ({
     <div className='flex flex-col h-full p-7 pb-0 pr-0 gap-5 max-[1080px]:p-0 max-[1080px]:pt-5'>
       <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
         <div className="flex justify-between items-center max-[856px]:gap-2">
-          {customTitle ? customTitle : <h2 className="text-xl max-[856px]:text-sm font-semibold whitespace-nowrap">{title}</h2>}
+          {customTitle ? customTitle : <h2 className="text-xl max-[856px]:text-sm font-semibold whitespace-nowrap dark:text-[#E8E8E8]">{title}</h2>}
           <div className='hidden max-[856px]:flex flex-1 h-10'>
             <SearchBar searchValue={searchValue} setSearchValue={setSearchValue} />
           </div>
@@ -44,8 +44,8 @@ const CommonLayout = ({
       </div>
 
       <section className="flex-1 h-full  gap-6 rounded-lg flex">
-        <div className="overflow-x-auto bg-white rounded-lg flex items-start gap-4 flex-1 h-full">
-          <table className="w-full min-w-max border-collapse text-left text-sm">
+        <div className="overflow-x-auto bg-white dark:bg-[#121317] rounded-lg flex items-start gap-4 flex-1 h-full">
+          <table className="w-full min-w-max border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead>
               <tr>
                 {columns.map(col => (
@@ -54,7 +54,7 @@ const CommonLayout = ({
               </tr>
               <tr>
                 <th colSpan={columns.length} className="p-0">
-                  <div className="mx-auto  w-[97%] border-b border-gray-600"></div>
+                  <div className="mx-auto  w-[97%] border-b border-gray-600 dark:border-[#292D32]"></div>
                 </th>
               </tr>
             </thead>

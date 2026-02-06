@@ -8,8 +8,16 @@ import {
 import {
   useUserRequests,
   useApproveUserRequest,
-  useRejectUserRequest
+  useRejectUserRequest,
+  useDeleteUserRequest
 } from '../hooks/useUserRequests.js';
+import {
+  useBookTransactions,
+  useUpdateBookTransaction,
+  useDeleteBookTransaction
+} from '../hooks/useBookTransactions.js';
+import { useBooks } from '../hooks/useBooks.js';
+import { useBookCopies } from '../hooks/useBookCopies.js';
 import UserFormPopup from '../components/UserFormPopup.jsx';
 import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
 import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
@@ -30,6 +38,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [showViewDetails, setShowViewDetails] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showRequestsPopup, setShowRequestsPopup] = useState(false);
+  const [pendingRequestId, setPendingRequestId] = useState(null);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -50,22 +59,52 @@ function UserManagement({ searchValue, setSearchValue }) {
   const { data: userRequests = [], isLoading: isLoadingRequests } = useUserRequests();
   const approveRequestMutation = useApproveUserRequest();
   const rejectRequestMutation = useRejectUserRequest();
+  const deleteRequestMutation = useDeleteUserRequest();
+
+  const { data: bookTransactions = [], isLoading: isLoadingBookTransactions } = useBookTransactions();
+  const updateBookTransactionMutation = useUpdateBookTransaction();
+  const deleteBookTransactionMutation = useDeleteBookTransaction();
+  const { data: books = [] } = useBooks();
+  const { data: bookCopies = [] } = useBookCopies();
+
+  const pendingBookRequests = bookTransactions.filter(
+    t => t.status === 'Pending' && t.transaction_type === 'Check-Out'
+  );
+
+  const pendingReturnRequests = bookTransactions.filter(
+    t => t.status === 'Pending' && t.transaction_type === 'Check-In'
+  );
 
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
+      if (!editMode && (!formData.user_id || formData.user_id.trim() === '')) {
+        alert('User ID is required.');
+        return;
+      }
+      if (!editMode && (!formData.password || formData.password.trim() === '')) {
+        alert('Password is required for new users.');
+        return;
+      }
+      if (!formData.phone_number || formData.phone_number.trim() === '') {
+        alert('Phone number is required.');
+        return;
+      }
+
       const selectedRole = isSuperAdmin && formData.role ? formData.role : 'User';
       const apiData = {
-        user_id: formData.user_id,
+        user_id: formData.user_id.trim(),
         name: formData.name,
         email: formData.email,
         phone_number: formData.phone_number,
         role: selectedRole,
         plan: formData.plan || null,
-        status: formData.status,
+        status: formData.status || 'Active',
         password_hash: formData.password,
         created_by: currentUser?.user_id || null
       };
+
+      console.log('Sending user data:', JSON.stringify(apiData, null, 2));
 
       if (editMode && formData.user_id) {
         if (!formData.password || formData.password.trim() === '') {
@@ -74,6 +113,15 @@ function UserManagement({ searchValue, setSearchValue }) {
         await updateUserMutation.mutateAsync({ id: formData.user_id, data: apiData });
       } else {
         await createUserMutation.mutateAsync(apiData);
+        if (pendingRequestId) {
+          try {
+            await deleteRequestMutation.mutateAsync(pendingRequestId);
+            console.log('Request deleted successfully:', pendingRequestId);
+          } catch (deleteError) {
+            console.error('Failed to delete request:', deleteError);
+          }
+          setPendingRequestId(null);
+        }
       }
       setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', role: 'User', status: 'Active', password: '', password_hash: '' });
       setShowPopup(false);
@@ -127,6 +175,7 @@ function UserManagement({ searchValue, setSearchValue }) {
 
   const buttonBehaviour = () => {
     setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', role: 'User', status: 'Active', password: '', password_hash: '' });
+    setPendingRequestId(null);
     setEditMode(false);
     setShowPopup(true);
   };
@@ -152,7 +201,22 @@ function UserManagement({ searchValue, setSearchValue }) {
   ];
 
   const customActionRenderer = (user) => {
-    const isAdminOrSuperAdmin = user.role === 'Admin' || user.role === 'Super Admin';
+    const isSuperAdminAccount = user.role === 'Super Admin';
+    const isAdminAccount = user.role === 'Admin';
+
+    const canDelete = isSuperAdmin
+      ? !isSuperAdminAccount
+      : !isAdminAccount && !isSuperAdminAccount;
+
+    const getDeleteMessage = () => {
+      if (isSuperAdminAccount) {
+        return 'Super Admin accounts cannot be deleted.';
+      }
+      if (isAdminAccount && !isSuperAdmin) {
+        return 'Only Super Admins can delete Admin accounts.';
+      }
+      return '';
+    };
 
     return (
       <div className='w-max mx-auto flex justify-center items-center'>
@@ -165,17 +229,17 @@ function UserManagement({ searchValue, setSearchValue }) {
         </button>
         <button
           onClick={() => {
-            if (isAdminOrSuperAdmin) {
-              alert('Cannot delete admin or super admin accounts. Only regular users can be deleted.');
+            if (!canDelete) {
+              alert(getDeleteMessage());
               return;
             }
             handleDelete(user.user_id);
           }}
-          className={`mr-2 text-lg transition-transform ${isAdminOrSuperAdmin
+          className={`mr-2 text-lg transition-transform ${!canDelete
             ? 'opacity-40 cursor-not-allowed'
             : 'hover:scale-125 cursor-pointer'
             }`}
-          title={isAdminOrSuperAdmin ? 'Cannot delete admin accounts' : 'Delete'}
+          title={!canDelete ? getDeleteMessage() : 'Delete'}
         >
           <Trash2 size={20} />
         </button>
@@ -228,7 +292,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         secondaryButton={
           <button
             onClick={() => setShowRequestsPopup(true)}
-            className="bg-white border border-[#0b0b3b] cursor-pointer h-full max-[856px]:text-xs text-[#0b0b3b] min-w-[150px] rounded-xl hover:bg-[#F0F0FF] transition-colors text-sm font-medium flex items-center justify-center gap-2"
+            className="bg-white border border-[#0b0b3b] dark:border-[#121317] cursor-pointer h-full max-[856px]:text-xs text-[#0b0b3b] dark:bg-[#E8E8E8] dark:text-[#121317] min-w-[150px] rounded-xl hover:bg-[#F0F0FF] transition-colors text-sm font-medium flex items-center justify-center hover:bg-[#1a1a6a] dark:hover:bg-[#d4d4d4] gap-2"
           >
             View Requests
           </button>
@@ -278,6 +342,7 @@ function UserManagement({ searchValue, setSearchValue }) {
             password: request.password || '',
             password_hash: ''
           });
+          setPendingRequestId(request.request_id);
           setShowRequestsPopup(false);
           setEditMode(false);
           setShowPopup(true);
@@ -298,6 +363,76 @@ function UserManagement({ searchValue, setSearchValue }) {
           } catch (error) {
             console.error('Failed to reject request:', error);
             alert('Failed to reject request. Please try again.');
+          }
+        }}
+        bookRequests={pendingBookRequests}
+        isLoadingBooks={isLoadingBookTransactions}
+        users={users}
+        books={books}
+        bookCopies={bookCopies}
+        onApproveBook={async (request) => {
+          try {
+            await updateBookTransactionMutation.mutateAsync({
+              id: request.transaction_id,
+              data: {
+                ...request,
+                status: 'Completed'
+              }
+            });
+          } catch (error) {
+            console.error('Failed to approve book request:', error);
+            alert('Failed to approve book request. Please try again.');
+          }
+        }}
+        onRejectBook={async (request) => {
+          try {
+            await deleteBookTransactionMutation.mutateAsync(request.transaction_id);
+          } catch (error) {
+            console.error('Failed to reject book request:', error);
+            alert('Failed to reject book request. Please try again.');
+          }
+        }}
+        returnRequests={pendingReturnRequests}
+        isLoadingReturns={isLoadingBookTransactions}
+        onApproveReturn={async (request) => {
+          try {
+            const originalBorrow = bookTransactions.find(
+              t => t.book_id === request.book_id &&
+                t.user_id === request.user_id &&
+                t.transaction_type === 'Check-Out' &&
+                t.status === 'Completed' &&
+                !t.return_date
+            );
+
+            if (originalBorrow) {
+              await updateBookTransactionMutation.mutateAsync({
+                id: originalBorrow.transaction_id,
+                data: {
+                  ...originalBorrow,
+                  return_date: new Date().toISOString(),
+                  status: 'Completed'
+                }
+              });
+            }
+
+            await updateBookTransactionMutation.mutateAsync({
+              id: request.transaction_id,
+              data: {
+                ...request,
+                status: 'Completed'
+              }
+            });
+          } catch (error) {
+            console.error('Failed to approve return request:', error);
+            alert('Failed to approve return request. Please try again.');
+          }
+        }}
+        onRejectReturn={async (request) => {
+          try {
+            await deleteBookTransactionMutation.mutateAsync(request.transaction_id);
+          } catch (error) {
+            console.error('Failed to reject return request:', error);
+            alert('Failed to reject return request. Please try again.');
           }
         }}
       />

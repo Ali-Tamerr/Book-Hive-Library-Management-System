@@ -8,6 +8,7 @@ import {
   approveUserRequest,
   rejectUserRequest
 } from '../services/userRequests.api';
+import { adminQueryOptions } from './queryConfig';
 
 export const userRequestKeys = {
   all: ['userRequests'],
@@ -21,7 +22,7 @@ export const useUserRequests = () => {
   return useQuery({
     queryKey: userRequestKeys.lists(),
     queryFn: getAllUserRequests,
-    staleTime: 2 * 60 * 1000,
+    ...adminQueryOptions,
   });
 };
 
