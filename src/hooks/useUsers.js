@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from '../services/users.api';
-import { adminQueryOptions } from './queryConfig';
 
+// Query Key Factory
 export const userKeys = {
   all: ['users'],
   lists: () => [...userKeys.all, 'list'],
@@ -10,11 +10,12 @@ export const userKeys = {
   detail: (id) => [...userKeys.details(), id],
 };
 
+// Get all users hook
 export const useUsers = () => {
   return useQuery({
     queryKey: userKeys.lists(),
     queryFn: getAllUsers,
-    ...adminQueryOptions,
+    staleTime: 5 * 60 * 1000, 
   });
 };
 

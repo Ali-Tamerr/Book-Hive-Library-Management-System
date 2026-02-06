@@ -139,18 +139,14 @@ function BorrowedBooks({ searchValue, setSearchValue, customTitle, hideButton = 
     return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
-  const approvedBorrowedBooks = borrowedBooks.filter(
-    book => book.status === 'Completed' && book.transaction_type === 'Check-Out'
-  );
-
   const filteredBorrowedBooks = searchValue
-    ? approvedBorrowedBooks.filter(
+    ? borrowedBooks.filter(
       (book) =>
         book.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
         book.user_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
         book.transaction_id?.toString().includes(searchValue)
     )
-    : approvedBorrowedBooks;
+    : borrowedBooks;
 
   const tableData = filteredBorrowedBooks.map(book => ({
     ...book,

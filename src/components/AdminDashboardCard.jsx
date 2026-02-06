@@ -9,24 +9,24 @@ const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadi
                 <li className="text-xs  p-3 rounded-lg flex items-center gap-3">Loading...</li>
             ) : displayAdmins.length > 0 ? (
                 displayAdmins.map((admin) => (
-                    <li key={admin.id} className="text-xs dark:bg-[#929292] h-18 p-1 rounded-xl flex items-center justify-between gap-3 mb-2 border border-[2px] border-[#0a0f33] dark:border-[#121317]">
-                        <div className="bg-[#C7C7C7]/48 dark:bg-[#929292] relative flex gap-3 h-full items-center flex-1 p-2 rounded-xl px-2 py-1">
+                    <li key={admin.id} className="text-xs bg-[#f5f7fb] h-18 p-1 rounded-lg flex items-center justify-between gap-3 mb-2 border border-[#0a0f33]">
+                        <div className="bg-[#C7C7C77A] relative flex gap-3 h-full items-center flex-1 p-2 rounded-lg px-2 py-1">
                             <div className="w-12 h-12 p-2 rounded-lg flex items-center justify-center shrink-0 ">
-                                <ShieldCheck className="text-[#0a0f33] dark:text-black h-full w-full" />
+                                <ShieldCheck className="text-[#0a0f33] h-full w-full" />
                             </div>
-                            <div className="w-0.5 h-[90%] bg-[#0a0f33] dark:bg-[#121317]"></div>
+                            <div className="w-0.5 h-[90%] bg-[#0a0f33]"></div>
                             <div className="flex-1 overflow-hidden flex flex-col justify-between  whitespace-nowrap truncate">
-                                <p className="text-[18px] font-semibold text-[#0a0f33] dark:text-black">{admin.name}</p>
-                                <p className="max-[1540px]:text-[10px] text-[14px] text-[#6f7390] dark:text-black">Admin ID: {admin.adminId}</p>
+                                <p className="text-[18px] font-semibold text-[#0a0f33]">{admin.name}</p>
+                                <p className="max-[1540px]:text-[11px] text-[14px] text-[#6f7390]">Admin ID: {admin.adminId}</p>
                                 <div className="flex justify-end absolute right-2 bottom-1 items-center gap-1 mt-1">
-                                    <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-[#0a0f33] dark:bg-black' : 'bg-gray-400'}`}></span>
-                                    <span className={`text-[10px] text-[#0a0f33] dark:text-black font-medium `}>{admin.isOnline ? 'Active' : 'Not Active'}</span>
+                                    <span className={`w-2 h-2 rounded-full ${admin.isOnline ? 'bg-[#0a0f33]' : 'bg-gray-400'}`}></span>
+                                    <span className={`text-[12px] text-[#0a0f33]${admin.isOnline ? 'font-bold' : 'font-normal'} `}>{admin.isOnline ? 'Online' : 'Offline'}</span>
                                 </div>
                             </div>
                         </div>
                         <RefreshCw
                             onClick={() => handleRefreshAdmins(admin.id)}
-                            className={`mr-2 h-15 w-12 px-2 text-[#0a0f33] dark:text-black cursor-pointer ${loadingAdmins[admin.id] ? 'animate-spin' : ''}`}
+                            className={`mr-2 h-15 w-12 px-2 text-[#0a0f33] cursor-pointer ${loadingAdmins[admin.id] ? 'animate-spin' : ''}`}
                         />
                     </li>
                 ))

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory } from '../services/categories.api';
-import { adminQueryOptions } from './queryConfig';
 
+// Query Key Factory
 export const categoryKeys = {
   all: ['categories'],
   lists: () => [...categoryKeys.all, 'list'],
@@ -10,11 +10,12 @@ export const categoryKeys = {
   detail: (id) => [...categoryKeys.details(), id],
 };
 
+// Get all categories hook
 export const useCategories = () => {
   return useQuery({
     queryKey: categoryKeys.lists(),
     queryFn: getAllCategories,
-    ...adminQueryOptions,
+    staleTime: 5 * 60 * 1000, 
   });
 };
 
