@@ -38,30 +38,31 @@ function Books({ searchValue, setSearchValue }) {
   const updateBookMutation = useUpdateBook();
   const deleteBookMutation = useDeleteBook();
 
-  const handleAddBook = async (e) => {
-    e.preventDefault();
+  const handleAddBook = async (e, overrideData) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const currentData = overrideData || formData;
     try {
-      const category_id = parseInt(formData.category_id, 10);
-      const quantity = parseInt(formData.quantity, 10);
-      const sale_price = parseFloat(formData.sale_price);
+      const category_id = parseInt(currentData.category_id, 10);
+      const quantity = parseInt(currentData.quantity, 10);
+      const sale_price = parseFloat(currentData.sale_price);
 
-      const bookCopiesCount = formData.BookCopies?.length || 0;
+      const bookCopiesCount = currentData.BookCopies?.length || 0;
       if (bookCopiesCount !== quantity) {
         alert(`Please enter exactly ${quantity} copy ID${quantity !== 1 ? 's' : ''}. Currently have ${bookCopiesCount}.`);
         return;
       }
 
       const apiData = {
-        name: formData.name,
+        name: currentData.name,
         category_id: isNaN(category_id) ? null : category_id,
         quantity: isNaN(quantity) ? 1 : quantity,
         sale_price: isNaN(sale_price) ? null : sale_price,
-        BookCopies: formData.BookCopies,
+        BookCopies: currentData.BookCopies,
         created_by: currentUser?.user_id || null
       };
 
-      if (editMode && formData.book_id) {
-        await updateBookMutation.mutateAsync({ id: formData.book_id, data: apiData });
+      if (editMode && currentData.book_id) {
+        await updateBookMutation.mutateAsync({ id: currentData.book_id, data: apiData });
       } else {
         await createBookMutation.mutateAsync(apiData);
       }

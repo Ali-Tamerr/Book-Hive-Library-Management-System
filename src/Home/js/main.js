@@ -74,13 +74,11 @@ let swiperHome = new Swiper('.home__swiper', {
 /*=============== FEATURED SWIPER ===============
 */
 let swiperFeatured = new Swiper('.featured__swiper', {
-    loop: false,
+    loop: true,
     spaceBetween: 16,
     grabCursor: true,
     slidesPerView: 'auto',
     centeredSlides: 'auto',
-    preventClicks: false,
-    preventClicksPropagation: false,
 
     navigation: {
         nextEl: '.swiper-button-next',

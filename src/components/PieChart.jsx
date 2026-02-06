@@ -11,9 +11,9 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
 
   if (totalForChart === 0 || (currentlyBorrowed === 0 && returnedBooks === 0)) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <svg viewBox={`0 0 ${size} ${size}`} className="block w-full h-full max-h-[600px]">
-          <circle cx={center} cy={center} r={radius} fill="#4b5563" />
+      <div className="w-full h-fit flex items-center justify-center">
+        <svg viewBox={`0 0 ${size} ${size}`} className="block w-full h-full">
+          <circle cx={center} cy={center} r={radius} className="fill-[#3D3E3E] dark:fill-[#292D32]" />
         </svg>
       </div>
     );
@@ -55,22 +55,22 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
   const isReturnedFullCircle = returnedDegrees >= 359.99;
 
   return (
-    <div className="w-full h-full max-h-[600px] flex items-center justify-center">
+    <div className="w-full h-fit flex items-center justify-center">
       <svg viewBox={`0 0 ${size} ${size}`} className="block w-full h-full">
         {isBorrowedFullCircle ? (
-          <circle cx={center} cy={center} r={radius} fill="#4b5563" />
+          <circle cx={center} cy={center} r={radius} className="fill-[#3D3E3E] dark:fill-[#D7D7D7]" />
         ) : borrowedDegrees > 0 && (
           <path
             d={describeArc(center, center, radius, borrowedStart, borrowedEnd)}
-            fill="#4b5563"
+            className="fill-[#3D3E3E] dark:fill-[#D7D7D7]"
           />
         )}
         {isReturnedFullCircle ? (
-          <circle cx={center} cy={center} r={radius} fill="#0a0f33" />
+          <circle cx={center} cy={center} r={radius} className="fill-[#000035] dark:fill-[#292D32]" />
         ) : returnedDegrees > 0 && (
           <path
             d={describeArc(center, center, radius, returnedStart, returnedEnd)}
-            fill="#0a0f33"
+            className="fill-[#000035] dark:fill-[#292D32]"
           />
         )}
       </svg>

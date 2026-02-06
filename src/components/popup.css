@@ -1,0 +1,167 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.popup h2 {
+  margin-top: 0;
+}
+
+.popup-close {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #bec3ce;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+
+  
+  .branches-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+.branches-header h2 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0a0f5c;
+  margin: 0;
+}
+
+.branches-logo {
+  height: 10px;
+  width: 60px;
+}
+
+  .branches-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+    .branches-table th {
+        text-align: left;
+        padding: 12px 10px;
+        font-size: 16px;
+        color: #0a0f5c;
+        border-bottom: 1px solid #12161f;
+  }
+
+    /* set explicit column widths so values align under headers */
+    .branches-table th:nth-child(1),
+    .branches-table td:nth-child(1) {
+      width: 20%;
+    }
+
+    .branches-table th:nth-child(2),
+    .branches-table td:nth-child(2) {
+      width: 25%;
+    }
+
+    .branches-table th:nth-child(3),
+    .branches-table td:nth-child(3) {
+      width: 25%;
+    }
+
+    .branches-table th:nth-child(4),
+    .branches-table td:nth-child(4) {
+      width: 10%;
+      text-align: center;
+    }
+
+  
+
+  .branches-table tr:hover {
+    background: #f9fafb;
+    cursor: pointer;
+  }
+
+  /* center the quantity column */
+  
+  .branches-table td:nth-child(4) {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* wider branches modal styles (overlay + popup) */
+  .branches-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .branches-popup {
+    background: #fff;
+    width: 90%;
+    max-width: 1200px;
+    min-height: 500px;
+    border-radius: 14px;
+    padding: 32px 40px;
+    position: relative;
+  }
+
+  .branches-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+/* Dark Theme Overrides */
+body.dark-theme .popup,
+body.dark-theme .branches-popup {
+  background: #121317;
+  color: #E8E8E8;
+}
+
+body.dark-theme .branches-header h2,
+body.dark-theme .popup h2 {
+  color: #E8E8E8;
+}
+
+body.dark-theme .branches-table th {
+  color: #E8E8E8;
+  border-bottom: 1px solid #292D32;
+}
+
+body.dark-theme .branches-table tr:hover {
+  background: #202020;
+}
+
+body.dark-theme .popup-close {
+  background: #292D32;
+  color: #E8E8E8;
+}
