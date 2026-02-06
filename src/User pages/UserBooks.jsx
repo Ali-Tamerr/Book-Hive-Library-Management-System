@@ -304,7 +304,7 @@ function UserBooks() {
                                 setViewBook(book);
                                 setShowViewDetails(true);
                             }}
-                            className="p-2 rounded-lg transition-all text-[#0a0f33] hover:bg-gray-100 cursor-pointer"
+                            className="p-2 rounded-lg transition-all text-[#0a0f33] dark:text-white hover:bg-gray-100 cursor-pointer"
                             title="View book details"
                         >
                             <ReceiptText size={20} />

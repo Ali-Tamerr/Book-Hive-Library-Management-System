@@ -69,26 +69,26 @@ const CommonLayout = ({
                 </tr>
               ) : (
                 data.map((item, index) => (
-                  <tr key={index} className="font-medium h-[68px]">
+                  <tr key={index} className="font-medium  h-[68px]">
                     {columns.map(col => {
                       let cellContent;
                       if (col.accessor === 'action') {
                         cellContent = customActionRenderer ? (
                           customActionRenderer(item)
                         ) : (
-                          <div className='w-max mx-auto flex justify-center items-center'>
+                          <div className=' w-max mx-auto flex justify-center items-center'>
                             <button
                               onClick={() => handleEdit(item)}
-                              className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer"
+                              className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer dark:text-white"
                               title="Edit"><FilePenLine size={20} /></button>
                             <button
                               onClick={() => handleDelete(item.id || item.user_id || item.book_id || item.category_id)}
-                              className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer"
+                              className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer dark:text-white"
                               title="Delete"><Trash2 size={20} /></button>
                             {handleView && (
                               <button
                                 onClick={() => handleView(item)}
-                                className="text-lg hover:scale-125 transition-transform cursor-pointer"
+                                className="text-lg hover:scale-125 transition-transform cursor-pointer dark:text-white"
                                 title="View"><ReceiptText size={20} /></button>
                             )}
                           </div>
@@ -98,7 +98,7 @@ const CommonLayout = ({
                       } else {
                         cellContent = item[col.accessor] || '-';
                       }
-                      return <td key={col.accessor} className="p-3 text-center whitespace-nowrap">{cellContent}</td>;
+                      return <td key={col.accessor} className="p-3 dark:text-white text-center whitespace-nowrap">{cellContent}</td>;
                     })}
                   </tr>
                 ))
@@ -107,8 +107,8 @@ const CommonLayout = ({
           </table>
         </div>
         {isUserPage && (
-          <div className="flex flex-col items-center justify-center gap-2 w-28 h-full bg-[#0a0f33] dark:bg-[#121317] rounded-tl-lg">
-            <span className='text-upright text-white text-2xl tracking-[5px]'>BOOK&nbsp;&nbsp;HIVE</span>
+          <div className="flex flex-col items-center dark:bg-white justify-center gap-2 w-28 h-full bg-[#0a0f33] dark:bg-[#121317] rounded-tl-lg">
+            <span className='text-upright dark:text-black text-white text-2xl tracking-[5px]'>BOOK&nbsp;&nbsp;HIVE</span>
           </div>
         )}
       </section>
