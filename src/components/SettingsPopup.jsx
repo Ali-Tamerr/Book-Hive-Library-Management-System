@@ -98,13 +98,13 @@ const SettingsPopup = ({ show, onClose }) => {
             show={show}
             onClose={onClose}
             title="Change Credentials"
-            icon={<Settings size={35} strokeWidth={2.3} />}
+            icon={<Settings size={28} strokeWidth={2.3} />}
             maxWidthClass="max-w-[700px]"
         >
-            <form onSubmit={handleSubmit} className='flex text-[#525252]  flex-col gap-14'>
+            <form onSubmit={handleSubmit} className='flex flex-col gap-14'>
                 <div className='px-10 space-y-6'>
                     <div className='flex items-center gap-6'>
-                        <label className='text-sm font-regular w-[180px] text-left whitespace-nowrap'>
+                        <label className='text-sm font-medium w-[180px] text-left whitespace-nowrap'>
                             Enter Current Password
                         </label>
                         <input
@@ -119,7 +119,7 @@ const SettingsPopup = ({ show, onClose }) => {
                     </div>
 
                     <div className='flex items-center gap-6'>
-                        <label className='text-sm font-regular w-[180px] text-left whitespace-nowrap'>
+                        <label className='text-sm font-medium w-[180px] text-left whitespace-nowrap'>
                             Enter New Password
                         </label>
                         <input
@@ -134,7 +134,7 @@ const SettingsPopup = ({ show, onClose }) => {
                     </div>
 
                     <div className='flex items-center gap-6'>
-                        <label className='text-sm font-regular w-[180px] text-left whitespace-nowrap'>
+                        <label className='text-sm font-medium w-[180px] text-left whitespace-nowrap'>
                             Confirm New Password
                         </label>
                         <input

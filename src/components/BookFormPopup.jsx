@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, Copy } from 'lucide-react';
 import FormLayout from '../Layouts/FormLayout.jsx';
+import NFCReaderButton from './NFCReaderButton.jsx';
 import BookCopiesPopup from './BookCopiesPopup.jsx';
 
 function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBook, setShowPopup, setEditMode, categories }) {
@@ -11,60 +12,53 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
   };
 
   const handleSaveBookCopies = (copiesArray) => {
-    const updatedData = { ...formData, BookCopies: copiesArray };
-    setFormData(updatedData);
-    // Directly submit the book with the new copies
-    if (handleAddBook) {
-      handleAddBook(null, updatedData);
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Validate required fields
-    if (!formData.name || !formData.name.trim()) {
-      alert('Please enter a book name');
-      return;
-    }
-    const qty = parseInt(formData.quantity, 10);
-    if (!qty || qty < 1) {
-      alert('Please enter a valid quantity');
-      return;
-    }
-    if (!formData.category_id) {
-      alert('Please select a category');
-      return;
-    }
-
-    setShowCopiesPopup(true);
+    setFormData(prevData => ({ ...prevData, BookCopies: copiesArray }));
   };
 
   const inputs = [
-    { name: 'name', type: 'text', placeholder: 'Name', required: true },
-    { name: 'quantity', type: 'number', placeholder: 'Quantity', required: true },
+    { name: 'name', type: 'text', placeholder: 'Book Name', required: true },
     {
       name: 'category_id',
       type: 'select',
       placeholder: 'Category',
       options: (categories || []).map(cat => ({ value: cat.category_id, label: cat.category_name })),
     },
+    { name: 'quantity', type: 'number', placeholder: 'Quantity', required: true },
     {
-      name: 'copy_indicator',
+      name: 'book_copies_button',
       type: 'custom',
-      render: () => (
-        <div className="flex justify-center w-full">
-          <div className="w-[150px] h-[45px] rounded-xl border border-[#3D3E3E] flex items-center justify-center bg-white text-[#0a0f33]">
-            <Copy size={20} />
-          </div>
-        </div>
-      )
+      render: (data) => {
+        const qty = parseInt(data.quantity, 10) || 0;
+        const copiesCount = data.BookCopies?.length || 0;
+        const isValid = copiesCount === qty && qty > 0;
+
+        return (
+          <button
+            type="button"
+            onClick={() => setShowCopiesPopup(true)}
+            disabled={qty < 1}
+            className={`w-full h-[50px] px-4 py-3 rounded-xl border flex items-center justify-center gap-2 text-[13px] font-medium transition-colors ${qty < 1
+              ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
+              : isValid
+                ? 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100 cursor-pointer'
+                : 'border-[#1e255e] bg-[#f0f1ff] text-[#1e255e] hover:bg-[#e0e2ff] cursor-pointer'
+              }`}
+          >
+            <Copy size={18} />
+            {copiesCount > 0
+              ? `${copiesCount}/${qty} Copy IDs Entered ${isValid ? '✓' : ''}`
+              : `Enter ${qty} Copy ID${qty !== 1 ? 's' : ''}`
+            }
+          </button>
+        );
+      }
     },
   ];
 
   const customLayout = [
     { columns: 1, inputs: ['name'] },
     { columns: 2, inputs: ['quantity', 'category_id'] },
-    { columns: 1, inputs: ['copy_indicator'] },
+    { columns: 1, inputs: ['book_copies_button'] },
   ];
 
   return (
@@ -72,12 +66,12 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
       <FormLayout
         show={showPopup}
         onClose={() => { setShowPopup(false); setEditMode(false); }}
-        title={editMode ? 'Edit Book' : 'Add Book'}
-        onSubmit={handleSubmit}
+        title={editMode ? 'Edit Book' : 'Add New Book'}
+        onSubmit={handleAddBook}
         inputs={inputs}
         formData={formData}
         onFormChange={onFormChange}
-        submitButtonText="Enter Ids"
+        submitButtonText={editMode ? 'UPDATE' : 'ADD'}
         onCancel={() => { setShowPopup(false); setEditMode(false); }}
         icon={<BookOpen size={24} strokeWidth={2.3} />}
         customLayout={customLayout}

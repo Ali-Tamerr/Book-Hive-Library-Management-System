@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, ShoppingCart, X, BookMarked, ReceiptText } from 'lucide-react';
+import { BookOpen, CheckCircle, XCircle, ShoppingCart, X, BookMarked, ReceiptText } from 'lucide-react';
 import CommonLayout from '../Layouts/CommonLayout';
 import { useBooks } from '../hooks/useBooks';
 import { useCategories } from '../hooks/useCategories';
@@ -10,7 +10,6 @@ import { getCurrentUser } from '../services/auth.api';
 import BorrowBookPopup from '../components/BorrowBookPopup';
 import ConfirmAcquirePopup from '../components/ConfirmAcquirePopup';
 import BookDetailsPopup from '../components/BookDetailsPopup';
-import StatusMessage from '../components/StatusMessage';
 
 function UserBooks() {
     const currentUser = getCurrentUser();
@@ -225,7 +224,19 @@ function UserBooks() {
     const customTitle = (
         <div className="flex items-center gap-4">
             <h2 className="text-xl max-[856px]:text-sm font-semibold whitespace-nowrap">Available Books</h2>
-            <StatusMessage message={message.text} type={message.type} />
+            {message.text && (
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium animate-pulse ${message.type === 'success'
+                    ? 'bg-green-100 text-green-700 border border-green-300'
+                    : 'bg-red-100 text-red-700 border border-red-300'
+                    }`}>
+                    {message.type === 'success' ? (
+                        <CheckCircle size={16} />
+                    ) : (
+                        <XCircle size={16} />
+                    )}
+                    <span>{message.text}</span>
+                </div>
+            )}
         </div>
     );
 
