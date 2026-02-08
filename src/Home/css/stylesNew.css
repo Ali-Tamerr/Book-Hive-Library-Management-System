@@ -159,6 +159,7 @@ body.dark-theme{
 .dark-theme .search__input{
   background-color: #1d1e23;
   color: #f1f1f3;
+  
 }
 
 .dark-theme .search__icon,
@@ -1011,6 +1012,50 @@ body.dark-theme{
     padding: 28px 12px;
   }
 
+  body.dark-theme .home-page .branches-popup-overlay{
+    background: rgba(10, 10, 12, 0.7);
+  }
+
+  body.dark-theme .home-page .branches-popup{
+    background: #14161b;
+    border-color: #242732;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  }
+
+  body.dark-theme .home-page .branches-popup-title,
+  body.dark-theme .home-page .branches-popup-brand-text .name,
+  body.dark-theme .home-page .branches-popup-brand-text .sub{
+    color: #f1f2f6;
+  }
+
+  body.dark-theme .home-page .branches-popup-back{
+    border-color: #e3e6f0;
+    color: #e3e6f0;
+    background: transparent;
+  }
+
+  body.dark-theme .home-page .branches-popup-back:hover{
+    background: #e3e6f0;
+    color: #0f1116;
+  }
+
+  body.dark-theme .home-page .branches-popup-table-wrap{
+    border-top-color: #2b2f3a;
+  }
+
+  body.dark-theme .home-page .branches-popup-table thead th{
+    color: #e3e6f0;
+    border-bottom-color: #2b2f3a;
+  }
+
+  body.dark-theme .home-page .branches-popup-table tbody td{
+    color: #d8dbe6;
+  }
+
+  body.dark-theme .home-page .branches-popup-empty{
+    color: #a2a7b3;
+  }
+
   @media (max-width: 700px){
     .home-page .branches-popup{
       padding: 14px 14px 20px;
@@ -1174,6 +1219,51 @@ body.dark-theme{
     .home-page .featured-popup-col-divider{
       display: none;
     }
+  }
+
+  body.dark-theme .home-page .featured-popup-overlay{
+    background: rgba(10, 10, 12, 0.7);
+  }
+
+  body.dark-theme .home-page .featured-popup{
+    background: #14161b;
+    border-color: #242732;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  }
+
+  body.dark-theme .home-page .featured-popup-back{
+    border-color: #e3e6f0;
+    color: #e3e6f0;
+    background: transparent;
+  }
+
+  body.dark-theme .home-page .featured-popup-back:hover{
+    background: #e3e6f0;
+    color: #0f1116;
+  }
+
+  body.dark-theme .home-page .featured-popup-row{
+    color: #d8dbe6;
+  }
+
+  body.dark-theme .home-page .featured-popup-row .label{
+    color: #e3e6f0;
+  }
+
+  body.dark-theme .home-page .featured-popup-divider,
+  body.dark-theme .home-page .featured-popup-col-divider{
+    background: #2b2f3a;
+  }
+
+  body.dark-theme .home-page .featured-popup-action{
+    background: #0f1116;
+    color: #e3e6f0;
+    border: 1px solid #3a3f4c;
+  }
+
+  body.dark-theme .home-page .featured-popup-action:hover{
+    background: #e3e6f0;
+    color: #0f1116;
   }
 
 

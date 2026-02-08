@@ -5,7 +5,8 @@ import SignupPopup from '../shared/SignupPopup';
 import ForgotPasswordPopup from '../shared/ForgotPasswordPopup';
 import OTPPopup from '../shared/OTPPopup';
 import ResetPasswordPopup from '../shared/ResetPasswordPopup';
-import BranchesModal from '../components/BranchesModal';
+import AboutBranchesPopup from '../components/AboutBranchesPopup';
+import FeaturedBookPopup from '../components/FeaturedBookPopup';
 import './css/swiper-bundle.min.css';
 import './css/styles.css';
 import './css/stylesNew.css';
@@ -19,7 +20,43 @@ const Home = () => {
    const [isOTPOpen, setIsOTPOpen] = useState(false);
    const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
    const [activePopup, setActivePopup] = useState(null);
+   const [selectedFeaturedBook, setSelectedFeaturedBook] = useState(null);
    const [themeIcon, setThemeIcon] = useState('ri-moon-line');
+
+   const featuredBooks = [
+      {
+         name: 'My Turn',
+         category: 'Education',
+         language: 'English',
+         branch: 'Cairo',
+         availability: 'Available',
+         image: new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
+      },
+      {
+         name: 'The Second Half',
+         category: 'Biography',
+         language: 'English',
+         branch: 'Giza',
+         availability: 'Available',
+         image: new URL('./assets/img/23036917.jpg', import.meta.url).href,
+      },
+      {
+         name: 'I Think Therefore I Play',
+         category: 'Sports',
+         language: 'English',
+         branch: 'Alexandria',
+         availability: 'Available',
+         image: new URL('./assets/img/61WcybNpt9L.jpg', import.meta.url).href,
+      },
+      {
+         name: 'My Autobiography',
+         category: 'Biography',
+         language: 'English',
+         branch: 'Cairo',
+         availability: 'Available',
+         image: new URL('./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
+      },
+   ];
 
    // Initialize theme on mount
    useEffect(() => {
@@ -308,36 +345,16 @@ const Home = () => {
                <div className="featured__container container">
                   <div className="featured__swiper swiper">
                      <div className="swiper-wrapper">
+                        {featuredBooks.map((book) => (
+                           <article key={book.name} className="featured__card swiper-slide">
+                              <img src={book.image} alt={book.name} className="featured__img" />
 
-
-                        <article className="featured__card swiper-slide">
-                           <img src={new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">My Turn</h2>
-                           <button className="button">Explore Now</button>
-
-                        </article>
-
-                        <article className="featured__card swiper-slide">
-                           <img src={new URL('./assets/img/23036917.jpg', import.meta.url).href} alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">The Second Half</h2>
-                           <button className="button">Explore Now</button>
-                        </article>
-
-                        <article className="featured__card swiper-slide">
-                           <img src={new URL('./assets/img/61WcybNpt9L.jpg', import.meta.url).href} alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">I Think Therefore I Play </h2>
-                           <button className="button">Explore Now</button>
-                        </article>
-
-                        <article className="featured__card swiper-slide">
-                           <img src={new URL('./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="img" className="featured__img" />
-
-                           <h2 className="featured__title">My Autobiography</h2>
-                           <button className="button">Explore Now</button>
-                        </article>
+                              <h2 className="featured__title">{book.name}</h2>
+                              <button className="button" onClick={() => setSelectedFeaturedBook(book)}>
+                                 Book Now
+                              </button>
+                           </article>
+                        ))}
                      </div>
 
                      <div className="swiper-button-prev">
@@ -594,7 +611,12 @@ const Home = () => {
             onLogin={() => setIsLoginOpen(true)}
             onBack={() => setIsOTPOpen(true)}
          />
-         <BranchesModal isOpen={activePopup === 'branches'} onClose={() => setActivePopup(null)} />
+         <AboutBranchesPopup isOpen={activePopup === 'branches'} onClose={() => setActivePopup(null)} />
+         <FeaturedBookPopup
+            isOpen={Boolean(selectedFeaturedBook)}
+            book={selectedFeaturedBook}
+            onClose={() => setSelectedFeaturedBook(null)}
+         />
       </div>
    );
 };
