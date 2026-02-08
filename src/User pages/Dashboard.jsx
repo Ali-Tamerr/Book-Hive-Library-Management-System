@@ -130,7 +130,7 @@ function Dashboard() {
               <option value="">Category</option>
               {categories.map(cat => (
                 <option key={cat.category_id} value={cat.category_id}>
-                  {cat.name}
+                  {cat.category_name || cat.name}
                 </option>
               ))}
             </select>
