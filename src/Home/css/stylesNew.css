@@ -200,16 +200,17 @@ body.dark-theme{
 .dark-theme .footer-links li,
 .dark-theme .footer-description,
 .dark-theme .footer-copy {
-  color: #b2b4bb;
+  color: #ffffff;
 }
 
 .dark-theme .footer-links a:hover{
-  color: #ffffff;
+  color: #111214;
+  background-color: #ffffff;
 }
 
 .dark-theme .footer-title,
 .dark-theme .footer-logo {
-  color: var(--title-color);
+  color: #ffffff;
 }
 
 .dark-theme .about-title,
@@ -302,7 +303,7 @@ body.dark-theme{
 
 .dark-theme .footer-social a,
 .dark-theme .footer-social i {
-  color: #c7c9cf;
+  color: #ffffff;
 }
 
 .dark-theme .nav__actions i,
@@ -424,6 +425,11 @@ body.dark-theme{
   margin-bottom: 2rem;
 }
 
+.featured .section__title,
+.testimonial .section__title{
+  font-weight: 800;
+}
+
 .main {
   overflow: hidden;
 }
@@ -503,12 +509,21 @@ body.dark-theme{
 
 .nav__link i{
   font-size: 1.25rem;
+  color: inherit;
 }
 
 .nav__link:hover{
   color: #1b1c20;
   background-color: #e9e9e9;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+}
+
+.nav__link:hover i{
+  color: #000000;
+}
+
+.dark-theme .nav__link:hover i{
+  color: #ffffff;
 }
 
 .nav__actions{
@@ -666,6 +681,19 @@ body.dark-theme{
 /* Show login */
 .show-login{
   top: 0;
+}
+
+/*=============== LOGIN POPUP (REACT) ===============*/
+.login-popup-container{
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  will-change: transform, opacity;
+}
+
+.login-popup-container--show{
+  transform: translateY(0);
+  opacity: 1;
 }
 
 /*=============== HOME ===============*/
@@ -1326,6 +1354,7 @@ body.dark-theme{
   font-weight: var(--font-semi-bold);
   color: #525252;
   margin-bottom: .5rem;
+  font-family: var(--body-font);
   
 }
 
@@ -1595,11 +1624,13 @@ body.dark-theme{
   font-size: var(--h2-font-size);
   font-weight: var(--font-semi-bold);
   margin-bottom: .75rem;
+  font-family: var(--body-font);
 }
 
 .testimonial__description{
   font-size: var(--small-font-size);
   margin-bottom: 1.25rem;
+  font-family: var(--body-font);
 }
 
 .testimonial__stars{
@@ -1958,13 +1989,19 @@ body.dark-theme{
 }
 
 .footer-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
   color: #333;
   text-decoration: none;
-  transition: 0.2s;
+  transition: color 0.2s, background-color 0.2s, transform 0.2s;
 }
 
 .footer-links a:hover {
-  color: #000035;
+  color: #0a0b2b;
+  background-color: #f2f2f6;
+  transform: translateY(-1px);
 }
 
 /* SOCIAL */
