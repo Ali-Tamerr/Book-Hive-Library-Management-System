@@ -251,7 +251,6 @@ body.dark-theme{
 }
 
 .dark-theme .button,
-.dark-theme .about-cta,
 .dark-theme .btn {
   background-color: #1b1c20;
   border-color: #32343b;
@@ -259,11 +258,36 @@ body.dark-theme{
 }
 
 .dark-theme .button:hover,
-.dark-theme .about-cta:hover,
 .dark-theme .btn:hover {
   background-color: #ffffff;
   border-color: #1b1c20;
   color: #1b1c20;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
+}
+
+.dark-theme .home .button {
+  background-color: #111214;
+  border-color: #f7f7f7;
+  color: #f7f7f7;
+}
+
+.dark-theme .home .button:hover {
+  background-color: #f7f7f7;
+  border-color: #111214;
+  color: #111214;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
+}
+
+.dark-theme .about-cta {
+  background-color: #111214;
+  border-color: #f7f7f7;
+  color: #f7f7f7;
+}
+
+.dark-theme .about-cta:hover {
+  background-color: #f7f7f7;
+  border-color: #111214;
+  color: #111214;
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
 }
 
@@ -468,7 +492,7 @@ body.dark-theme{
   line-height: 1;
   min-height: 2.4rem;
   padding: .45rem 1.4rem;
-  border-radius: 999px;
+  border-radius: 6px;
   background-color: transparent;
   transition: color .3s, background-color .3s, box-shadow .3s;
 }
@@ -705,6 +729,19 @@ body.dark-theme{
   border: 1px #000035 solid;
 }
 
+.home .button{
+  background-color: #111214;
+  color: #f7f7f7;
+  border: 1px solid #f7f7f7;
+  transition: background-color .3s, color .3s, border-color .3s, box-shadow .4s;
+}
+
+.home .button:hover{
+  background-color: #f7f7f7;
+  color: #111214;
+  border: 1px solid #111214;
+}
+
 /* Ensure all text fields on the Home page use the same font as buttons */
 .home-page input,
 .home-page textarea,
@@ -819,21 +856,20 @@ body.dark-theme{
   /* CTA */
   .about-cta{
     display: inline-block;
-    background-color: var(--first-color);
-    color: var(--white-color);
+    background-color: #111214;
+    color: #f7f7f7;
     font-weight: var(--font-semi-bold);
-    transition: box-shadow .4s;
+    transition: background-color .3s, color .3s, border-color .3s, box-shadow .4s;
     text-decoration: none;
     padding: 12px 24px;
-      border: 1px var(--first-color) solid;
-  border-radius: 12px;
+    border: 1px solid #f7f7f7;
+    border-radius: 12px;
   }
 
   .about-cta:hover{
- 
-     background-color: #ffffff;
-  color: #000035;
-  border: 1px #000035 solid;
+    background-color: #f7f7f7;
+    color: #111214;
+    border: 1px solid #111214;
   }
 
   /* RIGHT column: safe container for decorative books */
