@@ -10,6 +10,7 @@ import BranchesPopup from '../components/BranchesPopup';
 
 function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
     const navigate = useNavigate();
+    const [isAnimating, setIsAnimating] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -60,15 +61,22 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
         onSignup?.();
     };
 
+    useEffect(() => {
+        if (!isOpen) return undefined;
+        setIsAnimating(false);
+        const id = requestAnimationFrame(() => setIsAnimating(true));
+        return () => cancelAnimationFrame(id);
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     const popupContent = (
         <div
-            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+            className="login-popup-overlay fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
             onClick={onClose}
         >
             <div
-                className="relative w-[95%] max-w-[1300px] h-[700px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
+                className={`login-popup-container ${isAnimating ? 'login-popup-container--show' : ''} relative w-[95%] max-w-[1300px] h-[700px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className={`flex max-[1080px]:flex-col justify-stretch w-full h-full ${isDarkMode ? 'bg-[#121317]' : 'bg-white'} overflow-hidden`}>
