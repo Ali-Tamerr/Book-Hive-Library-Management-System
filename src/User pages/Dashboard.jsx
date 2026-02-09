@@ -103,52 +103,52 @@ function Dashboard() {
 
   return (
     <div className="flex h-full w-full">
-      <main className="flex-1 h-full px-[30px] py-[20px] flex flex-col gap-[20px]">
-         <div className="flex gap-4 items-center w-full">
-              <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="text"
-                  placeholder="Search for book"
-                  value={searchValue}
-                  onChange={(e) => {
-                    setSearchValue(e.target.value);
-                    setCurrentPage(0);
-                  }}
-                  className="w-full pl-11 pr-4 py-3 rounded-lg border border-zinc-400 bg-white dark:bg-[#121317] dark:text-white dark:border-[#292D32] text-sm focus:outline-none focus:border-[#0b0c28] transition-colors"
-                />
-              </div>
-              <div className="relative flex-1 w-full max-w-[590px] min-w-[180px] mr-25">
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => {
-                    setSelectedCategory(e.target.value);
-                    setCurrentPage(0);
-                  }}
-                  className="w-full appearance-none px-4 py-3 pr-10 rounded-lg border border-zinc-400 bg-white dark:bg-[#121317] dark:text-white dark:border-[#292D32] text-sm focus:outline-none focus:border-[#0b0c28] transition-colors cursor-pointer"
-                >
-                  <option value="">Category</option>
-                  {categories.map(cat => (
-                    <option key={cat.category_id} value={cat.category_id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
-              </div>
-            </div>
-        <section className="flex h-full gap-[25px]">
-          <div className="flex h-full flex-col flex-1 gap-[20px]">
-           
+      <main className="flex-1 h-full px-[27px] py-[18px] flex flex-col gap-[18px]">
+        <div className="flex gap-3.5 items-center w-full">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <input
+              type="text"
+              placeholder="Search for book"
+              value={searchValue}
+              onChange={(e) => {
+                setSearchValue(e.target.value);
+                setCurrentPage(0);
+              }}
+              className="w-full pl-10 pr-3.5 py-2.5 rounded-md border border-zinc-400 bg-white dark:bg-[#121317] dark:text-white dark:border-[#292D32] text-sm focus:outline-none focus:border-[#0b0c28] transition-colors"
+            />
+          </div>
+          <div className="relative flex-1 w-full max-w-[531px] min-w-[162px] mr-22">
+            <select
+              value={selectedCategory}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                setCurrentPage(0);
+              }}
+              className="w-full appearance-none px-3.5 py-2.5 pr-9 rounded-md border border-zinc-400 bg-white dark:bg-[#121317] dark:text-white dark:border-[#292D32] text-sm focus:outline-none focus:border-[#0b0c28] transition-colors cursor-pointer"
+            >
+              <option value="">Category</option>
+              {categories.map(cat => (
+                <option key={cat.category_id} value={cat.category_id}>
+                  {cat.category_name || cat.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+          </div>
+        </div>
+        <section className="flex h-full gap-[22px]">
+          <div className="flex h-full flex-col flex-1 gap-[18px]">
+
 
             <div className="flex items-center border-b justify-between">
-              <div className="flex gap-6 ">
+              <div className="flex gap-5 ">
                 <button
                   onClick={() => {
                     setActiveTab('recommended');
                     setCurrentPage(0);
                   }}
-                  className={`pb-2 text-lg font-regular transition-colors relative ${activeTab === 'recommended'
+                  className={`pb-1.5 text-base font-regular transition-colors relative ${activeTab === 'recommended'
                     ? 'text-[#0b0c28] dark:text-white after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28] dark:after:bg-white'
                     : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                     }`}
@@ -160,7 +160,7 @@ function Dashboard() {
                     setActiveTab('recently');
                     setCurrentPage(0);
                   }}
-                  className={`pb-2 text-lg font-regular transition-colors relative ${activeTab === 'recently'
+                  className={`pb-1.5 text-base font-regular transition-colors relative ${activeTab === 'recently'
                     ? 'text-[#0b0c28] dark:text-white after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#0b0c28] dark:after:bg-white'
                     : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                     }`}
@@ -168,25 +168,25 @@ function Dashboard() {
                   Recently added
                 </button>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage === 0}
                   className={`p-1 rounded transition-colors ${currentPage === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-800 hover:bg-gray-100'
                     }`}
                 >
-                  <ChevronLeft size={20} />
+                  <ChevronLeft size={18} />
                 </button>
                 <div className="flex gap-1">
-                    <div
-                      className={`w-2 h-0.5 rounded-full transition-colors bg-gray-300`}
-                    />
-                     <div
-                      className={`w-2 h-0.5 rounded-full transition-colors bg-gray-300`}
-                    />
-                     <div
-                      className= {`w-2 h-0.5 rounded-full transition-colors bg-gray-300`}
-                    />
+                  <div
+                    className={`w-2 h-0.5 rounded-full transition-colors bg-gray-300`}
+                  />
+                  <div
+                    className={`w-2 h-0.5 rounded-full transition-colors bg-gray-300`}
+                  />
+                  <div
+                    className={`w-2 h-0.5 rounded-full transition-colors bg-gray-300`}
+                  />
                 </div>
                 <button
                   onClick={handleNextPage}
@@ -194,23 +194,23 @@ function Dashboard() {
                   className={`p-1 rounded transition-colors ${currentPage >= totalPages - 1 ? 'text-gray-800 cursor-not-allowed' : 'text-gray-300 hover:bg-gray-100'
                     }`}
                 >
-                  <ChevronRight size={20} />
+                  <ChevronRight size={18} />
                 </button>
               </div>
             </div>
 
-            <div className="grid w-full place-items-center grid-cols-4 gap-15 max-[1200px]:grid-cols-3 max-[900px]:grid-cols-2 max-[600px]:grid-cols-1">
+            <div className="grid w-full place-items-center grid-cols-4 gap-13 max-[1200px]:grid-cols-3 max-[900px]:grid-cols-2 max-[600px]:grid-cols-1">
               {loading ? (
-                <div className="col-span-full text-center py-10 text-gray-500">Loading books...</div>
+                <div className="col-span-full text-center py-9 text-gray-500">Loading books...</div>
               ) : paginatedBooks.length === 0 ? (
-                <div className="col-span-full text-center py-10 text-gray-500">No books found</div>
+                <div className="col-span-full text-center py-9 text-gray-500">No books found</div>
               ) : (
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="bg-white w-fit rounded-xl p-5 transition-shadow cursor-pointer flex flex-col items-center"
+                    className="bg-white w-fit rounded-lg p-4 transition-shadow cursor-pointer flex flex-col items-center"
                   >
-                    <div className="w-full h-40 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-36 rounded-md mb-2.5 flex items-center justify-center overflow-hidden">
                       {book.image_url ? (
                         <img
                           src={book.image_url}
@@ -224,10 +224,10 @@ function Dashboard() {
                         </div>
                       )}
                     </div>
-                    <h3 className="text-base font-semibold text-[#0b0c28]  text-center line-clamp-1 mb-2">
+                    <h3 className="text-sm font-semibold text-[#0b0c28]  text-center line-clamp-1 mb-1.5">
                       {book.name || 'Untitled'}
                     </h3>
-                    <button className="bg-[#0b0c28] text-white text-xs px-6 py-2.5 rounded-md hover:bg-[#1a1b4b] transition-colors">
+                    <button className="bg-[#0b0c28] text-white text-xs px-5 py-2 rounded-md hover:bg-[#1a1b4b] transition-colors">
                       Explore Now
                     </button>
                   </div>
@@ -235,7 +235,7 @@ function Dashboard() {
               )}
             </div>
             <div className='flex w-full my-auto justify-center'>
-              <div className="bg-white w-fit pr-15  text-md scale-140 p-5  ">
+              <div className="bg-white w-fit pr-13  text-sm scale-126 p-4  ">
                 <p className="text-[#0b0c28] ">
                   Dear {currentUser?.name || 'Ahmed'}, please note that your subscription will expire on{' '}
                   <span className="block">1/1/2026.</span>
@@ -247,11 +247,11 @@ function Dashboard() {
           </div>
 
           {/* Pie chart inspired by admin/pages/Dashboard.jsx */}
-          <div className={`flex h-full justify-start flex-col flex-1 gap-[20px] flex-1 max-[1540px]:h-80 max-[1540px]:flex-none w-full max-w-[700px] items-center max-[1540px]:mx-0 ml-20`}>
-            <div className="h-full rounded-lg w-full  flex flex-col items-center justify-center min-[1200px]:mb-15">
-              <div className="flex max-[1540px]:flex-row flex-col gap-16 justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full max-w-[700px] h-full max-[1080px]:h-60 max-[430px]:scale-80 [430px]:mx-0 -ml-10 max-[380px]:w-[110%]">
+          <div className={`flex h-full justify-start flex-col flex-1 gap-[18px] flex-1 max-[1540px]:h-72 max-[1540px]:flex-none w-full max-w-[630px] items-center max-[1540px]:mx-0 ml-18`}>
+            <div className="h-full rounded-md w-full  flex flex-col items-center justify-center min-[1200px]:mb-13">
+              <div className="flex max-[1540px]:flex-row flex-col gap-14 justify-center max-3xl:items-start items-center max-[1540px]:-mr-7 w-full max-w-[630px] h-full max-[1080px]:h-54 max-[430px]:scale-80 [430px]:mx-0 -ml-9 max-[380px]:w-[110%]">
                 <PieChartLegend variant="mobile" />
-                <div className='max-[1540px]:w-[180px] w-full h-fit max-[1540px]:min-h-[180px] max-[1080px]:w-[200px] max-[1080px]:h-full max-[340px]:-ml-10'>
+                <div className='max-[1540px]:w-[162px] w-full h-fit max-[1540px]:min-h-[162px] max-[1080px]:w-[180px] max-[1080px]:h-full max-[340px]:-ml-9'>
                   <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
                 </div>
                 <PieChartLegend variant="desktop" />

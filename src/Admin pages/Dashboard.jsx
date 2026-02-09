@@ -115,13 +115,13 @@ function Dashboard() {
     .slice(0, 4);
 
   return (
-    <div className="max-[1540px]:py-5 py-8 px-10 max-[1080px]:px-12 max-[430px]:px-0 flex-1 w-full overflow-hidden relative max-[430px]:w-dvw flex flex-col h-full">
-      <section className="flex-1 flex max-[1540px]:flex-col flex-row justify-between gap-14 max-[1540px]:gap-0 min-h-0">
-        <div className='flex max-[1540px]:h-50 min-[1540px]:mt-10 justify-center items-center flex-1 max-[1540px]:mx-0 ml-20 self-stretch'>
-          <div className=" rounded-lg w-full h-full flex flex-col items-center justify-center min-[1200px]:mb-15">
-            <div className="flex max-[1540px]:flex-row flex-col gap-16 justify-center max-3xl:items-start items-center max-[1540px]:-mr-8 w-full max-w-[700px] h-full max-[1080px]:h-60 max-[430px]:scale-80 [430px]:mx-0 -ml-10  max-[380px]:w-[110%]">
+    <div className="max-[1540px]:py-4 py-7 px-9 max-[1080px]:px-11 max-[430px]:px-0 flex-1 w-full overflow-y-auto overflow-x-hidden relative max-[430px]:w-dvw flex flex-col h-full">
+      <section className="flex-1 flex max-[1540px]:flex-col flex-row justify-between gap-12 max-[1540px]:gap-0 min-h-0">
+        <div className='flex max-[1540px]:h-45 min-[1540px]:mt-9 justify-center items-center flex-1 max-[1540px]:mx-0 ml-18 self-stretch min-h-0'>
+          <div className=" rounded-lg w-full h-full flex flex-col items-center justify-center min-[1200px]:mb-13">
+            <div className="flex max-[1540px]:flex-row flex-col gap-14 justify-center max-3xl:items-start items-center max-[1540px]:-mr-7 w-full max-w-[630px] h-full max-[1080px]:h-54 max-[430px]:scale-80 [430px]:mx-0 -ml-9  max-[380px]:w-[110%]">
               <PieChartLegend variant="mobile" />
-              <div className='max-[1540px]:w-[180px] w-full h-fit max-[1540px]:min-h-[180px] max-[1080px]:w-[200px] max-[1080px]:h-full max-[340px]:-ml-10'>
+              <div className='max-[1540px]:w-[162px] w-full h-fit max-[1540px]:min-h-[162px] max-[1080px]:w-[180px] max-[1080px]:h-full max-[340px]:-ml-9'>
                 <PieChart totalBorrowed={stats.totalBorrowed} currentlyBorrowed={stats.currentlyBorrowed} returnedBooks={stats.returnedBooks} />
               </div>
               <PieChartLegend variant="desktop" />
@@ -129,8 +129,8 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex flex-col gap-15 self-stretch justify-start items-end max-[1540px]:items-center  max-[1540px]:max-h-[150px] max-[1540px]:w-full max-[1540px]:items-center'>
-          <div className='flex max-[1540px]:mr-0 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1540px]:justify-center max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-9 max-[1080px]:gap-2 min-[1080px]:p-0 max-[650px]:p-0 max-[650px]:w-screen max-[1540px]:w-[90%] max-[856px]:scale-90 max-[1080px]:w-[110%]'>
+        <div className='flex flex-col gap-13 self-stretch justify-start items-end max-[1540px]:items-center min-h-0 max-[1540px]:max-h-[135px] max-[1540px]:w-full max-[1540px]:items-center'>
+          <div className='flex max-[1540px]:mr-0 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1540px]:flex-row max-[1540px]:justify-center max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center flex-col gap-8 max-[1080px]:gap-2 min-[1080px]:p-0 max-[650px]:p-0 max-[650px]:w-screen max-[1540px]:w-[90%] max-[856px]:scale-90 max-[1080px]:w-[110%]'>
 
             <div className="max-[1200px]:w-full max-[340px]:scale-90 max-[1200px]:flex max-[1200px]:justify-center">
               <DashboardInfoCard
@@ -154,7 +154,7 @@ function Dashboard() {
                 loading={loading} />
             </div>
           </div>
-          <div className='flex-1 mr-6 w-[440px] h-full block max-[1540px]:hidden'>
+          <div className='flex-1 mr-5 w-[396px] h-full block max-[1540px]:hidden'>
             <AdminDashboardCard
               loading={loading}
               displayAdmins={displayAdmins}
@@ -164,7 +164,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className='flex self-stretch max-[640px]:-mb-8 max-[1540px]:flex-row flex-col gap-10 w-max min-w-[200px] max-w-[450px] max-[1540px]:w-full max-[1540px]:max-w-full max-[1080px]:mt-2 overflow-x-auto max-[1540px]:flex-20 max-[1400px]:max-h-[400px] max-[1540px]:rounded-lg max-[1540px]:gap-5 max-[856px]:scale-90 snap-x snap-mandatory pr-4'>
+        <div className='flex self-stretch min-h-0 max-[640px]:-mb-7 max-[1540px]:flex-row flex-col gap-9 w-max min-w-[180px] max-w-[405px] max-[1540px]:w-full max-[1540px]:max-w-full max-[1080px]:mt-2 overflow-x-auto max-[1540px]:flex-20 max-[1400px]:max-h-[360px] max-[1540px]:rounded-lg max-[1540px]:gap-4 max-[856px]:scale-90 snap-x snap-mandatory pr-4'>
 
           <div className='flex-1 flex flex-col snap-start min-h-0'>
             <DashboardCard title="Overdue Borrowers">
@@ -172,9 +172,9 @@ function Dashboard() {
                 <li className="text-xs p-3 rounded-lg flex items-center gap-3">Loading...</li>
               ) : overdueBorrowers.length > 0 ? (
                 overdueBorrowers.map((borrower) => (
-                  <li key={borrower.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#929292] px-3 py-4 h-16 rounded-2xl flex items-center gap-3 mb-2 dark:bg-[#929292]">
-                    <div className="w-8 h-8 bg-[#0a0f33] dark:bg-[#929292] rounded-lg flex items-center justify-center shrink-0">
-                      <User size={16} className="text-white dark:text-black" />
+                  <li key={borrower.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#929292] px-2.5 py-3 h-14 rounded-xl flex items-center gap-2.5 mb-1.5 dark:bg-[#929292]">
+                    <div className="w-7 h-7 bg-[#0a0f33] dark:bg-[#929292] rounded-md flex items-center justify-center shrink-0">
+                      <User size={14} className="text-white dark:text-black" />
                     </div>
                     <div className='w-[1.8px] h-full bg-[#0b0b3b] dark:bg-black rounded-full'></div>
                     <div className="flex-1">
@@ -182,7 +182,8 @@ function Dashboard() {
                       <p className="text-xs font-medium text-[#6f7390] dark:text-black">Borrowed ID: {borrower.borrowedId}</p>
                     </div>
                     <MaximizeIcon
-                      className="w-8 h-8 text-[#0a0f33] dark:text-black cursor-pointer"
+                      className="w-7 h-7 text-[#0a0f33] dark:text-black cursor-pointer"
+
                       onClick={() => handleViewDetails(borrower, 'overdue')}
                     />
                   </li>
@@ -199,8 +200,8 @@ function Dashboard() {
                 <li className="text-xs  p-3 rounded-lg flex items-center gap-3">Loading...</li>
               ) : Array.isArray(branches) && branches.length > 0 ? (
                 branches.map((branch) => (
-                  <li key={branch.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#292D32] px-3 py-2 h-16 rounded-2xl flex items-center gap-3 mb-2 dark:bg-[#929292]">
-                    <div className="w-10 h-8 p4 rounded-lg flex items-center justify-center shrink-0">
+                  <li key={branch.id} className="text-xs bg-transparent border border-[#0a0f33] dark:border-[#292D32] px-2.5 py-1.5 h-14 rounded-xl flex items-center gap-2.5 mb-1.5 dark:bg-[#929292]">
+                    <div className="w-9 h-7 p4 rounded-md flex items-center justify-center shrink-0">
                       <Building2 className="text-[#0a0f33] dark:text-black  h-full w-full" />
                     </div>
                     <div className='w-[1.8px] h-full bg-[#0b0b3b] dark:bg-black '></div>
@@ -209,7 +210,7 @@ function Dashboard() {
                       <p className="text-xs font-medium text-[#0a0f33] dark:text-black">{branch.location || branch.address || 'Location not specified'}</p>
                     </div>
                     <MaximizeIcon
-                      className="w-8 h-8 text-[#0a0f33] dark:text-black cursor-pointer"
+                      className="w-7 h-7 text-[#0a0f33] dark:text-black cursor-pointer"
                       onClick={() => handleViewDetails(branch, 'branch')}
                     />
                   </li>
@@ -220,7 +221,7 @@ function Dashboard() {
             </DashboardCard>
           </div>
 
-          <div className='h-[380px] max-[1540px]:h-full max-[1540px]:flex-1 max-[1540px]:flex hidden flex-col snap-end'>
+          <div className='h-[342px] max-[1540px]:h-full max-[1540px]:flex-1 max-[1540px]:flex hidden flex-col snap-end'>
             <AdminDashboardCard
               loading={loading}
               displayAdmins={displayAdmins}
