@@ -263,6 +263,7 @@ const Home = () => {
                      <h3 className="services__title">Free Shipping</h3>
                      <p className="services__description">Order More Than $100</p>
                   </article>
+                  
 
                   <article className="services__card">
                      <i className="ri-lock-2-line"></i>
