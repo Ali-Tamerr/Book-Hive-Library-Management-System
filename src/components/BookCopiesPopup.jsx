@@ -136,7 +136,7 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
                     </div>
                 </div>
 
-                <div className={`px-10 max-h-[400px] overflow-y-auto grid ${copies.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
+                <div className={`px-10 max-h-[400px] text-[#727374] overflow-y-auto grid ${copies.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
                     {copies.map((copy, index) => (
                         <input
                             key={index}
@@ -147,13 +147,13 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
                             onFocus={() => handleInputFocus(index)}
                             placeholder={`ID`}
                             required
-                            className="w-full h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+                            className="w-full text-[#727374] h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
                         />
                     ))}
                 </div>
                 <div className="flex justify-between gap-3">
                     <FormButton type="button" onClick={onClose}>
-                        CANCEL
+                        BACK
                     </FormButton>
                     <FormButton type="submit" isPrimary>
                         SAVE COPIES

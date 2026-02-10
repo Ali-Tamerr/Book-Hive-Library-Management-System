@@ -64,7 +64,7 @@ const DeleteConfirmationPopup = ({
                                     value={nfcId}
                                     onChange={(e) => setNfcId(e.target.value)}
                                     placeholder="ID"
-                                    className="flex-1 h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+                                    className="flex-1 h-[50px] px-4 py-3 rounded-xl border text-[#727374] border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
                                 />
                             </div>
                             <div className="flex items-center gap-2">
