@@ -16,6 +16,7 @@ import {
   useUpdateBookTransaction,
   useDeleteBookTransaction
 } from '../hooks/useBookTransactions.js';
+import { useReservations, useDeleteReservation } from '../hooks/useReservations.js';
 import { useBooks } from '../hooks/useBooks.js';
 import { useBookCopies } from '../hooks/useBookCopies.js';
 import UserFormPopup from '../components/UserFormPopup.jsx';
@@ -39,6 +40,8 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showRequestsPopup, setShowRequestsPopup] = useState(false);
   const [pendingRequestId, setPendingRequestId] = useState(null);
+  const [deleteWarning, setDeleteWarning] = useState(null);
+  const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -66,6 +69,8 @@ function UserManagement({ searchValue, setSearchValue }) {
   const deleteBookTransactionMutation = useDeleteBookTransaction();
   const { data: books = [] } = useBooks();
   const { data: bookCopies = [] } = useBookCopies();
+  const { data: reservations = [] } = useReservations();
+  const deleteReservationMutation = useDeleteReservation();
 
   const pendingBookRequests = bookTransactions.filter(
     t => t.status === 'Pending' && t.transaction_type === 'Check-Out'
@@ -151,19 +156,56 @@ function UserManagement({ searchValue, setSearchValue }) {
 
   const handleDelete = (id) => {
     setUserToDelete(id);
+
+    const linkedTransactions = bookTransactions.filter(t => t.user_id === id);
+    const linkedReservations = reservations.filter(r => r.user_id === id);
+
+    if (linkedTransactions.length > 0 || linkedReservations.length > 0) {
+      const transactionCount = linkedTransactions.length;
+      const reservationCount = linkedReservations.length;
+      let message = 'This user have associated records:';
+      if (transactionCount > 0) message += ` ${transactionCount} transaction(s)`;
+      if (transactionCount > 0 && reservationCount > 0) message += ' and';
+      if (reservationCount > 0) message += ` ${reservationCount} reservation(s)`;
+      message += '.';
+
+      setDeleteWarning(message + " Deleting the user will permanently remove these records.");
+      setIsDeleteDisabled(false);
+    } else {
+      setDeleteWarning(null);
+      setIsDeleteDisabled(false);
+    }
+
     setShowDeleteConfirm(true);
   };
 
   const confirmDelete = async () => {
     if (userToDelete) {
       try {
+        // Delete associated transactions
+        const userTransactions = bookTransactions.filter(t => t.user_id === userToDelete);
+        if (userTransactions.length > 0) {
+          await Promise.all(userTransactions.map(t => deleteBookTransactionMutation.mutateAsync(t.transaction_id)));
+        }
+
+        // Delete associated reservations
+        const userReservations = reservations.filter(r => r.user_id === userToDelete);
+        if (userReservations.length > 0) {
+          await Promise.all(userReservations.map(r => deleteReservationMutation.mutateAsync(r.reservation_id)));
+        }
+
+        // Delete the user
         await deleteUserMutation.mutateAsync(userToDelete);
+
         setShowDeleteConfirm(false);
         setUserToDelete(null);
+        setDeleteWarning(null);
       } catch (error) {
-        alert('Failed to delete user. Please try again.');
+        console.error("Delete failed:", error);
+        alert('Failed to delete user or their associated records. Please try again.');
         setShowDeleteConfirm(false);
         setUserToDelete(null);
+        setDeleteWarning(null);
       }
     }
   };
@@ -303,9 +345,13 @@ function UserManagement({ searchValue, setSearchValue }) {
         onClose={() => {
           setShowDeleteConfirm(false);
           setUserToDelete(null);
+          setDeleteWarning(null);
+          setIsDeleteDisabled(false);
         }}
         onConfirm={confirmDelete}
         title="Delete User"
+        warningMessage={deleteWarning}
+        isDeleteDisabled={isDeleteDisabled}
       />
       <ViewDetailsPopup
         show={showViewDetails}
