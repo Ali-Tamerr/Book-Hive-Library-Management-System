@@ -350,7 +350,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         }}
         onConfirm={confirmDelete}
         title="Delete User"
-        warningMessage={deleteWarning}
+        // warningMessage={deleteWarning}
         isDeleteDisabled={isDeleteDisabled}
       />
       <ViewDetailsPopup
