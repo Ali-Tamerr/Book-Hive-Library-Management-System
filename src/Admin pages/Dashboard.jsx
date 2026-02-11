@@ -158,7 +158,7 @@ function Dashboard() {
           <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[1540px]:h-fit">
             <div className="[430px]:px-0 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[1540px]:my-0 max-[1540px]:h-fit max-[1540px]:max-w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1540px]:overflow-hidden max-[650px]:h-auto max-[650px]:gap-4 max-[430px]:scale-90">
               <PieChartLegend variant="mobile" />
-              <div className=" flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[1540px]:min-h-[162px] max-[1540px]:min-w-0 max-[1540px]:max-w-[250px] max-[1540px]:pb-0 max-[1080px]:max-w-[180px]  max-[650px]:mb-0 max-[650px]:w-[120px]">
+              <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[1540px]:min-h-[162px] max-[1540px]:min-w-0 max-[1540px]:max-w-[250px] max-[1540px]:pb-0 max-[1080px]:max-w-[180px] max-[650px]:mb-0 max-[650px]:w-[120px]">
                 <PieChart
                   totalBorrowed={stats.totalBorrowed}
                   currentlyBorrowed={stats.currentlyBorrowed}
@@ -170,8 +170,8 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="gap-13 [1540px]:self-end flex min-h-0 shrink-0 flex-col items-end justify-start max-[1540px]:max-h-[135px] max-[1540px]:w-full max-[1540px]:shrink max-[1540px]:items-center max-[1200px]:max-h-none max-[1200px]:gap-0 max-[650px]:max-h-fit max-[650px]:shrink-0">
-          <div className="flex flex-col gap-8 max-[1540px]:mr-0 max-[1540px]:w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1540px]:gap-8 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center max-[1200px]:gap-0 max-[1080px]:w-[110%] max-[1080px]:gap-2 max-[856px]:scale-90 max-[650px]:flex max-[650px]:w-full max-[650px]:scale-100 max-[650px]:flex-col max-[650px]:items-stretch max-[650px]:gap-1 max-[650px]:p-0 min-[1080px]:p-0">
+        <div className="[1540px]:self-end flex min-h-0 shrink-0 flex-col items-end justify-start gap-[5vh] max-[1540px]:max-h-[135px] max-[1540px]:w-full max-[1540px]:shrink max-[1540px]:items-center max-[1200px]:max-h-none max-[1200px]:gap-0 max-[650px]:max-h-fit max-[650px]:shrink-0">
+          <div className="flex flex-col gap-[3vh] max-[1540px]:mr-0 max-[1540px]:w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1540px]:gap-8 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center max-[1200px]:gap-0 max-[1080px]:w-[110%] max-[1080px]:gap-2 max-[856px]:scale-90 max-[650px]:flex max-[650px]:w-full max-[650px]:scale-100 max-[650px]:flex-col max-[650px]:items-stretch max-[650px]:gap-1 max-[650px]:p-0 min-[1080px]:p-0">
             <div className="min-w-0 max-[1540px]:flex-1 max-[1200px]:flex max-[1200px]:w-fit max-[1200px]:justify-center max-[650px]:w-full">
               <DashboardInfoCard
                 icon={<User className="h-full w-full text-[#0a0f33]" />}
