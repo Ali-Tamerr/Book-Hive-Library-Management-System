@@ -171,7 +171,7 @@ function Dashboard() {
         </div>
 
         <div className="[1540px]:self-end flex min-h-0 shrink-0 flex-col items-end justify-start gap-[5vh] max-[1540px]:max-h-[135px] max-[1540px]:w-full max-[1540px]:shrink max-[1540px]:items-center max-[1200px]:max-h-none max-[1200px]:gap-0 max-[650px]:max-h-fit max-[650px]:shrink-0">
-          <div className="flex flex-col gap-[3vh] max-[1540px]:mr-0 max-[1540px]:w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1540px]:gap-8 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center max-[1200px]:gap-0 max-[1080px]:w-[110%] max-[1080px]:gap-2 max-[856px]:scale-90 max-[650px]:flex max-[650px]:w-full max-[650px]:scale-100 max-[650px]:flex-col max-[650px]:items-stretch max-[650px]:gap-1 max-[650px]:p-0 min-[1080px]:p-0">
+          <div className="flex flex-col gap-[3.5vh] max-[1540px]:mr-0 max-[1540px]:w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1540px]:gap-8 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center max-[1200px]:gap-0 max-[1080px]:w-[110%] max-[1080px]:gap-2 max-[856px]:scale-90 max-[650px]:flex max-[650px]:w-full max-[650px]:scale-100 max-[650px]:flex-col max-[650px]:items-stretch max-[650px]:gap-1 max-[650px]:p-0 min-[1080px]:p-0">
             <div className="min-w-0 max-[1540px]:flex-1 max-[1200px]:flex max-[1200px]:w-fit max-[1200px]:justify-center max-[650px]:w-full">
               <DashboardInfoCard
                 icon={<User className="h-full w-full text-[#0a0f33]" />}
