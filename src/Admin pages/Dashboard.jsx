@@ -152,13 +152,13 @@ function Dashboard() {
     .slice(0, 4);
 
   return (
-    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[1540px]:py-4 max-[1080px]:px-11 max-[430px]:w-dvw max-[430px]:px-0">
+    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[1540px]:py-4 max-[1080px]:px-11 max-[430px]:w-dvw max-[430px]:px-4">
       <div className="flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto max-[1540px]:flex-col max-[1540px]:gap-0 max-[1540px]:overflow-x-hidden max-[650px]:overflow-hidden">
         <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[1540px]:mx-0 max-[1540px]:h-fit max-[1540px]:flex-none max-[650px]:shrink">
-          <div className="flex h-full w-full flex-col items-center justify-center rounded-lg max-[1540px]:h-fit">
-            <div className="[430px]:px-0 flex h-full w-full max-w-[660px] flex-col items-center justify-center gap-14 max-[1540px]:my-0 max-[1540px]:h-fit max-[1540px]:max-w-full max-[1540px]:flex-row max-[1540px]:overflow-hidden max-[1080px]:h-54 max-[650px]:h-auto max-[650px]:gap-4 max-[430px]:scale-90 [430px]:mx-0">
+          <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[1540px]:h-fit">
+            <div className="[430px]:px-0 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[1540px]:my-0 max-[1540px]:h-fit max-[1540px]:max-w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1540px]:overflow-hidden max-[650px]:h-auto max-[650px]:gap-4 max-[430px]:scale-90">
               <PieChartLegend variant="mobile" />
-              <div className="min-h-0 w-full max-[1540px]:min-h-[162px] max-[1540px]:max-w-[300px] max-[1540px]:min-w-0 max-[1080px]:w-[180px] max-[650px]:mb-0 max-[650px]:min-h-0 max-[650px]:w-[120px]">
+              <div className=" flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[1540px]:min-h-[162px] max-[1540px]:min-w-0 max-[1540px]:max-w-[250px] max-[1540px]:pb-0 max-[1080px]:max-w-[180px]  max-[650px]:mb-0 max-[650px]:w-[120px]">
                 <PieChart
                   totalBorrowed={stats.totalBorrowed}
                   currentlyBorrowed={stats.currentlyBorrowed}
@@ -170,8 +170,8 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="flex min-h-0 shrink-0 flex-col items-end justify-start gap-13 max-[1540px]:max-h-[135px] max-[1540px]:w-full max-[1540px]:shrink max-[1540px]:items-center max-[1200px]:max-h-none max-[1200px]:gap-0 max-[650px]:max-h-fit max-[650px]:shrink-0 [1540px]:self-end">
-          <div className="flex flex-col gap-8 max-[1540px]:mr-0 max-[1540px]:w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center max-[1200px]:gap-0 max-[1080px]:w-[110%] max-[1080px]:gap-2 max-[856px]:scale-90 max-[650px]:flex max-[650px]:w-full max-[650px]:scale-100 max-[650px]:flex-col max-[650px]:items-stretch max-[650px]:gap-1 max-[650px]:p-0 min-[1080px]:p-0">
+        <div className="gap-13 [1540px]:self-end flex min-h-0 shrink-0 flex-col items-end justify-start max-[1540px]:max-h-[135px] max-[1540px]:w-full max-[1540px]:shrink max-[1540px]:items-center max-[1200px]:max-h-none max-[1200px]:gap-0 max-[650px]:max-h-fit max-[650px]:shrink-0">
+          <div className="flex flex-col gap-8 max-[1540px]:mr-0 max-[1540px]:w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1540px]:gap-8 max-[1200px]:grid max-[1200px]:grid-cols-2 max-[1200px]:place-items-center max-[1200px]:content-center max-[1200px]:items-center max-[1200px]:gap-0 max-[1080px]:w-[110%] max-[1080px]:gap-2 max-[856px]:scale-90 max-[650px]:flex max-[650px]:w-full max-[650px]:scale-100 max-[650px]:flex-col max-[650px]:items-stretch max-[650px]:gap-1 max-[650px]:p-0 min-[1080px]:p-0">
             <div className="min-w-0 max-[1540px]:flex-1 max-[1200px]:flex max-[1200px]:w-fit max-[1200px]:justify-center max-[650px]:w-full">
               <DashboardInfoCard
                 icon={<User className="h-full w-full text-[#0a0f33]" />}
@@ -197,7 +197,7 @@ function Dashboard() {
               />
             </div>
           </div>
-          <div className="mr-5 block h-full w-[396px] flex-1 max-[1540px]:hidden">
+          <div className="mr-5 block min-h-0 w-[396px] flex-1 overflow-y-auto max-[1540px]:hidden">
             <AdminDashboardCard
               loading={loading}
               displayAdmins={displayAdmins}
@@ -207,7 +207,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="flex min-h-0 w-max max-w-[405px] min-w-[180px] shrink-0 snap-x snap-mandatory flex-col gap-9 overflow-x-auto overflow-y-auto pr-4 max-[1540px]:max-h-[400px] max-[1540px]:w-full max-[1540px]:max-w-full max-[1540px]:flex-20 max-[1540px]:shrink max-[1540px]:flex-row max-[1540px]:gap-4 max-[1540px]:rounded-lg max-[1400px]:max-h-[360px] max-[1080px]:mt-2 max-[856px]:scale-90 max-[650px]:min-h-0 max-[650px]:flex-1 max-[650px]:scale-100 max-[650px]:pr-0 max-[650px]:[scrollbar-width:none] max-[640px]:-mb-7 max-[650px]:[&::-webkit-scrollbar]:hidden">
+        <div className="max-[1540px]:flex-20 flex min-h-0 w-max min-w-[180px] max-w-[405px] shrink-0 snap-x snap-mandatory flex-col gap-9 overflow-x-auto overflow-y-auto pr-4 max-[1540px]:max-h-[360px] max-[1540px]:w-full max-[1540px]:max-w-full max-[1540px]:shrink max-[1540px]:flex-row max-[1540px]:gap-4 max-[1540px]:rounded-lg max-[1080px]:mt-2 max-[856px]:scale-90 max-[650px]:min-h-0 max-[650px]:flex-1 max-[650px]:scale-100 max-[650px]:pr-0 max-[650px]:[scrollbar-width:none] max-[640px]:-mb-7 max-[650px]:[&::-webkit-scrollbar]:hidden">
           <div className="flex min-h-0 flex-1 snap-start flex-col">
             <DashboardCard title="Overdue Borrowers">
               {loading ? (
@@ -218,7 +218,7 @@ function Dashboard() {
                 overdueBorrowers.map((borrower) => (
                   <li
                     key={borrower.id}
-                    className="mb-1.5 flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#929292] dark:bg-[#929292]"
+                    className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#929292] dark:bg-[#929292]"
                   >
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#0a0f33] dark:bg-[#929292]">
                       <User size={14} className="text-white dark:text-black" />
@@ -256,7 +256,7 @@ function Dashboard() {
                 branches.map((branch) => (
                   <li
                     key={branch.id}
-                    className="mb-1.5 flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-1.5 text-xs dark:border-[#292D32] dark:bg-[#929292]"
+                    className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-1.5 text-xs dark:border-[#292D32] dark:bg-[#929292]"
                   >
                     <div className="p4 flex h-7 w-9 shrink-0 items-center justify-center rounded-md">
                       <Building2 className="h-full w-full text-[#0a0f33] dark:text-black" />

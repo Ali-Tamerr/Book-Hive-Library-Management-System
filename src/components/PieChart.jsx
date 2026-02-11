@@ -13,7 +13,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
 
   if (totalForChart === 0 || (currentlyBorrowed === 0 && returnedBooks === 0)) {
     return (
-      <div className="flex aspect-square w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px]">
+      <div className="flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px]">
         <svg viewBox={`0 0 ${size} ${size}`} className="block h-full w-full">
           <circle
             cx={center}
@@ -73,7 +73,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
   const isReturnedFullCircle = returnedDegrees >= 359.99;
 
   return (
-    <div className="flex aspect-square w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px]">
+    <div className="flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px]">
       <svg viewBox={`0 0 ${size} ${size}`} className="block h-full w-full">
         {isBorrowedFullCircle ? (
           <circle
