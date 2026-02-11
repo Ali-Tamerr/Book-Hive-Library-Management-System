@@ -63,25 +63,24 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
   return (
     <>
       <div
-        className={`bg-opacity-50 fixed inset-0 z-40 bg-[#0000009a] backdrop-blur-lg transition-opacity duration-300 ${isSidebarOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} hidden max-[1080px]:block`}
+        className={`fixed inset-0 z-40 bg-[#0000009a] bg-opacity-50 backdrop-blur-lg transition-opacity duration-300 ${isSidebarOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} hidden max-[1080px]:block`}
         onClick={toggleSidebar}
       ></div>
       <aside
-        className={`flex flex-col items-stretch justify-start overflow-hidden bg-[#0a0f33] pt-6 pb-3 text-white transition-all duration-300 dark:bg-white dark:text-black ${isExpanded ? "w-55" : "w-24"} max-[1080px]:fixed max-[1080px]:z-50 max-[1080px]:h-full max-[1080px]:w-64 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? "max-[1080px]:translate-x-0" : "max-[1080px]:translate-x-full"} relative shadow-lg max-[1080px]:right-0`}
+        className={`flex flex-col items-stretch justify-start overflow-hidden bg-[#0a0f33] pb-3 pt-6 text-white transition-all duration-300 dark:bg-[#D7D7D7] dark:text-black ${isExpanded ? "w-55" : "w-24"} max-[1080px]:fixed max-[1080px]:z-50 max-[1080px]:h-full max-[1080px]:w-64 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? "max-[1080px]:translate-x-0" : "max-[1080px]:translate-x-full"} relative shadow-lg max-[1080px]:right-0`}
       >
-        <div className="pointer-events-none absolute top-0 right-0 z-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200" />
+        <div className="pointer-events-none absolute right-0 top-0 z-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200" />
 
         <div className="relative z-10 h-40 self-center px-4 text-center">
           <LogoIcon
-            className={`mx-auto transition-all duration-300 ${isExpanded ? "h-22 w-20" : "h-14 w-12"} max-[1080px]:h-22 max-[1080px]:w-20`}
+            className={`mx-auto transition-all duration-300 ${isExpanded ? "h-13 w-13" : "h-14 w-12"} max-[1080px]:h-22 max-[1080px]:w-20`}
           />
 
           <h2
-            className={`mt-2 text-center text-2xl leading-tight transition-all duration-300 ${isExpanded ? "max-w-full scale-100 opacity-100" : "max-w-0 scale-50 overflow-hidden opacity-0"} whitespace-nowrap max-[1080px]:mt-2 max-[1080px]:max-w-full max-[1080px]:scale-100 max-[1080px]:text-center max-[1080px]:opacity-100`}
+            className={`text-center text-3xl leading-none transition-all duration-300 ${isExpanded ? "max-w-full scale-100 opacity-100" : "max-w-0 scale-50 overflow-hidden opacity-0"} whitespace-nowrap max-[1080px]:mt-2 max-[1080px]:max-w-full max-[1080px]:scale-100 max-[1080px]:text-center max-[1080px]:opacity-100`}
           >
             BookHive
-            <br />
-            <span className="text-center font-['Mynerve',cursive] text-lg text-[#b5b8d1] dark:text-black">
+            <span className="-mt-0.5 block text-center font-['Mynerve',cursive] text-xl text-[#b5b8d1] dark:text-black">
               Library
             </span>
           </h2>
@@ -89,7 +88,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
 
         {!isAdmin && (
           <div className="relative z-10 mt-10 flex w-full flex-1 flex-col overflow-hidden">
-            <nav className="h-full w-full overflow-x-hidden overflow-y-auto pb-10">
+            <nav className="h-full w-full overflow-y-auto overflow-x-hidden pb-10">
               <NavLink
                 isExpanded={isExpanded}
                 active={location.pathname === "/user/dashboard"}
@@ -118,12 +117,12 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                 text="Catalog"
               />
             </nav>
-            <div className="pointer-events-none absolute bottom-0 left-0 -ml-[0.6px] h-20 w-full bg-gradient-to-t from-[#0a0f33] to-transparent dark:from-white" />
+            <div className="pointer-events-none absolute bottom-0 left-0 -ml-[0.6px] h-20 w-full bg-gradient-to-t from-[#0a0f33] to-transparent dark:from-[#D7D7D7]" />
           </div>
         )}
         {isAdmin && (
           <div className="relative z-10 mt-10 flex w-full flex-1 flex-col overflow-hidden">
-            <nav className="flex h-full w-full flex-col gap-2 overflow-x-hidden overflow-y-auto pb-3 [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+            <nav className="flex h-full w-full flex-col gap-2 overflow-y-auto overflow-x-hidden pb-3 [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
               <NavLink
                 isExpanded={isExpanded}
                 active={location.pathname === "/admin/dashboard"}
@@ -185,11 +184,11 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                 toggleSidebar={toggleSidebar}
               />
             </nav>
-            <div className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-[#0a0f33] to-transparent dark:from-white" />
+            <div className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-[#0a0f33] to-transparent dark:from-[#D7D7D7]" />
           </div>
         )}
         <div
-          className={`mt-auto flex w-full flex-col gap-2 transition-all duration-300 ${isExpanded ? "" : "flex justify-center"}`}
+          className={`mt-auto flex w-full flex-col gap-2 transition-all duration-300 dark:bg-[#D7D7D7] ${isExpanded ? "" : "flex justify-center"}`}
         >
           <div className="hidden max-[1080px]:block">
             <NavLink
