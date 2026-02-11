@@ -86,6 +86,20 @@ function Layout({
     return <Navigate to="/" replace />;
   }
 
+  if (currentUser && location.pathname.startsWith("/user")) {
+    const role = currentUser.role?.toLowerCase();
+    if (role === "admin" || role === "super admin") {
+      return <Navigate to="/admin/dashboard" replace />;
+    }
+  }
+
+  if (currentUser && location.pathname.startsWith("/admin")) {
+    const role = currentUser.role?.toLowerCase();
+    if (role === "user") {
+      return <Navigate to="/user/dashboard" replace />;
+    }
+  }
+
   if (isHomePage) {
     return (
       <Suspense
@@ -122,7 +136,7 @@ function Layout({
           setSearchValue={setSearchValue}
           toggleSidebar={toggleSidebar}
         />
-        <div className="h-full flex-99 [1540px]:py-0">
+        <div className="flex-99 [1540px]:py-0 h-full">
           <Suspense fallback={<PageLoader />}>{children}</Suspense>
         </div>
       </main>
