@@ -12,13 +12,17 @@ function UserFormPopup({
   setShowPopup,
   setEditMode,
   isSuperAdmin = false,
+  error,
+  nextUserId,
 }) {
   const userIdInputRef = React.useRef(null);
 
   const onFormChange = (e) => {
     const { name, value } = e.target;
     if (name === "role" && value === "Admin") {
-      setFormData({ ...formData, [name]: value, plan: null });
+      const newId =
+        !editMode && nextUserId ? nextUserId.toString() : formData.user_id;
+      setFormData({ ...formData, [name]: value, plan: null, user_id: newId });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -169,6 +173,7 @@ function UserFormPopup({
       }}
       icon={<Users size={24} strokeWidth={2.3} />}
       customLayout={customLayout}
+      error={error}
     />
   );
 }

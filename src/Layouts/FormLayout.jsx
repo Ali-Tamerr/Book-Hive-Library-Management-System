@@ -1,8 +1,8 @@
-import React from 'react';
-import Popup from '../components/Popup.jsx';
-import FormInput from '../components/FormInput.jsx';
-import FormSelect from '../components/FormSelect.jsx';
-import FormButton from '../components/FormButton.jsx';
+import React from "react";
+import Popup from "../components/Popup.jsx";
+import FormInput from "../components/FormInput.jsx";
+import FormSelect from "../components/FormSelect.jsx";
+import FormButton from "../components/FormButton.jsx";
 
 const FormLayout = ({
   show,
@@ -12,19 +12,20 @@ const FormLayout = ({
   inputs,
   formData,
   onFormChange,
-  submitButtonText = 'SUBMIT',
-  cancelButtonText = 'CANCEL',
+  submitButtonText = "SUBMIT",
+  cancelButtonText = "CANCEL",
   onCancel,
   children,
   icon,
   customLayout,
+  error,
 }) => {
   const renderInput = (input) => {
     const { name, type } = input;
-    if (type === 'custom') {
+    if (type === "custom") {
       return <div key={name}>{input.render(formData, onFormChange)}</div>;
     }
-    if (type === 'select') {
+    if (type === "select") {
       return (
         <FormSelect
           key={name}
@@ -49,13 +50,17 @@ const FormLayout = ({
       return (
         <div className="space-y-4">
           {customLayout.map((row, rowIndex) => {
-            if (row.type === 'flex') {
+            if (row.type === "flex") {
               return (
                 <div key={rowIndex} className="flex gap-4">
                   {row.inputs.map((inputConfig) => {
-                    const inputName = typeof inputConfig === 'string' ? inputConfig : inputConfig.name;
-                    const flexValue = typeof inputConfig === 'object' ? inputConfig.flex : 1;
-                    const input = inputs.find(inp => inp.name === inputName);
+                    const inputName =
+                      typeof inputConfig === "string"
+                        ? inputConfig
+                        : inputConfig.name;
+                    const flexValue =
+                      typeof inputConfig === "object" ? inputConfig.flex : 1;
+                    const input = inputs.find((inp) => inp.name === inputName);
                     return input ? (
                       <div key={inputName} style={{ flex: flexValue }}>
                         {renderInput(input)}
@@ -73,7 +78,7 @@ const FormLayout = ({
                 style={{ gridTemplateColumns: `repeat(${row.columns}, 1fr)` }}
               >
                 {row.inputs.map((inputName) => {
-                  const input = inputs.find(inp => inp.name === inputName);
+                  const input = inputs.find((inp) => inp.name === inputName);
                   return input ? renderInput(input) : null;
                 })}
               </div>
@@ -84,7 +89,9 @@ const FormLayout = ({
     }
 
     return (
-      <div className={inputs.length > 6 ? "grid grid-cols-2 gap-4" : "space-y-3"}>
+      <div
+        className={inputs.length > 6 ? "grid grid-cols-2 gap-4" : "space-y-3"}
+      >
         {inputs.map((input) => renderInput(input))}
       </div>
     );
@@ -92,16 +99,20 @@ const FormLayout = ({
 
   return (
     <Popup show={show} onClose={onClose} title={title} icon={icon}>
-      <form onSubmit={onSubmit} className='flex flex-col gap-14'>
-        <div className='px-10'>
-
+      <form onSubmit={onSubmit} className="flex flex-col gap-14">
+        <div className="px-10">
           {renderFormContent()}
           {children}
         </div>
-        <div className={`flex justify-between gap-3 ${inputs.length > 6 && !customLayout ? 'col-span-2' : ''}`}>
-          <FormButton onClick={onCancel}>
-            {cancelButtonText}
-          </FormButton>
+        {error && (
+          <div className="px-10 text-center text-sm font-medium text-red-500">
+            {error}
+          </div>
+        )}
+        <div
+          className={`flex justify-between gap-3 ${inputs.length > 6 && !customLayout ? "col-span-2" : ""}`}
+        >
+          <FormButton onClick={onCancel}>{cancelButtonText}</FormButton>
           <FormButton type="submit" isPrimary>
             {submitButtonText}
           </FormButton>
