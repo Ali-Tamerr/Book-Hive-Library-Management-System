@@ -123,7 +123,7 @@ function UserFormPopup({
 
   const inputs = isSuperAdmin
     ? isRoleAdmin
-      ? [...baseInputs, roleInput, userIdInput]
+      ? [...baseInputs, roleInput]
       : [...baseInputs, planInput, roleInput, userIdInput]
     : [...baseInputs, planInput, userIdInput];
 
@@ -140,7 +140,7 @@ function UserFormPopup({
             { name: "password", flex: 1 },
           ],
         },
-        { columns: 1, inputs: ["user_id"] },
+        ...(isRoleAdmin ? [] : [{ columns: 1, inputs: ["user_id"] }]),
       ]
     : [
         { columns: 3, inputs: ["name", "phone_number", "plan"] },
