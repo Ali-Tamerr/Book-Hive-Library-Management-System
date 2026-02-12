@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 .env
+
+ESP8266_SMART_ID.ino
