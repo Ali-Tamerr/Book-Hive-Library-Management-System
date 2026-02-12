@@ -50,10 +50,10 @@ const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadi
             No admins found
           </li>
         )}
+        {/* <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
         <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
         <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
-        <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
-        <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
+        <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li> */}
       </DashboardCard>
     );
 };
