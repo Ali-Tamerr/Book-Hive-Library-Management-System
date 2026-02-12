@@ -122,6 +122,16 @@ function UserManagement({ searchValue, setSearchValue }) {
       console.log("Sending user data:", JSON.stringify(apiData, null, 2));
 
       if (editMode && formData.user_id) {
+        const originalUser = users.find((u) => u.user_id === formData.user_id);
+        if (
+          originalUser &&
+          (originalUser.role?.toLowerCase() === "super admin" ||
+            originalUser.role?.toLowerCase() === "superadmin")
+        ) {
+          alert("Super Admin accounts cannot be edited.");
+          return;
+        }
+
         // Exclude created_by for updates to avoid FK violation and preserve original creator
         const { created_by, ...updateData } = apiData;
 
@@ -177,6 +187,13 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const handleEdit = (user) => {
+    if (
+      user.role?.toLowerCase() === "super admin" ||
+      user.role?.toLowerCase() === "superadmin"
+    ) {
+      alert("Super Admin accounts cannot be edited.");
+      return;
+    }
     setFormError(null);
     setFormData({
       id: user.user_id,
@@ -225,6 +242,17 @@ function UserManagement({ searchValue, setSearchValue }) {
 
   const confirmDelete = async () => {
     if (userToDelete) {
+      const user = users.find((u) => u.user_id === userToDelete);
+      if (
+        user &&
+        (user.role?.toLowerCase() === "super admin" ||
+          user.role?.toLowerCase() === "superadmin")
+      ) {
+        alert("Super Admin accounts cannot be deleted.");
+        setShowDeleteConfirm(false);
+        setUserToDelete(null);
+        return;
+      }
       try {
         // Delete associated transactions
         const userTransactions = bookTransactions.filter(
