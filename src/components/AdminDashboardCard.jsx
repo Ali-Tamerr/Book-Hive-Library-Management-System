@@ -6,14 +6,14 @@ const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadi
     return (
       <DashboardCard title="BookWorm Admins">
         {loading ? (
-          <li className="flex items-center gap-2.5 rounded-md p-2.5 text-xs">
+          <li className="flex items-center gap-2.5 rounded-md p-2.5 text-xs dark:text-[#0a0f33]">
             Loading...
           </li>
         ) : displayAdmins.length > 0 ? (
           displayAdmins.map((admin) => (
             <li
               key={admin.id}
-              className="flex h-18 items-center justify-between gap-2.5 rounded-xl border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"
+              className="h-18 flex items-center justify-between gap-2.5 rounded-xl border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"
             >
               <div className="bg-[#C7C7C7]/48 relative flex h-full flex-1 items-center gap-2.5 rounded-lg p-1.5 px-1.5 py-1 dark:bg-[#929292]">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md p-1.5">
@@ -46,14 +46,14 @@ const AdminDashboardCard = ({ loading, displayAdmins, handleRefreshAdmins, loadi
             </li>
           ))
         ) : (
-          <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500">
+          <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500 dark:text-[#0a0f33]">
             No admins found
           </li>
         )}
-        <li className="  flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
-        <li className="  flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
-        <li className="  flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
-        <li className="  flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
+        <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
+        <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
+        <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
+        <li className="flex h-16 items-center justify-between gap-2.5 rounded-lg border border-[2px] border-[#0a0f33] p-1 text-xs dark:border-[#121317] dark:bg-[#929292]"></li>
       </DashboardCard>
     );
 };
