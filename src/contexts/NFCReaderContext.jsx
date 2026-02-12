@@ -24,6 +24,9 @@ export const NFCReaderProvider = ({ children }) => {
   const readerRef = useRef(null);
   const callbacksRef = useRef(new Set());
   const [isWireless, setIsWireless] = useState(false);
+  const [targetDeviceId, setTargetDeviceId] = useState(
+    localStorage.getItem("nfc_scanner_id") || "esp8266",
+  );
   const lastProcessedScanTimeRef = useRef(new Date().toISOString());
 
   useEffect(() => {
@@ -215,6 +218,21 @@ export const NFCReaderProvider = ({ children }) => {
   // Wireless Scanning: Poll the Backend API directly
   // This respects the new architecture where the Backend proxies/manages the database access.
   const toggleWireless = () => {
+    if (!isWireless) {
+      // Turning ON: Check for Device ID
+      let id = localStorage.getItem("nfc_scanner_id");
+      if (!id) {
+        id = prompt("Enter Scanner ID (shown on LCD):", "esp8266");
+        if (id) {
+          localStorage.setItem("nfc_scanner_id", id.trim());
+          setTargetDeviceId(id.trim());
+        } else {
+          return; // User cancelled
+        }
+      } else {
+        setTargetDeviceId(id.trim());
+      }
+    }
     setIsWireless((prev) => !prev);
     lastProcessedScanTimeRef.current = new Date().toISOString();
   };
@@ -223,38 +241,42 @@ export const NFCReaderProvider = ({ children }) => {
     let pollInterval;
 
     if (isWireless) {
-      console.log("Starting Wireless Polling via Backend API...");
+      console.log(`Starting Wireless Polling for Device: ${targetDeviceId}...`);
       pollInterval = setInterval(async () => {
         try {
-          // Fetch latest scans from our Backend (.NET/Supabase integration)
-          // The API returns ordered list by created_at desc
           const data = await apiGet("/NfcScans");
 
           if (data && Array.isArray(data) && data.length > 0) {
-            const latestScan = data[0];
+            // Filter by our specific Device ID locally
+            const myScans = data.filter(
+              (s) =>
+                s.device_id === targetDeviceId ||
+                (!s.device_id && targetDeviceId === "esp8266"),
+            );
 
-            // Backend returns 'created_at'. Ensure we parse it correctly.
-            // Compare string timestamps or Date objects
-            if (
-              new Date(latestScan.created_at) >
-              new Date(lastProcessedScanTimeRef.current)
-            ) {
-              console.log("New Wireless Scan (API):", latestScan.tag_id);
-              notifyCallbacks(latestScan.tag_id);
-              lastProcessedScanTimeRef.current = latestScan.created_at;
+            if (myScans.length > 0) {
+              const latestScan = myScans[0];
+
+              if (
+                new Date(latestScan.created_at) >
+                new Date(lastProcessedScanTimeRef.current)
+              ) {
+                console.log("New Wireless Scan (API):", latestScan.tag_id);
+                notifyCallbacks(latestScan.tag_id);
+                lastProcessedScanTimeRef.current = latestScan.created_at;
+              }
             }
           }
         } catch (err) {
           console.error("Wireless Poll API Error:", err);
-          // Don't auto-disable on error, as transient network issues might occur.
         }
-      }, 1000); // Poll every 1 second
+      }, 1000);
     }
 
     return () => {
       if (pollInterval) clearInterval(pollInterval);
     };
-  }, [isWireless]);
+  }, [isWireless, targetDeviceId]);
 
   const handleConnectClick = async () => {
     if (isConnected) {
