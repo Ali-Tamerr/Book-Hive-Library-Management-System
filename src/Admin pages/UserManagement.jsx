@@ -45,6 +45,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [pendingRequestId, setPendingRequestId] = useState(null);
   const [deleteWarning, setDeleteWarning] = useState(null);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
+  const [formError, setFormError] = useState(null);
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -154,13 +155,26 @@ function UserManagement({ searchValue, setSearchValue }) {
       });
       setShowPopup(false);
       setEditMode(false);
+      setFormError(null);
     } catch (error) {
       console.error("Failed to save user:", error);
-      alert("Failed to save user. Please try again.");
+      const errorMsg =
+        error.response?.data?.message || error.message || JSON.stringify(error);
+      const responseData = JSON.stringify(error.response?.data || {});
+      if (
+        errorMsg.includes("UQ_Users_PhoneNumber") ||
+        responseData.includes("UQ_Users_PhoneNumber") ||
+        responseData.includes("duplicate")
+      ) {
+        setFormError("This phone number is already registered.");
+      } else {
+        setFormError("Failed to save user. Please try again.");
+      }
     }
   };
 
   const handleEdit = (user) => {
+    setFormError(null);
     setFormData({
       id: user.user_id,
       user_id: user.user_id,
@@ -257,6 +271,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const buttonBehaviour = () => {
+    setFormError(null);
     setFormData({
       id: "",
       user_id: "",
@@ -358,6 +373,12 @@ function UserManagement({ searchValue, setSearchValue }) {
       : { name: createdById, role: "Unknown" };
   };
 
+  const availableNumericIds = users
+    .map((u) => parseInt(u.user_id, 10))
+    .filter((n) => !isNaN(n));
+  const nextUserId =
+    availableNumericIds.length > 0 ? Math.max(...availableNumericIds) + 1 : 1;
+
   const formPopup = (
     <UserFormPopup
       showPopup={showPopup}
@@ -368,6 +389,8 @@ function UserManagement({ searchValue, setSearchValue }) {
       setShowPopup={setShowPopup}
       setEditMode={setEditMode}
       isSuperAdmin={isSuperAdmin}
+      error={formError}
+      nextUserId={nextUserId}
     />
   );
 
