@@ -1,36 +1,39 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   useUsers,
   useCreateUser,
   useUpdateUser,
-  useDeleteUser
-} from '../hooks/useUsers.js';
+  useDeleteUser,
+} from "../hooks/useUsers.js";
 import {
   useUserRequests,
   useApproveUserRequest,
   useRejectUserRequest,
-  useDeleteUserRequest
-} from '../hooks/useUserRequests.js';
+  useDeleteUserRequest,
+} from "../hooks/useUserRequests.js";
 import {
   useBookTransactions,
   useUpdateBookTransaction,
-  useDeleteBookTransaction
-} from '../hooks/useBookTransactions.js';
-import { useReservations, useDeleteReservation } from '../hooks/useReservations.js';
-import { useBooks } from '../hooks/useBooks.js';
-import { useBookCopies } from '../hooks/useBookCopies.js';
-import UserFormPopup from '../components/UserFormPopup.jsx';
-import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
-import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
-import ViewRequestsPopup from '../components/ViewRequestsPopup.jsx';
-import CommonLayout from '../Layouts/CommonLayout.jsx';
-import { FilePenLine, Trash2, ReceiptText } from 'lucide-react';
+  useDeleteBookTransaction,
+} from "../hooks/useBookTransactions.js";
+import {
+  useReservations,
+  useDeleteReservation,
+} from "../hooks/useReservations.js";
+import { useBooks } from "../hooks/useBooks.js";
+import { useBookCopies } from "../hooks/useBookCopies.js";
+import UserFormPopup from "../components/UserFormPopup.jsx";
+import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
+import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
+import ViewRequestsPopup from "../components/ViewRequestsPopup.jsx";
+import CommonLayout from "../Layouts/CommonLayout.jsx";
+import { FilePenLine, Trash2, ReceiptText } from "lucide-react";
 
-import { getCurrentUser } from '../services/auth.api';
+import { getCurrentUser } from "../services/auth.api";
 
 function UserManagement({ searchValue, setSearchValue }) {
   const currentUser = getCurrentUser();
-  const isSuperAdmin = currentUser?.role === 'Super Admin';
+  const isSuperAdmin = currentUser?.role === "Super Admin";
 
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -43,15 +46,15 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [deleteWarning, setDeleteWarning] = useState(null);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
   const [formData, setFormData] = useState({
-    id: '',
-    name: '',
-    email: '',
-    phone_number: '',
-    plan: '',
-    role: 'User',
-    status: 'Active',
-    password: '',
-    password_hash: ''
+    id: "",
+    name: "",
+    email: "",
+    phone_number: "",
+    plan: "",
+    role: "User",
+    status: "Active",
+    password: "",
+    password_hash: "",
   });
 
   const { data: users = [], isLoading } = useUsers();
@@ -59,12 +62,14 @@ function UserManagement({ searchValue, setSearchValue }) {
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
 
-  const { data: userRequests = [], isLoading: isLoadingRequests } = useUserRequests();
+  const { data: userRequests = [], isLoading: isLoadingRequests } =
+    useUserRequests();
   const approveRequestMutation = useApproveUserRequest();
   const rejectRequestMutation = useRejectUserRequest();
   const deleteRequestMutation = useDeleteUserRequest();
 
-  const { data: bookTransactions = [], isLoading: isLoadingBookTransactions } = useBookTransactions();
+  const { data: bookTransactions = [], isLoading: isLoadingBookTransactions } =
+    useBookTransactions();
   const updateBookTransactionMutation = useUpdateBookTransaction();
   const deleteBookTransactionMutation = useDeleteBookTransaction();
   const { data: books = [] } = useBooks();
@@ -73,30 +78,34 @@ function UserManagement({ searchValue, setSearchValue }) {
   const deleteReservationMutation = useDeleteReservation();
 
   const pendingBookRequests = bookTransactions.filter(
-    t => t.status === 'Pending' && t.transaction_type === 'Check-Out'
+    (t) => t.status === "Pending" && t.transaction_type === "Check-Out",
   );
 
   const pendingReturnRequests = bookTransactions.filter(
-    t => t.status === 'Pending' && t.transaction_type === 'Check-In'
+    (t) => t.status === "Pending" && t.transaction_type === "Check-In",
   );
 
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      if (!editMode && (!formData.user_id || formData.user_id.trim() === '')) {
-        alert('User ID is required.');
+      if (!editMode && (!formData.user_id || formData.user_id.trim() === "")) {
+        alert("User ID is required.");
         return;
       }
-      if (!editMode && (!formData.password || formData.password.trim() === '')) {
-        alert('Password is required for new users.');
+      if (
+        !editMode &&
+        (!formData.password || formData.password.trim() === "")
+      ) {
+        alert("Password is required for new users.");
         return;
       }
-      if (!formData.phone_number || formData.phone_number.trim() === '') {
-        alert('Phone number is required.');
+      if (!formData.phone_number || formData.phone_number.trim() === "") {
+        alert("Phone number is required.");
         return;
       }
 
-      const selectedRole = isSuperAdmin && formData.role ? formData.role : 'User';
+      const selectedRole =
+        isSuperAdmin && formData.role ? formData.role : "User";
       const apiData = {
         user_id: formData.user_id.trim(),
         name: formData.name,
@@ -104,36 +113,50 @@ function UserManagement({ searchValue, setSearchValue }) {
         phone_number: formData.phone_number,
         role: selectedRole,
         plan: formData.plan || null,
-        status: formData.status || 'Active',
+        status: formData.status || "Active",
         password_hash: formData.password,
-        created_by: currentUser?.user_id || null
+        created_by: currentUser?.user_id || null,
       };
 
-      console.log('Sending user data:', JSON.stringify(apiData, null, 2));
+      console.log("Sending user data:", JSON.stringify(apiData, null, 2));
 
       if (editMode && formData.user_id) {
-        if (!formData.password || formData.password.trim() === '') {
+        if (!formData.password || formData.password.trim() === "") {
           apiData.password_hash = formData.password_hash;
         }
-        await updateUserMutation.mutateAsync({ id: formData.user_id, data: apiData });
+        await updateUserMutation.mutateAsync({
+          id: formData.user_id,
+          data: apiData,
+        });
       } else {
         await createUserMutation.mutateAsync(apiData);
         if (pendingRequestId) {
           try {
             await deleteRequestMutation.mutateAsync(pendingRequestId);
-            console.log('Request deleted successfully:', pendingRequestId);
+            console.log("Request deleted successfully:", pendingRequestId);
           } catch (deleteError) {
-            console.error('Failed to delete request:', deleteError);
+            console.error("Failed to delete request:", deleteError);
           }
           setPendingRequestId(null);
         }
       }
-      setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', role: 'User', status: 'Active', password: '', password_hash: '' });
+      setFormData({
+        id: "",
+        user_id: "",
+        name: "",
+        email: "",
+        phone_number: "",
+        plan: "",
+        role: "User",
+        status: "Active",
+        password: "",
+        password_hash: "",
+      });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
       console.error("Failed to save user:", error);
-      alert('Failed to save user. Please try again.');
+      alert("Failed to save user. Please try again.");
     }
   };
 
@@ -141,14 +164,14 @@ function UserManagement({ searchValue, setSearchValue }) {
     setFormData({
       id: user.user_id,
       user_id: user.user_id,
-      name: user.name || '',
-      email: user.email || '',
-      phone_number: user.phone_number || '',
-      plan: user.plan || '',
-      role: user.role || 'User',
-      status: user.status || 'Active',
-      password: '',
-      password_hash: user.password_hash || ''
+      name: user.name || "",
+      email: user.email || "",
+      phone_number: user.phone_number || "",
+      plan: user.plan || "",
+      role: user.role || "User",
+      status: user.status || "Active",
+      password: "",
+      password_hash: user.password_hash || "",
     });
     setEditMode(true);
     setShowPopup(true);
@@ -157,19 +180,23 @@ function UserManagement({ searchValue, setSearchValue }) {
   const handleDelete = (id) => {
     setUserToDelete(id);
 
-    const linkedTransactions = bookTransactions.filter(t => t.user_id === id);
-    const linkedReservations = reservations.filter(r => r.user_id === id);
+    const linkedTransactions = bookTransactions.filter((t) => t.user_id === id);
+    const linkedReservations = reservations.filter((r) => r.user_id === id);
 
     if (linkedTransactions.length > 0 || linkedReservations.length > 0) {
       const transactionCount = linkedTransactions.length;
       const reservationCount = linkedReservations.length;
-      let message = 'This user have associated records:';
-      if (transactionCount > 0) message += ` ${transactionCount} transaction(s)`;
-      if (transactionCount > 0 && reservationCount > 0) message += ' and';
-      if (reservationCount > 0) message += ` ${reservationCount} reservation(s)`;
-      message += '.';
+      let message = "This user have associated records:";
+      if (transactionCount > 0)
+        message += ` ${transactionCount} transaction(s)`;
+      if (transactionCount > 0 && reservationCount > 0) message += " and";
+      if (reservationCount > 0)
+        message += ` ${reservationCount} reservation(s)`;
+      message += ".";
 
-      setDeleteWarning(message + " Deleting the user will permanently remove these records.");
+      setDeleteWarning(
+        message + " Deleting the user will permanently remove these records.",
+      );
       setIsDeleteDisabled(false);
     } else {
       setDeleteWarning(null);
@@ -183,15 +210,27 @@ function UserManagement({ searchValue, setSearchValue }) {
     if (userToDelete) {
       try {
         // Delete associated transactions
-        const userTransactions = bookTransactions.filter(t => t.user_id === userToDelete);
+        const userTransactions = bookTransactions.filter(
+          (t) => t.user_id === userToDelete,
+        );
         if (userTransactions.length > 0) {
-          await Promise.all(userTransactions.map(t => deleteBookTransactionMutation.mutateAsync(t.transaction_id)));
+          await Promise.all(
+            userTransactions.map((t) =>
+              deleteBookTransactionMutation.mutateAsync(t.transaction_id),
+            ),
+          );
         }
 
         // Delete associated reservations
-        const userReservations = reservations.filter(r => r.user_id === userToDelete);
+        const userReservations = reservations.filter(
+          (r) => r.user_id === userToDelete,
+        );
         if (userReservations.length > 0) {
-          await Promise.all(userReservations.map(r => deleteReservationMutation.mutateAsync(r.reservation_id)));
+          await Promise.all(
+            userReservations.map((r) =>
+              deleteReservationMutation.mutateAsync(r.reservation_id),
+            ),
+          );
         }
 
         // Delete the user
@@ -202,7 +241,9 @@ function UserManagement({ searchValue, setSearchValue }) {
         setDeleteWarning(null);
       } catch (error) {
         console.error("Delete failed:", error);
-        alert('Failed to delete user or their associated records. Please try again.');
+        alert(
+          "Failed to delete user or their associated records. Please try again.",
+        );
         setShowDeleteConfirm(false);
         setUserToDelete(null);
         setDeleteWarning(null);
@@ -216,35 +257,47 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ id: '', user_id: '', name: '', email: '', phone_number: '', plan: '', role: 'User', status: 'Active', password: '', password_hash: '' });
+    setFormData({
+      id: "",
+      user_id: "",
+      name: "",
+      email: "",
+      phone_number: "",
+      plan: "",
+      role: "User",
+      status: "Active",
+      password: "",
+      password_hash: "",
+    });
     setPendingRequestId(null);
     setEditMode(false);
     setShowPopup(true);
   };
 
+  const visibleUsers = users.filter((user) => user.role !== "Super Admin");
   const filteredUsers = searchValue
-    ? users.filter(
-      (user) =>
-        user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        user.user_id?.toString().includes(searchValue)
-    )
-    : users;
+    ? visibleUsers.filter(
+        (user) =>
+          user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          user.user_id?.toString().includes(searchValue),
+      )
+    : visibleUsers;
 
   const title = "User Management";
   const buttonText = "Add User";
   const columns = [
-    { header: 'User ID', accessor: 'user_id' },
-    { header: 'Name', accessor: 'name' },
-    { header: 'Email', accessor: 'email' },
-    { header: 'Plan', accessor: 'plan' },
-    { header: 'Contact No', accessor: 'phone_number' },
-    { header: 'Action', accessor: 'action' },
+    { header: "User ID", accessor: "user_id" },
+    { header: "Name", accessor: "name" },
+    { header: "Email", accessor: "email" },
+    { header: "Plan", accessor: "plan" },
+    { header: "Contact No", accessor: "phone_number" },
+    { header: "Action", accessor: "action" },
   ];
 
   const customActionRenderer = (user) => {
-    const isSuperAdminAccount = user.role === 'Super Admin';
-    const isAdminAccount = user.role === 'Admin';
+    const isSuperAdminAccount = user.role === "Super Admin";
+    const isAdminAccount = user.role === "Admin";
 
     const canDelete = isSuperAdmin
       ? !isSuperAdminAccount
@@ -252,19 +305,19 @@ function UserManagement({ searchValue, setSearchValue }) {
 
     const getDeleteMessage = () => {
       if (isSuperAdminAccount) {
-        return 'Super Admin accounts cannot be deleted.';
+        return "Super Admin accounts cannot be deleted.";
       }
       if (isAdminAccount && !isSuperAdmin) {
-        return 'Only Super Admins can delete Admin accounts.';
+        return "Only Super Admins can delete Admin accounts.";
       }
-      return '';
+      return "";
     };
 
     return (
-      <div className='w-max mx-auto flex justify-center items-center'>
+      <div className="mx-auto flex w-max items-center justify-center">
         <button
           onClick={() => handleEdit(user)}
-          className="mr-2 text-lg hover:scale-125 transition-transform cursor-pointer"
+          className="mr-2 cursor-pointer text-lg transition-transform hover:scale-125"
           title="Edit"
         >
           <FilePenLine size={20} />
@@ -277,17 +330,18 @@ function UserManagement({ searchValue, setSearchValue }) {
             }
             handleDelete(user.user_id);
           }}
-          className={`mr-2 text-lg transition-transform ${!canDelete
-            ? 'opacity-40 cursor-not-allowed'
-            : 'hover:scale-125 cursor-pointer'
-            }`}
-          title={!canDelete ? getDeleteMessage() : 'Delete'}
+          className={`mr-2 text-lg transition-transform ${
+            !canDelete
+              ? "cursor-not-allowed opacity-40"
+              : "cursor-pointer hover:scale-125"
+          }`}
+          title={!canDelete ? getDeleteMessage() : "Delete"}
         >
           <Trash2 size={20} />
         </button>
         <button
           onClick={() => handleView(user)}
-          className="text-lg hover:scale-125 transition-transform cursor-pointer"
+          className="cursor-pointer text-lg transition-transform hover:scale-125"
           title="View"
         >
           <ReceiptText size={20} />
@@ -297,9 +351,11 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const getCreatorName = (createdById) => {
-    if (!createdById) return { name: 'N/A', role: 'Not recorded' };
-    const creator = users.find(u => u.user_id === createdById);
-    return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
+    if (!createdById) return { name: "N/A", role: "Not recorded" };
+    const creator = users.find((u) => u.user_id === createdById);
+    return creator
+      ? { name: creator.name, role: creator.role }
+      : { name: createdById, role: "Unknown" };
   };
 
   const formPopup = (
@@ -334,7 +390,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         secondaryButton={
           <button
             onClick={() => setShowRequestsPopup(true)}
-            className="bg-white border border-[#0b0b3b] dark:border-[#121317] cursor-pointer h-full max-[856px]:text-xs text-[#0b0b3b] dark:bg-[#E8E8E8] dark:text-[#121317] min-w-[150px] rounded-xl hover:bg-[#F0F0FF] transition-colors text-sm font-medium flex items-center justify-center hover:bg-[#1a1a6a] dark:hover:bg-[#d4d4d4] gap-2"
+            className="flex h-full min-w-[150px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#0b0b3b] bg-white text-sm font-medium text-[#0b0b3b] transition-colors hover:bg-[#1a1a6a] hover:bg-[#F0F0FF] max-[856px]:text-xs dark:border-[#121317] dark:bg-[#E8E8E8] dark:text-[#121317] dark:hover:bg-[#d4d4d4]"
           >
             View Requests
           </button>
@@ -360,16 +416,19 @@ function UserManagement({ searchValue, setSearchValue }) {
           setSelectedUser(null);
         }}
         title="View User"
-        data={selectedUser ? {
-          'User ID': selectedUser.user_id,
-          'Name': selectedUser.name,
-          'Email': selectedUser.email,
-          'Phone Number': selectedUser.phone_number,
-          'Plan': selectedUser.plan || 'N/A',
-        } : null}
+        data={
+          selectedUser
+            ? {
+                "User ID": selectedUser.user_id,
+                Name: selectedUser.name,
+                Email: selectedUser.email,
+                "Phone Number": selectedUser.phone_number,
+                Plan: selectedUser.plan || "N/A",
+              }
+            : null
+        }
         savedBy={selectedUser ? getCreatorName(selectedUser.created_by) : null}
-      >
-      </ViewDetailsPopup>
+      ></ViewDetailsPopup>
       <ViewRequestsPopup
         show={showRequestsPopup}
         onClose={() => setShowRequestsPopup(false)}
@@ -377,16 +436,16 @@ function UserManagement({ searchValue, setSearchValue }) {
         isLoading={isLoadingRequests}
         onApprove={(request) => {
           setFormData({
-            id: '',
-            user_id: '',
-            name: request.name || '',
-            email: request.email || '',
-            phone_number: request.phone_number || '',
-            plan: request.plan || '',
-            role: 'User',
-            status: 'Active',
-            password: request.password || '',
-            password_hash: ''
+            id: "",
+            user_id: "",
+            name: request.name || "",
+            email: request.email || "",
+            phone_number: request.phone_number || "",
+            plan: request.plan || "",
+            role: "User",
+            status: "Active",
+            password: request.password || "",
+            password_hash: "",
           });
           setPendingRequestId(request.request_id);
           setShowRequestsPopup(false);
@@ -403,12 +462,12 @@ function UserManagement({ searchValue, setSearchValue }) {
                 password: request.password,
                 phone_number: request.phone_number,
                 plan: request.plan,
-                status: 'Rejected'
-              }
+                status: "Rejected",
+              },
             });
           } catch (error) {
-            console.error('Failed to reject request:', error);
-            alert('Failed to reject request. Please try again.');
+            console.error("Failed to reject request:", error);
+            alert("Failed to reject request. Please try again.");
           }
         }}
         bookRequests={pendingBookRequests}
@@ -422,20 +481,22 @@ function UserManagement({ searchValue, setSearchValue }) {
               id: request.transaction_id,
               data: {
                 ...request,
-                status: 'Completed'
-              }
+                status: "Completed",
+              },
             });
           } catch (error) {
-            console.error('Failed to approve book request:', error);
-            alert('Failed to approve book request. Please try again.');
+            console.error("Failed to approve book request:", error);
+            alert("Failed to approve book request. Please try again.");
           }
         }}
         onRejectBook={async (request) => {
           try {
-            await deleteBookTransactionMutation.mutateAsync(request.transaction_id);
+            await deleteBookTransactionMutation.mutateAsync(
+              request.transaction_id,
+            );
           } catch (error) {
-            console.error('Failed to reject book request:', error);
-            alert('Failed to reject book request. Please try again.');
+            console.error("Failed to reject book request:", error);
+            alert("Failed to reject book request. Please try again.");
           }
         }}
         returnRequests={pendingReturnRequests}
@@ -443,11 +504,12 @@ function UserManagement({ searchValue, setSearchValue }) {
         onApproveReturn={async (request) => {
           try {
             const originalBorrow = bookTransactions.find(
-              t => t.book_id === request.book_id &&
+              (t) =>
+                t.book_id === request.book_id &&
                 t.user_id === request.user_id &&
-                t.transaction_type === 'Check-Out' &&
-                t.status === 'Completed' &&
-                !t.return_date
+                t.transaction_type === "Check-Out" &&
+                t.status === "Completed" &&
+                !t.return_date,
             );
 
             if (originalBorrow) {
@@ -456,8 +518,8 @@ function UserManagement({ searchValue, setSearchValue }) {
                 data: {
                   ...originalBorrow,
                   return_date: new Date().toISOString(),
-                  status: 'Completed'
-                }
+                  status: "Completed",
+                },
               });
             }
 
@@ -465,20 +527,22 @@ function UserManagement({ searchValue, setSearchValue }) {
               id: request.transaction_id,
               data: {
                 ...request,
-                status: 'Completed'
-              }
+                status: "Completed",
+              },
             });
           } catch (error) {
-            console.error('Failed to approve return request:', error);
-            alert('Failed to approve return request. Please try again.');
+            console.error("Failed to approve return request:", error);
+            alert("Failed to approve return request. Please try again.");
           }
         }}
         onRejectReturn={async (request) => {
           try {
-            await deleteBookTransactionMutation.mutateAsync(request.transaction_id);
+            await deleteBookTransactionMutation.mutateAsync(
+              request.transaction_id,
+            );
           } catch (error) {
-            console.error('Failed to reject return request:', error);
-            alert('Failed to reject return request. Please try again.');
+            console.error("Failed to reject return request:", error);
+            alert("Failed to reject return request. Please try again.");
           }
         }}
       />

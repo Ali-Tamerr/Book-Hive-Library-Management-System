@@ -211,7 +211,7 @@ function Dashboard() {
           <div className="flex min-h-0 flex-1 snap-start flex-col">
             <DashboardCard title="Overdue Borrowers">
               {loading ? (
-                <li className="flex items-center gap-3 rounded-lg p-3 text-xs">
+                <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#0a0f33]">
                   Loading...
                 </li>
               ) : overdueBorrowers.length > 0 ? (
@@ -239,7 +239,7 @@ function Dashboard() {
                   </li>
                 ))
               ) : (
-                <li className="rounded-lg p-3 text-xs text-gray-500">
+                <li className="rounded-lg p-3 text-xs text-gray-500 dark:text-[#0a0f33]">
                   No overdue books
                 </li>
               )}
@@ -249,7 +249,7 @@ function Dashboard() {
           <div className="flex min-h-0 flex-1 snap-center flex-col">
             <DashboardCard title="Branch Network">
               {branchesLoading ? (
-                <li className="flex items-center gap-3 rounded-lg p-3 text-xs">
+                <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#0a0f33]">
                   Loading...
                 </li>
               ) : Array.isArray(branches) && branches.length > 0 ? (
@@ -279,7 +279,7 @@ function Dashboard() {
                   </li>
                 ))
               ) : (
-                <li className="rounded-lg p-3 text-xs text-gray-500">
+                <li className="rounded-lg p-3 text-xs text-gray-500 dark:text-[#0a0f33]">
                   No branches found
                 </li>
               )}
