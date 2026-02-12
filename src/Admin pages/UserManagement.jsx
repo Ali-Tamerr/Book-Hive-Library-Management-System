@@ -187,13 +187,21 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const handleEdit = (user) => {
-    if (
+    const isTargetSuperAdmin =
       user.role?.toLowerCase() === "super admin" ||
-      user.role?.toLowerCase() === "superadmin"
-    ) {
+      user.role?.toLowerCase() === "superadmin";
+    const isTargetAdmin = user.role === "Admin";
+
+    if (isTargetSuperAdmin) {
       alert("Super Admin accounts cannot be edited.");
       return;
     }
+
+    if (!isSuperAdmin && isTargetAdmin) {
+      alert("Only Super Admins can edit Admin accounts.");
+      return;
+    }
+
     setFormError(null);
     setFormData({
       id: user.user_id,
@@ -362,12 +370,36 @@ function UserManagement({ searchValue, setSearchValue }) {
       return "";
     };
 
+    const canEdit = isSuperAdmin
+      ? !isSuperAdminAccount
+      : !isAdminAccount && !isSuperAdminAccount;
+
+    const getEditMessage = () => {
+      if (isSuperAdminAccount) {
+        return "Super Admin accounts cannot be edited.";
+      }
+      if (isAdminAccount && !isSuperAdmin) {
+        return "Only Super Admins can edit Admin accounts.";
+      }
+      return "";
+    };
+
     return (
       <div className="mx-auto flex w-max items-center justify-center">
         <button
-          onClick={() => handleEdit(user)}
-          className="mr-2 cursor-pointer text-lg transition-transform hover:scale-125"
-          title="Edit"
+          onClick={() => {
+            if (!canEdit) {
+              alert(getEditMessage());
+              return;
+            }
+            handleEdit(user);
+          }}
+          className={`mr-2 text-lg transition-transform ${
+            !canEdit
+              ? "cursor-not-allowed opacity-40"
+              : "cursor-pointer hover:scale-125"
+          }`}
+          title={!canEdit ? getEditMessage() : "Edit"}
         >
           <FilePenLine size={20} />
         </button>
