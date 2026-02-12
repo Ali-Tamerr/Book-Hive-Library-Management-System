@@ -122,12 +122,15 @@ function UserManagement({ searchValue, setSearchValue }) {
       console.log("Sending user data:", JSON.stringify(apiData, null, 2));
 
       if (editMode && formData.user_id) {
+        // Exclude created_by for updates to avoid FK violation and preserve original creator
+        const { created_by, ...updateData } = apiData;
+
         if (!formData.password || formData.password.trim() === "") {
-          apiData.password_hash = formData.password_hash;
+          updateData.password_hash = formData.password_hash;
         }
         await updateUserMutation.mutateAsync({
           id: formData.user_id,
-          data: apiData,
+          data: updateData,
         });
       } else {
         await createUserMutation.mutateAsync(apiData);
@@ -289,7 +292,10 @@ function UserManagement({ searchValue, setSearchValue }) {
     setShowPopup(true);
   };
 
-  const visibleUsers = users.filter((user) => user.role !== "Super Admin");
+  const visibleUsers = users.filter((user) => {
+    const role = user.role?.toLowerCase() || "";
+    return role !== "super admin";
+  });
   const filteredUsers = searchValue
     ? visibleUsers.filter(
         (user) =>
@@ -374,8 +380,8 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const availableNumericIds = users
-    .map((u) => parseInt(u.user_id, 10))
-    .filter((n) => !isNaN(n));
+    .filter((u) => /^\d+$/.test(u.user_id))
+    .map((u) => parseInt(u.user_id, 10));
   const nextUserId =
     availableNumericIds.length > 0 ? Math.max(...availableNumericIds) + 1 : 1;
 
