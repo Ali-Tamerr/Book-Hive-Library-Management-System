@@ -288,11 +288,11 @@ const ViewRequestsPopup = ({
                 <div className='border border-[#8787A3] rounded-[10px] overflow-hidden flex-1 flex flex-col'>
                     <div className='flex-1 min-w-[100px] overflow-auto'>
                         {currentLoading ? (
-                            <div className='p-8 text-center text-gray-500'>
+                            <div className='p-8 text-center text-gray-500 dark:text-[#0a0f33]'>
                                 Loading requests...
                             </div>
                         ) : currentData.length === 0 ? (
-                            <div className='p-8 text-center text-gray-500'>
+                            <div className='p-8 text-center text-gray-500 dark:text-[#0a0f33]'>
                                 {searchValue
                                     ? 'No requests match your search.'
                                     : showRejected
@@ -317,12 +317,12 @@ const ViewRequestsPopup = ({
                                 <tbody className='border-t border-[#0a0f33]'>
                                     {filteredUserRequests.map((request, index) => (
                                         <tr key={request.request_id || index}>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{request.name}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{request.email}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{request.phone_number}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{request.plan || 'N/A'}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
-                                            <td className='p-4 whitespace-nowrap text-center'>{getUserStatusBadge(request)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{request.name}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{request.email}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{request.phone_number}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{request.plan || 'N/A'}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] whitespace-nowrap text-center'>{getUserStatusBadge(request)}</td>
                                             {!showRejected && (
                                                 <td className='p-4'>
                                                     <div className='flex justify-center gap-2'>
@@ -371,11 +371,11 @@ const ViewRequestsPopup = ({
                                 <tbody className='border-t border-[#0a0f33]'>
                                     {filteredBookRequests.map((request, index) => (
                                         <tr key={request.transaction_id || index}>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{getUserName(request.user_id)}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{getBookName(request.book_id)}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{formatDateShort(request.due_date)}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
-                                            <td className='p-4 whitespace-nowrap text-center'>{getBookStatusBadge(request)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{getUserName(request.user_id)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{getBookName(request.book_id)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{formatDateShort(request.due_date)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] whitespace-nowrap text-center'>{getBookStatusBadge(request)}</td>
                                             {!showRejected && (
                                                 <td className='p-4'>
                                                     <div className='flex justify-center gap-2'>
@@ -418,10 +418,10 @@ const ViewRequestsPopup = ({
                                 <tbody className='border-t border-[#0a0f33]'>
                                     {filteredReturnRequests.map((request, index) => (
                                         <tr key={request.transaction_id || index}>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{getUserName(request.user_id)}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{getBookName(request.book_id)}</td>
-                                            <td className='p-4 text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
-                                            <td className='p-4 whitespace-nowrap text-center'>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{getUserName(request.user_id)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{getBookName(request.book_id)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
+                                            <td className='p-4 dark:text-[#0a0f33] whitespace-nowrap text-center'>
                                                 <span className="text-xs font-medium text-yellow-600">Pending Return</span>
                                             </td>
                                             <td className='p-4'>
