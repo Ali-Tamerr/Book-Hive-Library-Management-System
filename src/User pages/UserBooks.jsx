@@ -287,7 +287,7 @@ function UserBooks() {
                                     onClick={() => handleBorrowClick(book)}
                                     disabled={!canBorrow}
                                     className={`p-2 rounded-lg transition-all ${canBorrow
-                                        ? 'text-[#0a0f33] hover:bg-gray-100 cursor-pointer'
+                                        ? 'text-[#0a0f33] dark:text-white hover:bg-gray-100 cursor-pointer'
                                         : 'text-gray-300 cursor-not-allowed'
                                         }`}
                                     title={!canBorrow ? 'Not available' : 'Configure borrow details'}
