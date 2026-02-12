@@ -218,9 +218,11 @@ export const NFCReaderProvider = ({ children }) => {
   };
 
   const value = {
-    isConnected,
+    isConnected, // Wired status
+    isWireless, // Wireless status
     isWebSerialSupported,
-    handleConnectClick,
+    handleConnectClick, // Wired connect
+    toggleWireless, // Wireless toggle
     registerCallback,
   };
 
