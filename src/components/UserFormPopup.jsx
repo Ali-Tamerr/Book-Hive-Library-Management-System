@@ -28,9 +28,12 @@ function UserFormPopup({
     }
   };
 
-  const handleNFCData = (data) => {
-    setFormData((prevData) => ({ ...prevData, user_id: data }));
-  };
+  const handleNFCData = React.useCallback(
+    (data) => {
+      setFormData((prevData) => ({ ...prevData, user_id: data }));
+    },
+    [setFormData],
+  );
 
   const baseInputs = [
     {
@@ -111,7 +114,7 @@ function UserFormPopup({
               placeholder="User ID"
               required
               autoComplete="off"
-              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] px-4 py-3 text-[13px] outline-none focus:border-[#1e255e]"
+              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] px-4 py-3 text-[13px] outline-none focus:border-[#1e255e] dark:text-[#0a0f33]"
             />
           </div>
         </div>
