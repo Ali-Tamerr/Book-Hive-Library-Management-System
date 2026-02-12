@@ -5,6 +5,7 @@ import React, {
   useRef,
   useEffect,
 } from "react";
+import { apiGet } from "../services/api.config";
 
 const NFCReaderContext = createContext();
 
@@ -211,15 +212,10 @@ export const NFCReaderProvider = ({ children }) => {
     }
   };
 
-  // Hardcoded for the Wireless Scanner feature (Bypassing .NET for this specific hardware feature)
-  const SUPABASE_URL =
-    "https://guoanmhasnpjmlewqzrs.supabase.co/rest/v1/nfc_scans";
-  const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1b2FubWhhc25wam1sZXdxenJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1Njk5NDEsImV4cCI6MjA3NjE0NTk0MX0.PD4QzTLaVGw3WIGr5oZ_kLdnWTE-CE485ZK83rMjLtU";
-
+  // Wireless Scanning: Poll the Backend API directly
+  // This respects the new architecture where the Backend proxies/manages the database access.
   const toggleWireless = () => {
     setIsWireless((prev) => !prev);
-    // Reset last processed time to now so we don't process old scans
     lastProcessedScanTimeRef.current = new Date().toISOString();
   };
 
@@ -227,44 +223,32 @@ export const NFCReaderProvider = ({ children }) => {
     let pollInterval;
 
     if (isWireless) {
-      console.log("Starting Wireless Polling...");
+      console.log("Starting Wireless Polling via Backend API...");
       pollInterval = setInterval(async () => {
         try {
-          // Fetch latest scan that is NEWER than our reference time
-          const url = `${SUPABASE_URL}?select=tag_id,created_at&order=created_at.desc&limit=1`;
+          // Fetch latest scans from our Backend (.NET/Supabase integration)
+          // The API returns ordered list by created_at desc
+          const data = await apiGet("/NfcScans");
 
-          const response = await fetch(url, {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: `Bearer ${SUPABASE_KEY}`,
-            },
-          });
+          if (data && Array.isArray(data) && data.length > 0) {
+            const latestScan = data[0];
 
-          if (response.ok) {
-            const data = await response.json();
-            if (data && data.length > 0) {
-              const latestScan = data[0];
-              // Compare timestamps
-              if (latestScan.created_at > lastProcessedScanTimeRef.current) {
-                console.log("New Wireless Scan:", latestScan.tag_id);
-                notifyCallbacks(latestScan.tag_id);
-                lastProcessedScanTimeRef.current = latestScan.created_at;
-              }
-            }
-          } else {
-            console.error("Wireless Poll Error:", response.status);
-            // If 404, table doesn't exist. Stop polling to avoid spam.
-            if (response.status === 404) {
-              alert(
-                "Wireless setup incomplete. Ensure 'nfc_scans' table exists in Supabase.",
-              );
-              setIsWireless(false);
+            // Backend returns 'created_at'. Ensure we parse it correctly.
+            // Compare string timestamps or Date objects
+            if (
+              new Date(latestScan.created_at) >
+              new Date(lastProcessedScanTimeRef.current)
+            ) {
+              console.log("New Wireless Scan (API):", latestScan.tag_id);
+              notifyCallbacks(latestScan.tag_id);
+              lastProcessedScanTimeRef.current = latestScan.created_at;
             }
           }
         } catch (err) {
-          console.error("Wireless Poll Network Error:", err);
+          console.error("Wireless Poll API Error:", err);
+          // Don't auto-disable on error, as transient network issues might occur.
         }
-      }, 750); // Poll every 750ms
+      }, 1000); // Poll every 1 second
     }
 
     return () => {
