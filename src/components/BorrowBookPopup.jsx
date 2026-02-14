@@ -3,7 +3,14 @@ import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
 import { BookOpen, Calendar } from "lucide-react";
 
-function BorrowBookPopup({ show, onClose, book, onConfirm, isLoading }) {
+function BorrowBookPopup({
+  show,
+  onClose,
+  book,
+  onConfirm,
+  isLoading,
+  availableCopies,
+}) {
   const today = new Date();
   const maxDate = new Date();
   maxDate.setDate(today.getDate() + 30);
@@ -57,7 +64,8 @@ function BorrowBookPopup({ show, onClose, book, onConfirm, isLoading }) {
         <div className="rounded-lg bg-[#f5f5f5] p-4">
           <p className="text-lg font-semibold text-[#0a0f33]">{book.name}</p>
           <p className="text-sm text-gray-600">
-            Available copies: {book.quantity}
+            Available copies:{" "}
+            {availableCopies !== undefined ? availableCopies : book.quantity}
           </p>
         </div>
 

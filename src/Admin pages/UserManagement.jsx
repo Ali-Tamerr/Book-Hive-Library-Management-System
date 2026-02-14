@@ -21,7 +21,7 @@ import {
   useDeleteReservation,
 } from "../hooks/useReservations.js";
 import { useBooks } from "../hooks/useBooks.js";
-import { useBookCopies } from "../hooks/useBookCopies.js";
+import { useBookCopies, useUpdateBookCopy } from "../hooks/useBookCopies.js";
 import UserFormPopup from "../components/UserFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
@@ -74,6 +74,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const updateBookTransactionMutation = useUpdateBookTransaction();
   const deleteBookTransactionMutation = useDeleteBookTransaction();
   const { data: books = [] } = useBooks();
+  const updateBookCopyMutation = useUpdateBookCopy();
   const { data: bookCopies = [] } = useBookCopies();
   const { data: reservations = [] } = useReservations();
   const deleteReservationMutation = useDeleteReservation();
@@ -565,13 +566,38 @@ function UserManagement({ searchValue, setSearchValue }) {
         books={books}
         bookCopies={bookCopies}
         onApproveBook={async (request) => {
+          console.log("Admin approving borrow request:", request);
           try {
+            const bookCopy = bookCopies.find(
+              (bc) => bc.book_copy_id === request.book_id,
+            );
+
+            if (bookCopy) {
+              await updateBookCopyMutation.mutateAsync({
+                id: bookCopy.book_copy_id,
+                data: {
+                  ...bookCopy,
+                  status: "Borrowed",
+                },
+              });
+            } else {
+              console.warn(
+                "Book copy not found for update, proceeding with transaction approval.",
+              );
+            }
+
+            const updatedRequest = {
+              ...request,
+              status: "Completed", // Reverted to "Completed" to match existing system convention
+            };
+            console.log(
+              "Setting transaction status to:",
+              updatedRequest.status,
+            );
+
             await updateBookTransactionMutation.mutateAsync({
               id: request.transaction_id,
-              data: {
-                ...request,
-                status: "Completed",
-              },
+              data: updatedRequest,
             });
           } catch (error) {
             console.error("Failed to approve book request:", error);

@@ -255,7 +255,7 @@ function Dashboard() {
               ) : Array.isArray(branches) && branches.length > 0 ? (
                 branches.map((branch) => (
                   <li
-                    key={branch.id}
+                    key={branch.branch_id || branch.id}
                     className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-1.5 text-xs dark:border-[#292D32] dark:bg-[#929292]"
                   >
                     <div className="p4 flex h-7 w-9 shrink-0 items-center justify-center rounded-md">
