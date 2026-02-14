@@ -249,7 +249,8 @@ function Books({ searchValue, setSearchValue }) {
         // Consolidate "Reference Only" and "Borrowed" into "Not Available"
         // If quantity <= 1, it's Reference Only -> Not Available (for borrowing)
         // If availableCount == 0, it's Borrowed -> Not Available
-        if (book.quantity <= 1 || availableCount === 0) {
+        // If availableCount is 1 or less, it's considered Reference Only -> Not Available for lending
+        if (availableCount <= 1) {
           return "Not Available";
         }
         return "Available";
@@ -318,7 +319,7 @@ function Books({ searchValue, setSearchValue }) {
                   const availableCount = getAvailableCopiesCount(
                     selectedBook.book_id,
                   );
-                  if (selectedBook.quantity <= 1 || availableCount === 0) {
+                  if (availableCount <= 1) {
                     return "Not Available";
                   }
                   return "Available";
