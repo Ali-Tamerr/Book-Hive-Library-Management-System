@@ -108,7 +108,7 @@ function UserBooks() {
       render: (book) => {
         const availableCopiesCount = getAvailableCopiesCount(book.book_id);
 
-        if (book.quantity <= 1 || availableCopiesCount === 0) {
+        if (availableCopiesCount <= 1) {
           return "Not Available";
         }
 
@@ -159,8 +159,8 @@ function UserBooks() {
     }
 
     const availableCopies = getAvailableCopies(book.book_id);
-    if (availableCopies.length === 0) {
-      setMessage({ text: "No copies available for this book.", type: "error" });
+    if (availableCopies.length <= 1) {
+      setMessage({ text: "Last copy is Reference Only.", type: "error" });
       return;
     }
 
@@ -201,8 +201,8 @@ function UserBooks() {
 
     const availableCopies = getAvailableCopies(selectedBook.book_id);
 
-    if (availableCopies.length === 0) {
-      setMessage({ text: "No copies available.", type: "error" });
+    if (availableCopies.length <= 1) {
+      setMessage({ text: "Last copy is Reference Only.", type: "error" });
       setShowBorrowPopup(false);
       return;
     }
@@ -265,9 +265,9 @@ function UserBooks() {
           return prev;
         }
         const availableCopies = getAvailableCopiesCount(book.book_id);
-        if (availableCopies === 0) {
+        if (availableCopies <= 1) {
           setMessage({
-            text: "No copies available for this book.",
+            text: "Last copy is Reference Only.",
             type: "error",
           });
           return prev;
@@ -310,7 +310,7 @@ function UserBooks() {
           dueDate = new Date(globalDueDate).toISOString();
         }
 
-        if (availableCopies.length > 0) {
+        if (availableCopies.length > 1) {
           const bookCopyId = availableCopies[0].book_copy_id;
           await createBorrowedBookMutation.mutateAsync({
             user_id: currentUser.user_id,
@@ -402,7 +402,7 @@ function UserBooks() {
         secondaryButton={secondaryButton}
         customActionRenderer={(book) => {
           const availableCopiesCount = getAvailableCopiesCount(book.book_id);
-          const canBorrow = availableCopiesCount > 0 && book.quantity > 1;
+          const canBorrow = availableCopiesCount > 1;
           const isBorrowing = borrowingBookId === book.book_id;
           const isSelected = !!selectedBooks[book.book_id];
 
