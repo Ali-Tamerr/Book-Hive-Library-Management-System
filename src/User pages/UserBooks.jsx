@@ -11,7 +11,10 @@ import { useBooks } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
 import { useBookCopies } from "../hooks/useBookCopies";
 import { useBranches } from "../hooks/useBranches";
-import { useCreateBorrowedBook } from "../hooks/useBorrowedBooks";
+import {
+  useBorrowedBooks,
+  useCreateBorrowedBook,
+} from "../hooks/useBorrowedBooks";
 import { getCurrentUser } from "../services/auth.api";
 import BorrowBookPopup from "../components/BorrowBookPopup";
 import ConfirmAcquirePopup from "../components/ConfirmAcquirePopup";
@@ -24,6 +27,7 @@ function UserBooks() {
   const { data: categories = [] } = useCategories();
   const { data: bookCopies = [] } = useBookCopies();
   const { data: branches = [] } = useBranches();
+  const { data: transactions = [] } = useBorrowedBooks();
   const createBorrowedBookMutation = useCreateBorrowedBook();
   const [searchValue, setSearchValue] = useState("");
   const [borrowingBookId, setBorrowingBookId] = useState(null);
@@ -47,6 +51,40 @@ function UserBooks() {
     }
   }, [message]);
 
+  const getAvailableCopies = (bookId) => {
+    const copies = bookCopies.filter((c) => c.book_id === bookId);
+    if (!copies.length) return [];
+
+    const activeTransactions = transactions.filter((t) => {
+      if (!t || !t.book_id) return false;
+      const txBookId = String(t.book_id).trim();
+
+      const isRelevant =
+        copies.some((c) => String(c.book_copy_id).trim() == txBookId) ||
+        String(bookId).trim() == txBookId;
+
+      if (!isRelevant) return false;
+
+      const type = (t.transaction_type || "").toLowerCase().trim();
+      const status = (t.status || "").toLowerCase().trim();
+
+      const isCompletedActive = status === "completed" && !t.return_date;
+      const isActiveStatus =
+        ["open", "active", "approved", "overdue"].includes(status) ||
+        isCompletedActive;
+      const isLendingType = ["check-out", "borrow"].includes(type);
+
+      return isLendingType && isActiveStatus;
+    });
+    const borrowedCopyIds = new Set(activeTransactions.map((t) => t.book_id));
+
+    return copies.filter((c) => !borrowedCopyIds.has(c.book_copy_id));
+  };
+
+  const getAvailableCopiesCount = (bookId) => {
+    return getAvailableCopies(bookId).length;
+  };
+
   const filteredBooks = searchValue
     ? books.filter(
         (book) =>
@@ -67,13 +105,15 @@ function UserBooks() {
     {
       header: "Availability",
       accessor: "availability",
-      render: (book) => (
-        <span
-          className={`rounded-full px-3 py-1 text-sm font-medium text-black dark:text-white`}
-        >
-          {book.quantity > 0 ? "Available" : "Borrowed"}
-        </span>
-      ),
+      render: (book) => {
+        const availableCopiesCount = getAvailableCopiesCount(book.book_id);
+
+        if (book.quantity <= 1 || availableCopiesCount === 0) {
+          return "Not Available";
+        }
+
+        return "Available";
+      },
     },
     { header: "Action", accessor: "action" },
   ];
@@ -110,9 +150,15 @@ function UserBooks() {
       return;
     }
 
-    const availableCopies = bookCopies.filter(
-      (copy) => copy.book_id === book.book_id,
-    );
+    if (book.quantity <= 1) {
+      setMessage({
+        text: "This book is Reference Only and cannot be borrowed.",
+        type: "error",
+      });
+      return;
+    }
+
+    const availableCopies = getAvailableCopies(book.book_id);
     if (availableCopies.length === 0) {
       setMessage({ text: "No copies available for this book.", type: "error" });
       return;
@@ -135,18 +181,25 @@ function UserBooks() {
 
     setShowBorrowPopup(false);
     setSelectedBook(null);
-    setMessage({
-      text: `"${selectedBook.name}" added to selection!`,
-      type: "success",
-    });
+    // setMessage({
+    //   text: `"${selectedBook.name}" added to selection!`,
+    //   type: "success",
+    // });
   };
 
   const handleConfirmBorrowDirect = async ({ dueDate }) => {
     if (!selectedBook || !currentUser) return;
 
-    const availableCopies = bookCopies.filter(
-      (copy) => copy.book_id === selectedBook.book_id,
-    );
+    if (selectedBook.quantity <= 1) {
+      setMessage({
+        text: "This book is Reference Only and cannot be borrowed.",
+        type: "error",
+      });
+      setShowBorrowPopup(false);
+      return;
+    }
+
+    const availableCopies = getAvailableCopies(selectedBook.book_id);
 
     if (availableCopies.length === 0) {
       setMessage({ text: "No copies available.", type: "error" });
@@ -158,6 +211,13 @@ function UserBooks() {
 
     try {
       const bookCopyId = availableCopies[0].book_copy_id;
+
+      console.log("User initiating borrow request:", {
+        bookId: selectedBook.book_id,
+        copyId: bookCopyId,
+        dueDate,
+      });
+
       await createBorrowedBookMutation.mutateAsync({
         user_id: currentUser.user_id,
         book_id: bookCopyId,
@@ -166,6 +226,8 @@ function UserBooks() {
         due_date: dueDate,
         status: "Pending",
       });
+
+      console.log("Borrow request sent successfully (status: Pending)");
       setMessage({
         text: `Successfully borrowed "${selectedBook.name}"!`,
         type: "success",
@@ -184,12 +246,37 @@ function UserBooks() {
   };
 
   const handleToggleBookSelection = (book) => {
+    if (!selectionMode) return;
+
     setSelectedBooks((prev) => {
       const newSelection = { ...prev };
       if (newSelection[book.book_id]) {
         delete newSelection[book.book_id];
+        // setMessage({
+        //   text: `"${book.name}" removed from selection.`,
+        //   type: "success",
+        // });
       } else {
-        newSelection[book.book_id] = book;
+        if (book.quantity <= 1) {
+          setMessage({
+            text: "This book is Reference Only and cannot be borrowed.",
+            type: "error",
+          });
+          return prev;
+        }
+        const availableCopies = getAvailableCopiesCount(book.book_id);
+        if (availableCopies === 0) {
+          setMessage({
+            text: "No copies available for this book.",
+            type: "error",
+          });
+          return prev;
+        }
+        newSelection[book.book_id] = { ...book };
+        //     setMessage({
+        //       text: `"${book.name}" added to selection.`,
+        //       type: "success",
+        //     });
       }
       return newSelection;
     });
@@ -216,9 +303,7 @@ function UserBooks() {
 
     try {
       for (const book of selectedList) {
-        const availableCopies = bookCopies.filter(
-          (copy) => copy.book_id === book.book_id,
-        );
+        const availableCopies = getAvailableCopies(book.book_id);
 
         let dueDate = book.borrowDetails?.dueDate;
         if (!dueDate && globalDueDate) {
@@ -316,7 +401,8 @@ function UserBooks() {
         customTitle={customTitle}
         secondaryButton={secondaryButton}
         customActionRenderer={(book) => {
-          const canBorrow = book.quantity >= 2;
+          const availableCopiesCount = getAvailableCopiesCount(book.book_id);
+          const canBorrow = availableCopiesCount > 0 && book.quantity > 1;
           const isBorrowing = borrowingBookId === book.book_id;
           const isSelected = !!selectedBooks[book.book_id];
 
@@ -327,6 +413,7 @@ function UserBooks() {
                   type="checkbox"
                   checked={isSelected}
                   onChange={() => handleToggleBookSelection(book)}
+                  disabled={!canBorrow && !isSelected}
                   className="h-5 w-5 cursor-pointer accent-[#0a0f33]"
                 />
                 <button
@@ -338,7 +425,11 @@ function UserBooks() {
                       : "cursor-not-allowed text-gray-300"
                   }`}
                   title={
-                    !canBorrow ? "Not available" : "Configure borrow details"
+                    !canBorrow
+                      ? book.quantity <= 1
+                        ? "Reference Only"
+                        : "Not available"
+                      : "Configure borrow details"
                   }
                 >
                   <BookMarked size={20} />
@@ -368,6 +459,9 @@ function UserBooks() {
           setSelectedBook(null);
         }}
         book={selectedBook}
+        availableCopies={
+          selectedBook ? getAvailableCopiesCount(selectedBook.book_id) : 0
+        }
         onConfirm={
           selectionMode
             ? handleConfirmBorrowForSelection
@@ -383,6 +477,7 @@ function UserBooks() {
         onConfirm={handleFinalConfirm}
         isLoading={isProcessing}
         categories={categories}
+        getAvailableCopiesCount={getAvailableCopiesCount}
       />
       <BookDetailsPopup
         show={showViewDetails}
@@ -391,6 +486,9 @@ function UserBooks() {
           setViewBook(null);
         }}
         book={viewBook}
+        availableCopies={
+          viewBook ? getAvailableCopiesCount(viewBook.book_id) : 0
+        }
         category={
           viewBook
             ? categories.find((cat) => cat.category_id === viewBook.category_id)
