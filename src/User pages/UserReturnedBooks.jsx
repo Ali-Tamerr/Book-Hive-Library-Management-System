@@ -4,6 +4,7 @@ import CommonLayout from "../Layouts/CommonLayout";
 import { useReturnedBooks } from "../hooks/useReturnedBooks";
 import { useBooks } from "../hooks/useBooks";
 import { useBookCopies } from "../hooks/useBookCopies";
+import { useCategories } from "../hooks/useCategories";
 import { getCurrentUser } from "../services/auth.api";
 
 function ReturnedBooksContent({ searchValue, customTitle }) {
@@ -11,6 +12,7 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
   const { data: returnedBooks = [], isLoading, error } = useReturnedBooks();
   const { data: books = [] } = useBooks();
   const { data: bookCopies = [] } = useBookCopies();
+  const { data: categories = [] } = useCategories();
 
   const getBookName = (bookCopyId) => {
     const copy = bookCopies.find((c) => c.book_copy_id === bookCopyId);
@@ -25,7 +27,12 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
     const copy = bookCopies.find((c) => c.book_copy_id === bookCopyId);
     if (copy) {
       const book = books.find((b) => b.book_id === copy.book_id);
-      return book?.category || "Unknown";
+      if (book) {
+        const category = categories.find(
+          (c) => c.category_id === book.category_id,
+        );
+        return category?.category_name || "Unknown";
+      }
     }
     return "Unknown";
   };

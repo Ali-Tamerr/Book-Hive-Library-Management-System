@@ -4,6 +4,7 @@ import CommonLayout from "../Layouts/CommonLayout";
 import { useBorrowedBooks } from "../hooks/useBorrowedBooks";
 import { useBooks } from "../hooks/useBooks";
 import { useBookCopies } from "../hooks/useBookCopies";
+import { useCategories } from "../hooks/useCategories";
 import {
   useBookTransactions,
   useCreateBookTransaction,
@@ -18,6 +19,7 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
   const { data: allTransactions = [] } = useBookTransactions();
   const { data: books = [] } = useBooks();
   const { data: bookCopies = [] } = useBookCopies();
+  const { data: categories = [] } = useCategories();
   const createTransactionMutation = useCreateBookTransaction();
   const returnTransactionMutation = useReturnBookTransaction();
   const [pendingReturns, setPendingReturns] = useState([]);
@@ -45,7 +47,12 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
     const copy = bookCopies.find((c) => c.book_copy_id === bookCopyId);
     if (copy) {
       const book = books.find((b) => b.book_id === copy.book_id);
-      return book?.category || "Unknown";
+      if (book) {
+        const category = categories.find(
+          (c) => c.category_id === book.category_id,
+        );
+        return category?.category_name || "Unknown";
+      }
     }
     return "Unknown";
   };
@@ -83,7 +90,7 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
     { header: "Category", accessor: "category" },
     { header: "Due Date", accessor: "due_date" },
     { header: "Date & Time", accessor: "created_at" },
-    { header: "Action", accessor: "action" },
+    // { header: "Action", accessor: "action" },
   ];
 
   const handleReturn = async (book) => {
