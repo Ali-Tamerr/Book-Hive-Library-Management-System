@@ -19,7 +19,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
             cx={center}
             cy={center}
             r={radius}
-            className="fill-[#3D3E3E] dark:fill-[#292D32]"
+            className="fill-[#3D3E3E]  "
           />
         </svg>
       </div>
@@ -101,7 +101,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
             cx={center}
             cy={center}
             r={radius}
-            className="fill-[#000035] dark:fill-[#292D32]"
+            className="fill-[#000035]  "
           />
         ) : (
           returnedDegrees > 0 && (
@@ -113,7 +113,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
                 returnedStart,
                 returnedEnd,
               )}
-              className="fill-[#000035] dark:fill-[#292D32]"
+              className="fill-[#000035]  "
             />
           )
         )}
