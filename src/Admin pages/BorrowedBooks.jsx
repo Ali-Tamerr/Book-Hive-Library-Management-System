@@ -185,8 +185,15 @@ function BorrowedBooks({
   };
 
   const filteredPending = borrowedBooks.filter((book) => {
-    const isPending = (book.status || "").toLowerCase() === "pending";
-    return showPending ? isPending : !isPending;
+    const status = (book.status || "").toLowerCase();
+    const isPending = status === "pending";
+    const isReturned = status === "returned";
+
+    if (showPending) {
+      return isPending;
+    }
+    // Show everything except Pending and Returned (i.e., Completed, Overdue)
+    return !isPending && !isReturned;
   });
 
   const filteredBorrowedBooks = searchValue
