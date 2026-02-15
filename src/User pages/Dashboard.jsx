@@ -208,7 +208,7 @@ function Dashboard() {
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="bg-white w-24 h-40 rounded-lg p-4 transition-shadow cursor-pointer flex flex-col items-center"
+                    className="bg-white w-35 h-60 rounded-lg p-4 transition-shadow cursor-pointer flex flex-col items-center"
                   >
                     <div className="w-full h-36 rounded-md mb-2.5 flex items-center justify-center overflow-hidden">
                       {book.image_url ? (

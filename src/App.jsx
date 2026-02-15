@@ -25,7 +25,7 @@ const Settings = lazy(() => import("./shared/Settings"));
 const Branches = lazy(() => import("./Admin pages/Branches"));
 
 const UserDashboard = lazy(() => import("./User pages/Dashboard"));
-const UserBooks = lazy(() => import("./User pages/UserBooks"));
+// const UserBooks = lazy(() => import("./User pages/UserBooks"));
 const UserBorrowedBooks = lazy(() => import("./User pages/UserBorrowedBooks"));
 const UserReturnedBooks = lazy(() => import("./User pages/UserReturnedBooks"));
 const UserLibraryLane = lazy(() => import("./User pages/UserLibraryLane"));
@@ -229,7 +229,7 @@ function App() {
             />
 
             <Route path="/user/dashboard" element={<UserDashboard />} />
-            <Route path="/user/books" element={<UserBooks />} />
+            {/* <Route path="/user/books" element={<UserBooks />} /> */}
             <Route path="/user/catalog" element={<UserCatalog />} />
             <Route
               path="/user/catalog/borrowed"
