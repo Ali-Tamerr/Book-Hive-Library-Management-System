@@ -1,101 +1,105 @@
-import React, { useState, useRef } from 'react';
-import Popup from './Popup.jsx';
-import FormButton from './FormButton.jsx';
-import NFCReaderButton from './NFCReaderButton.jsx';
-import { Trash2 } from 'lucide-react';
+import React, { useState, useRef } from "react";
+import Popup from "./Popup.jsx";
+import FormButton from "./FormButton.jsx";
+import NFCReaderButton from "./NFCReaderButton.jsx";
+import { Trash2 } from "lucide-react";
 
 const DeleteConfirmationPopup = ({
-    show,
-    onClose,
-    onConfirm,
-    title = "Delete Confirmation",
-    warningMessage,
-    isDeleteDisabled,
-    showNFCInput = false
+  show,
+  onClose,
+  onConfirm,
+  title = "Delete Confirmation",
+  warningMessage,
+  isDeleteDisabled,
+  showNFCInput = false,
 }) => {
-    const [nfcId, setNfcId] = useState('');
-    const [deleteAll, setDeleteAll] = useState(false);
-    const inputRef = useRef(null);
+  const [nfcId, setNfcId] = useState("");
+  const [deleteAll, setDeleteAll] = useState(false);
+  const inputRef = useRef(null);
 
-    const handleNFCData = (data) => {
-        setNfcId(data);
-    };
+  const handleNFCData = (data) => {
+    setNfcId(data);
+  };
 
-    const handleConfirm = () => {
-        if (showNFCInput) {
-            onConfirm({ nfcId, deleteAll });
-        } else {
-            onConfirm();
-        }
-        setNfcId('');
-        setDeleteAll(false);
-    };
+  const handleConfirm = () => {
+    if (showNFCInput) {
+      onConfirm({ nfcId, deleteAll });
+    } else {
+      onConfirm();
+    }
+    setNfcId("");
+    setDeleteAll(false);
+  };
 
-    const handleClose = () => {
-        setNfcId('');
-        setDeleteAll(false);
-        onClose();
-    };
+  const handleClose = () => {
+    setNfcId("");
+    setDeleteAll(false);
+    onClose();
+  };
 
-    return (
-        <Popup
-            show={show}
-            onClose={handleClose}
-            title={title}
-            icon={<Trash2 size={30} />}
-            maxWidthClass="max-w-[627px]"
-        >
-            <div className='flex flex-col items-center gap-14'>
-                <div className='px-10 flex flex-col gap-4 w-full'>
-                    <p className="text-center text-[#000035] text-base font-medium">
-                        Are you certain you wish to proceed with the deletion of the selected entry?
-                    </p>
+  return (
+    <Popup
+      show={show}
+      onClose={handleClose}
+      title={title}
+      icon={<Trash2 size={30} />}
+      maxWidthClass="max-w-[647px]"
+    >
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex w-full flex-col gap-4 px-5">
+          <p className="text-start text-base font-medium text-[#000035] dark:text-gray-300">
+            "Are you certain you wish to proceed with the deletion of the
+            selected entry?"
+          </p>
 
-                    {showNFCInput && (
-                        <div className="flex flex-col gap-3 mt-4">
-                            <div className="flex gap-3">
-                                <NFCReaderButton
-                                    onDataReceived={handleNFCData}
-                                    inputRef={inputRef}
-                                />
-                                <input
-                                    ref={inputRef}
-                                    type="text"
-                                    value={nfcId}
-                                    onChange={(e) => setNfcId(e.target.value)}
-                                    placeholder="ID"
-                                    className="flex-1 h-[50px] px-4 py-3 rounded-xl border text-[#727374] border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    id="deleteAll"
-                                    checked={deleteAll}
-                                    onChange={(e) => setDeleteAll(e.target.checked)}
-                                    className="w-5 h-5 rounded border-[#3D3E3E] cursor-pointer"
-                                />
-                                <label htmlFor="deleteAll" className="text-[#000035] text-sm font-medium cursor-pointer">
-                                    Do you want Delete all
-                                </label>
-                            </div>
-                        </div>
-                    )}
-
-                    {warningMessage && (
-                        <p className="text-center text-red-600 text-sm font-medium">
-                            {warningMessage}
-                        </p>
-                    )}
-                </div>
-                <div className="flex justify-between gap-3">
-                    <FormButton onClick={handleConfirm} isPrimary disabled={isDeleteDisabled}>
-                        CONFIRM
-                    </FormButton>
-                </div>
+          {showNFCInput && (
+            <div className="flex w-full items-center flex-col gap-3">
+              <div className="flex gap-3">
+                <NFCReaderButton
+                  onDataReceived={handleNFCData}
+                  inputRef={inputRef}
+                />
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={nfcId}
+                  onChange={(e) => setNfcId(e.target.value)}
+                  placeholder="ID"
+                  className="h-[50px] flex-1 rounded-xl border border-[#3D3E3E] bg-transparent px-4 py-3 text-[13px] text-[#727374] outline-none focus:border-[#1e255e] dark:border-[#2C2D33] dark:text-gray-300 dark:focus:border-white"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="deleteAll"
+                  checked={deleteAll}
+                  onChange={(e) => setDeleteAll(e.target.checked)}
+                  className="h-5 w-5 cursor-pointer rounded border-[#3D3E3E]"
+                />
+                <label
+                  htmlFor="deleteAll"
+                  className="cursor-pointer text-sm font-medium text-[#000035] dark:text-gray-300"
+                >
+                  Do you want Delete all
+                </label>
+              </div>
             </div>
-        </Popup>
-    );
+          )}
+
+          {warningMessage && (
+            <p className="text-center text-sm font-medium text-red-600">
+              {warningMessage}
+            </p>
+          )}
+        </div>
+        <div className="flex justify-between gap-3">
+          <FormButton onClick={handleConfirm} disabled={isDeleteDisabled}>
+            CONFIRM
+          </FormButton>
+        </div>
+      </div>
+    </Popup>
+  );
 };
 
 export default DeleteConfirmationPopup;
