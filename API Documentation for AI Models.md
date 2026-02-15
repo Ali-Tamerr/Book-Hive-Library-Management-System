@@ -91,7 +91,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `book_id` | string(50) | FK → `BookCopies.book_copy_id` |
 | `transaction_type` | string(20) | **required** — allowed: `"Check-In"`, `"Check-Out"` |
 | `borrow_type` | string(20) | default: `"Borrow"` — allowed: `"Purchase"`, `"Borrow"` |
-| `status` | string(20) | default: `"Pending"` — allowed: `"Overdue"`, `"Pending"`, `"Completed"` |
+| `status` | string(20) | default: `"Pending"` — allowed: `"Overdue"`, `"Pending"`, `"Completed"`, `"Returned"` |
 | `due_date` | timestamp | nullable |
 | `return_date` | timestamp | nullable |
 | `fine_amount` | numeric(10,2) | default: `0.00` |
@@ -206,6 +206,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | POST | `/api/BookTransactions` | Create transaction; body: `{ user_id, book_id, transaction_type, borrow_type?, due_date? }` |
 | PUT | `/api/BookTransactions/{transaction_id}` | Update transaction |
 | DELETE | `/api/BookTransactions/{transaction_id}` | Delete transaction |
+| POST | `/api/BookTransactions/return` | Mark a book as returned; body: `{ transaction_id, return_date?, action? }` (sets `return_date` to provided or current UTC; status becomes `"Returned"`) |
 
 ### UserRequests
 | Method | Endpoint | Description |
@@ -321,6 +322,17 @@ PUT /api/UserRequests/1
 }
 ```
 
+### Return Book (set return_date, status → Returned)
+```json
+POST /api/BookTransactions/return
+{
+  "action": "return_book",
+  "transaction_id": 12,
+  "return_date": "2025-01-15T10:00:00Z"
+}
+```
+> If `return_date` is omitted, the backend sets it to current UTC. Status is set to `"Returned"`.
+
 ---
 
 ## DTO Shapes (Response Objects)
@@ -362,6 +374,7 @@ interface BookDTO {
 ## Behavior and Implementation Notes (for UI/AI generation)
 
 - **Atomic operations:** Multi-step changes (BookDetail + BookCopies) use explicit transactions. UI should treat create/update as all-or-nothing and implement retry/error handling on 4xx/5xx.
+- **Return flow:** To mark a return, call `POST /api/BookTransactions/return` with `transaction_id` (and optional `returned_at`). Backend sets `returned_at` (defaults to UTC now) and status to `Returned`; database trigger may also set `return_date`.
 - **Error handling:** API returns:
   - `400` for validation failures (include readable error message)
   - `404` for missing resources
@@ -471,9 +484,9 @@ interface BookTransaction {
   book_id: string;           // references BookCopy.book_copy_id, max 50 chars
   transaction_type: 'Check-In' | 'Check-Out';
   borrow_type?: 'Borrow' | 'Purchase';
-  status?: 'Pending' | 'Completed' | 'Overdue';
+  status?: 'Pending' | 'Completed' | 'Overdue' | 'Returned';
   due_date?: string;
-  return_date?: string;
+  return_date?: string;      // set when returned
   fine_amount?: number;      // numeric(10,2), default 0.00
   created_at?: string;
 }
@@ -523,7 +536,11 @@ UserRequests (standalone, no FK relationships)
 
 ## Changelog
 
-### Latest Update (NFC Scans table + API)
+### Latest Update (Book return marker)
+- Removed `returned_at` (dropped from DB). Return flow now uses `return_date`.
+- `POST /api/BookTransactions/return` sets `return_date` (defaults to current UTC) and status to `Returned`.
+
+### Previous Update (NFC Scans table + API)
 - Added `nfc_scans` table mapping and REST API to ingest temporary NFC reads from ESP8266 and expose them to the frontend.
 - Schema: `scan_id` (bigint identity), `tag_id` (required), `device_id` (default `"esp8266"`), `created_at` (default `now()`).
 - Endpoints: `GET /api/NfcScans`, `GET /api/NfcScans/{scan_id}`, `POST /api/NfcScans`.
