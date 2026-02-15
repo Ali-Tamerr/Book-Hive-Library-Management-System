@@ -54,10 +54,11 @@ const DeleteConfirmationPopup = ({
 
           {showNFCInput && (
             <div className="flex w-full items-center flex-col gap-3">
-              <div className="flex gap-3">
+              <div className="flex w-full gap-2">
                 <NFCReaderButton
                   onDataReceived={handleNFCData}
                   inputRef={inputRef}
+                  isFlexOne="true"
                 />
                 <input
                   ref={inputRef}
@@ -65,7 +66,7 @@ const DeleteConfirmationPopup = ({
                   value={nfcId}
                   onChange={(e) => setNfcId(e.target.value)}
                   placeholder="ID"
-                  className="h-[50px] flex-1 rounded-xl border border-[#3D3E3E] bg-transparent px-4 py-3 text-[13px] text-[#727374] outline-none focus:border-[#1e255e] dark:border-[#2C2D33] dark:text-gray-300 dark:focus:border-white"
+                  className="h-[50px] w-full rounded-xl border border-[#3D3E3E] bg-transparent px-4 py-3 text-[13px] text-[#727374] outline-none focus:border-[#1e255e] dark:border-[#2C2D33] dark:text-gray-300 dark:focus:border-white"
                 />
               </div>
               <div className="flex items-center gap-2">
