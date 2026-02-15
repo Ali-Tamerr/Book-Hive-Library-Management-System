@@ -619,6 +619,7 @@ const Home = () => {
             book={selectedFeaturedBook}
             onClose={() => setSelectedFeaturedBook(null)}
          />
+
       </div>
    );
 };
