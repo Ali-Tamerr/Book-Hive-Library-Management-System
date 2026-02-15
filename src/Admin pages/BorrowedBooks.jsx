@@ -208,11 +208,11 @@ function BorrowedBooks({
   }));
 
   const columns = [
-    { header: "Book Name", accessor: "book_name" },
     { header: "User Name", accessor: "user_name_display" },
+    { header: "Book Name", accessor: "book_name" },
     { header: "Due Date", accessor: "due_date_formatted" },
-    { header: "Borrowed On", accessor: "borrowed_on_formatted" },
-    { header: "Action", accessor: "action" },
+    { header: "Date & Time", accessor: "borrowed_on_formatted" },
+    // { header: "Action", accessor: "action" },
   ];
 
   const formPopupComponent = (
