@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import BorrowedBooks from './BorrowedBooks';
-import Overdue from './Overdue';
-import ReservedBooks from './ReservedBooks';
-import TabButton from '../components/TabButton';
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import BorrowedBooks from "./BorrowedBooks";
+import Overdue from "./Overdue";
+import ReservedBooks from "./ReservedBooks";
+import TabButton from "../components/TabButton";
 
 function Catalog({ searchValue, setSearchValue }) {
   const location = useLocation();
-  const [localActiveTab, setLocalActiveTab] = useState('borrowed');
+  const [localActiveTab, setLocalActiveTab] = useState("borrowed");
 
-  const [activeTab, setActiveTab] = useState('catalog');
+  const [activeTab, setActiveTab] = useState("catalog");
 
   useEffect(() => {
     const path = location.pathname;
-    if (path.includes('/admin/catalog')) {
-      setActiveTab('catalog');
+    if (path.includes("/admin/catalog")) {
+      setActiveTab("catalog");
     }
   }, [location.pathname]);
 
@@ -22,20 +22,14 @@ function Catalog({ searchValue, setSearchValue }) {
     <div className="flex gap-4 max-[650px]:grid max-[650px]:grid-cols-1">
       <TabButton
         label="Borrowed Books"
-        isActive={localActiveTab === 'borrowed'}
-        onClick={() => setLocalActiveTab('borrowed')}
+        isActive={localActiveTab === "borrowed"}
+        onClick={() => setLocalActiveTab("borrowed")}
         position="first"
       />
-      {/* <TabButton
-        label="Reserved Books"
-        isActive={localActiveTab === 'reserved'}
-        onClick={() => setLocalActiveTab('reserved')}
-        position="middle"
-      /> */}
       <TabButton
         label="Overdue Borrowers"
-        isActive={localActiveTab === 'overdue'}
-        onClick={() => setLocalActiveTab('overdue')}
+        isActive={localActiveTab === "overdue"}
+        onClick={() => setLocalActiveTab("overdue")}
         position="last"
       />
     </div>
@@ -43,9 +37,21 @@ function Catalog({ searchValue, setSearchValue }) {
 
   return (
     <>
-      {localActiveTab === 'borrowed' && <BorrowedBooks searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} hideButton={true} />}
-      {localActiveTab === 'reserved' && <ReservedBooks searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} hideButton={true} />}
-      {localActiveTab === 'overdue' && <Overdue searchValue={searchValue} setSearchValue={setSearchValue} customTitle={tabButtons} />}
+      {localActiveTab === "borrowed" && (
+        <BorrowedBooks
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+          customTitle={tabButtons}
+          hideButton={true}
+        />
+      )}
+      {localActiveTab === "overdue" && (
+        <Overdue
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+          customTitle={tabButtons}
+        />
+      )}
     </>
   );
 }

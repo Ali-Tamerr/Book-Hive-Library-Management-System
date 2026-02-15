@@ -48,17 +48,17 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
       placeholder: 'Category',
       options: (categories || []).map(cat => ({ value: cat.category_id, label: cat.category_name })),
     },
-    {
-      name: 'copy_indicator',
-      type: 'custom',
-      render: () => (
-        <div className="flex justify-center w-full">
-          <div className="w-[150px] h-[45px] rounded-xl border border-[#3D3E3E] flex items-center justify-center bg-white text-[#0a0f33]">
-            <Copy size={20} />
-          </div>
-        </div>
-      )
-    },
+    // {
+    //   name: 'copy_indicator',
+    //   type: 'custom',
+    //   render: () => (
+    //     <div className="flex justify-center w-full">
+    //       <div className="w-[150px] h-[45px] rounded-xl border border-[#3D3E3E] flex items-center justify-center bg-white text-[#0a0f33]">
+    //         <Copy size={20} />
+    //       </div>
+    //     </div>
+    //   )
+    // },
   ];
 
   const customLayout = [

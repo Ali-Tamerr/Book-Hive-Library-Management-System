@@ -1,71 +1,120 @@
-import React from 'react';
-import { Users } from 'lucide-react';
-import FormLayout from '../Layouts/FormLayout.jsx';
-import NFCReaderButton from './NFCReaderButton.jsx';
+import React from "react";
+import { Users } from "lucide-react";
+import FormLayout from "../Layouts/FormLayout.jsx";
+import NFCReaderButton from "./NFCReaderButton.jsx";
 
-function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUser, setShowPopup, setEditMode, isSuperAdmin = false }) {
+function UserFormPopup({
+  showPopup,
+  editMode,
+  formData,
+  setFormData,
+  handleAddUser,
+  setShowPopup,
+  setEditMode,
+  isSuperAdmin = false,
+  error,
+  nextUserId,
+}) {
   const userIdInputRef = React.useRef(null);
 
   const onFormChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "role" && value === "Admin") {
+      const newId =
+        !editMode && nextUserId ? nextUserId.toString() : formData.user_id;
+      setFormData({ ...formData, [name]: value, plan: null, user_id: newId });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
-  const handleNFCData = (data) => {
-    setFormData(prevData => ({ ...prevData, user_id: data }));
-  };
+  const handleNFCData = React.useCallback(
+    (data) => {
+      setFormData((prevData) => ({ ...prevData, user_id: data }));
+    },
+    [setFormData],
+  );
 
   const baseInputs = [
-    { name: 'name', type: 'text', placeholder: 'Name', required: true, autocomplete: 'name' },
-    { name: 'email', type: 'email', placeholder: 'Email', required: true, autocomplete: 'email' },
-    { name: 'phone_number', type: 'text', placeholder: 'Contact No', autocomplete: 'tel' },
-    { name: 'password', type: 'password', placeholder: editMode ? "Password (leave blank to keep current)" : "Password", required: !editMode, autocomplete: editMode ? 'off' : 'new-password' },
+    {
+      name: "name",
+      type: "text",
+      placeholder: "Name",
+      required: true,
+      autocomplete: "name",
+    },
+    {
+      name: "email",
+      type: "email",
+      placeholder: "Email",
+      required: true,
+      autocomplete: "email",
+    },
+    {
+      name: "phone_number",
+      type: "text",
+      placeholder: "Contact No",
+      autocomplete: "tel",
+    },
+    {
+      name: "password",
+      type: "password",
+      placeholder: editMode
+        ? "Password (leave blank to keep current)"
+        : "Password",
+      required: !editMode,
+      autocomplete: editMode ? "off" : "new-password",
+    },
   ];
 
   const planInput = {
-    name: 'plan',
-    type: 'select',
-    placeholder: 'Plan',
+    name: "plan",
+    type: "select",
+    placeholder: "Plan",
     required: false,
-    autocomplete: 'off',
+    autocomplete: "off",
     options: [
-      { value: 'Discover', label: 'Discover' },
-      { value: 'Enterprise', label: 'Enterprise' },
-      { value: 'Professional', label: 'Professional' },
+      { value: "Discover", label: "Discover" },
+      { value: "Enterprise", label: "Enterprise" },
+      { value: "Professional", label: "Professional" },
     ],
   };
 
   const roleInput = {
-    name: 'role',
-    type: 'select',
-    placeholder: 'Role',
+    name: "role",
+    type: "select",
+    placeholder: "Role",
     required: true,
-    autocomplete: 'off',
+    autocomplete: "off",
     options: [
-      { value: 'User', label: 'User' },
-      { value: 'Admin', label: 'Admin' },
+      { value: "User", label: "User" },
+      { value: "Admin", label: "Admin" },
     ],
   };
 
   const userIdInput = {
-    name: 'user_id',
-    type: 'custom',
+    name: "user_id",
+    type: "custom",
     render: (data, onChange) => (
       <div>
         <div className="flex items-center gap-2">
-          <div className='flex-1'>
-            <NFCReaderButton onDataReceived={handleNFCData} inputRef={userIdInputRef} />
+          <div className="flex-1">
+            <NFCReaderButton
+              onDataReceived={handleNFCData}
+              inputRef={userIdInputRef}
+            />
           </div>
-          <div className='flex-2'>
+          <div className="flex-2">
             <input
               ref={userIdInputRef}
               name="user_id"
               type="text"
-              value={data.user_id || ''}
+              value={data.user_id || ""}
               onChange={onChange}
               placeholder="User ID"
               required
               autoComplete="off"
-              className="w-full h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] px-4 py-3 text-[13px] outline-none focus:border-[#1e255e] dark:text-[#0a0f33]"
             />
           </div>
         </div>
@@ -73,48 +122,61 @@ function UserFormPopup({ showPopup, editMode, formData, setFormData, handleAddUs
     ),
   };
 
+  const isRoleAdmin = formData.role === "Admin";
+
   const inputs = isSuperAdmin
-    ? [...baseInputs, planInput, roleInput, userIdInput]
+    ? isRoleAdmin
+      ? [...baseInputs, roleInput]
+      : [...baseInputs, planInput, roleInput, userIdInput]
     : [...baseInputs, planInput, userIdInput];
 
   const customLayout = isSuperAdmin
     ? [
-      { columns: 2, inputs: ['name', 'phone_number'] },
-      { columns: 2, inputs: ['plan', 'role'] },
-      {
-        type: 'flex',
-        inputs: [
-          { name: 'email', flex: 2 },
-          { name: 'password', flex: 1 }
-        ]
-      },
-      { columns: 1, inputs: ['user_id'] },
-    ]
+        { columns: 2, inputs: ["name", "phone_number"] },
+        isRoleAdmin
+          ? { columns: 1, inputs: ["role"] }
+          : { columns: 2, inputs: ["plan", "role"] },
+        {
+          type: "flex",
+          inputs: [
+            { name: "email", flex: 2 },
+            { name: "password", flex: 1 },
+          ],
+        },
+        ...(isRoleAdmin ? [] : [{ columns: 1, inputs: ["user_id"] }]),
+      ]
     : [
-      { columns: 3, inputs: ['name', 'phone_number', 'plan'] },
-      {
-        type: 'flex',
-        inputs: [
-          { name: 'email', flex: 2 },
-          { name: 'password', flex: 1 }
-        ]
-      },
-      { columns: 1, inputs: ['user_id'] },
-    ];
+        { columns: 3, inputs: ["name", "phone_number", "plan"] },
+        {
+          type: "flex",
+          inputs: [
+            { name: "email", flex: 2 },
+            { name: "password", flex: 1 },
+          ],
+        },
+        { columns: 1, inputs: ["user_id"] },
+      ];
 
   return (
     <FormLayout
       show={showPopup}
-      onClose={() => { setShowPopup(false); setEditMode(false); }}
-      title={editMode ? 'Edit User' : 'Add New User'}
+      onClose={() => {
+        setShowPopup(false);
+        setEditMode(false);
+      }}
+      title={editMode ? "Edit User" : "Add New User"}
       onSubmit={handleAddUser}
       inputs={inputs}
       formData={formData}
       onFormChange={onFormChange}
-      submitButtonText={editMode ? 'UPDATE' : 'ADD'}
-      onCancel={() => { setShowPopup(false); setEditMode(false); }}
+      submitButtonText={editMode ? "UPDATE" : "ADD"}
+      onCancel={() => {
+        setShowPopup(false);
+        setEditMode(false);
+      }}
       icon={<Users size={24} strokeWidth={2.3} />}
       customLayout={customLayout}
+      error={error}
     />
   );
 }

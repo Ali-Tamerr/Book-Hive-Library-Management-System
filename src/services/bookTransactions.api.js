@@ -1,6 +1,6 @@
-import { apiGet, apiPost, apiPut, apiDelete } from './api.config';
+import { apiGet, apiPost, apiPut, apiDelete } from "./api.config";
 
-const BASE_ENDPOINT = '/BookTransactions';
+const BASE_ENDPOINT = "/BookTransactions";
 
 // Get all transactions
 export const getAllTransactions = async () => {
@@ -27,3 +27,7 @@ export const deleteTransaction = async (id) => {
   return await apiDelete(`${BASE_ENDPOINT}/${id}`);
 };
 
+// Return transaction (New Endpoint)
+export const returnTransaction = async (data) => {
+  return await apiPost(`${BASE_ENDPOINT}/return`, data);
+};
