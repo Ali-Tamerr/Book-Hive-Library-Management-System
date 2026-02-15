@@ -121,7 +121,7 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
               onClick={() => setIsBranchSelectOpen(!isBranchSelectOpen)}
               onBlur={() => setIsBranchSelectOpen(false)}
               required
-              className="h-[50px] w-full appearance-none rounded-xl border border-[#3D3E3E] bg-white px-4 py-3 pr-10 text-[13px] text-[#727374] outline-none focus:border-[#1e255e]"
+              className="border-1 appearance-none h-[50px] w-full rounded-xl border-[#3D3E3E] bg-white px-4 py-3 text-[13px] text-black placeholder-[#727374] outline-none focus:border-[#1e255e] dark:border-[#2C2D33] dark:bg-[#1A1B20] dark:text-[#D7D7D7] dark:placeholder-[#5A5B60] dark:focus:border-[#D7D7D7]"
             >
               <option value="">Select Branch</option>
               {branches.map((branch) => (
@@ -149,7 +149,7 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
               onFocus={() => handleInputFocus(index)}
               placeholder={`ID`}
               required
-              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] px-4 py-3 text-[13px] text-[#727374] outline-none focus:border-[#1e255e]"
+              className="border-1 h-[50px] w-full rounded-xl border-[#3D3E3E] bg-white px-4 py-3 text-[13px] text-black placeholder-[#727374] outline-none focus:border-[#1e255e] dark:border-[#2C2D33] dark:bg-[#1A1B20] dark:text-[#D7D7D7] dark:placeholder-[#5A5B60] dark:focus:border-[#D7D7D7]"
             />
           ))}
         </div>
