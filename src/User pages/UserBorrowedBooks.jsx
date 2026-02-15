@@ -41,6 +41,15 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
     return "Unknown";
   };
 
+  const getBookCategory = (bookCopyId) => {
+    const copy = bookCopies.find((c) => c.book_copy_id === bookCopyId);
+    if (copy) {
+      const book = books.find((b) => b.book_id === copy.book_id);
+      return book?.category || "Unknown";
+    }
+    return "Unknown";
+  };
+
   const hasPendingReturnRequest = (bookId, userId) => {
     return allTransactions.some(
       (t) =>
@@ -71,6 +80,7 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
   const columns = [
     // { header: 'ID', accessor: 'transaction_id' },
     { header: "Book Name", accessor: "book_name" },
+    { header: "Category", accessor: "category" },
     { header: "Due Date", accessor: "due_date" },
     { header: "Date & Time", accessor: "created_at" },
     { header: "Action", accessor: "action" },
@@ -103,6 +113,7 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
   const tableData = filteredBooks.map((book) => ({
     ...book,
     book_name: getBookName(book.book_id),
+    category: getBookCategory(book.book_id),
     created_at: book.created_at
       ? new Date(book.created_at).toLocaleDateString()
       : "N/A",
