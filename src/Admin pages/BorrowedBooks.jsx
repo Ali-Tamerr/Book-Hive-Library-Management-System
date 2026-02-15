@@ -219,7 +219,7 @@ function BorrowedBooks({
     { header: "Book Name", accessor: "book_name" },
     { header: "Due Date", accessor: "due_date_formatted" },
     { header: "Date & Time", accessor: "borrowed_on_formatted" },
-    // { header: "Action", accessor: "action" },
+    { header: "Action", accessor: "action" },
   ];
 
   const formPopupComponent = (
@@ -242,9 +242,7 @@ function BorrowedBooks({
         buttonBehaviour={handleButtonClick}
         isLoading={isLoading}
         data={tableData}
-        handleEdit={handleEdit}
         handleDelete={handleDelete}
-        handleView={handleView}
         title={customTitle || "Book Transactions"}
         buttonText={hideButton ? "" : "Add Transaction"}
         columns={columns}
