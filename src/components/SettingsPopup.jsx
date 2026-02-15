@@ -101,7 +101,7 @@ const SettingsPopup = ({ show, onClose }) => {
             icon={<Settings size={35} strokeWidth={2.3} />}
             maxWidthClass="max-w-[700px]"
         >
-            <form onSubmit={handleSubmit} className='flex text-[#525252]  flex-col gap-14'>
+            <form onSubmit={handleSubmit} className='settings-credentials-form flex text-[#525252] dark:text-[#d6d6d6] flex-col gap-14'>
                 <div className='px-10 space-y-6'>
                     <div className='flex items-center gap-6'>
                         <label className='text-sm font-regular w-[180px] text-left whitespace-nowrap'>
@@ -114,7 +114,7 @@ const SettingsPopup = ({ show, onClose }) => {
                             value={formData.currentPassword}
                             onChange={handleChange}
                             required
-                            className="flex-1 h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+                            className="settings-credentials-input flex-1 h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] dark:border-[#4b4f56] bg-white dark:bg-[#1f2228] text-[#121317] dark:text-[#E8E8E8] placeholder-[#6f7377] dark:placeholder-[#8b9097] outline-none focus:border-[#1e255e] dark:focus:border-[#9aa3ff] text-[13px]"
                         />
                     </div>
 
@@ -129,7 +129,7 @@ const SettingsPopup = ({ show, onClose }) => {
                             value={formData.newPassword}
                             onChange={handleChange}
                             required
-                            className="flex-1 h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+                            className="settings-credentials-input flex-1 h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] dark:border-[#4b4f56] bg-white dark:bg-[#1f2228] text-[#121317] dark:text-[#E8E8E8] placeholder-[#6f7377] dark:placeholder-[#8b9097] outline-none focus:border-[#1e255e] dark:focus:border-[#9aa3ff] text-[13px]"
                         />
                     </div>
 
@@ -144,7 +144,7 @@ const SettingsPopup = ({ show, onClose }) => {
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             required
-                            className="flex-1 h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+                            className="settings-credentials-input flex-1 h-[50px] px-4 py-3 rounded-xl border border-[#3D3E3E] dark:border-[#4b4f56] bg-white dark:bg-[#1f2228] text-[#121317] dark:text-[#E8E8E8] placeholder-[#6f7377] dark:placeholder-[#8b9097] outline-none focus:border-[#1e255e] dark:focus:border-[#9aa3ff] text-[13px]"
                         />
                     </div>
 

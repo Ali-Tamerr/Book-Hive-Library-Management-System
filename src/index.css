@@ -87,6 +87,45 @@ body.dark-theme {
   background: #121317;
 }
 
+body.dark-theme .app-popup {
+  background-color: #121317;
+  border: 1px solid #292d32;
+  color: #e8e8e8;
+}
+
+body.dark-theme .app-popup__icon {
+  background-color: #292d32;
+  color: #e8e8e8;
+}
+
+body.dark-theme .app-popup__close {
+  color: #e8e8e8;
+  border-color: #6b6f76;
+}
+
+body.dark-theme .app-popup__close:hover {
+  color: #ffffff;
+  background-color: #1f232a;
+}
+
+body.dark-theme .app-popup__divider {
+  background-color: #2a2a2a;
+}
+
+body.dark-theme .app-popup .settings-credentials-form {
+  color: #d6d6d6;
+}
+
+body.dark-theme .app-popup .settings-credentials-input {
+  background-color: #1f2228;
+  border-color: #4b4f56;
+  color: #e8e8e8;
+}
+
+body.dark-theme .app-popup .settings-credentials-input::placeholder {
+  color: #8b9097;
+}
+
 #root {
   min-height: 100vh;
   width: 100%;
