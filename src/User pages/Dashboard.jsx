@@ -323,13 +323,13 @@ function Dashboard() {
               )}
             </div>
             <div className="my-auto flex w-full justify-center">
-              <div className="pr-13 scale-126 w-fit bg-white p-4 text-sm">
+              <div className="pr-13 w-fit rounded-md bg-white p-6 text-lg">
                 <p className="text-[#0b0c28]">
                   Dear {currentUser?.name || "Ahmed"}, please note that your
                   subscription will expire on{" "}
-                  <span className="block">1/1/2026.</span>
+                  <span className="block font-bold">1/1/2026.</span>
                 </p>
-                <p className="text-[#0b0c28]">
+                <p className="mt-2 text-[#0b0c28]">
                   To renew your subscription, kindly visit the nearest branch.
                 </p>
               </div>
