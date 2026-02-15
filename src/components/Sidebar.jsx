@@ -98,15 +98,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                 icon={<Home size={18} strokeWidth={2.3} />}
                 text="Dashboard"
               />
-              <NavLink
-                isExpanded={isExpanded}
-                active={location.pathname === "/user/books"}
-                onClick={() => {
-                  navigate("/user/books");
-                }}
-                icon={<BookOpen size={18} strokeWidth={2.3} />}
-                text="Books"
-              />
+              {/* Books NavLink Removed */}
               <NavLink
                 isExpanded={isExpanded}
                 active={location.pathname === "/user/catalog"}
