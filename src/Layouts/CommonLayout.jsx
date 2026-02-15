@@ -114,13 +114,15 @@ const CommonLayout = ({
                           customActionRenderer(item)
                         ) : (
                           <div className="mx-auto flex w-max items-center justify-center">
-                            <button
-                              onClick={() => handleEdit(item)}
-                              className="mr-2 cursor-pointer text-lg transition-transform hover:scale-125 dark:text-white"
-                              title="Edit"
-                            >
-                              <FilePenLine size={20} />
-                            </button>
+                            {handleEdit && (
+                              <button
+                                onClick={() => handleEdit(item)}
+                                className="mr-2 cursor-pointer text-lg transition-transform hover:scale-125 dark:text-white"
+                                title="Edit"
+                              >
+                                <FilePenLine size={20} />
+                              </button>
+                            )}
                             <button
                               onClick={() =>
                                 handleDelete(
