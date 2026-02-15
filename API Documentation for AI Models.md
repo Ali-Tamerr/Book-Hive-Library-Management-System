@@ -111,6 +111,14 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
 | `created_at` | timestamp | default: `now()` |
 
+### NfcScan (temporary NFC reads from ESP8266 → React)
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `scan_id` | bigint | PK, identity |
+| `tag_id` | string | **required** |
+| `device_id` | string | default: `"esp8266"` |
+| `created_at` | timestamp | default: `now()` |
+
 > **Note:** UserRequests are standalone registration requests. Admins review these requests and manually create Users separately. The `request_id` is auto-generated and should not be included in POST requests.
 
 ---
@@ -207,6 +215,13 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | POST | `/api/UserRequests` | Create request; body: `{ name, email, password, phone_number, plan? }` |
 | PUT | `/api/UserRequests/{request_id}` | Update request (approve/reject); body: `{ status?, name?, email?, phone_number?, plan? }` |
 | DELETE | `/api/UserRequests/{request_id}` | Delete request |
+
+### NfcScans (temporary NFC reads)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/NfcScans` | Returns `NfcScan[]` ordered by `created_at` descending |
+| GET | `/api/NfcScans/{scan_id}` | Returns single `NfcScan` |
+| POST | `/api/NfcScans` | Create scan; body: `{ tag_id, device_id?, created_at? }` |
 
 ---
 
@@ -473,6 +488,13 @@ interface UserRequest {
   status?: 'Pending' | 'Approved' | 'Rejected';  // default: 'Pending'
   created_at?: string;       // auto-set by database
 }
+
+interface NfcScan {
+  scan_id: number;           // bigint identity
+  tag_id: string;            // required
+  device_id?: string;        // defaults to "esp8266"
+  created_at?: string;       // ISO-8601, default now()
+}
 ```
 
 ---
@@ -500,6 +522,11 @@ UserRequests (standalone, no FK relationships)
 ---
 
 ## Changelog
+
+### Latest Update (NFC Scans table + API)
+- Added `nfc_scans` table mapping and REST API to ingest temporary NFC reads from ESP8266 and expose them to the frontend.
+- Schema: `scan_id` (bigint identity), `tag_id` (required), `device_id` (default `"esp8266"`), `created_at` (default `now()`).
+- Endpoints: `GET /api/NfcScans`, `GET /api/NfcScans/{scan_id}`, `POST /api/NfcScans`.
 
 ### Latest Update (Database Identity Column Fix - ROOT CAUSE FOUND)
 - **Bug fix:** Fixed `null value in column "book_id" violates not-null constraint` error when creating books.

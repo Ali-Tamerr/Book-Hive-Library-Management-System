@@ -1,19 +1,20 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAllBookCopies,
   getBookCopyById,
   getBookCopiesByBookId,
   createBookCopy,
-  deleteBookCopy
-} from '../services/bookCopies.api';
-import { bookKeys } from './useBooks';
-import { adminQueryOptions } from './queryConfig';
+  updateBookCopy,
+  deleteBookCopy,
+} from "../services/bookCopies.api";
+import { bookKeys } from "./useBooks";
+import { adminQueryOptions } from "./queryConfig";
 
 export const bookCopyKeys = {
-  all: ['bookCopies'],
-  lists: () => [...bookCopyKeys.all, 'list'],
-  byBook: (bookId) => [...bookCopyKeys.all, 'byBook', bookId],
-  detail: (id) => [...bookCopyKeys.all, 'detail', id],
+  all: ["bookCopies"],
+  lists: () => [...bookCopyKeys.all, "list"],
+  byBook: (bookId) => [...bookCopyKeys.all, "byBook", bookId],
+  detail: (id) => [...bookCopyKeys.all, "detail", id],
 };
 
 export const useBookCopies = () => {
@@ -42,7 +43,7 @@ export const useBookCopy = (id) => {
 
 export const useCreateBookCopy = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: createBookCopy,
     onSuccess: () => {
@@ -52,9 +53,24 @@ export const useCreateBookCopy = () => {
   });
 };
 
+export const useUpdateBookCopy = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }) => updateBookCopy(id, data),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: bookCopyKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: bookCopyKeys.detail(variables.id),
+      });
+      queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
+    },
+  });
+};
+
 export const useDeleteBookCopy = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: deleteBookCopy,
     onSuccess: () => {

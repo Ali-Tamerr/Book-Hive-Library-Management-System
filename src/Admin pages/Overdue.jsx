@@ -14,12 +14,14 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
     : overdueBooks;
 
   const columns = [
-    { header: 'ID', accessor: 'transaction_id' },
-    { header: 'User ID', accessor: 'user_id' },
-    { header: 'Amount', accessor: 'fine_amount' },
+    // { header: 'ID', accessor: 'transaction_id' },
+    // { header: 'User ID', accessor: 'user_id' },
+    // { header: 'Amount', accessor: 'fine_amount' },
+    { header: "User Name", accessor: "user_name_display" },
+    { header: "Book Name", accessor: "book_name" },
     { header: 'Due Date', accessor: 'due_date' },
-    { header: 'Borrowed On', accessor: 'created_at' },
-    { header: 'Action', accessor: 'action' },
+    { header: 'Date & Time', accessor: 'created_at' },
+    // { header: 'Action', accessor: 'action' },
   ];
 
   return (

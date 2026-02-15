@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
   const size = 9999;
@@ -6,14 +6,21 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
   const center = size / 2;
 
   const totalForChart = totalBorrowed || 0;
-  const borrowedPercentage = totalForChart > 0 ? (currentlyBorrowed / totalForChart) : 0;
-  const returnedPercentage = totalForChart > 0 ? (returnedBooks / totalForChart) : 0;
+  const borrowedPercentage =
+    totalForChart > 0 ? currentlyBorrowed / totalForChart : 0;
+  const returnedPercentage =
+    totalForChart > 0 ? returnedBooks / totalForChart : 0;
 
   if (totalForChart === 0 || (currentlyBorrowed === 0 && returnedBooks === 0)) {
     return (
-      <div className="w-full h-fit flex items-center justify-center">
-        <svg viewBox={`0 0 ${size} ${size}`} className="block w-full h-full">
-          <circle cx={center} cy={center} r={radius} className="fill-[#3D3E3E] dark:fill-[#292D32]" />
+      <div className="flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px]">
+        <svg viewBox={`0 0 ${size} ${size}`} className="block h-full w-full">
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            className="fill-[#3D3E3E] dark:fill-[#292D32]"
+          />
         </svg>
       </div>
     );
@@ -30,10 +37,21 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
     const end = polarToCartesian(x, y, radius, startAngle);
     const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
     const d = [
-      "M", x, y,
-      "L", start.x, start.y,
-      "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y,
-      "Z"
+      "M",
+      x,
+      y,
+      "L",
+      start.x,
+      start.y,
+      "A",
+      radius,
+      radius,
+      0,
+      largeArcFlag,
+      0,
+      end.x,
+      end.y,
+      "Z",
     ].join(" ");
     return d;
   };
@@ -42,7 +60,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
     const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
     return {
       x: centerX + radius * Math.cos(angleInRadians),
-      y: centerY + radius * Math.sin(angleInRadians)
+      y: centerY + radius * Math.sin(angleInRadians),
     };
   };
 
@@ -55,27 +73,53 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
   const isReturnedFullCircle = returnedDegrees >= 359.99;
 
   return (
-    <div className="w-full h-fit flex items-center justify-center">
-      <svg viewBox={`0 0 ${size} ${size}`} className="block w-full h-full">
+    <div className="flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px]">
+      <svg viewBox={`0 0 ${size} ${size}`} className="block h-full w-full">
         {isBorrowedFullCircle ? (
-          <circle cx={center} cy={center} r={radius} className="fill-[#3D3E3E] dark:fill-[#D7D7D7]" />
-        ) : borrowedDegrees > 0 && (
-          <path
-            d={describeArc(center, center, radius, borrowedStart, borrowedEnd)}
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
             className="fill-[#3D3E3E] dark:fill-[#D7D7D7]"
           />
+        ) : (
+          borrowedDegrees > 0 && (
+            <path
+              d={describeArc(
+                center,
+                center,
+                radius,
+                borrowedStart,
+                borrowedEnd,
+              )}
+              className="fill-[#3D3E3E] dark:fill-[#D7D7D7]"
+            />
+          )
         )}
         {isReturnedFullCircle ? (
-          <circle cx={center} cy={center} r={radius} className="fill-[#000035] dark:fill-[#292D32]" />
-        ) : returnedDegrees > 0 && (
-          <path
-            d={describeArc(center, center, radius, returnedStart, returnedEnd)}
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
             className="fill-[#000035] dark:fill-[#292D32]"
           />
+        ) : (
+          returnedDegrees > 0 && (
+            <path
+              d={describeArc(
+                center,
+                center,
+                radius,
+                returnedStart,
+                returnedEnd,
+              )}
+              className="fill-[#000035] dark:fill-[#292D32]"
+            />
+          )
         )}
       </svg>
     </div>
   );
 };
 
-export default PieChart
+export default PieChart;
