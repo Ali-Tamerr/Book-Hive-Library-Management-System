@@ -13,5 +13,5 @@ export default defineConfig({
       },
     }),
   ],
-  base: "/book-hive/",
+  base: "/Library-Management-System-React/",
 });
