@@ -154,7 +154,7 @@ function App() {
 
   return (
     <NFCReaderProvider>
-      <Router>
+      <Router basename="/Library-Management-System-React">
         <Layout
           activeTab={activeTab}
           setActiveTab={setActiveTab}
