@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNFCReader } from "../contexts/NFCReaderContext";
 import { Wifi, Usb, Loader2 } from "lucide-react";
 
-const NFCReaderButton = ({ onDataReceived, inputRef }) => {
+const NFCReaderButton = ({ onDataReceived, inputRef, isFlexOne = "false" }) => {
   const {
     isConnected,
     isWireless,
@@ -28,15 +28,15 @@ const NFCReaderButton = ({ onDataReceived, inputRef }) => {
   }, [isConnected, isWireless, inputRef]);
 
   return (
-    <div className="flex h-[50px] w-full gap-2">
+    <div className={`flex h-[50px] gap-2`}>
       {/* USB Button */}
       <button
         type="button"
         onClick={handleConnectClick}
-        className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] text-[13px] font-medium transition-colors ${
+        className={` ${isFlexOne === "true" ? "flex-1" : ""} flex w-20 cursor-pointer items-center justify-center gap-2 rounded-[12px] text-[13px] font-medium transition-colors ${
           isConnected
             ? "border border-red-200 bg-red-100 text-red-700 hover:bg-red-200"
-            : "border border-transparent bg-[#F2F2F2] text-[#000035] hover:bg-gray-200"
+            : "border border-transparent bg-[#F2F2F2] text-[#000035] hover:bg-gray-200 dark:bg-[#D7D7D7] dark:text-[#000035] dark:hover:bg-gray-300"
         }`}
         title={isConnected ? "Disconnect USB" : "Connect via USB Cable"}
       >
@@ -48,10 +48,10 @@ const NFCReaderButton = ({ onDataReceived, inputRef }) => {
       <button
         type="button"
         onClick={toggleWireless}
-        className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-[12px] text-[13px] font-medium transition-colors ${
+        className={` ${isFlexOne === "true" ? "flex-1" : ""} w-26 flex cursor-pointer items-center justify-center gap-2 rounded-[12px] text-[13px] font-medium transition-colors ${
           isWireless
             ? "border border-blue-200 bg-blue-100 text-blue-700 hover:bg-blue-200"
-            : "border border-transparent bg-[#F2F2F2] text-[#000035] hover:bg-gray-200"
+            : "border border-transparent bg-[#F2F2F2] text-[#000035] hover:bg-gray-200 dark:bg-[#D7D7D7] dark:text-[#000035] dark:hover:bg-gray-300"
         }`}
         title={isWireless ? "Disable Wireless" : "Enable Wireless Scanning"}
       >

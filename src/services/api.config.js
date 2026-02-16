@@ -22,8 +22,8 @@ axiosInstance.interceptors.request.use(
         const tokenData = JSON.parse(token);
         // Check if tokenData is an object with a 'token' property, otherwise use it directly
         const actualToken =
-          tokenData && typeof tokenData === "object" && tokenData.token
-            ? tokenData.token
+          tokenData && typeof tokenData === "object"
+            ? tokenData.token || tokenData.accessToken || tokenData
             : tokenData;
         config.headers.Authorization = `Bearer ${actualToken}`;
       } catch (e) {

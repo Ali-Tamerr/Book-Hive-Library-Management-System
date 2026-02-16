@@ -1,6 +1,11 @@
 import React from "react";
 
-const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
+const PieChart = ({
+  totalBorrowed,
+  currentlyBorrowed,
+  returnedBooks,
+  className,
+}) => {
   const size = 9999;
   const radius = size / 2 - 10;
   const center = size / 2;
@@ -13,13 +18,15 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
 
   if (totalForChart === 0 || (currentlyBorrowed === 0 && returnedBooks === 0)) {
     return (
-      <div className="flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px]">
+      <div
+        className={`flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px] ${className || ""}`}
+      >
         <svg viewBox={`0 0 ${size} ${size}`} className="block h-full w-full">
           <circle
             cx={center}
             cy={center}
             r={radius}
-            className="fill-[#3D3E3E] dark:fill-[#292D32]"
+            className="fill-[#3D3E3E]"
           />
         </svg>
       </div>
@@ -73,8 +80,14 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
   const isReturnedFullCircle = returnedDegrees >= 359.99;
 
   return (
-    <div className="flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px]">
-      <svg viewBox={`0 0 ${size} ${size}`} className="block h-full w-full">
+    <div
+      className={`flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px] ${className || ""}`}
+    >
+      <svg
+        viewBox={`0 0 ${size} ${size}`}
+        className="block h-full w-full"
+        preserveAspectRatio="xMidYMin meet"
+      >
         {isBorrowedFullCircle ? (
           <circle
             cx={center}
@@ -101,7 +114,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
             cx={center}
             cy={center}
             r={radius}
-            className="fill-[#000035] dark:fill-[#292D32]"
+            className="fill-[#000035]"
           />
         ) : (
           returnedDegrees > 0 && (
@@ -113,7 +126,7 @@ const PieChart = ({ totalBorrowed, currentlyBorrowed, returnedBooks }) => {
                 returnedStart,
                 returnedEnd,
               )}
-              className="fill-[#000035] dark:fill-[#292D32]"
+              className="fill-[#000035]"
             />
           )
         )}
