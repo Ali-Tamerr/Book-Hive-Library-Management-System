@@ -5,10 +5,10 @@
             "destination": "/index.html"
         }
     ],
-    
     "git": {
         "deploymentEnabled": {
-            "muhammed": false
+            "muhammed": false,
+            "gh-pages": false
         }
     }
 }
