@@ -26,3 +26,4 @@ dist-ssr
 .env
 
 ESP8266_SMART_ID.ino
+.vercel
