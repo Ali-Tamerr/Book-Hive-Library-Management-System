@@ -1,0 +1,1 @@
+import{c as o,j as t}from"./index-CoYPV6rV.js";const a="/book-hive/assets/image-Cj2xQBbI.png",m=()=>{const e=o.c(1);let s;return e[0]===Symbol.for("react.memo_cache_sentinel")?(s=t.jsx("div",{className:"p-6",children:t.jsx("img",{src:a,className:"w-100"})}),e[0]=s):s=e[0],s};export{m as default};

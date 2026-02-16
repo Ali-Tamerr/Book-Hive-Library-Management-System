@@ -1,1 +1,0 @@
-import{i as o,k as e,m as n,d as r}from"./index-CJb8dl2p.js";const t="/Books",i=async()=>await o(t),p=async a=>await e(t,a),u=async(a,s)=>await r(`${t}/${a}`,s),k=async a=>await n(`${t}/${a}`);export{p as c,k as d,i as g,u};
