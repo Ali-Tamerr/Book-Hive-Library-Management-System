@@ -266,33 +266,33 @@ const ViewRequestsPopup = ({
 
                 <div className='flex gap-3 items-center'>
                     <div className='relative flex-1'>
-                        <Search className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400' size={18} />
+                        <Search className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-[#8b9097]' size={18} />
                         <input
                             type="text"
                             placeholder={getSearchPlaceholder()}
                             value={searchValue}
                             onChange={(e) => setSearchValue(e.target.value)}
-                            className="w-full h-[50px] pl-12 pr-4 py-3 rounded-xl border border-[#3D3E3E] outline-none focus:border-[#1e255e] text-[13px]"
+                            className="w-full h-[50px] pl-12 pr-4 py-3 rounded-xl border border-[#3D3E3E] bg-white text-[#121317] outline-none focus:border-[#1e255e] text-[13px] placeholder-[#6f7377] dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097] dark:focus:border-[#9aa3ff]"
                         />
                     </div>
                     {activeTab !== 'returns' && (
                         <button
                             onClick={() => setShowRejected(!showRejected)}
-                            className="bg-[#0b0b3b] cursor-pointer h-[50px] px-6 text-white rounded-xl hover:bg-[#1a1a6a] transition-colors text-sm font-medium whitespace-nowrap"
+                            className="bg-[#0b0b3b] cursor-pointer h-[50px] px-6 text-white rounded-xl hover:bg-[#1a1a6a] transition-colors text-sm font-medium whitespace-nowrap dark:bg-[#292D32] dark:text-[#E8E8E8] dark:hover:bg-[#343a40]"
                         >
                             {showRejected ? 'Pending Requests' : 'Rejected Requests'}
                         </button>
                     )}
                 </div>
 
-                <div className='border border-[#8787A3] rounded-[10px] overflow-hidden flex-1 flex flex-col'>
+                <div className='border border-[#8787A3] dark:border-[#2a2a2a] dark:bg-[#1a1d23] rounded-[10px] overflow-hidden flex-1 flex flex-col'>
                     <div className='flex-1 min-w-[100px] overflow-auto'>
                         {currentLoading ? (
-                            <div className='p-8 text-center text-gray-500 dark:text-[#0a0f33]'>
+                            <div className='p-8 text-center text-gray-500 dark:text-[#8b9097]'>
                                 Loading requests...
                             </div>
                         ) : currentData.length === 0 ? (
-                            <div className='p-8 text-center text-gray-500 dark:text-[#0a0f33]'>
+                            <div className='p-8 text-center text-gray-500 dark:text-[#8b9097]'>
                                 {searchValue
                                     ? 'No requests match your search.'
                                     : showRejected
@@ -301,28 +301,28 @@ const ViewRequestsPopup = ({
                             </div>
                         ) : activeTab === 'users' ? (
                             <table className='w-full'>
-                                <thead className='sticky top-0 bg-white'>
+                                <thead className='sticky top-0 bg-white dark:bg-[#D7D7D7]'>
                                     <tr>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Name</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Email</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Contact No</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Plan</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Sent At</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Status</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Name</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Email</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Contact No</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Plan</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Sent At</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Status</th>
                                         {!showRejected && (
-                                            <th className='p-4 text-center text-sm font-semibold text-[#333]'>Actions</th>
+                                            <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Actions</th>
                                         )}
                                     </tr>
                                 </thead>
-                                <tbody className='border-t border-[#0a0f33]'>
+                                <tbody className='border-t border-[#0a0f33] dark:border-[#2a2a2a]'>
                                     {filteredUserRequests.map((request, index) => (
                                         <tr key={request.request_id || index}>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{request.name}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{request.email}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{request.phone_number}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{request.plan || 'N/A'}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] whitespace-nowrap text-center'>{getUserStatusBadge(request)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{request.name}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{request.email}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{request.phone_number}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{request.plan || 'N/A'}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{formatDate(request.created_at)}</td>
+                                            <td className='p-4 whitespace-nowrap text-center dark:text-[#E8E8E8]'>{getUserStatusBadge(request)}</td>
                                             {!showRejected && (
                                                 <td className='p-4'>
                                                     <div className='flex justify-center gap-2'>
@@ -330,14 +330,14 @@ const ViewRequestsPopup = ({
                                                             <>
                                                                 <button
                                                                     onClick={() => onApprove && onApprove(request)}
-                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer transition-colors hover:bg-gray-100 dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:border-[#4b4f56] dark:hover:bg-[#2a2e35]'
                                                                     title="Approve"
                                                                 >
                                                                     <Check size={16} />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => onReject && onReject(request)}
-                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer transition-colors hover:bg-gray-100 dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:border-[#4b4f56] dark:hover:bg-[#2a2e35]'
                                                                     title="Reject"
                                                                 >
                                                                     <X size={16} />
@@ -345,7 +345,7 @@ const ViewRequestsPopup = ({
                                                             </>
                                                         )}
                                                         {request.status !== 'Pending' && (
-                                                            <span className='text-sm text-gray-400 italic'>Processed</span>
+                                                            <span className='text-sm text-gray-400 dark:text-[#8b9097] italic'>Processed</span>
                                                         )}
                                                     </div>
                                                 </td>
@@ -356,26 +356,26 @@ const ViewRequestsPopup = ({
                             </table>
                         ) : activeTab === 'books' ? (
                             <table className='w-full'>
-                                <thead className='sticky top-0 bg-white'>
+                                <thead className='sticky top-0 bg-white dark:bg-[#D7D7D7]'>
                                     <tr>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>User Name</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Book Name</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Due Date</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Requested At</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Status</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>User Name</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Book Name</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Due Date</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Requested At</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Status</th>
                                         {!showRejected && (
-                                            <th className='p-4 text-center text-sm font-semibold text-[#333]'>Actions</th>
+                                            <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Actions</th>
                                         )}
                                     </tr>
                                 </thead>
-                                <tbody className='border-t border-[#0a0f33]'>
+                                <tbody className='border-t border-[#0a0f33] dark:border-[#2a2a2a]'>
                                     {filteredBookRequests.map((request, index) => (
                                         <tr key={request.transaction_id || index}>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{getUserName(request.user_id)}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{getBookName(request.book_id)}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{formatDateShort(request.due_date)}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] whitespace-nowrap text-center'>{getBookStatusBadge(request)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{getUserName(request.user_id)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{getBookName(request.book_id)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{formatDateShort(request.due_date)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{formatDate(request.created_at)}</td>
+                                            <td className='p-4 whitespace-nowrap text-center dark:text-[#E8E8E8]'>{getBookStatusBadge(request)}</td>
                                             {!showRejected && (
                                                 <td className='p-4'>
                                                     <div className='flex justify-center gap-2'>
@@ -383,14 +383,14 @@ const ViewRequestsPopup = ({
                                                             <>
                                                                 <button
                                                                     onClick={() => onApproveBook && onApproveBook(request)}
-                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer transition-colors hover:bg-gray-100 dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:border-[#4b4f56] dark:hover:bg-[#2a2e35]'
                                                                     title="Approve"
                                                                 >
                                                                     <Check size={16} />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => onRejectBook && onRejectBook(request)}
-                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                                    className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer transition-colors hover:bg-gray-100 dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:border-[#4b4f56] dark:hover:bg-[#2a2e35]'
                                                                     title="Reject"
                                                                 >
                                                                     <X size={16} />
@@ -406,36 +406,36 @@ const ViewRequestsPopup = ({
                             </table>
                         ) : (
                             <table className='w-full'>
-                                <thead className='sticky top-0 bg-white'>
+                                <thead className='sticky top-0 bg-white dark:bg-[#D7D7D7]'>
                                     <tr>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>User Name</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Book Name</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Requested At</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Status</th>
-                                        <th className='p-4 text-center text-sm font-semibold text-[#333]'>Actions</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>User Name</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Book Name</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Requested At</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Status</th>
+                                        <th className='p-4 text-center text-sm font-semibold text-[#333] dark:text-[#121317]'>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className='border-t border-[#0a0f33]'>
+                                <tbody className='border-t border-[#0a0f33] dark:border-[#2a2a2a]'>
                                     {filteredReturnRequests.map((request, index) => (
                                         <tr key={request.transaction_id || index}>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{getUserName(request.user_id)}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{getBookName(request.book_id)}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] text-sm whitespace-nowrap text-center'>{formatDate(request.created_at)}</td>
-                                            <td className='p-4 dark:text-[#0a0f33] whitespace-nowrap text-center'>
-                                                <span className="text-xs font-medium text-yellow-600">Pending Return</span>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{getUserName(request.user_id)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{getBookName(request.book_id)}</td>
+                                            <td className='p-4 text-sm whitespace-nowrap text-center dark:text-[#E8E8E8]'>{formatDate(request.created_at)}</td>
+                                            <td className='p-4 whitespace-nowrap text-center dark:text-[#E8E8E8]'>
+                                                <span className="text-xs font-medium text-yellow-600 dark:text-yellow-400">Pending Return</span>
                                             </td>
                                             <td className='p-4'>
                                                 <div className='flex justify-center gap-2'>
                                                     <button
                                                         onClick={() => onApproveReturn && onApproveReturn(request)}
-                                                        className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                        className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer transition-colors hover:bg-gray-100 dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:border-[#4b4f56] dark:hover:bg-[#2a2e35]'
                                                         title="Approve Return"
                                                     >
                                                         <Check size={16} />
                                                     </button>
                                                     <button
                                                         onClick={() => onRejectReturn && onRejectReturn(request)}
-                                                        className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer'
+                                                        className='p-2 bg-white text-[#1e255e] border border-[#1e255e] rounded-lg cursor-pointer transition-colors hover:bg-gray-100 dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:border-[#4b4f56] dark:hover:bg-[#2a2e35]'
                                                         title="Reject Return"
                                                     >
                                                         <X size={16} />
@@ -450,7 +450,7 @@ const ViewRequestsPopup = ({
                     </div>
                 </div>
 
-                <div className='text-sm text-gray-500 text-center'>
+                <div className='text-sm text-gray-500 dark:text-[#9aa0a6] text-center'>
                     <div>Showing {currentData.length} of {totalData.length} requests</div>
                     {activeTab === 'users' && !showRejected && (
                         <div className='text-xs mt-1'>Request expiration = {EXPIRATION_DAYS} days</div>
