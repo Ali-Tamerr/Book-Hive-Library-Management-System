@@ -1,0 +1,1 @@
+import{z as r,C as n,E as u,e as t}from"./index-B1hKs9aq.js";const s="/UserRequests",o=async()=>await n(s),p=async e=>await r(s,e),i=async(e,a)=>await t(`${s}/${e}`,a),q=async e=>await u(`${s}/${e}`),R=async e=>await t(`${s}/${e}`,{status:"Approved"});export{R as a,p as c,q as d,o as g,i as u};

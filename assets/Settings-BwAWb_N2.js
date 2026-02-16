@@ -1,1 +1,0 @@
-import{c as a,j as t}from"./index-B8Lo7d61.js";const m="/Library-Management-System-React/assets/image-Cj2xQBbI.png",r=()=>{const s=a.c(1);let e;return s[0]===Symbol.for("react.memo_cache_sentinel")?(e=t.jsx("div",{className:"p-6",children:t.jsx("img",{src:m,className:"w-100"})}),s[0]=e):e=s[0],e};export{r as default};
