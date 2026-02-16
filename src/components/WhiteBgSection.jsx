@@ -22,6 +22,7 @@ const WhiteBgSection = ({
     const textClass = isDarkMode ? "text-white" : "text-[#0a0f33]";
     const logoClass = isDarkMode ? "text-white" : "text-[#0a0f33]";
 
+    
     if (customLayout) {
         return (
             <div className={`${visibilityClass} ${bgClass} flex-col items-center justify-center p-16 w-full ${!mobileOnly && !desktopOnly ? 'relative' : ''}`}>
