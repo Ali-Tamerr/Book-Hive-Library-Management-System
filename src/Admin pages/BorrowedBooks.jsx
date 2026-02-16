@@ -185,8 +185,15 @@ function BorrowedBooks({
   };
 
   const filteredPending = borrowedBooks.filter((book) => {
-    const isPending = (book.status || "").toLowerCase() === "pending";
-    return showPending ? isPending : !isPending;
+    const status = (book.status || "").toLowerCase();
+    const isPending = status === "pending";
+    const isReturned = status === "returned";
+
+    if (showPending) {
+      return isPending;
+    }
+    // Show everything except Pending and Returned (i.e., Completed, Overdue)
+    return !isPending && !isReturned;
   });
 
   const filteredBorrowedBooks = searchValue
@@ -212,7 +219,7 @@ function BorrowedBooks({
     { header: "Book Name", accessor: "book_name" },
     { header: "Due Date", accessor: "due_date_formatted" },
     { header: "Date & Time", accessor: "borrowed_on_formatted" },
-    // { header: "Action", accessor: "action" },
+    { header: "Action", accessor: "action" },
   ];
 
   const formPopupComponent = (
@@ -235,9 +242,7 @@ function BorrowedBooks({
         buttonBehaviour={handleButtonClick}
         isLoading={isLoading}
         data={tableData}
-        handleEdit={handleEdit}
         handleDelete={handleDelete}
-        handleView={handleView}
         title={customTitle || "Book Transactions"}
         buttonText={hideButton ? "" : "Add Transaction"}
         columns={columns}
