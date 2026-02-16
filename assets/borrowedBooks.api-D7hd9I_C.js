@@ -1,1 +1,0 @@
-import{C as e,z as r,E as s,e as n}from"./index-CoYPV6rV.js";const o="/BookTransactions",i=async()=>await e(o),B=async a=>await r(o,a),w=async(a,t)=>await n(`${o}/${a}`,t),d=async a=>await s(`${o}/${a}`);export{B as c,d,i as g,w as u};
