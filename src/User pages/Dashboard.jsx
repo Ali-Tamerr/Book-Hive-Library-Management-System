@@ -209,8 +209,32 @@ function Dashboard() {
             />
           </div>
         </div>
-        <section className="flex h-full gap-[22px]">
-          <div className="flex h-full flex-1 flex-col gap-[18px]">
+        <section className="flex h-full gap-[22px] max-[640px]:flex-col">
+          <div
+            className={`min-[1540px]:ml-18 flex w-full flex-1 flex-col items-center justify-center gap-[18px] max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full`}
+          >
+            <div className="min-[1200px]:mb-13 flex h-full w-full flex-col items-center justify-start rounded-md">
+              <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full max-w-[630px] flex-col items-center justify-start gap-10 p-10 max-[380px]:w-[110%]">
+                <div className="h-fit w-full max-[640px]:min-h-[162px] max-[640px]:w-full max-[340px]:-ml-9">
+                  <PieChart
+                    totalBorrowed={stats.totalBorrowed}
+                    currentlyBorrowed={stats.currentlyBorrowed}
+                    returnedBooks={stats.returnedBooks}
+                    className="!max-h-full !max-w-full"
+                  />
+                </div>
+                <PieChartLegend
+                  variant="mobile"
+                  className="scale-125 max-[1540px]:!hidden max-[1080px]:!flex"
+                />
+                <PieChartLegend
+                  variant="desktop"
+                  className="max-[1540px]:!flex max-[1080px]:!hidden"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex w-full flex-col gap-[18px] min-[640px]:h-full min-[640px]:flex-1">
             <div className="flex items-center justify-between border-b">
               <div className="flex gap-5">
                 <button
@@ -277,7 +301,7 @@ function Dashboard() {
               </div>
             </div>
 
-            <div className="gap-13 grid w-full grid-cols-4 place-items-center max-[1200px]:grid-cols-3 max-[900px]:grid-cols-2 max-[600px]:grid-cols-1">
+            <div className="gap-13 grid w-full grid-cols-4 place-items-center max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2">
               {loading ? (
                 <div className="col-span-full py-9 text-center text-gray-500">
                   Loading books...
@@ -332,25 +356,6 @@ function Dashboard() {
                 <p className="mt-2 text-[#0b0c28]">
                   To renew your subscription, kindly visit the nearest branch.
                 </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Pie chart inspired by admin/pages/Dashboard.jsx */}
-          <div
-            className={`ml-18 flex h-full w-full max-w-[630px] flex-1 flex-col items-center justify-start gap-[18px] max-[1540px]:mx-0 max-[1540px]:h-72 max-[1540px]:flex-none`}
-          >
-            <div className="min-[1200px]:mb-13 flex h-full w-full flex-col items-center justify-center rounded-md">
-              <div className="max-3xl:items-start max-[1080px]:h-54 max-[430px]:scale-80 [430px]:mx-0 -ml-9 flex h-full w-full max-w-[630px] flex-col items-center justify-center gap-14 max-[1540px]:-mr-7 max-[1540px]:flex-row max-[380px]:w-[110%]">
-                <PieChartLegend variant="mobile" />
-                <div className="h-fit w-full max-[1540px]:min-h-[162px] max-[1540px]:w-[162px] max-[1080px]:h-full max-[1080px]:w-[180px] max-[340px]:-ml-9">
-                  <PieChart
-                    totalBorrowed={stats.totalBorrowed}
-                    currentlyBorrowed={stats.currentlyBorrowed}
-                    returnedBooks={stats.returnedBooks}
-                  />
-                </div>
-                <PieChartLegend variant="desktop" />
               </div>
             </div>
           </div>
