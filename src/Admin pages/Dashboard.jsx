@@ -211,35 +211,35 @@ function Dashboard() {
           <div className="flex min-h-0 flex-1 snap-start flex-col">
             <DashboardCard title="Overdue Borrowers">
               {loading ? (
-                <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#0a0f33]">
+                <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#121317]">
                   Loading...
                 </li>
               ) : overdueBorrowers.length > 0 ? (
                 overdueBorrowers.map((borrower) => (
                   <li
                     key={borrower.id}
-                    className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#929292] dark:bg-[#929292]"
+                    className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#0a0f33] dark:bg-[#E3E3E3]"
                   >
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#0a0f33] dark:bg-[#929292]">
-                      <User size={14} className="text-white dark:text-black" />
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#0a0f33] dark:bg-[#C0C0C0]">
+                      <User size={14} className="text-white dark:text-[#121317]" />
                     </div>
-                    <div className="h-full w-[1.8px] rounded-full bg-[#0b0b3b] dark:bg-black"></div>
+                    <div className="h-full w-[1.8px] rounded-full bg-[#0b0b3b] dark:bg-[#0a0f33]"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-[#0a0f33] dark:text-black">
+                      <p className="text-sm font-medium text-[#0a0f33] dark:text-[#121317]">
                         {borrower.userName}
                       </p>
-                      <p className="text-xs font-medium text-[#6f7390] dark:text-black">
+                      <p className="text-xs font-medium text-[#6f7390] dark:text-[#121317]">
                         Borrowed ID: {borrower.borrowedId}
                       </p>
                     </div>
                     <MaximizeIcon
-                      className="h-7 w-7 cursor-pointer text-[#0a0f33] dark:text-black"
+                      className="h-7 w-7 cursor-pointer text-[#0a0f33] dark:text-[#121317]"
                       onClick={() => handleViewDetails(borrower, "overdue")}
                     />
                   </li>
                 ))
               ) : (
-                <li className="rounded-lg p-3 text-xs text-gray-500 dark:text-[#0a0f33]">
+                <li className="rounded-lg p-3 text-xs text-gray-500 dark:text-[#121317]">
                   No overdue books
                 </li>
               )}
@@ -249,37 +249,37 @@ function Dashboard() {
           <div className="flex min-h-0 flex-1 snap-center flex-col">
             <DashboardCard title="Branch Network">
               {branchesLoading ? (
-                <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#0a0f33]">
+                <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#121317]">
                   Loading...
                 </li>
               ) : Array.isArray(branches) && branches.length > 0 ? (
                 branches.map((branch) => (
                   <li
                     key={branch.branch_id || branch.id}
-                    className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-1.5 text-xs dark:border-[#292D32] dark:bg-[#929292]"
+                    className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-1.5 text-xs dark:border-[#0a0f33] dark:bg-[#E3E3E3]"
                   >
                     <div className="p4 flex h-7 w-9 shrink-0 items-center justify-center rounded-md">
-                      <Building2 className="h-full w-full text-[#0a0f33] dark:text-black" />
+                      <Building2 className="h-full w-full text-[#0a0f33] dark:text-[#121317]" />
                     </div>
-                    <div className="h-full w-[1.8px] bg-[#0b0b3b] dark:bg-black"></div>
+                    <div className="h-full w-[1.8px] bg-[#0b0b3b] dark:bg-[#0a0f33]"></div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-[#0a0f33] dark:text-black">
+                      <p className="text-sm font-medium text-[#0a0f33] dark:text-[#121317]">
                         {branch.name}
                       </p>
-                      <p className="text-xs font-medium text-[#0a0f33] dark:text-black">
+                      <p className="text-xs font-medium text-[#0a0f33] dark:text-[#121317]">
                         {branch.location ||
                           branch.address ||
                           "Location not specified"}
                       </p>
                     </div>
                     <MaximizeIcon
-                      className="h-7 w-7 cursor-pointer text-[#0a0f33] dark:text-black"
+                      className="h-7 w-7 cursor-pointer text-[#0a0f33] dark:text-[#121317]"
                       onClick={() => handleViewDetails(branch, "branch")}
                     />
                   </li>
                 ))
               ) : (
-                <li className="rounded-lg p-3 text-xs text-gray-500 dark:text-[#0a0f33]">
+                <li className="rounded-lg p-3 text-xs text-gray-500 dark:text-[#121317]">
                   No branches found
                 </li>
               )}
