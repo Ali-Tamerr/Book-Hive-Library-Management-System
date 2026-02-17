@@ -38,7 +38,7 @@ const Home = () => {
          language: 'English',
          branch: 'Giza',
          availability: 'Available',
-         image: new URL('./assets/img/23036917.jpg', import.meta.url).href,
+         image: new URL('./assets/img/9780439023528.jpg', import.meta.url).href,
       },
       {
          name: 'I Think Therefore I Play',
@@ -46,7 +46,7 @@ const Home = () => {
          language: 'English',
          branch: 'Alexandria',
          availability: 'Available',
-         image: new URL('./assets/img/61WcybNpt9L.jpg', import.meta.url).href,
+         image: new URL('./assets/img/Concurrency-in-Go-768x1008.jpg', import.meta.url).href,
       },
       {
          name: 'My Autobiography',
@@ -54,7 +54,7 @@ const Home = () => {
          language: 'English',
          branch: 'Cairo',
          availability: 'Available',
-         image: new URL('./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
+         image: new URL('./assets/img/716VQYKJfsL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
       },
    ];
 
@@ -238,15 +238,15 @@ const Home = () => {
                      <div className="home__swiper swiper">
                         <div className="swiper-wrapper">
                            <article className="home__article swiper-slide">
-                              <img src={new URL('./assets/img/81VT2VfXZYL._AC_UF894,1000_QL80_.jpg', import.meta.url).href} alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/Concurrency-in-Go-768x1008.jpg', import.meta.url).href} alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src={new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/91YCWH4jFdL.jpg', import.meta.url).href} alt="image" className="home__img" />
                            </article>
 
                            <article className="home__article swiper-slide">
-                              <img src={new URL('./assets/img/18469883.jpg', import.meta.url).href} alt="image" className="home__img" />
+                              <img src={new URL('./assets/img/71ZPgUTDn6L._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="image" className="home__img" />
                            </article>
                         </div>
                      </div>
