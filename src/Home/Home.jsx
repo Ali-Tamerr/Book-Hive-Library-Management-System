@@ -33,7 +33,7 @@ const Home = () => {
          image: new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
       },
       {
-         name: 'The Second Half',
+         name: 'The Hunger Games',
          category: 'Biography',
          language: 'English',
          branch: 'Giza',
@@ -41,7 +41,7 @@ const Home = () => {
          image: new URL('./assets/img/9780439023528.jpg', import.meta.url).href,
       },
       {
-         name: 'I Think Therefore I Play',
+         name: 'Concurrency in Go',
          category: 'Sports',
          language: 'English',
          branch: 'Alexandria',
@@ -49,7 +49,7 @@ const Home = () => {
          image: new URL('./assets/img/Concurrency-in-Go-768x1008.jpg', import.meta.url).href,
       },
       {
-         name: 'My Autobiography',
+         name: 'Real world Haskell',
          category: 'Biography',
          language: 'English',
          branch: 'Cairo',
@@ -328,7 +328,7 @@ const Home = () => {
                      {/* RIGHT: decorative overlapping books */}
                      <div className="about-right" aria-hidden="true">
                         {/* back (left) */}
-                        <img className="book back" src={new URL('./assets/img/71STVuBmK+L._AC_UF1000,1000_QL80_.jpg', import.meta.url).href}
+                        <img className="book back" src={new URL('./assets/img/1.webp', import.meta.url).href}
                            alt="Sir Bobby Charlton book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
                         {/* front (right) */}
                         <img className="book front" src={new URL('./assets/img/81dugtP5foL._AC_UF894,1000_QL80_.jpg', import.meta.url).href}
