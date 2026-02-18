@@ -1,17 +1,15 @@
-import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import LoginPopup from "../shared/LoginPopup";
-import SignupPopup from "../shared/SignupPopup";
-import ForgotPasswordPopup from "../shared/ForgotPasswordPopup";
-import OTPPopup from "../shared/OTPPopup";
-import ResetPasswordPopup from "../shared/ResetPasswordPopup";
-import AboutBranchesPopup from "../components/AboutBranchesPopup";
-import FeaturedBookPopup from "../components/FeaturedBookPopup";
-import { useBooks } from "../hooks/useBooks";
-import { useCategories } from "../hooks/useCategories";
-import "./css/swiper-bundle.min.css";
-import "./css/styles.css";
-import "./css/stylesNew.css";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import LoginPopup from '../shared/LoginPopup';
+import SignupPopup from '../shared/SignupPopup';
+import ForgotPasswordPopup from '../shared/ForgotPasswordPopup';
+import OTPPopup from '../shared/OTPPopup';
+import ResetPasswordPopup from '../shared/ResetPasswordPopup';
+import AboutBranchesPopup from '../components/AboutBranchesPopup';
+import FeaturedBookPopup from '../components/FeaturedBookPopup';
+import './css/swiper-bundle.min.css';
+import './css/styles.css';
+import './css/stylesNew.css';
 
 const Home = () => {
    const navigate = useNavigate();
@@ -211,8 +209,6 @@ const Home = () => {
             <i className="ri-close-line search__close" id="search-close"></i>
          </div>
 
-
-
          {/*==================== MAIN ====================*/}
          <main className="main">
 
@@ -250,97 +246,35 @@ const Home = () => {
                               <img src={new URL('./assets/img/71ZPgUTDn6L._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="image" className="home__img" />
                            </article>
                         </div>
-                      )}
-                    </div>
-                    <div className="search-results__info">
-                      <h4 className="search-results__name">{book.name}</h4>
-                      <span className="search-results__category">
-                        {getCategoryName(book.category_id) || "Uncategorized"}
-                      </span>
-                    </div>
+                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="search-results__empty">
-                <i className="ri-search-line"></i>
-                <p>No books found for "{searchQuery}"</p>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+               </div>
+            </section>
 
-      {/*==================== MAIN ====================*/}
-      <main className="main">
-        {/*==================== HOME ====================*/}
-        <section className="home section" id="home">
-          <div className="home__container container grid">
-            <div className="home__data">
-              <h1 className="home__title">
-                Browse & <br />
-                Select E-Books
-              </h1>
-
-              <p className="home__description">
-                Find the best e-books from your favorite writers, explore
-                hundreds of books with all possible categories, take advantage
-                of the 50% discount and much more.
-              </p>
-
-              <a
-                href="#featured"
-                className="button"
-                onClick={(e) => scrollToSection(e, "featured")}
-              >
-                Explore Now
-              </a>
-            </div>
-
-            <div className="home__images">
-              <div className="home__swiper swiper">
-                <div className="swiper-wrapper">
-                  <article className="home__article swiper-slide">
-                    <img
-                      src={
-                        new URL(
-                          "./assets/img/81VT2VfXZYL._AC_UF894,1000_QL80_.jpg",
-                          import.meta.url,
-                        ).href
-                      }
-                      alt="image"
-                      className="home__img"
-                    />
+            {/*==================== SERVICES ====================*/}
+            <section className="services section">
+               <div className="services__container container grid">
+                  <article className="services__card">
+                     <i className="ri-truck-line"></i>
+                     <h3 className="services__title">Free Shipping</h3>
+                     <p className="services__description">Order More Than $100</p>
                   </article>
 
-                  <article className="home__article swiper-slide">
-                    <img
-                      src={
-                        new URL(
-                          "./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg",
-                          import.meta.url,
-                        ).href
-                      }
-                      alt="image"
-                      className="home__img"
-                    />
+                  <article className="services__card">
+                     <i className="ri-lock-2-line"></i>
+                     <h3 className="services__title">Secure Payment</h3>
+                     <p className="services__description">100% Secure Payment</p>
                   </article>
 
-                  <article className="home__article swiper-slide">
-                    <img
-                      src={
-                        new URL("./assets/img/18469883.jpg", import.meta.url)
-                          .href
-                      }
-                      alt="image"
-                      className="home__img"
-                    />
+                  <article className="services__card">
+                     <i className="ri-customer-service-2-line"></i>
+                     <h3 className="services__title">24/7 Support</h3>
+                     <p className="services__description">Call us anytime</p>
                   </article>
                </div>
             </section>
 
             {/*==================== about us====================*/}
-
             <section className="section-about" id="about" aria-labelledby="about-heading">
                <div className="container">
                   <h2 id="about-heading" className="about-title">About Us</h2>
@@ -370,7 +304,6 @@ const Home = () => {
                            </div>
                         </div>
 
-
                         <div>
                            <a
                               className="about-cta"
@@ -397,7 +330,6 @@ const Home = () => {
                   </div>
                </div>
             </section>
-
 
             {/*==================== FEATURED ====================*/}
             <section className="featured section" id="featured">
@@ -476,84 +408,24 @@ const Home = () => {
                            <div className="feature"><span className="tick">&#10003;</span>3 renewal per book</div>
                         </div>
 
-                  <div className="stat" role="listitem">
-                    <div className="num">100+</div>
-                    <div className="label">Category</div>
-                  </div>
-                </div>
+                        <a
+                           className="btn"
+                           href="#"
+                           role="button"
+                           aria-label="Subscribe to Enterprise"
+                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
+                        >
+                           Subscribe
+                        </a>
+                     </article>
 
-                <div>
-                  <a
-                    className="about-cta"
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setActivePopup("branches");
-                    }}
-                  >
-                    Where are we?
-                  </a>
-                </div>
-              </div>
-
-              {/* RIGHT: decorative overlapping books */}
-              <div className="about-right" aria-hidden="true">
-                {/* back (left) */}
-                <img
-                  className="book back"
-                  src={
-                    new URL(
-                      "./assets/img/71STVuBmK+L._AC_UF1000,1000_QL80_.jpg",
-                      import.meta.url,
-                    ).href
-                  }
-                  alt="Sir Bobby Charlton book cover"
-                  onError={(e) => (e.currentTarget.style.display = "none")}
-                />
-                {/* front (right) */}
-                <img
-                  className="book front"
-                  src={
-                    new URL(
-                      "./assets/img/81dugtP5foL._AC_UF894,1000_QL80_.jpg",
-                      import.meta.url,
-                    ).href
-                  }
-                  alt="Arsene Wenger book cover"
-                  onError={(e) => (e.currentTarget.style.display = "none")}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/*==================== FEATURED ====================*/}
-        <section className="featured section" id="featured">
-          <h2 className="section__title">Featured Books</h2>
-          <div className="featured__container container">
-            <div className="featured__swiper swiper">
-              <div className="swiper-wrapper">
-                {featuredBooks.map((book) => (
-                  <article
-                    key={book.name}
-                    className="featured__card swiper-slide"
-                  >
-                    <img
-                      src={book.image}
-                      alt={book.name}
-                      className="featured__img"
-                    />
-
-                    <h2 className="featured__title">{book.name}</h2>
-                    <button
-                      className="button"
-                      onClick={() => setSelectedFeaturedBook(book)}
-                    >
-                      Book Now
-                    </button>
-                  </article>
-                ))}
-              </div>
+                     {/* Right plan */}
+                     <article className="plan" role="listitem" aria-labelledby="plan-pro">
+                        <div id="plan-pro" className="plan-title">Professional</div>
+                        <div className="price">
+                           <span className="small-price">$199</span>
+                           <small>/ Per Month</small>
+                        </div>
 
                         <div className="features">
                            <div className="feature"><span className="tick">&#10003;</span>Borrow up to 10 books per month</div>
@@ -561,55 +433,87 @@ const Home = () => {
                            <div className="feature"><span className="tick">&#10003;</span>2 renewal per book</div>
                         </div>
 
-              <div className="swiper-button-next">
-                <i className="ri-arrow-right-s-line"></i>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/*==================== choose the best plan ====================*/}
-        <section
-          className="section"
-          id="plans"
-          aria-labelledby="pricing-heading"
-        >
-          <div className="container">
-            <h1 id="pricing-heading" className="heading">
-              Choose The best Plan
-            </h1>
-            <p className="subheading">
-              choose a plan that's right for your growing team. Simple pricing
-              &amp; No hidden charges.
-            </p>
-
-            <div className="plans" role="list">
-              {/* Left plan */}
-              <article
-                className="plan"
-                role="listitem"
-                aria-labelledby="plan-discover"
-              >
-                <div id="plan-discover" className="plan-title">
-                  Discover
-                </div>
-                <div className="price">
-                  <span className="small-price">$99</span>
-                  <small>/ Per Month</small>
-                </div>
-
-                <div className="features">
-                  <div className="feature">
-                    <span className="tick">✓</span>Reserve Book Online
+                        <a
+                           className="btn"
+                           href="#"
+                           role="button"
+                           aria-label="Subscribe to Professional"
+                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
+                        >
+                           Subscribe
+                        </a>
+                     </article>
                   </div>
-                  <div className="feature">
-                    <span className="tick">✓</span>Return Book Online
+               </div>
+            </section>
+
+            {/*==================== TESTIMONIAL ====================*/}
+            <section className="testimonial section" id="testimonial">
+               <h2 className="section__title">
+                  Customer Opinions
+               </h2>
+
+               <div className="testimonial__container container">
+                  <div className="testimonial__swiper swiper">
+                     <div className="swiper-wrapper">
+                        <article className="testimonial__card swiper-slide">
+                           <img src={new URL('./assets/img/testimonial-perfil-1.png', import.meta.url).href} alt="image" className="testimonial__img" />
+
+                           <h2 className="testimonial__title">Rial Loz</h2>
+                           <p className="testimonial__description">
+                              The best website to buy books, the purchase
+                              is very easy to make and has great discounts.
+                           </p>
+
+                           <div className="testimonial__stars">
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-half-fill"></i>
+                           </div>
+                        </article>
+
+                        <article className="testimonial__card swiper-slide">
+                           <img src={new URL('./assets/img/testimonial-perfil-2.png', import.meta.url).href} alt="image" className="testimonial__img" />
+
+                           <h2 className="testimonial__title">Rial Loz</h2>
+                           <p className="testimonial__description">
+                              The best website to buy books, the purchase
+                              is very easy to make and has great discounts.
+                           </p>
+
+                           <div className="testimonial__stars">
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-half-fill"></i>
+                           </div>
+                        </article>
+                        <article className="testimonial__card swiper-slide">
+                           <img src={new URL('./assets/img/testimonial-perfil-2.png', import.meta.url).href} alt="image" className="testimonial__img" />
+
+                           <h2 className="testimonial__title">Rial Loz</h2>
+                           <p className="testimonial__description">
+                              The best website to buy books, the purchase
+                              is very easy to make and has great discounts.
+                           </p>
+
+                           <div className="testimonial__stars">
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-fill"></i>
+                              <i className="ri-star-half-fill"></i>
+                           </div>
+                        </article>
+                     </div>
                   </div>
                </div>
             </section>
          </main>
          {/*==================== FOOTER ====================*/}
-
 
          <footer className="footer">
             <div className="footer-container">
@@ -624,189 +528,92 @@ const Home = () => {
                      </div>
                   </a>
 
-                  <div className="testimonial__stars">
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-half-fill"></i>
-                  </div>
-                </article>
-
-                <article className="testimonial__card swiper-slide">
-                  <img
-                    src={
-                      new URL(
-                        "./assets/img/testimonial-perfil-2.png",
-                        import.meta.url,
-                      ).href
-                    }
-                    alt="image"
-                    className="testimonial__img"
-                  />
-
-                  <h2 className="testimonial__title">Rial Loz</h2>
-                  <p className="testimonial__description">
-                    The best website to buy books, the purchase is very easy to
-                    make and has great discounts.
+                  <p className="footer-description">
+                     Find and explore the best <br />
+                     eBooks from all your <br />
+                     favorite writers.
                   </p>
+               </div>
 
-                  <div className="testimonial__stars">
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-half-fill"></i>
+               {/* ABOUT */}
+               <div className="footer-col">
+                  <h3 className="footer-title">About</h3>
+                  <ul className="footer-links">
+                     <li><a href="#">Who are we ?</a></li>
+                     <li><a href="#">Our Branches</a></li>
+                     <li><a href="#">Customer Feedback</a></li>
+                  </ul>
+               </div>
+
+               {/* CONTACT */}
+               <div className="footer-col">
+                  <h3 className="footer-title">Contact</h3>
+                  <ul className="footer-links">
+                     <li>Cairo, Egypt</li>
+                     <li>BookHive@gmail.com</li>
+                     <li>01122334455</li>
+                  </ul>
+               </div>
+
+               {/* SOCIAL */}
+               <div className="footer-col">
+                  <h3 className="footer-title">Social</h3>
+                  <div className="footer-social">
+                     <a href="#"><i className="ri-facebook-circle-line"></i></a>
+                     <a href="#"><i className="ri-instagram-line"></i></a>
+                     <a href="#"><i className="ri-twitter-x-line"></i></a>
                   </div>
-                </article>
-                <article className="testimonial__card swiper-slide">
-                  <img
-                    src={
-                      new URL(
-                        "./assets/img/testimonial-perfil-2.png",
-                        import.meta.url,
-                      ).href
-                    }
-                    alt="image"
-                    className="testimonial__img"
-                  />
+               </div>
 
-                  <h2 className="testimonial__title">Rial Loz</h2>
-                  <p className="testimonial__description">
-                    The best website to buy books, the purchase is very easy to
-                    make and has great discounts.
-                  </p>
-
-                  <div className="testimonial__stars">
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-half-fill"></i>
-                  </div>
-                </article>
-              </div>
             </div>
-          </div>
-        </section>
-      </main>
-      {/*==================== FOOTER ====================*/}
 
-      <footer className="footer">
-        <div className="footer-container">
-          {/* LEFT: LOGO + TEXT */}
-          <div className="footer-col footer-brand">
-            <a href="#" className="footer-logo">
-              <img
-                src={new URL("./assets/logo.svg", import.meta.url).href}
-                alt="Book Hive Logo"
-                style={{ width: "60px", height: "auto" }}
-              />
-              <div className="logo-text">
-                <span className="name">BookHive</span>
-                <span className="sub">Library</span>
-              </div>
-            </a>
+            <p className="footer-copy">&copy; All Rights Reserved By BookHive</p>
+         </footer>
 
-            <p className="footer-description">
-              Find and explore the best <br />
-              eBooks from all your <br />
-              favorite writers.
-            </p>
-          </div>
+         {/*========== SCROLL UP ==========*/}
+         <a href="#" className="scrollup" id="scroll-up">
+            <i className="ri-arrow-up-line"></i>
+         </a>
 
-          {/* ABOUT */}
-          <div className="footer-col">
-            <h3 className="footer-title">About</h3>
-            <ul className="footer-links">
-              <li>
-                <a href="#">Who are we ?</a>
-              </li>
-              <li>
-                <a href="#">Our Branches</a>
-              </li>
-              <li>
-                <a href="#">Customer Feedback</a>
-              </li>
-            </ul>
-          </div>
+         {/*========== AUTH POPUPS ==========*/}
+         <LoginPopup
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+            onForgotPassword={() => setIsForgotPasswordOpen(true)}
+            onSignup={() => setIsSignupOpen(true)}
+         />
+         <SignupPopup
+            isOpen={isSignupOpen}
+            onClose={() => setIsSignupOpen(false)}
+            onLogin={() => setIsLoginOpen(true)}
+         />
+         <ForgotPasswordPopup
+            isOpen={isForgotPasswordOpen}
+            onClose={() => setIsForgotPasswordOpen(false)}
+            onOTP={() => setIsOTPOpen(true)}
+            onBack={() => setIsLoginOpen(true)}
+         />
+         <OTPPopup
+            isOpen={isOTPOpen}
+            onClose={() => setIsOTPOpen(false)}
+            onResetPassword={() => setIsResetPasswordOpen(true)}
+            onBack={() => setIsForgotPasswordOpen(true)}
+         />
+         <ResetPasswordPopup
+            isOpen={isResetPasswordOpen}
+            onClose={() => setIsResetPasswordOpen(false)}
+            onLogin={() => setIsLoginOpen(true)}
+            onBack={() => setIsOTPOpen(true)}
+         />
+         <AboutBranchesPopup isOpen={activePopup === 'branches'} onClose={() => setActivePopup(null)} />
+         <FeaturedBookPopup
+            isOpen={Boolean(selectedFeaturedBook)}
+            book={selectedFeaturedBook}
+            onClose={() => setSelectedFeaturedBook(null)}
+         />
 
-          {/* CONTACT */}
-          <div className="footer-col">
-            <h3 className="footer-title">Contact</h3>
-            <ul className="footer-links">
-              <li>Cairo, Egypt</li>
-              <li>BookHive@gmail.com</li>
-              <li>01122334455</li>
-            </ul>
-          </div>
-
-          {/* SOCIAL */}
-          <div className="footer-col">
-            <h3 className="footer-title">Social</h3>
-            <div className="footer-social">
-              <a href="#">
-                <i className="ri-facebook-circle-line"></i>
-              </a>
-              <a href="#">
-                <i className="ri-instagram-line"></i>
-              </a>
-              <a href="#">
-                <i className="ri-twitter-x-line"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <p className="footer-copy">© All Rights Reserved By BookHive</p>
-      </footer>
-
-      {/*========== SCROLL UP ==========*/}
-      <a href="#" className="scrollup" id="scroll-up">
-        <i className="ri-arrow-up-line"></i>
-      </a>
-
-      {/*========== AUTH POPUPS ==========*/}
-      <LoginPopup
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onForgotPassword={() => setIsForgotPasswordOpen(true)}
-        onSignup={() => setIsSignupOpen(true)}
-      />
-      <SignupPopup
-        isOpen={isSignupOpen}
-        onClose={() => setIsSignupOpen(false)}
-        onLogin={() => setIsLoginOpen(true)}
-      />
-      <ForgotPasswordPopup
-        isOpen={isForgotPasswordOpen}
-        onClose={() => setIsForgotPasswordOpen(false)}
-        onOTP={() => setIsOTPOpen(true)}
-        onBack={() => setIsLoginOpen(true)}
-      />
-      <OTPPopup
-        isOpen={isOTPOpen}
-        onClose={() => setIsOTPOpen(false)}
-        onResetPassword={() => setIsResetPasswordOpen(true)}
-        onBack={() => setIsForgotPasswordOpen(true)}
-      />
-      <ResetPasswordPopup
-        isOpen={isResetPasswordOpen}
-        onClose={() => setIsResetPasswordOpen(false)}
-        onLogin={() => setIsLoginOpen(true)}
-        onBack={() => setIsOTPOpen(true)}
-      />
-      <AboutBranchesPopup
-        isOpen={activePopup === "branches"}
-        onClose={() => setActivePopup(null)}
-      />
-      <FeaturedBookPopup
-        isOpen={Boolean(selectedFeaturedBook)}
-        book={selectedFeaturedBook}
-        onClose={() => setSelectedFeaturedBook(null)}
-      />
-    </div>
-  );
+      </div>
+   );
 };
 
 export default Home;

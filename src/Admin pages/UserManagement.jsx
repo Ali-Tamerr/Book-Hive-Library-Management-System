@@ -90,6 +90,18 @@ function UserManagement({ searchValue, setSearchValue }) {
     (t) => t.status === "Pending" && t.transaction_type === "Check-In",
   );
 
+  useEffect(() => {
+    const handleOpenRequests = () => {
+      setShowRequestsPopup(true);
+    };
+
+    window.addEventListener("openUserRequests", handleOpenRequests);
+
+    return () => {
+      window.removeEventListener("openUserRequests", handleOpenRequests);
+    };
+  }, []);
+
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
@@ -499,14 +511,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         columns={columns}
         formPopup={formPopup}
         customActionRenderer={customActionRenderer}
-        secondaryButton={
-          <button
-            onClick={() => setShowRequestsPopup(true)}
-            className="flex h-full min-w-[150px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#0b0b3b] bg-white text-sm font-medium text-[#0b0b3b] transition-colors hover:bg-[#1a1a6a] hover:bg-[#F0F0FF] max-[856px]:text-xs dark:border-[#121317] dark:bg-[#E8E8E8] dark:text-[#121317] dark:hover:bg-[#d4d4d4]"
-          >
-            View Requests
-          </button>
-        }
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}

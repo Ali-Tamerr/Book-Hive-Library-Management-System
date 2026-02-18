@@ -104,6 +104,12 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           <button
             className="max-[1080px]:hidden w-8 h-8 cursor-pointer hover:text-[#1e255e] dark:hover:text-[#9CA3AF] transition-colors"
             title="Notifications"
+            onClick={() => {
+              if (location.pathname === '/admin/user-management') {
+                window.dispatchEvent(new Event('openUserRequests'));
+              }
+            }}
+            type="button"
           >
             <Bell className='h-full w-full' />
           </button>
