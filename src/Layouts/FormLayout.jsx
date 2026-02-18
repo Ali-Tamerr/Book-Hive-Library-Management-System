@@ -15,6 +15,8 @@ const FormLayout = ({
   submitButtonText = "SUBMIT",
   cancelButtonText = "CANCEL",
   onCancel,
+  submitButtonClassName,
+  cancelButtonClassName,
   children,
   icon,
   customLayout,
@@ -112,8 +114,10 @@ const FormLayout = ({
         <div
           className={`flex justify-between gap-3 ${inputs.length > 6 && !customLayout ? "col-span-2" : ""}`}
         >
-          <FormButton onClick={onCancel}>{cancelButtonText}</FormButton>
-          <FormButton type="submit" isPrimary>
+          <FormButton onClick={onCancel} className={cancelButtonClassName}>
+            {cancelButtonText}
+          </FormButton>
+          <FormButton type="submit" isPrimary className={submitButtonClassName}>
             {submitButtonText}
           </FormButton>
         </div>

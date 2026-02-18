@@ -14,320 +14,241 @@ import "./css/styles.css";
 import "./css/stylesNew.css";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isSignupOpen, setIsSignupOpen] = useState(false);
-  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
-  const [isOTPOpen, setIsOTPOpen] = useState(false);
-  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
-  const [activePopup, setActivePopup] = useState(null);
-  const [selectedFeaturedBook, setSelectedFeaturedBook] = useState(null);
-  const [themeIcon, setThemeIcon] = useState("ri-moon-line");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const searchInputRef = useRef(null);
+   const navigate = useNavigate();
+   const [isLoginOpen, setIsLoginOpen] = useState(false);
+   const [isSignupOpen, setIsSignupOpen] = useState(false);
+   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+   const [isOTPOpen, setIsOTPOpen] = useState(false);
+   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+   const [activePopup, setActivePopup] = useState(null);
+   const [selectedFeaturedBook, setSelectedFeaturedBook] = useState(null);
+   const [themeIcon, setThemeIcon] = useState('ri-moon-line');
 
-  const { data: allBooks = [] } = useBooks();
-  const { data: allCategories = [] } = useCategories();
+   const featuredBooks = [
+      {
+         name: 'My Turn',
+         category: 'Education',
+         language: 'English',
+         branch: 'Cairo',
+         availability: 'Available',
+         image: new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
+      },
+      {
+         name: 'The Hunger Games',
+         category: 'Biography',
+         language: 'English',
+         branch: 'Giza',
+         availability: 'Available',
+         image: new URL('./assets/img/9780439023528.jpg', import.meta.url).href,
+      },
+      {
+         name: 'Concurrency in Go',
+         category: 'Sports',
+         language: 'English',
+         branch: 'Alexandria',
+         availability: 'Available',
+         image: new URL('./assets/img/Concurrency-in-Go-768x1008.jpg', import.meta.url).href,
+      },
+      {
+         name: 'Real world Haskell',
+         category: 'Biography',
+         language: 'English',
+         branch: 'Cairo',
+         availability: 'Available',
+         image: new URL('./assets/img/716VQYKJfsL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
+      },
+   ];
 
-  const getCategoryName = useCallback(
-    (categoryId) => {
-      const cat = allCategories.find((c) => c.category_id === categoryId);
-      return cat?.category_name || "";
-    },
-    [allCategories],
-  );
+   // Initialize theme on mount
+   useEffect(() => {
+      const selectedTheme = localStorage.getItem('selected-theme');
 
-  const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    const term = searchQuery.toLowerCase();
-
-    return allBooks
-      .filter((book) => {
-        const nameMatch = book.name?.toLowerCase().includes(term);
-        const catName = getCategoryName(book.category_id);
-        const categoryMatch = catName?.toLowerCase().includes(term);
-        return nameMatch || categoryMatch;
-      })
-      .slice(0, 12);
-  }, [searchQuery, allBooks, getCategoryName]);
-
-  const openSearch = useCallback(() => {
-    setIsSearchOpen(true);
-    setTimeout(() => searchInputRef.current?.focus(), 100);
-  }, []);
-
-  const closeSearch = useCallback(() => {
-    setIsSearchOpen(false);
-    setSearchQuery("");
-  }, []);
-
-  const featuredBooks = [
-    {
-      name: "My Turn",
-      category: "Education",
-      language: "English",
-      branch: "Cairo",
-      availability: "Available",
-      image: new URL(
-        "./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg",
-        import.meta.url,
-      ).href,
-    },
-    {
-      name: "The Second Half",
-      category: "Biography",
-      language: "English",
-      branch: "Giza",
-      availability: "Available",
-      image: new URL("./assets/img/23036917.jpg", import.meta.url).href,
-    },
-    {
-      name: "I Think Therefore I Play",
-      category: "Sports",
-      language: "English",
-      branch: "Alexandria",
-      availability: "Available",
-      image: new URL("./assets/img/61WcybNpt9L.jpg", import.meta.url).href,
-    },
-    {
-      name: "My Autobiography",
-      category: "Biography",
-      language: "English",
-      branch: "Cairo",
-      availability: "Available",
-      image: new URL(
-        "./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg",
-        import.meta.url,
-      ).href,
-    },
-  ];
-
-  // Initialize theme on mount
-  useEffect(() => {
-    const selectedTheme = localStorage.getItem("selected-theme");
-
-    // If dark theme is selected, apply it and set icon to sun
-    if (selectedTheme === "dark") {
-      document.body.classList.add("dark-theme");
-      setThemeIcon("ri-sun-line");
-    } else {
-      document.body.classList.remove("dark-theme");
-      setThemeIcon("ri-moon-line");
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const body = document.body;
-    const isDark = body.classList.contains("dark-theme");
-
-    if (isDark) {
-      // Switch to light
-      body.classList.remove("dark-theme");
-      setThemeIcon("ri-moon-line");
-      localStorage.setItem("selected-theme", "light");
-      localStorage.setItem("selected-icon", "ri-moon-line");
-    } else {
-      // Switch to dark
-      body.classList.add("dark-theme");
-      setThemeIcon("ri-sun-line");
-      localStorage.setItem("selected-theme", "dark");
-      localStorage.setItem("selected-icon", "ri-sun-line");
-    }
-  };
-
-  const scrollToSection = (e, sectionId) => {
-    e.preventDefault();
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  useEffect(() => {
-    const loadScript = (src, id) => {
-      return new Promise((resolve, reject) => {
-        const existingScript = document.getElementById(id);
-        if (existingScript) {
-          resolve();
-          return;
-        }
-
-        const script = document.createElement("script");
-        script.src = src;
-        script.id = id;
-        script.onload = () => resolve();
-        script.onerror = () => reject();
-        document.body.appendChild(script);
-      });
-    };
-
-    const initScripts = async () => {
-      try {
-        await loadScript(
-          new URL("./js/scrollreveal.min.js", import.meta.url).href,
-          "scrollreveal",
-        );
-        await loadScript(
-          new URL("./js/swiper-bundle.min.js", import.meta.url).href,
-          "swiper",
-        );
-
-        await loadScript(new URL("./js/main.js", import.meta.url).href, "main");
-      } catch (error) {
-        console.error("Error loading scripts:", error);
+      // If dark theme is selected, apply it and set icon to sun
+      if (selectedTheme === 'dark') {
+         document.body.classList.add('dark-theme');
+         setThemeIcon('ri-sun-line');
+      } else {
+         document.body.classList.remove('dark-theme');
+         setThemeIcon('ri-moon-line');
       }
-    };
+   }, []);
 
-    initScripts();
-  }, [navigate]);
+   const toggleTheme = () => {
+      const body = document.body;
+      const isDark = body.classList.contains('dark-theme');
 
-  return (
-    <div className="home-page">
-      <header className="header" id="header">
-        <nav className="nav">
-          <a href="#" className="nav__logo">
-            <img
-              src={new URL("./assets/logo.svg", import.meta.url).href}
-              alt="Book Hive Logo"
-              style={{ width: "60px", height: "auto" }}
-            />
-          </a>
+      if (isDark) {
+         // Switch to light
+         body.classList.remove('dark-theme');
+         setThemeIcon('ri-moon-line');
+         localStorage.setItem('selected-theme', 'light');
+         localStorage.setItem('selected-icon', 'ri-moon-line');
+      } else {
+         // Switch to dark
+         body.classList.add('dark-theme');
+         setThemeIcon('ri-sun-line');
+         localStorage.setItem('selected-theme', 'dark');
+         localStorage.setItem('selected-icon', 'ri-sun-line');
+      }
+   };
 
-          <div className="nav__menu">
-            <ul className="nav__list">
-              <li className="nav__item">
-                <a
-                  href="#home"
-                  className="nav__link"
-                  onClick={(e) => scrollToSection(e, "home")}
-                >
-                  <i className="ri-home-4-line"></i>
-                  <span>Home</span>
-                </a>
-              </li>
+   const scrollToSection = (e, sectionId) => {
+      e.preventDefault();
+      const section = document.getElementById(sectionId);
+      if (section) {
+         section.scrollIntoView({ behavior: 'smooth' });
+      }
+   };
 
-              <li className="nav__item">
-                <a
-                  href="#about"
-                  className="nav__link"
-                  onClick={(e) => scrollToSection(e, "about")}
-                >
-                  <i className="ri-information-line"></i>
-                  <span>About</span>
-                </a>
-              </li>
+   useEffect(() => {
+      const loadScript = (src, id) => {
+         return new Promise((resolve, reject) => {
+            const existingScript = document.getElementById(id);
+            if (existingScript) {
+               resolve();
+               return;
+            }
 
-              <li className="nav__item">
-                <a
-                  href="#featured"
-                  className="nav__link"
-                  onClick={(e) => scrollToSection(e, "featured")}
-                >
-                  <i className="ri-book-3-line"></i>
-                  <span>Featured</span>
-                </a>
-              </li>
+            const script = document.createElement('script');
+            script.src = src;
+            script.id = id;
+            script.onload = () => resolve();
+            script.onerror = () => reject();
+            document.body.appendChild(script);
+         });
+      };
 
-              <li className="nav__item">
-                <a
-                  href="#plans"
-                  className="nav__link"
-                  onClick={(e) => scrollToSection(e, "plans")}
-                >
-                  <i className="ri-price-tag-3-line"></i>
-                  <span>Plans</span>
-                </a>
-              </li>
+      const initScripts = async () => {
+         try {
+            await loadScript(new URL('./js/scrollreveal.min.js', import.meta.url).href, 'scrollreveal');
+            await loadScript(new URL('./js/swiper-bundle.min.js', import.meta.url).href, 'swiper');
 
-              <li className="nav__item">
-                <a
-                  href="#testimonial"
-                  className="nav__link"
-                  onClick={(e) => scrollToSection(e, "testimonial")}
-                >
-                  <i className="ri-message-3-line"></i>
-                  <span>Testimonial</span>
-                </a>
-              </li>
-            </ul>
-          </div>
+            await loadScript(new URL('./js/main.js', import.meta.url).href, 'main');
+         } catch (error) {
+            console.error('Error loading scripts:', error);
+         }
+      };
 
-          <div className="nav__actions">
-            {/* Search button */}
-            <i
-              className="ri-search-line search-button"
-              id="search-button"
-              onClick={openSearch}
-            ></i>
+      initScripts();
+   }, [navigate]);
 
-            {/* Login button */}
-            <i
-              className="ri-user-line login-button"
-              id="login-button"
-              onClick={() => setIsLoginOpen(true)}
-              style={{ cursor: "pointer" }}
-            ></i>
+   return (
+      <div className="home-page">
+         <header className="header" id="header">
+            <nav className="nav">
+               <a href="#" className="nav__logo" >
+                  <img src={new URL('./assets/bookhive_icon_only_black-removebg-preview 2.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
+               </a>
 
-            {/* Theme button */}
-            <i
-              className={`${themeIcon} change-theme`}
-              onClick={toggleTheme}
-              style={{ cursor: "pointer" }}
-            ></i>
-          </div>
-        </nav>
-      </header>
+               <div className="nav__menu">
+                  <ul className="nav__list">
+                     <li className="nav__item">
+                        <a href="#home" className="nav__link" onClick={(e) => scrollToSection(e, 'home')}>
+                           <i className="ri-home-4-line"></i>
+                           <span>Home</span>
+                        </a>
+                     </li>
 
-      {/*==================== SEARCH ====================*/}
-      <div
-        className={`search ${isSearchOpen ? "show-search" : ""}`}
-        id="search-content"
-      >
-        <form className="search__form" onSubmit={(e) => e.preventDefault()}>
-          <i className="ri-search-line search__icon"></i>
-          <input
-            ref={searchInputRef}
-            type="search"
-            placeholder="Search books by name or category..."
-            className="search__input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </form>
+                     <li className="nav__item">
+                        <a href="#about" className="nav__link" onClick={(e) => scrollToSection(e, 'about')}>
+                           <i className="ri-information-line"></i>
+                           <span>About</span>
+                        </a>
+                     </li>
 
-        <i
-          className="ri-close-line search__close"
-          id="search-close"
-          onClick={closeSearch}
-        ></i>
+                     <li className="nav__item">
+                        <a href="#featured" className="nav__link" onClick={(e) => scrollToSection(e, 'featured')}>
+                           <i className="ri-book-3-line"></i>
+                           <span>Featured</span>
+                        </a>
+                     </li>
 
-        {searchQuery.trim() && (
-          <div className="search-results">
-            {searchResults.length > 0 ? (
-              <div className="search-results__grid">
-                {searchResults.map((book) => (
-                  <div
-                    key={book.book_id}
-                    className="search-results__card"
-                    onClick={() => {
-                      setSelectedFeaturedBook({
-                        ...book,
-                        category: getCategoryName(book.category_id),
-                      });
-                      closeSearch();
-                    }}
-                  >
-                    <div className="search-results__img-wrapper">
-                      {book.image ? (
-                        <img
-                          src={book.image}
-                          alt={book.name}
-                          className="search-results__img"
-                        />
-                      ) : (
-                        <div className="search-results__img-fallback">
-                          <i className="ri-book-3-line"></i>
+                     <li className="nav__item">
+                        <a href="#plans" className="nav__link" onClick={(e) => scrollToSection(e, 'plans')}>
+                           <i className="ri-price-tag-3-line"></i>
+                           <span>Plans</span>
+                        </a>
+                     </li>
+
+                     <li className="nav__item">
+                        <a href="#testimonial" className="nav__link" onClick={(e) => scrollToSection(e, 'testimonial')}>
+                           <i className="ri-message-3-line"></i>
+                           <span>Testimonial</span>
+                        </a>
+                     </li>
+                  </ul>
+               </div>
+
+               <div className="nav__actions">
+                  {/* Search button */}
+                  <i className="ri-search-line search-button" id="search-button"></i>
+
+                  {/* Login button */}
+                  <i
+                     className="ri-user-line login-button"
+                     id="login-button"
+                     onClick={() => setIsLoginOpen(true)}
+                     style={{ cursor: 'pointer' }}
+                  ></i>
+
+                  {/* Theme button */}
+                  <i
+                     className={`${themeIcon} change-theme`}
+                     onClick={toggleTheme}
+                     style={{ cursor: 'pointer' }}
+                  ></i>
+               </div>
+            </nav>
+         </header>
+
+         {/*==================== SEARCH ====================*/}
+         <div className="search" id="search-content">
+            <form action="" className="search__form">
+               <i className="ri-search-line search__icon"></i>
+               <input type="search" placeholder="What are you looking for?" className="search__input" />
+            </form>
+
+            <i className="ri-close-line search__close" id="search-close"></i>
+         </div>
+
+
+
+         {/*==================== MAIN ====================*/}
+         <main className="main">
+
+            {/*==================== HOME ====================*/}
+            <section className="home section" id="home">
+               <div className="home__container container grid">
+                  <div className="home__data">
+                     <h1 className="home__title">
+                        Browse & <br />
+                        Select E-Books
+                     </h1>
+
+                     <p className="home__description">
+                        Find the best e-books from your favorite
+                        writers, explore hundreds of books with all
+                        possible categories, take advantage of the
+                        50% discount and much more.
+                     </p>
+
+                     <a href="#featured" className="button" onClick={(e) => scrollToSection(e, 'featured')}>Explore Now</a>
+                  </div>
+
+                  <div className="home__images">
+                     <div className="home__swiper swiper">
+                        <div className="swiper-wrapper">
+                           <article className="home__article swiper-slide">
+                              <img src={new URL('./assets/img/Concurrency-in-Go-768x1008.jpg', import.meta.url).href} alt="image" className="home__img" />
+                           </article>
+
+                           <article className="home__article swiper-slide">
+                              <img src={new URL('./assets/img/91YCWH4jFdL.jpg', import.meta.url).href} alt="image" className="home__img" />
+                           </article>
+
+                           <article className="home__article swiper-slide">
+                              <img src={new URL('./assets/img/71ZPgUTDn6L._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="image" className="home__img" />
+                           </article>
                         </div>
                       )}
                     </div>
@@ -415,67 +336,145 @@ const Home = () => {
                       className="home__img"
                     />
                   </article>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+               </div>
+            </section>
 
-        {/*==================== SERVICES ====================*/}
-        <section className="services section">
-          <div className="services__container container grid">
-            <article className="services__card">
-              <i className="ri-truck-line"></i>
-              <h3 className="services__title">Free Shipping</h3>
-              <p className="services__description">Order More Than $100</p>
-            </article>
+            {/*==================== about us====================*/}
 
-            <article className="services__card">
-              <i className="ri-lock-2-line"></i>
-              <h3 className="services__title">Secure Payment</h3>
-              <p className="services__description">100% Secure Payment</p>
-            </article>
+            <section className="section-about" id="about" aria-labelledby="about-heading">
+               <div className="container">
+                  <h2 id="about-heading" className="about-title">About Us</h2>
 
-            <article className="services__card">
-              <i className="ri-customer-service-2-line"></i>
-              <h3 className="services__title">24/7 Support</h3>
-              <p className="services__description">Call us anytime</p>
-            </article>
-          </div>
-        </section>
+                  <div className="about-grid">
+                     {/* LEFT: text, stats, CTA */}
+                     <div className="about-left">
+                        <p className="about-text">
+                           We are a smart, technology-driven library system that uses RFID to make book management faster and easier.
+                           Our platform helps students and staff search, borrow, and track books efficiently with a modern and user-friendly design.
+                        </p>
 
-        {/*==================== about us====================*/}
+                        <div className="stats" role="list" aria-label="Quick facts">
+                           <div className="stat" role="listitem">
+                              <div className="num">5+</div>
+                              <div className="label">Branches</div>
+                           </div>
 
-        <section
-          className="section-about"
-          id="about"
-          aria-labelledby="about-heading"
-        >
-          <div className="container">
-            <h2 id="about-heading" className="about-title">
-              About Us
-            </h2>
+                           <div className="stat" role="listitem">
+                              <div className="num">1K+</div>
+                              <div className="label">Books</div>
+                           </div>
 
-            <div className="about-grid">
-              {/* LEFT: text, stats, CTA */}
-              <div className="about-left">
-                <p className="about-text">
-                  We are a smart, technology-driven library system that uses
-                  RFID to make book management faster and easier. Our platform
-                  helps students and staff search, borrow, and track books
-                  efficiently with a modern and user-friendly design.
-                </p>
+                           <div className="stat" role="listitem">
+                              <div className="num">100+</div>
+                              <div className="label">Category</div>
+                           </div>
+                        </div>
 
-                <div className="stats" role="list" aria-label="Quick facts">
-                  <div className="stat" role="listitem">
-                    <div className="num">5+</div>
-                    <div className="label">Branches</div>
+
+                        <div>
+                           <a
+                              className="about-cta"
+                              href="#"
+                              onClick={(e) => {
+                                 e.preventDefault();
+                                 setActivePopup('branches');
+                              }}
+                           >
+                              Where are we?
+                           </a>
+                        </div>
+                     </div>
+
+                     {/* RIGHT: decorative overlapping books */}
+                     <div className="about-right" aria-hidden="true">
+                        {/* back (left) */}
+                        <img className="book back" src={new URL('./assets/img/1.webp', import.meta.url).href}
+                           alt="Sir Bobby Charlton book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                        {/* front (right) */}
+                        <img className="book front" src={new URL('./assets/img/81dugtP5foL._AC_UF894,1000_QL80_.jpg', import.meta.url).href}
+                           alt="Arsene Wenger book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                     </div>
                   </div>
+               </div>
+            </section>
 
-                  <div className="stat" role="listitem">
-                    <div className="num">1K+</div>
-                    <div className="label">Books</div>
+
+            {/*==================== FEATURED ====================*/}
+            <section className="featured section" id="featured">
+               <h2 className="section__title">
+                  Featured Books
+               </h2>
+               <div className="featured__container container">
+                  <div className="featured__swiper swiper">
+                     <div className="swiper-wrapper">
+                        {featuredBooks.map((book) => (
+                           <article key={book.name} className="featured__card swiper-slide">
+                              <img src={book.image} alt={book.name} className="featured__img" />
+
+                              <h2 className="featured__title">{book.name}</h2>
+                              <button className="button" onClick={() => setSelectedFeaturedBook(book)}>
+                                 Book Now
+                              </button>
+                           </article>
+                        ))}
+                     </div>
+
+                     <div className="swiper-button-prev">
+                        <i className="ri-arrow-left-s-line"></i>
+                     </div>
+
+                     <div className="swiper-button-next">
+                        <i className="ri-arrow-right-s-line"></i>
+                     </div>
                   </div>
+               </div>
+            </section>
+
+            {/*==================== choose the best plan ====================*/}
+            <section className="section" id="plans" aria-labelledby="pricing-heading">
+               <div className="container">
+                  <h1 id="pricing-heading" className="heading">Choose The best Plan</h1>
+                  <p className="subheading">choose a plan that's right for your growing team. Simple pricing &amp; No hidden charges.</p>
+
+                  <div className="plans" role="list">
+                     {/* Left plan */}
+                     <article className="plan" role="listitem" aria-labelledby="plan-discover">
+                        <div id="plan-discover" className="plan-title">Discover</div>
+                        <div className="price">
+                           <span className="small-price">$99</span>
+                           <small>/ Per Month</small>
+                        </div>
+
+                        <div className="features">
+                           <div className="feature"><span className="tick">&#10003;</span>Borrow up to 3 books per month.</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Loan period: 7 days per book.</div>
+                           <div className="feature"><span className="tick">&#10003;</span>1 renewal per book</div>
+                        </div>
+
+                        <a
+                           className="btn"
+                           href="#"
+                           role="button"
+                           aria-label="Subscribe to Discover"
+                           onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}
+                        >
+                           Subscribe
+                        </a>
+                     </article>
+
+                     {/* Center plan - highlighted */}
+                     <article className="plan center" role="listitem" aria-labelledby="plan-enterprise">
+                        <div id="plan-enterprise" className="plan-title">Enterprise</div>
+                        <div className="price">
+                           <span>$299</span>
+                           <small>/ Per Month</small>
+                        </div>
+
+                        <div className="features">
+                           <div className="feature"><span className="tick">&#10003;</span>Borrow up to 15 books per month</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Loan period: 21 days per book.</div>
+                           <div className="feature"><span className="tick">&#10003;</span>3 renewal per book</div>
+                        </div>
 
                   <div className="stat" role="listitem">
                     <div className="num">100+</div>
@@ -556,9 +555,11 @@ const Home = () => {
                 ))}
               </div>
 
-              <div className="swiper-button-prev">
-                <i className="ri-arrow-left-s-line"></i>
-              </div>
+                        <div className="features">
+                           <div className="feature"><span className="tick">&#10003;</span>Borrow up to 10 books per month</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Loan period: 14 days per book.</div>
+                           <div className="feature"><span className="tick">&#10003;</span>2 renewal per book</div>
+                        </div>
 
               <div className="swiper-button-next">
                 <i className="ri-arrow-right-s-line"></i>
@@ -604,131 +605,24 @@ const Home = () => {
                   <div className="feature">
                     <span className="tick">✓</span>Return Book Online
                   </div>
-                  <div className="feature">
-                    <span className="tick">✓</span>Borrow + 3 books Monthly
-                  </div>
-                </div>
+               </div>
+            </section>
+         </main>
+         {/*==================== FOOTER ====================*/}
 
-                <a
-                  className="btn"
-                  href="#"
-                  role="button"
-                  aria-label="Subscribe to Discover"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsLoginOpen(true);
-                  }}
-                >
-                  Subscribe
-                </a>
-              </article>
 
-              {/* Center plan - highlighted */}
-              <article
-                className="plan center"
-                role="listitem"
-                aria-labelledby="plan-enterprise"
-              >
-                <div id="plan-enterprise" className="plan-title">
-                  Enterprise
-                </div>
-                <div className="price">
-                  <span>$299</span>
-                  <small>/ Per Month</small>
-                </div>
+         <footer className="footer">
+            <div className="footer-container">
 
-                <div className="features">
-                  <div className="feature">
-                    <span className="tick">✓</span>Reserve Book Online
-                  </div>
-                  <div className="feature">
-                    <span className="tick">✓</span>Return Book Online
-                  </div>
-                  <div className="feature">
-                    <span className="tick">✓</span>Borrow + 15 books Monthly
-                  </div>
-                </div>
-
-                <a
-                  className="btn"
-                  href="#"
-                  role="button"
-                  aria-label="Subscribe to Enterprise"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsLoginOpen(true);
-                  }}
-                >
-                  Subscribe
-                </a>
-              </article>
-
-              {/* Right plan */}
-              <article
-                className="plan"
-                role="listitem"
-                aria-labelledby="plan-pro"
-              >
-                <div id="plan-pro" className="plan-title">
-                  Professional
-                </div>
-                <div className="price">
-                  <span className="small-price">$199</span>
-                  <small>/ Per Month</small>
-                </div>
-
-                <div className="features">
-                  <div className="feature">
-                    <span className="tick">✓</span>Reserve Book Online
-                  </div>
-                  <div className="feature">
-                    <span className="tick">✓</span>Return Book Online
-                  </div>
-                  <div className="feature">
-                    <span className="tick">✓</span>Borrow + 10 books Monthly
-                  </div>
-                </div>
-
-                <a
-                  className="btn"
-                  href="#"
-                  role="button"
-                  aria-label="Subscribe to Professional"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsLoginOpen(true);
-                  }}
-                >
-                  Subscribe
-                </a>
-              </article>
-            </div>
-          </div>
-        </section>
-        {/*==================== TESTIMONIAL ====================*/}
-        <section className="testimonial section" id="testimonial">
-          <h2 className="section__title">Customer Opinions</h2>
-
-          <div className="testimonial__container container">
-            <div className="testimonial__swiper swiper">
-              <div className="swiper-wrapper">
-                <article className="testimonial__card swiper-slide">
-                  <img
-                    src={
-                      new URL(
-                        "./assets/img/testimonial-perfil-1.png",
-                        import.meta.url,
-                      ).href
-                    }
-                    alt="image"
-                    className="testimonial__img"
-                  />
-
-                  <h2 className="testimonial__title">Rial Loz</h2>
-                  <p className="testimonial__description">
-                    The best website to buy books, the purchase is very easy to
-                    make and has great discounts.
-                  </p>
+               {/* LEFT: LOGO + TEXT */}
+               <div className="footer-col footer-brand">
+                  <a href="#" className="footer-logo">
+                     <img src={new URL('./assets/bookhive_icon_only_black-removebg-preview 2.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
+                     <div className="logo-text">
+                        <span className="name">BookHive</span>
+                        <span className="sub">Library</span>
+                     </div>
+                  </a>
 
                   <div className="testimonial__stars">
                     <i className="ri-star-fill"></i>
