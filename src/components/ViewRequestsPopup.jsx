@@ -252,7 +252,7 @@ const ViewRequestsPopup = ({
       title="Requests"
       icon={getTabIcon()}
       maxWidthClass="max-w-[1100px] max-[856px]:scale-80"
-      heightClass="h-[90vh]"
+      heightClass="min-h-[1000px]"
     >
       <div className="flex h-full flex-col gap-4">
         <div className="flex gap-0">
@@ -302,9 +302,15 @@ const ViewRequestsPopup = ({
           {activeTab !== "returns" && (
             <button
               onClick={() => setShowRejected(!showRejected)}
-              className="h-[50px] cursor-pointer whitespace-nowrap rounded-xl border border-transparent bg-[#0b0b3b] px-6 text-sm font-medium text-white transition-colors hover:bg-[#1a1a6a] dark:bg-[#D7D7D7] dark:text-[#121317] dark:hover:border-[#D7D7D7] dark:hover:bg-transparent dark:hover:text-[#D7D7D7]"
+              className="relative h-[50px] cursor-pointer whitespace-nowrap rounded-xl border border-transparent bg-[#0b0b3b] px-6 text-sm font-medium text-white transition-colors hover:bg-[#1a1a6a] dark:bg-[#D7D7D7] dark:text-[#121317] dark:hover:border-[#D7D7D7] dark:hover:bg-transparent dark:hover:text-[#D7D7D7]"
             >
               {showRejected ? "Pending Requests" : "Rejected Requests"}
+              {!showRejected &&
+                totalData.filter((r) => r.status === "Rejected").length > 0 && (
+                  <span className="absolute -bottom-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-transparent border border-[#0b0b3b] text-xs bg-white dark:bg-[#0b0b3b] font-bold text-[#0b0b3b] dark:text-[#D7D7D7] dark:ring-[#1A1B20]">
+                    {totalData.filter((r) => r.status === "Rejected").length}
+                  </span>
+                )}
             </button>
           )}
         </div>

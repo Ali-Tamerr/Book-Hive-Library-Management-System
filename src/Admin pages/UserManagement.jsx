@@ -6,26 +6,16 @@ import {
   useDeleteUser,
 } from "../hooks/useUsers.js";
 import {
-  useUserRequests,
-  useApproveUserRequest,
-  useRejectUserRequest,
-  useDeleteUserRequest,
-} from "../hooks/useUserRequests.js";
-import {
   useBookTransactions,
-  useUpdateBookTransaction,
   useDeleteBookTransaction,
 } from "../hooks/useBookTransactions.js";
 import {
   useReservations,
   useDeleteReservation,
 } from "../hooks/useReservations.js";
-import { useBooks } from "../hooks/useBooks.js";
-import { useBookCopies, useUpdateBookCopy } from "../hooks/useBookCopies.js";
 import UserFormPopup from "../components/UserFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
-import ViewRequestsPopup from "../components/ViewRequestsPopup.jsx";
 import RenewConfirmationPopup from "../components/RenewConfirmationPopup.jsx";
 import CommonLayout from "../Layouts/CommonLayout.jsx";
 import { FilePenLine, Trash2, ReceiptText, RotateCcw } from "lucide-react";
@@ -44,8 +34,6 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showRenewPopup, setShowRenewPopup] = useState(false);
   const [selectedRenewUser, setSelectedRenewUser] = useState(null);
-  const [showRequestsPopup, setShowRequestsPopup] = useState(false);
-  const [pendingRequestId, setPendingRequestId] = useState(null);
   const [deleteWarning, setDeleteWarning] = useState(null);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
   const [formError, setFormError] = useState(null);
@@ -66,29 +54,10 @@ function UserManagement({ searchValue, setSearchValue }) {
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
 
-  const { data: userRequests = [], isLoading: isLoadingRequests } =
-    useUserRequests();
-  const approveRequestMutation = useApproveUserRequest();
-  const rejectRequestMutation = useRejectUserRequest();
-  const deleteRequestMutation = useDeleteUserRequest();
-
-  const { data: bookTransactions = [], isLoading: isLoadingBookTransactions } =
-    useBookTransactions();
-  const updateBookTransactionMutation = useUpdateBookTransaction();
+  const { data: bookTransactions = [] } = useBookTransactions();
   const deleteBookTransactionMutation = useDeleteBookTransaction();
-  const { data: books = [] } = useBooks();
-  const updateBookCopyMutation = useUpdateBookCopy();
-  const { data: bookCopies = [] } = useBookCopies();
   const { data: reservations = [] } = useReservations();
   const deleteReservationMutation = useDeleteReservation();
-
-  const pendingBookRequests = bookTransactions.filter(
-    (t) => t.status === "Pending" && t.transaction_type === "Check-Out",
-  );
-
-  const pendingReturnRequests = bookTransactions.filter(
-    (t) => t.status === "Pending" && t.transaction_type === "Check-In",
-  );
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -148,15 +117,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         });
       } else {
         await createUserMutation.mutateAsync(apiData);
-        if (pendingRequestId) {
-          try {
-            await deleteRequestMutation.mutateAsync(pendingRequestId);
-            console.log("Request deleted successfully:", pendingRequestId);
-          } catch (deleteError) {
-            console.error("Failed to delete request:", deleteError);
-          }
-          setPendingRequestId(null);
-        }
       }
       setFormData({
         id: "",
@@ -312,7 +272,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     setSelectedUser(user);
     setShowViewDetails(true);
   };
-  
+
   const handleRenew = (user) => {
     setSelectedRenewUser(user);
     setShowRenewPopup(true);
@@ -339,7 +299,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       password: "",
       password_hash: "",
     });
-    setPendingRequestId(null);
     setEditMode(false);
     setShowPopup(true);
   };
@@ -499,14 +458,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         columns={columns}
         formPopup={formPopup}
         customActionRenderer={customActionRenderer}
-        secondaryButton={
-          <button
-            onClick={() => setShowRequestsPopup(true)}
-            className="flex h-full min-w-[150px] cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#0b0b3b] bg-white text-sm font-medium text-[#0b0b3b] transition-colors hover:bg-[#1a1a6a] hover:bg-[#F0F0FF] max-[856px]:text-xs dark:border-[#121317] dark:bg-[#E8E8E8] dark:text-[#121317] dark:hover:bg-[#d4d4d4]"
-          >
-            View Requests
-          </button>
-        }
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}
@@ -541,148 +492,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         }
         savedBy={selectedUser ? getCreatorName(selectedUser.created_by) : null}
       ></ViewDetailsPopup>
-      <ViewRequestsPopup
-        show={showRequestsPopup}
-        onClose={() => setShowRequestsPopup(false)}
-        requests={userRequests}
-        isLoading={isLoadingRequests}
-        onApprove={(request) => {
-          setFormData({
-            id: "",
-            user_id: "",
-            name: request.name || "",
-            email: request.email || "",
-            phone_number: request.phone_number || "",
-            plan: request.plan || "",
-            role: "User",
-            status: "Active",
-            password: request.password || "",
-            password_hash: "",
-          });
-          setPendingRequestId(request.request_id);
-          setShowRequestsPopup(false);
-          setEditMode(false);
-          setShowPopup(true);
-        }}
-        onReject={async (request) => {
-          try {
-            await rejectRequestMutation.mutateAsync({
-              id: request.request_id,
-              data: {
-                name: request.name,
-                email: request.email,
-                password: request.password,
-                phone_number: request.phone_number,
-                plan: request.plan,
-                status: "Rejected",
-              },
-            });
-          } catch (error) {
-            console.error("Failed to reject request:", error);
-            alert("Failed to reject request. Please try again.");
-          }
-        }}
-        bookRequests={pendingBookRequests}
-        isLoadingBooks={isLoadingBookTransactions}
-        users={users}
-        books={books}
-        bookCopies={bookCopies}
-        onApproveBook={async (request) => {
-          console.log("Admin approving borrow request:", request);
-          try {
-            const bookCopy = bookCopies.find(
-              (bc) => bc.book_copy_id === request.book_id,
-            );
-
-            if (bookCopy) {
-              await updateBookCopyMutation.mutateAsync({
-                id: bookCopy.book_copy_id,
-                data: {
-                  ...bookCopy,
-                  status: "Borrowed",
-                },
-              });
-            } else {
-              console.warn(
-                "Book copy not found for update, proceeding with transaction approval.",
-              );
-            }
-
-            const updatedRequest = {
-              ...request,
-              status: "Completed", // Reverted to "Completed" to match existing system convention
-            };
-            console.log(
-              "Setting transaction status to:",
-              updatedRequest.status,
-            );
-
-            await updateBookTransactionMutation.mutateAsync({
-              id: request.transaction_id,
-              data: updatedRequest,
-            });
-          } catch (error) {
-            console.error("Failed to approve book request:", error);
-            alert("Failed to approve book request. Please try again.");
-          }
-        }}
-        onRejectBook={async (request) => {
-          try {
-            await deleteBookTransactionMutation.mutateAsync(
-              request.transaction_id,
-            );
-          } catch (error) {
-            console.error("Failed to reject book request:", error);
-            alert("Failed to reject book request. Please try again.");
-          }
-        }}
-        returnRequests={pendingReturnRequests}
-        isLoadingReturns={isLoadingBookTransactions}
-        onApproveReturn={async (request) => {
-          try {
-            const originalBorrow = bookTransactions.find(
-              (t) =>
-                t.book_id === request.book_id &&
-                t.user_id === request.user_id &&
-                t.transaction_type === "Check-Out" &&
-                t.status === "Completed" &&
-                !t.return_date,
-            );
-
-            if (originalBorrow) {
-              await updateBookTransactionMutation.mutateAsync({
-                id: originalBorrow.transaction_id,
-                data: {
-                  ...originalBorrow,
-                  return_date: new Date().toISOString(),
-                  status: "Completed",
-                },
-              });
-            }
-
-            await updateBookTransactionMutation.mutateAsync({
-              id: request.transaction_id,
-              data: {
-                ...request,
-                status: "Completed",
-              },
-            });
-          } catch (error) {
-            console.error("Failed to approve return request:", error);
-            alert("Failed to approve return request. Please try again.");
-          }
-        }}
-        onRejectReturn={async (request) => {
-          try {
-            await deleteBookTransactionMutation.mutateAsync(
-              request.transaction_id,
-            );
-          } catch (error) {
-            console.error("Failed to reject return request:", error);
-            alert("Failed to reject return request. Please try again.");
-          }
-        }}
-      />
       <RenewConfirmationPopup
         show={showRenewPopup}
         onClose={() => {
