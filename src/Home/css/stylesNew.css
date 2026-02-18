@@ -222,6 +222,14 @@ body.dark-theme{
   color: var(--muted);
 }
 
+.dark-theme #plans .heading{
+  color: #e3e4e8;
+}
+
+.dark-theme #plans .subheading{
+  color: #b3b6bd;
+}
+
 .dark-theme .stat .num {
   color: var(--title-color);
 }
@@ -238,9 +246,9 @@ body.dark-theme{
 
 .dark-theme .plan {
   background: #15161b;
-  color: #e6e7ea;
+  color: #e3e4e8;
   border: 1px solid #2b2f36;
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 18px 28px rgba(0, 0, 0, 0.4);
 }
 
 .dark-theme .plan:not(.center){
@@ -249,7 +257,7 @@ body.dark-theme{
 
 .dark-theme .plan.center{
   background: #15161b;
-  border: 2px solid #e2e3e6;
+  border: 2px solid #d7d7d7;
 }
 
 .dark-theme .nav__logo img,
@@ -366,32 +374,32 @@ body.dark-theme{
 
 .dark-theme .plan-title,
 .dark-theme .price{
-  color: #e6e7ea;
+  color: #e3e4e8;
 }
 
 .dark-theme .price small{
-  color: #c7c9cf;
+  color: #b9bbc1;
 }
 
 .dark-theme .feature{
-  color: #d6d8dd;
+  color: #cfd1d7;
 }
 
 .dark-theme .feature .tick{
-  color: #e6e7ea;
+  color: #e3e4e8;
 }
 
 .dark-theme .plan .btn{
   background-color: transparent;
-  border-color: #c7c9cf;
-  color: #e6e7ea;
+  border-color: #7b7f88;
+  color: #e3e4e8;
   box-shadow: none;
 }
 
 .dark-theme .plan.center .btn{
-  background-color: #e5e5e5;
-  border-color: #e5e5e5;
-  color: #17181b;
+  background-color: #d7d7d7;
+  border-color: #d7d7d7;
+  color: #111214;
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
 }
 
