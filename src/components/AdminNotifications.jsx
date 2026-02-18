@@ -172,9 +172,7 @@ const AdminNotifications = () => {
         onClick={() => setShowRequestsPopup(true)}
       >
         <Bell className="h-full w-full" />
-        {(pendingUserRequests.length > 0 ||
-          pendingBookRequests.length > 0 ||
-          pendingReturnRequests.length > 0) && (
+        {(pendingUserRequests.length > 0 || pendingBookRequests.length > 0) && (
           <span className="absolute right-0 top-0 block h-2.5 w-2.5 -translate-y-1/4 translate-x-1/4 transform rounded-full bg-red-500 ring-2 ring-white"></span>
         )}
       </button>
@@ -259,49 +257,19 @@ const AdminNotifications = () => {
             alert("Failed to reject book request. Please try again.");
           }
         }}
-        returnRequests={pendingReturnRequests}
-        isLoadingReturns={isLoadingBookTransactions}
-        onApproveReturn={async (request) => {
-          try {
-            const originalBorrow = bookTransactions.find(
-              (t) =>
-                t.book_id === request.book_id &&
-                t.user_id === request.user_id &&
-                t.transaction_type === "Check-Out" &&
-                t.status === "Completed" &&
-                !t.return_date,
-            );
-
-            if (originalBorrow) {
-              await updateBookTransactionMutation.mutateAsync({
-                id: originalBorrow.transaction_id,
-                data: {
-                  ...originalBorrow,
-                  return_date: new Date().toISOString(),
-                  status: "Completed",
-                },
-              });
-            }
-
-            await updateBookTransactionMutation.mutateAsync({
-              id: request.transaction_id,
-              data: { ...request, status: "Completed" },
-            });
-          } catch (error) {
-            console.error("Failed to approve return request:", error);
-            alert("Failed to approve return request. Please try again.");
-          }
-        }}
-        onRejectReturn={async (request) => {
-          try {
-            await deleteBookTransactionMutation.mutateAsync(
-              request.transaction_id,
-            );
-          } catch (error) {
-            console.error("Failed to reject return request:", error);
-            alert("Failed to reject return request. Please try again.");
-          }
-        }}
+        returnRequests={[]}
+        isLoadingReturns={false}
+        onApproveReturn={() => {}}
+        onRejectReturn={() => {}}
+        feedbackRequests={[]}
+        isLoadingFeedback={false}
+        onApproveFeedback={(request) =>
+          console.log("Approve feedback", request)
+        }
+        onRejectFeedback={(request) => console.log("Reject feedback", request)}
+        onViewFeedback={(request) =>
+          console.log("View feedback details", request)
+        }
       />
 
       <UserFormPopup
