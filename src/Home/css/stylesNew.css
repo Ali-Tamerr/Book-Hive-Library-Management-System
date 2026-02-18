@@ -243,6 +243,10 @@ body.dark-theme{
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.45);
 }
 
+.dark-theme .plan:not(.center){
+  border: none;
+}
+
 .dark-theme .plan.center{
   background: #15161b;
   border: 2px solid #e2e3e6;
@@ -1678,6 +1682,10 @@ body.dark-theme{
       transition:transform .28s ease, box-shadow .28s ease;
     }
     .plan:hover{ transform:none; box-shadow: var(--card-shadow-hover); }
+
+    .plan:not(.center){
+      border: none;
+    }
 
     /* center highlight */
     .plan.center{
