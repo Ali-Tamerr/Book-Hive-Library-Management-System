@@ -5,6 +5,7 @@ import {
   useUpdateUser,
   useDeleteUser,
 } from "../hooks/useUsers.js";
+import { useBranches } from "../hooks/useBranches.js";
 import {
   useBookTransactions,
   useDeleteBookTransaction,
@@ -50,6 +51,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   });
 
   const { data: users = [], isLoading } = useUsers();
+  const { data: branches = [] } = useBranches();
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
@@ -278,11 +280,54 @@ function UserManagement({ searchValue, setSearchValue }) {
     setShowRenewPopup(true);
   };
 
-  const handleConfirmRenew = () => {
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const handleConfirmRenew = async () => {
     if (!selectedRenewUser) return;
-    console.log("Renew confirmed for user:", selectedRenewUser);
-    setShowRenewPopup(false);
-    setSelectedRenewUser(null);
+
+    // Calculate new expiration date
+    const currentEnd = selectedRenewUser.subscription_end_date
+      ? new Date(selectedRenewUser.subscription_end_date)
+      : new Date();
+    const now = new Date();
+
+    // If active, extend from end date. If expired/null, extend from now.
+    const baseDate = currentEnd > now ? currentEnd : now;
+    const newEndDate = new Date(baseDate);
+    newEndDate.setMonth(newEndDate.getMonth() + 1);
+
+    console.log(
+      "Renewing user:",
+      selectedRenewUser.user_id,
+      "New Date:",
+      newEndDate,
+    );
+
+    try {
+      // Exclude created_by to avoid issues if backend strictly checks joins/foreign keys on update
+      // (though usually fine, consistent with handleAddUser)
+      const { created_by, ...userData } = selectedRenewUser;
+
+      await updateUserMutation.mutateAsync({
+        id: selectedRenewUser.user_id,
+        data: {
+          ...userData,
+          subscription_end_date: newEndDate.toISOString(),
+        },
+      });
+      setShowRenewPopup(false);
+      setSelectedRenewUser(null);
+    } catch (error) {
+      console.error("Failed to renew user:", error);
+      alert("Failed to renew user plan. Please try again.");
+    }
   };
 
   const buttonBehaviour = () => {
@@ -303,18 +348,91 @@ function UserManagement({ searchValue, setSearchValue }) {
     setShowPopup(true);
   };
 
+  const normalizeText = (value) =>
+    String(value || "")
+      .trim()
+      .toLowerCase();
+
+  const getUserBranchId = (user) => {
+    if (!user) return null;
+
+    const directBranchId = user.branch_id ?? user.branchId;
+    if (directBranchId !== undefined && directBranchId !== null && directBranchId !== "") {
+      return String(directBranchId).trim();
+    }
+
+    const nestedBranchId = user.branch?.branch_id ?? user.branch?.id;
+    if (nestedBranchId !== undefined && nestedBranchId !== null && nestedBranchId !== "") {
+      return String(nestedBranchId).trim();
+    }
+
+    return null;
+  };
+
+  const getUserBranchName = (user) => {
+    if (!user) return "N/A";
+
+    const directBranchName = user.branch_name ?? user.branchName;
+    if (directBranchName) return directBranchName;
+
+    if (typeof user.branch === "string" && user.branch.trim()) {
+      return user.branch.trim();
+    }
+
+    const branchId = getUserBranchId(user);
+    if (!branchId) return "N/A";
+
+    const matchedBranch = branches.find(
+      (branch) => String(branch.branch_id).trim() === String(branchId).trim(),
+    );
+
+    return matchedBranch?.name || `Branch ${branchId}`;
+  };
+
+  const currentRole = normalizeText(currentUser?.role);
+  const isBranchScopedRole = currentRole === "admin" || currentRole === "librarian";
+  const currentUserBranchId = getUserBranchId(currentUser);
+  const currentUserBranchName = normalizeText(getUserBranchName(currentUser));
+
+  const isSameBranch = (user) => {
+    const userBranchId = getUserBranchId(user);
+    if (currentUserBranchId && userBranchId) {
+      return String(userBranchId).trim() === String(currentUserBranchId).trim();
+    }
+
+    if (currentUserBranchName && currentUserBranchName !== "n/a") {
+      return normalizeText(getUserBranchName(user)) === currentUserBranchName;
+    }
+
+    return false;
+  };
+
   const visibleUsers = users.filter((user) => {
     const role = user.role?.toLowerCase() || "";
-    return role !== "super admin";
+    if (role === "super admin") return false;
+
+    if (isBranchScopedRole) {
+      return isSameBranch(user);
+    }
+
+    return true;
   });
-  const filteredUsers = searchValue
-    ? visibleUsers.filter(
-        (user) =>
-          user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          user.user_id?.toString().includes(searchValue),
-      )
-    : visibleUsers;
+
+  const filteredUsers = (
+    searchValue
+      ? visibleUsers.filter(
+          (user) =>
+            user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            user.user_id?.toString().includes(searchValue) ||
+            getUserBranchName(user).toLowerCase().includes(searchValue.toLowerCase()),
+        )
+      : visibleUsers
+  ).map((user) => ({
+    ...user,
+    formatted_exp_date: formatDate(user.subscription_end_date),
+    branch_display: getUserBranchName(user),
+  }));
 
   const title = "User Management";
   const buttonText = "Add User";
@@ -322,7 +440,9 @@ function UserManagement({ searchValue, setSearchValue }) {
     { header: "User ID", accessor: "user_id" },
     { header: "Name", accessor: "name" },
     { header: "Email", accessor: "email" },
+    { header: "Branch", accessor: "branch_display" },
     { header: "Plan", accessor: "plan" },
+    { header: "Exp Date", accessor: "formatted_exp_date" },
     { header: "Contact No", accessor: "phone_number" },
     { header: "Action", accessor: "action" },
   ];
@@ -485,6 +605,7 @@ function UserManagement({ searchValue, setSearchValue }) {
                 "User ID": selectedUser.user_id,
                 Name: selectedUser.name,
                 Email: selectedUser.email,
+                Branch: getUserBranchName(selectedUser),
                 "Phone Number": selectedUser.phone_number,
                 Plan: selectedUser.plan || "N/A",
               }

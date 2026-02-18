@@ -4,6 +4,22 @@ import FormButton from "./FormButton.jsx";
 import { RotateCcw } from "lucide-react";
 
 const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
+  const calculateNewDate = () => {
+    if (!user) return "";
+    const currentEnd = user.subscription_end_date
+      ? new Date(user.subscription_end_date)
+      : new Date();
+    const now = new Date();
+    const baseDate = currentEnd > now ? currentEnd : now;
+    const newEndDate = new Date(baseDate);
+    newEndDate.setMonth(newEndDate.getMonth() + 1);
+    return newEndDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <Popup
       show={show}
@@ -18,14 +34,23 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
         <div className="flex w-full gap-8 max-[650px]:flex-col">
           <input
             type="text"
+            readOnly
             value={user?.name || ""}
             placeholder="Name"
             className="h-14 w-full rounded-2xl border border-[#0a0f33] px-6 text-sm font-medium text-[#0a0f33] outline-none"
           />
           <input
             type="text"
+            readOnly
             value={user?.plan || ""}
             placeholder="Plan"
+            className="h-14 w-full rounded-2xl border border-[#0a0f33] px-6 text-sm font-medium text-[#0a0f33] outline-none"
+          />
+          <input
+            type="text"
+            readOnly
+            value={calculateNewDate()}
+            placeholder="New Expiration"
             className="h-14 w-full rounded-2xl border border-[#0a0f33] px-6 text-sm font-medium text-[#0a0f33] outline-none"
           />
         </div>
