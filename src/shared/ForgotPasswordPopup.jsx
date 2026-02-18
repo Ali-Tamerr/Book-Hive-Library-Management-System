@@ -38,7 +38,7 @@ function ForgotPasswordPopup({ isOpen, onClose, onOTP, onBack }) {
             onClick={onClose}
         >
             <div
-                className="relative w-[95%] max-w-[1300px] h-[700px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl"
+                className="relative w-[95%] max-w-[1420px] h-full max-h-[87vh] overflow-hidden rounded-2xl shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className={`flex max-[1080px]:flex-col w-full h-full ${isDarkMode ? 'bg-[#121317]' : 'bg-white'} overflow-hidden`}>
