@@ -4,6 +4,8 @@ import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
 import FormInput from "./FormInput.jsx";
 
+import { getCurrentUser } from "../services/auth.api";
+
 const FeedbackPopup = ({ show, onClose }) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -20,8 +22,27 @@ const FeedbackPopup = ({ show, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      console.log("Submitting feedback:", { rating, feedbackText });
+      const currentUser = getCurrentUser();
+      const newFeedback = {
+        request_id: Date.now(), // Mock ID
+        user_id: currentUser?.user_id || "Guest",
+        description: feedbackText,
+        rate: rating,
+        created_at: new Date().toISOString(),
+        status: "Pending",
+      };
+
+      // Mock saving to localStorage for demo purposes
+      const existingFeedback = JSON.parse(
+        localStorage.getItem("mock_feedback_requests") || "[]",
+      );
+      localStorage.setItem(
+        "mock_feedback_requests",
+        JSON.stringify([...existingFeedback, newFeedback]),
+      );
+      window.dispatchEvent(new Event("mockFeedbackUpdated")); // Custom event to notify AdminNotifications
+
+      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       setRating(0);
@@ -61,14 +82,14 @@ const FeedbackPopup = ({ show, onClose }) => {
       maxWidthClass="max-w-[600px]"
     >
       <div className="flex w-full flex-col gap-6">
-        <div className="flex items-center w-full justify-center">
+        <div className="flex w-full items-center justify-center">
           <FormInput
-          type="textarea"
-          className="h-[150px] w-full  max-w-[400px] resize-none"
-          placeholder="Share your experience"
-          value={feedbackText}
-          onChange={(e) => setFeedbackText(e.target.value)}
-        />
+            type="textarea"
+            className="h-[150px] w-full max-w-[400px] resize-none"
+            placeholder="Share your experience"
+            value={feedbackText}
+            onChange={(e) => setFeedbackText(e.target.value)}
+          />
         </div>
 
         <div
