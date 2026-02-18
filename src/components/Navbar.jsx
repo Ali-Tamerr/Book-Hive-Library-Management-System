@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Settings, Menu, UserRound, Search, Sun, Moon } from 'lucide-react';
+import { Settings, Menu, UserRound, Search, Sun, Moon, Bell } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { getCurrentUser } from '../services/auth.api';
 import SearchBar from './SearchBar';
@@ -14,6 +14,10 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const location = useLocation();
 
   const currentUser = getCurrentUser();
+  const roleLabel =
+    currentUser?.role?.toLowerCase() === 'admin'
+      ? 'Librarian'
+      : currentUser?.role || 'User';
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -84,7 +88,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             <h3 className="text-lg font-semibold max-[480px]:text-sm max-[350px]:text-xs">
               {currentUser ? currentUser.name || 'User' : 'Loading...'}
             </h3>
-            <p className="text-sm font-semibold max-[350px]:text-[10px]">{currentUser?.role || 'User'}</p>
+            <p className="text-sm font-semibold max-[350px]:text-[10px]">{roleLabel}</p>
           </div>
         </div>
         <div className="flex items-center gap-3 flex-1 h-min justify-end">
@@ -97,6 +101,12 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             </p>
           </div>
           <div className='w-0.5 max-[1080px]:hidden h-10 rounded-full bg-[#0b0b3b] dark:bg-white'></div>
+          <button
+            className="max-[1080px]:hidden w-8 h-8 cursor-pointer hover:text-[#1e255e] dark:hover:text-[#9CA3AF] transition-colors"
+            title="Notifications"
+          >
+            <Bell className='h-full w-full' />
+          </button>
           <button
             className="max-[1080px]:hidden w-8 h-8 hover:text-[#1e255e] dark:hover:text-[#9CA3AF] transition-colors cursor-pointer"
             onClick={toggleTheme}
