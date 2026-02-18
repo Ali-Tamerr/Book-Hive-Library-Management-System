@@ -18,10 +18,10 @@ const DarkBgSection = ({
         ? "rounded-tr-[80px] rounded-br-[80px]"
         : "rounded-tl-[80px] rounded-bl-[80px]";
 
-    const bgColor = isDarkMode ? "bg-[#E8E8E8]" : "bg-[#0a0f33]";
+    const bgColor = isDarkMode ? "bg-[#E8E8E8]" : "bg-[#000035]";
     const textColor = isDarkMode ? "text-[#121317]" : "text-white";
     const borderColor = isDarkMode ? "border-[#121317]" : "border-white";
-    const hoverBg = isDarkMode ? "hover:bg-[#121317] hover:text-white" : "hover:bg-white hover:text-[#0a0f33]";
+    const hoverBg = isDarkMode ? "hover:bg-[#121317] hover:text-white" : "hover:bg-white hover:text-[#000035]";
     const logoSrc = isDarkMode ? logoDark : logoLight;
     const logoAlt = "BookHive Logo";
 
