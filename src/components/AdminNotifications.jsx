@@ -16,6 +16,7 @@ import { useBookCopies, useUpdateBookCopy } from "../hooks/useBookCopies.js";
 import UserFormPopup from "./UserFormPopup.jsx";
 import ViewRequestsPopup from "./ViewRequestsPopup.jsx";
 import { getCurrentUser } from "../services/auth.api";
+import FeedbackDetailsPopup from "./FeedbackDetailsPopup.jsx";
 
 const AdminNotifications = () => {
   const currentUser = getCurrentUser();
@@ -58,6 +59,21 @@ const AdminNotifications = () => {
   /* eslint-disable no-unused-vars */
   const EXPIRATION_DAYS = 7;
 
+  const [feedbackRequests, setFeedbackRequests] = useState([]);
+
+  React.useEffect(() => {
+    const loadFeedback = () => {
+      const data = JSON.parse(
+        localStorage.getItem("mock_feedback_requests") || "[]",
+      );
+      setFeedbackRequests(data);
+    };
+    loadFeedback();
+    window.addEventListener("mockFeedbackUpdated", loadFeedback);
+    return () =>
+      window.removeEventListener("mockFeedbackUpdated", loadFeedback);
+  }, []);
+
   const isExpired = (createdAt) => {
     if (!createdAt) return false;
     const createdDate = new Date(createdAt);
@@ -79,11 +95,36 @@ const AdminNotifications = () => {
     (req) => req.status === "Pending" && !isExpired(req.created_at),
   );
 
+  const pendingFeedbackRequests = feedbackRequests.filter(
+    (req) => req.status === "Pending",
+  );
+
   const availableNumericIds = users
     .filter((u) => /^\d+$/.test(u.user_id))
     .map((u) => parseInt(u.user_id, 10));
   const nextUserId =
     availableNumericIds.length > 0 ? Math.max(...availableNumericIds) + 1 : 1;
+
+  const [showFeedbackDetails, setShowFeedbackDetails] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+
+  const handleApproveFeedback = (request) => {
+    console.log("Approve feedback", request);
+    const updated = feedbackRequests.map((r) =>
+      r.request_id === request.request_id ? { ...r, status: "Approved" } : r,
+    );
+    setFeedbackRequests(updated);
+    localStorage.setItem("mock_feedback_requests", JSON.stringify(updated));
+  };
+
+  const handleRejectFeedback = (request) => {
+    console.log("Reject feedback", request);
+    const updated = feedbackRequests.map((r) =>
+      r.request_id === request.request_id ? { ...r, status: "Rejected" } : r,
+    );
+    setFeedbackRequests(updated);
+    localStorage.setItem("mock_feedback_requests", JSON.stringify(updated));
+  };
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -172,7 +213,9 @@ const AdminNotifications = () => {
         onClick={() => setShowRequestsPopup(true)}
       >
         <Bell className="h-full w-full" />
-        {(pendingUserRequests.length > 0 || pendingBookRequests.length > 0) && (
+        {(pendingUserRequests.length > 0 ||
+          pendingBookRequests.length > 0 ||
+          pendingFeedbackRequests.length > 0) && (
           <span className="absolute right-0 top-0 block h-2.5 w-2.5 -translate-y-1/4 translate-x-1/4 transform rounded-full bg-red-500 ring-2 ring-white"></span>
         )}
       </button>
@@ -261,15 +304,14 @@ const AdminNotifications = () => {
         isLoadingReturns={false}
         onApproveReturn={() => {}}
         onRejectReturn={() => {}}
-        feedbackRequests={[]}
+        feedbackRequests={feedbackRequests}
         isLoadingFeedback={false}
-        onApproveFeedback={(request) =>
-          console.log("Approve feedback", request)
-        }
-        onRejectFeedback={(request) => console.log("Reject feedback", request)}
-        onViewFeedback={(request) =>
-          console.log("View feedback details", request)
-        }
+        onApproveFeedback={handleApproveFeedback}
+        onRejectFeedback={handleRejectFeedback}
+        onViewFeedback={(request) => {
+          setSelectedFeedback(request);
+          setShowFeedbackDetails(true);
+        }}
       />
 
       <UserFormPopup
@@ -283,6 +325,13 @@ const AdminNotifications = () => {
         isSuperAdmin={isSuperAdmin}
         error={formError}
         nextUserId={nextUserId}
+      />
+
+      <FeedbackDetailsPopup
+        show={showFeedbackDetails}
+        onClose={() => setShowFeedbackDetails(false)}
+        feedback={selectedFeedback}
+        user={users.find((u) => u.user_id === selectedFeedback?.user_id)}
       />
     </>
   );

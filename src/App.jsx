@@ -98,6 +98,11 @@ function Layout({
     if (role === "user") {
       return <Navigate to="/user/dashboard" replace />;
     }
+
+    const restrictedAdminOnlyRoutes = ["/admin/branches", "/admin/categories"];
+    if (role === "admin" && restrictedAdminOnlyRoutes.includes(location.pathname)) {
+      return <Navigate to="/admin/dashboard" replace />;
+    }
   }
 
   if (isHomePage) {

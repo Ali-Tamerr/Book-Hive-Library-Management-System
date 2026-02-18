@@ -15,7 +15,7 @@ import GlobalSearchPopup from "./GlobalSearchPopup";
 import SettingsPopup from "./SettingsPopup";
 import AdminNotifications from "./AdminNotifications";
 import FeedbackPopup from "./FeedbackPopup";
-import feedbackIcon from "../Home/assets/img/ix_feedback-filled.svg";
+import FeedbackIcon from "../Home/assets/img/ix_feedback-filled.svg?react";
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
@@ -118,7 +118,6 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
                 month: "short",
                 day: "2-digit",
                 year: "numeric",
-                year: "numeric",
               })}
             </p>
           </div>
@@ -131,11 +130,11 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             <AdminNotifications />
           ) : (
             <button
-              className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[1080px]:hidden dark:hover:text-[#9CA3AF] flex items-center justify-center p-0.5"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center p-0.5 transition-colors hover:text-[#1e255e] max-[1080px]:hidden dark:hover:text-[#9CA3AF]"
               onClick={() => setShowFeedbackPopup(true)}
               title="Give Feedback"
             >
-              <img src={feedbackIcon} alt="Feedback" className="h-full w-full dark:invert" />
+              <FeedbackIcon className="h-full w-full" />
             </button>
           )}
           <button
@@ -172,9 +171,9 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
         show={showSettings}
         onClose={() => setShowSettings(false)}
       />
-      <FeedbackPopup 
-        show={showFeedbackPopup} 
-        onClose={() => setShowFeedbackPopup(false)} 
+      <FeedbackPopup
+        show={showFeedbackPopup}
+        onClose={() => setShowFeedbackPopup(false)}
       />
     </>
   );
