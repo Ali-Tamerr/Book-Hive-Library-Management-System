@@ -253,6 +253,7 @@ const ViewRequestsPopup = ({
       icon={getTabIcon()}
       maxWidthClass="max-w-[1100px] max-[856px]:scale-80"
       heightClass="h-[90vh]"
+      closeButtonClassName="dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#1A1B20]"
     >
       <div className="flex h-full flex-col gap-4">
         <div className="flex gap-0">
