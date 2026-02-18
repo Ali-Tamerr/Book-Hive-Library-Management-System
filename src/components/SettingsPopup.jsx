@@ -94,6 +94,11 @@ const SettingsPopup = ({ show, onClose }) => {
         onClose();
     };
 
+    const cancelHoverClass =
+        "hover:bg-[#000035] hover:text-white dark:hover:bg-[#000035] dark:hover:text-white";
+    const confirmHoverClass =
+        "border border-transparent hover:bg-white hover:text-[#000035] hover:border-[#000035] dark:hover:bg-white dark:hover:text-[#000035] dark:hover:border-[#000035]";
+
     return (
         <Popup
             show={show}
@@ -158,10 +163,10 @@ const SettingsPopup = ({ show, onClose }) => {
                 </div>
 
                 <div className="flex justify-between gap-3">
-                    <FormButton type="button" onClick={handleCancel}>
+                    <FormButton type="button" onClick={handleCancel} className={cancelHoverClass}>
                         CANCEL
                     </FormButton>
-                    <FormButton type="submit" isPrimary disabled={loading}>
+                    <FormButton type="submit" isPrimary disabled={loading} className={confirmHoverClass}>
                         {loading ? 'CONFIRMING...' : 'CONFIRM'}
                     </FormButton>
                 </div>

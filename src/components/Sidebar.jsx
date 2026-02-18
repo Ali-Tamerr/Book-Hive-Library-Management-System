@@ -80,7 +80,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
             className={`text-center text-3xl leading-none transition-all duration-300 ${isExpanded ? "max-w-full scale-100 opacity-100" : "max-w-0 scale-50 overflow-hidden opacity-0"} whitespace-nowrap max-[1080px]:mt-2 max-[1080px]:max-w-full max-[1080px]:scale-100 max-[1080px]:text-center max-[1080px]:opacity-100`}
           >
             BookHive
-            <span className="-mt-0.5 block text-center font-['Mynerve',cursive] text-xl text-[#b5b8d1] dark:text-black">
+            <span className="-mt-0.5 block text-center font-['Merienda_One',cursive] text-xl text-[#b5b8d1] dark:text-black">
               Library
             </span>
           </h2>

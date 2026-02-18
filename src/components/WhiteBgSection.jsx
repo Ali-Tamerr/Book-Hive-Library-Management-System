@@ -1,4 +1,5 @@
-import LogoIcon from '../assets/logo.svg?react';
+import logoDark from '../assets/logo.svg';
+import logoLight from '../Home/assets/bookhive_icon_only-removebg-preview 2.svg';
 
 const WhiteBgSection = ({
     title,
@@ -20,7 +21,8 @@ const WhiteBgSection = ({
 
     const bgClass = isDarkMode ? "bg-[#121317]" : "bg-white";
     const textClass = isDarkMode ? "text-white" : "text-[#0a0f33]";
-    const logoClass = isDarkMode ? "text-white" : "text-[#0a0f33]";
+    const logoSrc = isDarkMode ? logoLight : logoDark;
+    const logoAlt = "BookHive Logo";
 
     
     if (customLayout) {
@@ -47,13 +49,13 @@ const WhiteBgSection = ({
 
             <div className={`flex flex-col gap-4 justify-center items-center ${mobileOnly ? 'max-[1080px]:h-screen w-[85%] max-[1080px]:w-full max-w-[650px]' : 'w-full'}`}>
                 {logoWithTitle ? (
-                    <div className='flex gap-6 items-center'>
+                    <div className="flex gap-6 items-center">
                         <h2 className={`text-4xl inline font-semibold ${textClass}`}>{title}</h2>
-                        <LogoIcon className={`w-36 ${logoClass}`} />
+                        <img src={logoSrc} alt={logoAlt} className="w-36 h-auto" />
                     </div>
                 ) : (
                     <>
-                        <LogoIcon className={`w-32 h-min ${logoClass} mb-6`} />
+                        <img src={logoSrc} alt={logoAlt} className="w-32 h-auto mb-6" />
                         <h2 className={`text-3xl max-[1080px]:text-2xl font-semibold ${textClass} mb-4`}>{title}</h2>
                     </>
                 )}

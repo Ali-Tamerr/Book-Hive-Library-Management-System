@@ -9,6 +9,8 @@ const Popup = ({
   icon,
   children,
   maxWidthClass,
+  closeButtonClassName,
+  dividerClassName,
 }) => {
   const isVisible = show !== undefined ? show : isOpen;
 
@@ -35,13 +37,12 @@ const Popup = ({
           </div>
           <button
             onClick={onClose}
-            className="mr-13 cursor-pointer rounded-md border border-[#525252] p-1 text-[#525252] transition-colors hover:bg-gray-100 hover:text-gray-600 dark:border-[#E0E0E0] dark:text-[#E0E0E0] dark:hover:bg-[#2C2D33]"
-
+            className={`mr-13 cursor-pointer rounded-md border border-[#525252] p-1 text-[#525252] transition-colors hover:bg-gray-100 hover:text-gray-600 dark:border-[#E0E0E0] dark:text-[#E0E0E0] dark:hover:bg-[#2C2D33] ${closeButtonClassName || ""}`}
           >
             <X size={14} />
           </button>
         </div>
-        <div className="mx-auto h-[1px] w-[100%] bg-black dark:bg-[#2C2D33]"></div>
+        <div className={`mx-auto h-[1px] w-[100%] bg-black dark:bg-[#2C2D33] ${dividerClassName || ""}`}></div>
         <div className="overflow-y-auto px-4 py-8">{children}</div>
 
       </div>

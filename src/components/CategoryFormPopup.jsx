@@ -7,20 +7,30 @@ function CategoryFormPopup({ showPopup, editMode, formData, setFormData, handleA
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const cancelHoverClass = editMode
+    ? "hover:bg-[#000035] hover:text-white dark:hover:bg-[#000035] dark:hover:text-white"
+    : "";
+  const updateHoverClass = editMode
+    ? "hover:bg-white hover:text-[#000035] hover:border-[#000035] dark:hover:bg-white dark:hover:text-[#000035] dark:hover:border-[#000035]"
+    : "";
+
   const inputs = [
     { name: 'name', type: 'text', placeholder: 'Name', required: true },
+    { name: 'description', type: 'text', placeholder: 'Description' },
   ];
 
   return (
     <FormLayout
       show={showPopup}
       onClose={() => { setShowPopup(false); setEditMode(false); }}
-      title={editMode ? 'Edit Category' : 'Add New Category'}
+      title={editMode ? 'Edit Category' : 'Add Category'}
       onSubmit={handleAddCategory}
       inputs={inputs}
       formData={formData}
       onFormChange={onFormChange}
       submitButtonText={editMode ? 'UPDATE' : 'ADD'}
+      cancelButtonClassName={cancelHoverClass}
+      submitButtonClassName={updateHoverClass}
       onCancel={() => { setShowPopup(false); setEditMode(false); }}
       icon={<Folder size={24} strokeWidth={2.3} />}
     />

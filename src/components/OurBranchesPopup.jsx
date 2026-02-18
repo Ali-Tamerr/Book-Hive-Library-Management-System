@@ -48,7 +48,7 @@ const OurBranchesPopup = ({ isOpen, onClose }) => {
           </button>
           <div className="branches-popup-brand">
             <img
-              src={new URL('../Home/assets/logo.svg', import.meta.url).href}
+              src={new URL('../assets/logo.svg', import.meta.url).href}
               alt="Book Hive Logo"
             />
             <div className="branches-popup-brand-text">

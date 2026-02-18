@@ -23,7 +23,7 @@ function BranchesPopup({ isOpen, onClose }) {
                             <LogoIcon className="w-16 h-16 text-[#0a0f33]" />
                             <div className="flex flex-col">
                                 <span className="text-xl text-[#0a0f33]">BookHive</span>
-                                <span className="text-lg text-center text-[#0a0f33] font-['Mynerve',cursive]">Library</span>
+                                <span className="text-lg text-center text-[#0a0f33] font-['Merienda_One',cursive]">Library</span>
                             </div>
                         </div>
                     </div>

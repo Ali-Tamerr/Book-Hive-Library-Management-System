@@ -36,7 +36,7 @@ const BranchesModal = ({ isOpen, onClose }) => {
         <div className="branches-header">
           <h2>Our Branches</h2>
           <img
-            src={new URL('../Home/assets/logo.svg', import.meta.url).href}
+            src={new URL('../assets/logo.svg', import.meta.url).href}
             alt="BookHive Logo"
             className="branches-logo"
           />

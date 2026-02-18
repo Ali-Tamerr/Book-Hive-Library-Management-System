@@ -1,6 +1,6 @@
 import React from "react";
 
-const FormButton = ({ type = "button", onClick, children, isPrimary }) => {
+const FormButton = ({ type = "button", onClick, children, isPrimary, className }) => {
   const baseClasses =
     "px-4 py-4 rounded-lg whitespace-nowrap transition-colors min-w-[100px] w-full max-w-[500px] font-semibold cursor-pointer";
   const primaryClasses =
@@ -12,7 +12,7 @@ const FormButton = ({ type = "button", onClick, children, isPrimary }) => {
     <button
       type={type}
       onClick={onClick}
-      className={`${baseClasses} ${isPrimary ? primaryClasses : secondaryClasses}`}
+      className={`${baseClasses} ${isPrimary ? primaryClasses : secondaryClasses} ${className || ""}`}
     >
       {children}
     </button>
