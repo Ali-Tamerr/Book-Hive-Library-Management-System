@@ -24,6 +24,7 @@ const WhiteBgSection = ({
     const logoSrc = isDarkMode ? logoLight : logoDark;
     const logoAlt = "BookHive Logo";
 
+    
     if (customLayout) {
         return (
             <div className={`${visibilityClass} ${bgClass} flex-col items-center justify-center p-16 w-full ${!mobileOnly && !desktopOnly ? 'relative' : ''}`}>
