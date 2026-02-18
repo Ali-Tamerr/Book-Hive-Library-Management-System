@@ -24,7 +24,7 @@ const CommonLayout = ({
   const FormPopupComponent = formPopup;
 
   return (
-    <div className="flex h-full flex-col gap-5 p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
+    <div className="flex h-full flex-col gap-5 overflow-y-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
       <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
         <div className="flex items-center justify-between max-[856px]:gap-2">
           {customTitle ? (
