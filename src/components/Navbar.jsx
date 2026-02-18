@@ -14,10 +14,13 @@ import SearchBar from "./SearchBar";
 import GlobalSearchPopup from "./GlobalSearchPopup";
 import SettingsPopup from "./SettingsPopup";
 import AdminNotifications from "./AdminNotifications";
+import FeedbackPopup from "./FeedbackPopup";
+import feedbackIcon from "../Home/assets/img/ix_feedback-filled.svg";
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [, setForceUpdate] = useState(0);
   const location = useLocation();
@@ -115,6 +118,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
                 month: "short",
                 day: "2-digit",
                 year: "numeric",
+                year: "numeric",
               })}
             </p>
           </div>
@@ -127,10 +131,11 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             <AdminNotifications />
           ) : (
             <button
-              className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[1080px]:hidden dark:hover:text-[#9CA3AF]"
-              title="Notifications"
+              className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[1080px]:hidden dark:hover:text-[#9CA3AF] flex items-center justify-center p-0.5"
+              onClick={() => setShowFeedbackPopup(true)}
+              title="Give Feedback"
             >
-              <Bell className="h-full w-full" />
+              <img src={feedbackIcon} alt="Feedback" className="h-full w-full dark:invert" />
             </button>
           )}
           <button
@@ -166,6 +171,10 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
       <SettingsPopup
         show={showSettings}
         onClose={() => setShowSettings(false)}
+      />
+      <FeedbackPopup 
+        show={showFeedbackPopup} 
+        onClose={() => setShowFeedbackPopup(false)} 
       />
     </>
   );
