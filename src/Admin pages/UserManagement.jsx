@@ -26,8 +26,9 @@ import UserFormPopup from "../components/UserFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
 import ViewRequestsPopup from "../components/ViewRequestsPopup.jsx";
+import RenewConfirmationPopup from "../components/RenewConfirmationPopup.jsx";
 import CommonLayout from "../Layouts/CommonLayout.jsx";
-import { FilePenLine, Trash2, ReceiptText } from "lucide-react";
+import { FilePenLine, Trash2, ReceiptText, RotateCcw } from "lucide-react";
 
 import { getCurrentUser } from "../services/auth.api";
 
@@ -41,6 +42,8 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [userToDelete, setUserToDelete] = useState(null);
   const [showViewDetails, setShowViewDetails] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showRenewPopup, setShowRenewPopup] = useState(false);
+  const [selectedRenewUser, setSelectedRenewUser] = useState(null);
   const [showRequestsPopup, setShowRequestsPopup] = useState(false);
   const [pendingRequestId, setPendingRequestId] = useState(null);
   const [deleteWarning, setDeleteWarning] = useState(null);
@@ -309,6 +312,18 @@ function UserManagement({ searchValue, setSearchValue }) {
     setSelectedUser(user);
     setShowViewDetails(true);
   };
+  
+  const handleRenew = (user) => {
+    setSelectedRenewUser(user);
+    setShowRenewPopup(true);
+  };
+
+  const handleConfirmRenew = () => {
+    if (!selectedRenewUser) return;
+    console.log("Renew confirmed for user:", selectedRenewUser);
+    setShowRenewPopup(false);
+    setSelectedRenewUser(null);
+  };
 
   const buttonBehaviour = () => {
     setFormError(null);
@@ -427,6 +442,13 @@ function UserManagement({ searchValue, setSearchValue }) {
           title="View"
         >
           <ReceiptText size={20} />
+        </button>
+        <button
+          onClick={() => handleRenew(user)}
+          className="ml-2 cursor-pointer text-lg transition-transform hover:scale-125"
+          title="Renew"
+        >
+          <RotateCcw size={20} />
         </button>
       </div>
     );
@@ -660,6 +682,15 @@ function UserManagement({ searchValue, setSearchValue }) {
             alert("Failed to reject return request. Please try again.");
           }
         }}
+      />
+      <RenewConfirmationPopup
+        show={showRenewPopup}
+        onClose={() => {
+          setShowRenewPopup(false);
+          setSelectedRenewUser(null);
+        }}
+        user={selectedRenewUser}
+        onConfirm={handleConfirmRenew}
       />
     </>
   );
