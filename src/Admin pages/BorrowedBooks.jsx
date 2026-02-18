@@ -12,6 +12,7 @@ import BorrowedBookFormPopup from "../components/BorrowedBookFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
 import CommonLayout from "../Layouts/CommonLayout.jsx";
+import { getCurrentUser } from "../services/auth.api.js";
 
 function BorrowedBooks({
   searchValue,
@@ -214,12 +215,15 @@ function BorrowedBooks({
     borrowed_on_formatted: formatDate(book.created_at),
   }));
 
+  const currentUser = getCurrentUser();
+  const isSuperAdmin = currentUser?.role === "Super Admin";
+
   const columns = [
     { header: "User Name", accessor: "user_name_display" },
     { header: "Book Name", accessor: "book_name" },
     { header: "Due Date", accessor: "due_date_formatted" },
     { header: "Date & Time", accessor: "borrowed_on_formatted" },
-    { header: "Action", accessor: "action" },
+    ...(isSuperAdmin ? [{ header: "Action", accessor: "action" }] : []),
   ];
 
   const formPopupComponent = (
