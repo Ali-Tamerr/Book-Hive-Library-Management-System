@@ -76,7 +76,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
             onClick={onClose}
         >
             <div
-                className={`login-popup-container ${isAnimating ? 'login-popup-container--show' : ''} relative w-[95%] max-w-[1300px] h-[700px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl`}
+                className={`login-popup-container ${isAnimating ? 'login-popup-container--show' : ''} relative w-[95%] max-w-[1420px] h-full max-h-[87vh] overflow-hidden rounded-2xl shadow-2xl`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className={`flex max-[1080px]:flex-col justify-stretch w-full h-full ${isDarkMode ? 'bg-[#121317]' : 'bg-white'} overflow-hidden`}>
