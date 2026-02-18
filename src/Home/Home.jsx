@@ -136,7 +136,7 @@ const Home = () => {
          <header className="header" id="header">
             <nav className="nav">
                <a href="#" className="nav__logo" >
-                  <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
+                  <img src={new URL('./assets/bookhive_icon_only_black-removebg-preview 2.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
                </a>
 
                <div className="nav__menu">
@@ -386,9 +386,9 @@ const Home = () => {
                         </div>
 
                         <div className="features">
-                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-                           <div className="feature"><span className="tick">✓</span>Borrow + 3 books Monthly</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Borrow up to 3 books per month.</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Loan period: 7 days per book.</div>
+                           <div className="feature"><span className="tick">&#10003;</span>1 renewal per book</div>
                         </div>
 
                         <a
@@ -411,9 +411,9 @@ const Home = () => {
                         </div>
 
                         <div className="features">
-                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-                           <div className="feature"><span className="tick">✓</span>Borrow + 15 books Monthly</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Borrow up to 15 books per month</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Loan period: 21 days per book.</div>
+                           <div className="feature"><span className="tick">&#10003;</span>3 renewal per book</div>
                         </div>
 
                         <a
@@ -436,9 +436,9 @@ const Home = () => {
                         </div>
 
                         <div className="features">
-                           <div className="feature"><span className="tick">✓</span>Reserve Book Online</div>
-                           <div className="feature"><span className="tick">✓</span>Return Book Online</div>
-                           <div className="feature"><span className="tick">✓</span>Borrow + 10 books Monthly</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Borrow up to 10 books per month</div>
+                           <div className="feature"><span className="tick">&#10003;</span>Loan period: 14 days per book.</div>
+                           <div className="feature"><span className="tick">&#10003;</span>2 renewal per book</div>
                         </div>
 
                         <a
@@ -529,7 +529,7 @@ const Home = () => {
                {/* LEFT: LOGO + TEXT */}
                <div className="footer-col footer-brand">
                   <a href="#" className="footer-logo">
-                     <img src={new URL('./assets/logo.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
+                     <img src={new URL('./assets/bookhive_icon_only_black-removebg-preview 2.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
                      <div className="logo-text">
                         <span className="name">BookHive</span>
                         <span className="sub">Library</span>
