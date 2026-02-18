@@ -73,7 +73,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
 
         <div className="relative z-10 h-40 self-center px-4 text-center">
           <LogoIcon
-            className={`mx-auto transition-all duration-300 ${isExpanded ? "h-13 w-13" : "h-14 w-12"} max-[1080px]:h-22 max-[1080px]:w-20`}
+            className={` invert dark:invert-0 mx-auto transition-all duration-300 ${isExpanded ? "h-13 w-13" : "h-14 w-12"} max-[1080px]:h-22 max-[1080px]:w-20`}
           />
 
           <h2
