@@ -18,10 +18,10 @@ const DarkBgSection = ({
         ? "rounded-tr-[80px] rounded-br-[80px]"
         : "rounded-tl-[80px] rounded-bl-[80px]";
 
-    const bgColor = isDarkMode ? "bg-white" : "bg-[#0a0f33]";
+    const bgColor = isDarkMode ? "bg-[#E8E8E8]" : "bg-[#000035]";
     const textColor = isDarkMode ? "text-[#121317]" : "text-white";
     const borderColor = isDarkMode ? "border-[#121317]" : "border-white";
-    const hoverBg = isDarkMode ? "hover:bg-[#121317] hover:text-white" : "hover:bg-white hover:text-[#0a0f33]";
+    const hoverBg = isDarkMode ? "hover:bg-[#121317] hover:text-white" : "hover:bg-white hover:text-[#000035]";
     const logoSrc = isDarkMode ? logoDark : logoLight;
     const logoAlt = "BookHive Logo";
 
@@ -41,14 +41,14 @@ const DarkBgSection = ({
                 <img
                     src={logoSrc}
                     alt={logoAlt}
-                    className={`w-[280px] h-auto ${logoClassName}`}
+                    className={`w-[220px] -mb-10 h-auto ${logoClassName}`}
                     style={logoStyle}
                 />
             )}
-            <h1 className={`text-[64px] text-center -mt-12 ${textColor}`}>
+            <h1 className={`text-[73px] text-center -mb-8 ${textColor}`}>
                 BookHive
                 <br />
-                <span className="block font-['Merienda_One',cursive] text-[45px] -mt-6 font-medium">Library</span>
+                <span className="block font-['Merienda_One',cursive] text-[50px] -mt-6 font-medium">Library</span>
             </h1>
             <p className={`text-xl ${textColor} max-w-100 text-center cursor-default`}>{message}</p>
             <div className="flex flex-col gap-4 w-full max-w-[300px]">
