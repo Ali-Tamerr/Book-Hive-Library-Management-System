@@ -20,6 +20,7 @@ function BorrowedBooks({
   customTitle,
   hideButton = false,
   showPending = false,
+  showReturned = false,
 }) {
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -192,6 +193,9 @@ function BorrowedBooks({
 
     if (showPending) {
       return isPending;
+    }
+    if (showReturned) {
+      return isReturned;
     }
     // Show everything except Pending and Returned (i.e., Completed, Overdue)
     return !isPending && !isReturned;
