@@ -20,14 +20,12 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
             type="text"
             value={user?.name || ""}
             placeholder="Name"
-            readOnly
             className="h-14 w-full rounded-2xl border border-[#0a0f33] px-6 text-sm font-medium text-[#0a0f33] outline-none"
           />
           <input
             type="text"
             value={user?.plan || ""}
             placeholder="Plan"
-            readOnly
             className="h-14 w-full rounded-2xl border border-[#0a0f33] px-6 text-sm font-medium text-[#0a0f33] outline-none"
           />
         </div>
