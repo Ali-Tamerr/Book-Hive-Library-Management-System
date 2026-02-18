@@ -1,25 +1,29 @@
 import React, { useState } from "react";
-import { X, ThumbsUp, Star } from "lucide-react";
+import { ThumbsUp, Star, StarHalf } from "lucide-react";
+import Popup from "./Popup.jsx";
+import FormButton from "./FormButton.jsx";
+import FormInput from "./FormInput.jsx";
 
 const FeedbackPopup = ({ show, onClose }) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [feedbackText, setFeedbackText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      alert("Please select a rating.");
+      setShowWarning(true);
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Simulate API call
       console.log("Submitting feedback:", { rating, feedbackText });
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setRating(0);
       setFeedbackText("");
       onClose();
@@ -35,86 +39,104 @@ const FeedbackPopup = ({ show, onClose }) => {
     setHoverRating(0);
     setFeedbackText("");
     onClose();
-  }
+  };
 
-  if (!show) return null;
+  const handleMouseMove = (e, star) => {
+    const { left, width } = e.currentTarget.getBoundingClientRect();
+    const isLeftHalf = e.clientX - left < width / 2;
+    setHoverRating(isLeftHalf ? star - 0.5 : star);
+  };
+
+  const handleStarClick = () => {
+    setRating(hoverRating);
+    setShowWarning(false);
+  };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="absolute inset-0" onClick={handleCancel}></div>
-
-      <div className="relative w-full max-w-[600px] flex flex-col rounded-[20px] bg-white dark:bg-[#121317] dark:border dark:border-[#2C2D33] p-8 shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#0b0b3b] text-white dark:bg-[#D7D7D7] dark:text-[#0b0b3b]">
-              <ThumbsUp size={24} fill="currentColor" />
-            </div>
-            <h2 className="text-xl font-bold text-[#0a0f33] dark:text-white">
-              Rate your experience
-            </h2>
-          </div>
-          <button
-            onClick={handleCancel}
-            className="rounded-lg border border-[#3D3E3E] p-1.5 text-[#3D3E3E] transition-colors hover:bg-gray-100 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#2C2D33]"
-          >
-            <X size={16} />
-          </button>
+    <Popup
+      show={show}
+      onClose={handleCancel}
+      title="Rate your experience"
+      icon={<ThumbsUp size={24} />}
+      maxWidthClass="max-w-[600px]"
+    >
+      <div className="flex w-full flex-col gap-6">
+        <div className="flex items-center w-full justify-center">
+          <FormInput
+          type="textarea"
+          className="h-[150px] w-full  max-w-[400px] resize-none"
+          placeholder="Share your experience"
+          value={feedbackText}
+          onChange={(e) => setFeedbackText(e.target.value)}
+        />
         </div>
 
-        <div className="h-[1px] w-full bg-[#E3E3E3] dark:bg-[#2C2D33] mb-6"></div>
+        <div
+          className="flex items-center justify-center gap-2"
+          onMouseLeave={() => setHoverRating(0)}
+        >
+          {[1, 2, 3, 4, 5].map((star) => {
+            const value = hoverRating || rating;
+            const isFull = value >= star;
+            const isHalf = !isFull && value >= star - 0.5;
 
-        {/* Content */}
-        <div className="flex flex-col gap-6">
-          <textarea
-            className="w-full h-32 p-4 rounded-xl border border-[#E3E3E3] bg-transparent text-sm text-[#0a0f33] placeholder-gray-400 outline-none resize-none focus:border-[#0b0b3b] dark:border-[#2C2D33] dark:text-[#D7D7D7] dark:focus:border-[#D7D7D7]"
-            placeholder="Share your experience"
-            value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
-          ></textarea>
-
-          <div className="flex justify-center gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
+            return (
               <button
                 key={star}
                 type="button"
-                className="cursor-pointer focus:outline-none transition-transform hover:scale-110"
-                onClick={() => setRating(star)}
-                onMouseEnter={() => setHoverRating(star)}
-                onMouseLeave={() => setHoverRating(0)}
+                className="cursor-pointer transition-transform hover:scale-110 focus:outline-none"
+                onMouseMove={(e) => handleMouseMove(e, star)}
+                onClick={handleStarClick}
               >
-                <Star
-                  size={32}
-                  className={`${
-                    star <= (hoverRating || rating)
-                      ? "fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
-                      : "text-gray-300 dark:text-gray-600"
-                  }`}
-                  strokeWidth={1.5}
-                />
+                <div className="relative">
+                  <Star
+                    size={34}
+                    className="text-[#0b0b3b] dark:text-[#D7D7D7]"
+                    strokeWidth={1.5}
+                  />
+                  {isFull && (
+                    <Star
+                      size={34}
+                      className="absolute left-0 top-0 fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                      strokeWidth={1.5}
+                    />
+                  )}
+                  {isHalf && (
+                    <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
+                      <Star
+                        size={34}
+                        className="min-w-[34px] fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                        strokeWidth={1.5}
+                        style={{
+                          width: "34px",
+                          height: "34px",
+                          minWidth: "34px",
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </div>
 
-          <div className="flex gap-4 mt-2">
-            <button
-              onClick={handleCancel}
-              className="flex-1 py-3.5 rounded-xl bg-[#E3E3E3] text-[#0a0f33] font-bold text-sm uppercase tracking-wider hover:bg-gray-300 transition-colors"
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="flex-1 py-3.5 rounded-xl bg-[#0b0b3b] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#1a1a6a] transition-colors dark:bg-[#0b0b3b] dark:text-white dark:hover:bg-[#1a1a6a]"
-            >
-              {isSubmitting ? "Sending..." : "Send"}
-            </button>
+        {showWarning && (
+          <div className="text-center text-sm font-semibold text-red-500">
+            Please select a rating.
           </div>
+        )}
+
+        <div className="mt-2 flex gap-4">
+          <FormButton onClick={handleCancel} disabled={isSubmitting}>
+            Cancel
+          </FormButton>
+          <FormButton onClick={handleSubmit} disabled={isSubmitting} isPrimary>
+            {isSubmitting ? "Sending..." : "Send"}
+          </FormButton>
         </div>
       </div>
-    </div>
+    </Popup>
   );
 };
 
