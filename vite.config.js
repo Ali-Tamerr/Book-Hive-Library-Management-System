@@ -13,5 +13,5 @@ export default defineConfig({
       },
     }),
   ],
-  base: "/Library-Management-System-React/",
+  base: process.env.VITE_BASE || "/",
 });
