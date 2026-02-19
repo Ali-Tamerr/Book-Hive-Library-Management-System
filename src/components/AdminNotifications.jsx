@@ -221,6 +221,7 @@ const AdminNotifications = () => {
       <ViewRequestsPopup
         show={showRequestsPopup}
         onClose={() => setShowRequestsPopup(false)}
+        currentUser={currentUser}
         requests={userRequests}
         isLoading={isLoadingRequests}
         onApprove={(request) => {

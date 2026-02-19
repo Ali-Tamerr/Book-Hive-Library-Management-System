@@ -5,6 +5,56 @@ const rawApiUrl =
 export const API_BASE_URL = rawApiUrl.replace(/^['"]|['"]$/g, "");
 console.log("API_BASE_URL configured as:", API_BASE_URL);
 
+export const getImageUrl = (path) => {
+  if (!path) return null;
+  const value = String(path).trim();
+
+  if (value.startsWith("data:")) return value;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+
+  // Check for Postgres Hex format (\x...)
+  if (value.startsWith("\\x")) {
+    try {
+      // Remove prefix
+      const hex = value.substring(2);
+      // Convert hex to binary string
+      const match = hex.match(/.{1,2}/g);
+      if (match) {
+        const binary = match
+          .map((byte) => String.fromCharCode(parseInt(byte, 16)))
+          .join("");
+        return `data:image/jpeg;base64,${btoa(binary)}`;
+      }
+    } catch (e) {
+      console.error("Failed to convert hex image:", e);
+      return null;
+    }
+  }
+
+  const looksLikePath =
+    /^\/?(uploads|images|assets)\//i.test(value) ||
+    /^[./]/.test(value) ||
+    /\\/.test(value) ||
+    /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico|avif)$/i.test(value);
+
+  if (looksLikePath) {
+    const normalizedPath = value.replace(/\\/g, "/");
+    const rootUrl = API_BASE_URL.replace(/\/api\/?$/, "");
+    const formattedPath = normalizedPath.startsWith("/")
+      ? normalizedPath
+      : `/${normalizedPath}`;
+    return `${rootUrl}${formattedPath}`;
+  }
+
+  const looksLikeBase64 = /^[A-Za-z0-9+/=\r\n]+$/.test(value) && value.length > 40;
+  if (looksLikeBase64) {
+    return `data:image/jpeg;base64,${value.replace(/\s+/g, "")}`;
+  }
+
+  // Treat as base64
+  return `data:image/jpeg;base64,${value}`;
+};
+
 // Create Axios instance with default config
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
