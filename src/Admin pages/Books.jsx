@@ -228,7 +228,7 @@ function Books({ searchValue, setSearchValue }) {
   const title = "Book Management";
   const buttonText = isSuperAdmin ? "Add Book" : null;
   const columns = [
-    { header: "ID", accessor: "book_id" },
+    // { header: "ID", accessor: "book_id" },
     { header: "Name", accessor: "name" },
     {
       header: "Category",
