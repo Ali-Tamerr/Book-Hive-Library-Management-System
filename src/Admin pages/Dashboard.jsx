@@ -82,7 +82,7 @@ function Dashboard() {
   const getUserName = (userId) => {
     const user = users.find((u) => u.user_id === userId || u.id === userId);
     if (!user) return "Unknown";
-    return user.full_name || user.name || user.username || user.email || "User";
+    return user.full_name || user.name || user.username || "User";
   };
 
   const buildTransactionItem = (transaction) => ({
@@ -142,7 +142,6 @@ function Dashboard() {
         user.full_name ||
         user.username ||
         `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-        user.email ||
         "Unknown",
       adminId: user.user_id ?? user.id,
       subtitle: `Librarian Branch: ${getBranchName(user)} \u2022 ${user.status || "Active"}`,
