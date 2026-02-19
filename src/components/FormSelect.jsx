@@ -29,7 +29,7 @@ const FormSelect = ({
         ? "w-full p-5 rounded-xl border border-solid border-gray-500 bg-transparent text-white outline-none focus:border-white text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none"
         : "w-full p-5 rounded-xl border border-solid border-[#3D3E3E] bg-white text-[#0a0f33] outline-none focus:border-[#1e255e] text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none";
     }
-    return "w-full text-[#727374] dark:text-[#9CA3AF] h-[50px] px-4 py-3 pr-10 rounded-xl border border-[#3D3E3E] dark:border-[#2C2D33] bg-white dark:bg-[#1A1B20] outline-none focus:border-[#1e255e] dark:focus:border-white text-[13px] appearance-none";
+    return "w-full h-[50px] px-4 py-4 rounded-xl border border-[#3D3E3E] dark:border-[#3D3E3E] bg-white dark:bg-[#121317] text-black dark:text-[#D7D7D7] placeholder-[#727374] dark:placeholder-[#5A5B60] outline-none focus:border-[#1e255e] dark:focus:border-[#D7D7D7] text-[13px] appearance-none";
   };
 
   const getChevronStyles = () => {

@@ -12,6 +12,8 @@ const FormInput = ({
   autocomplete,
   step,
   className,
+  rightIcon,
+  onRightIconClick,
 }) => {
   const commonProps = {
     name,
