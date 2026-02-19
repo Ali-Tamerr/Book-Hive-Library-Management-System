@@ -1,36 +1,51 @@
+import { useState } from "react";
 import { User, RotateCcw } from "lucide-react";
 import { useUsers } from "../hooks/useUsers";
 import { useBooks } from "../hooks/useBooks";
 import { useOverdueBooks } from "../hooks/useOverdueBooks";
 import { useBookCopies } from "../hooks/useBookCopies";
 import { useBookTransactions } from "../hooks/useBookTransactions";
+import { useBranches } from "../hooks/useBranches";
+import { getCurrentUser } from "../services/auth.api";
 import DashboardCard from "../components/DashboardCard";
 import { useUserActivity } from "../hooks/useUserActivity";
+import { isUserOnline } from "../services/userActivity.api";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
+import AdminDashboardCard from "../components/AdminDashboardCard.jsx";
 
 function Dashboard() {
+  const currentUser = getCurrentUser();
+  const isSuperAdmin = currentUser?.role === "Super Admin";
+  const [loadingAdmins, setLoadingAdmins] = useState({});
   useUserActivity();
 
   // Use React Query hooks - much cleaner!
   const {
     data: users = [],
     isLoading: usersLoading,
+    refetch: refetchUsers,
   } = useUsers();
 
   const { data: books = [], isLoading: booksLoading } = useBooks();
+  const { data: branches = [], isLoading: branchesLoading } = useBranches();
   const { data: bookCopies = [] } = useBookCopies();
   const { data: overdueBooksData = [], isLoading: overdueLoading } =
     useOverdueBooks();
   const { data: bookTransactions = [], isLoading: transactionsLoading } =
     useBookTransactions();
 
+  const handleRefreshAdmins = (adminId) => {
+    setLoadingAdmins((prev) => ({ ...prev, [adminId]: true }));
+    refetchUsers().finally(() => {
+      setLoadingAdmins((prev) => ({ ...prev, [adminId]: false }));
+    });
+  };
+
   // Calculate stats from data
-  const loading =
-    usersLoading ||
-    booksLoading ||
-    overdueLoading ||
-    transactionsLoading;
+  const transactionsLoadingState =
+    usersLoading || booksLoading || overdueLoading || transactionsLoading;
+  const librariansLoading = usersLoading || branchesLoading;
 
   const borrowedTransactions = Array.isArray(bookTransactions)
     ? bookTransactions.filter(
@@ -92,8 +107,57 @@ function Dashboard() {
     .slice(0, 5)
     .map(buildTransactionItem);
 
+  const branchesById = new Map(
+    branches.map((branch) => [
+      branch.branch_id ?? branch.id,
+      branch.name || branch.location || branch.address || "Unknown",
+    ]),
+  );
+
+  const getBranchName = (user) => {
+    const direct =
+      user.branch ||
+      user.branch_name ||
+      user.branchName ||
+      user.branch_location ||
+      user.location ||
+      user.address;
+    if (direct) return direct;
+    const branchId = user.branch_id ?? user.branchId;
+    if (branchId !== undefined && branchId !== null) {
+      return branchesById.get(branchId) || `Branch ${branchId}`;
+    }
+    return "N/A";
+  };
+
+  const adminUsers = Array.isArray(users)
+    ? users.filter((user) => user.role === "Admin")
+    : [];
+
+  const displayAdmins = adminUsers
+    .map((user) => ({
+      id: user.user_id ?? user.id,
+      name:
+        user.name ||
+        user.full_name ||
+        user.username ||
+        `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+        user.email ||
+        "Unknown",
+      adminId: user.user_id ?? user.id,
+      subtitle: `Librarian Branch: ${getBranchName(user)} \u2022 ${user.status || "Active"}`,
+      isOnline: isUserOnline(user),
+    }))
+    .sort((a, b) => {
+      if (a.isOnline !== b.isOnline) {
+        return b.isOnline - a.isOnline;
+      }
+      return a.name.localeCompare(b.name);
+    })
+    .slice(0, 4);
+
   const renderTransactionList = (items, emptyText) => {
-    if (loading) {
+    if (transactionsLoadingState) {
       return (
         <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#121317]">
           Loading...
@@ -151,19 +215,43 @@ function Dashboard() {
         </div>
 
         <div className="flex min-h-0 w-full flex-1 flex-col gap-6 max-[1540px]:mt-6">
-          <div className="mx-auto w-full max-w-[420px]">
-            <DashboardCard title="Borrowed Books">
-              {renderTransactionList(borrowedItems, "No borrowed books")}
-            </DashboardCard>
-          </div>
-          <div className="grid w-full grid-cols-2 gap-6 max-[900px]:grid-cols-1">
-            <DashboardCard title="Overdue Borrowers">
-              {renderTransactionList(overdueItems, "No overdue books")}
-            </DashboardCard>
-            <DashboardCard title="Returned Books">
-              {renderTransactionList(returnedItems, "No returned books")}
-            </DashboardCard>
-          </div>
+          {isSuperAdmin ? (
+            <div className="grid w-full grid-cols-2 gap-6 max-[900px]:grid-cols-1">
+              <DashboardCard title="Borrowed Books">
+                {renderTransactionList(borrowedItems, "No borrowed books")}
+              </DashboardCard>
+              <DashboardCard title="Overdue Borrowers">
+                {renderTransactionList(overdueItems, "No overdue books")}
+              </DashboardCard>
+              <DashboardCard title="Returned Books">
+                {renderTransactionList(returnedItems, "No returned books")}
+              </DashboardCard>
+              <AdminDashboardCard
+                title="BookHive Librarian"
+                loading={librariansLoading}
+                displayAdmins={displayAdmins}
+                handleRefreshAdmins={handleRefreshAdmins}
+                loadingAdmins={loadingAdmins}
+                emptyLabel="No librarians found"
+              />
+            </div>
+          ) : (
+            <>
+              <div className="mx-auto w-full max-w-[420px]">
+                <DashboardCard title="Borrowed Books">
+                  {renderTransactionList(borrowedItems, "No borrowed books")}
+                </DashboardCard>
+              </div>
+              <div className="grid w-full grid-cols-2 gap-6 max-[900px]:grid-cols-1">
+                <DashboardCard title="Overdue Borrowers">
+                  {renderTransactionList(overdueItems, "No overdue books")}
+                </DashboardCard>
+                <DashboardCard title="Returned Books">
+                  {renderTransactionList(returnedItems, "No returned books")}
+                </DashboardCard>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>
