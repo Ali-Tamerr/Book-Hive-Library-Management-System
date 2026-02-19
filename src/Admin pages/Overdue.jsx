@@ -3,6 +3,7 @@ import { useOverdueBooks } from "../hooks/useOverdueBooks";
 import { useBooks } from "../hooks/useBooks";
 import { useUsers } from "../hooks/useUsers";
 import { useBookCopies } from "../hooks/useBookCopies";
+import { useBranches } from "../hooks/useBranches"; // Added
 import { useDeleteBorrowedBook } from "../hooks/useBorrowedBooks";
 import CommonLayout from "../Layouts/CommonLayout.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
@@ -16,10 +17,39 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
   const { data: books = [] } = useBooks();
   const { data: users = [] } = useUsers();
   const { data: bookCopies = [] } = useBookCopies();
+  const { data: branches = [] } = useBranches(); // Added
   const deleteBorrowedBookMutation = useDeleteBorrowedBook();
 
   const currentUser = getCurrentUser();
   const isSuperAdmin = currentUser?.role === "Super Admin";
+
+  const getBranchIdFromUser = (user) => {
+    if (!user) return null;
+    return (
+      user.branch_id ||
+      user.branchId ||
+      user.branch?.branch_id ||
+      user.branch?.id
+    );
+  };
+  const currentUserBranchId = getBranchIdFromUser(currentUser);
+
+  const getBookBranchId = (bookCopyId) => {
+    const copy = bookCopies.find(
+      (c) => c.book_copy_id === bookCopyId || c.id === bookCopyId,
+    );
+    if (copy && copy.branch_id) return String(copy.branch_id);
+    return null;
+  };
+
+  const getBookBranchName = (bookCopyId) => {
+    const branchId = getBookBranchId(bookCopyId);
+    if (!branchId) return "N/A";
+    const branch = branches.find(
+      (b) => String(b.branch_id) === String(branchId),
+    );
+    return branch ? branch.name : `Branch ${branchId}`;
+  };
 
   const getBookName = (bookCopyId) => {
     const copy = bookCopies.find(
@@ -53,13 +83,25 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
     });
   };
 
-  const enrichedOverdueBooks = overdueBooks.map((book) => ({
+  const visibleOverdueBooks = overdueBooks.filter((item) => {
+    if (isSuperAdmin) return true;
+    if (currentUserBranchId) {
+      const itemBranchId = getBookBranchId(item.book_id); // book_id here is actually book_copy_id in transactions usually?
+      // API docs say `book_id` in `BookTransactions` refers to `BookCopies.book_copy_id`.
+      // So checking `item.book_id` against copy's branch is correct.
+      return String(itemBranchId) === String(currentUserBranchId);
+    }
+    return false;
+  });
+
+  const enrichedOverdueBooks = visibleOverdueBooks.map((book) => ({
     ...book,
     id: book.transaction_id,
     book_name: getBookName(book.book_id),
     user_name_display: getUserName(book.user_id),
     due_date_formatted: formatDate(book.due_date),
     created_at_formatted: formatDate(book.created_at),
+    branch_name: getBookBranchName(book.book_id),
   }));
 
   const filteredOverdueBooks = searchValue
@@ -68,7 +110,11 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
           book.book_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
           book.user_name_display
             ?.toLowerCase()
-            .includes(searchValue.toLowerCase()),
+            .includes(searchValue.toLowerCase()) ||
+          (isSuperAdmin &&
+            book.branch_name
+              ?.toLowerCase()
+              .includes(searchValue.toLowerCase())),
       )
     : enrichedOverdueBooks;
 
@@ -94,6 +140,7 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
   const columns = [
     { header: "User Name", accessor: "user_name_display" },
     { header: "Book Name", accessor: "book_name" },
+    ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_name" }] : []),
     { header: "Due Date", accessor: "due_date_formatted" },
     { header: "Date & Time", accessor: "created_at_formatted" },
     ...(isSuperAdmin ? [{ header: "Action", accessor: "action" }] : []),

@@ -316,7 +316,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     });
   };
 
-  const handleConfirmRenew = async () => {
+  const handleConfirmRenew = async (selectedPlan) => {
     if (!selectedRenewUser) return;
 
     // Calculate new expiration date
@@ -346,6 +346,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         id: selectedRenewUser.user_id,
         data: {
           ...userData,
+          plan: selectedPlan || selectedRenewUser.plan || null,
           subscription_end_date: newEndDate.toISOString(),
         },
       });
