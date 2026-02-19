@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   useCategories,
   useCreateCategory,
   useUpdateCategory,
-  useDeleteCategory
-} from '../hooks/useCategories.js';
-import { useUsers } from '../hooks/useUsers.js';
-import CategoryFormPopup from '../components/CategoryFormPopup.jsx';
-import DeleteConfirmationPopup from '../components/DeleteConfirmationPopup.jsx';
-import ViewDetailsPopup from '../components/ViewDetailsPopup.jsx';
-import CommonLayout from '../Layouts/CommonLayout.jsx';
-import { getCurrentUser } from '../services/auth.api';
+  useDeleteCategory,
+} from "../hooks/useCategories.js";
+import { useUsers } from "../hooks/useUsers.js";
+import CategoryFormPopup from "../components/CategoryFormPopup.jsx";
+import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
+import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
+import CommonLayout from "../Layouts/CommonLayout.jsx";
+import { getCurrentUser } from "../services/auth.api";
 
-import { useBooks } from '../hooks/useBooks.js';
+import { useBooks } from "../hooks/useBooks.js";
 
 function Categories({ searchValue, setSearchValue }) {
   const currentUser = getCurrentUser();
@@ -26,13 +26,16 @@ function Categories({ searchValue, setSearchValue }) {
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: ''
+    name: "",
+    description: "",
   });
 
   const { data: categories = [], isLoading } = useCategories();
   const { data: books = [] } = useBooks();
-  const { data: users = [] } = useUsers();
+  const { data: usersData } = useUsers();
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
   const deleteCategoryMutation = useDeleteCategory();
@@ -43,28 +46,31 @@ function Categories({ searchValue, setSearchValue }) {
       const apiData = {
         category_name: formData.name,
         category_description: formData.description,
-        created_by: currentUser?.user_id || null
+        created_by: currentUser?.user_id || null,
       };
 
       if (editMode && formData.id) {
-        await updateCategoryMutation.mutateAsync({ id: formData.id, data: apiData });
+        await updateCategoryMutation.mutateAsync({
+          id: formData.id,
+          data: apiData,
+        });
       } else {
         await createCategoryMutation.mutateAsync(apiData);
       }
-      setFormData({ name: '', description: '' });
+      setFormData({ name: "", description: "" });
       setShowPopup(false);
       setEditMode(false);
     } catch (error) {
       console.error("Failed to save category:", error);
-      alert('Failed to save category. Please try again.');
+      alert("Failed to save category. Please try again.");
     }
   };
 
   const handleEdit = (category) => {
     setFormData({
       id: category.category_id || category.id,
-      name: category.category_name || category.name || '',
-      description: category.category_description || category.description || ''
+      name: category.category_name || category.name || "",
+      description: category.category_description || category.description || "",
     });
     setEditMode(true);
     setShowPopup(true);
@@ -74,9 +80,11 @@ function Categories({ searchValue, setSearchValue }) {
     setCategoryToDelete(id);
 
     // Check if any book uses this category
-    const linkedBooks = books.filter(book => book.category_id === id);
+    const linkedBooks = books.filter((book) => book.category_id === id);
     if (linkedBooks.length > 0) {
-      setDeleteWarning(`Cannot delete this category because it is linked to ${linkedBooks.length} book(s).`);
+      setDeleteWarning(
+        `Cannot delete this category because it is linked to ${linkedBooks.length} book(s).`,
+      );
       setIsDeleteDisabled(true);
     } else {
       setDeleteWarning(null);
@@ -93,7 +101,9 @@ function Categories({ searchValue, setSearchValue }) {
         setShowDeleteConfirm(false);
         setCategoryToDelete(null);
       } catch (error) {
-        alert(`Failed to delete category: ${error.message || 'Unknown error'}. Please try again.`);
+        alert(
+          `Failed to delete category: ${error.message || "Unknown error"}. Please try again.`,
+        );
         setShowDeleteConfirm(false);
         setCategoryToDelete(null);
       }
@@ -106,46 +116,47 @@ function Categories({ searchValue, setSearchValue }) {
   };
 
   const buttonBehaviour = () => {
-    setFormData({ name: '', description: '' });
+    setFormData({ name: "", description: "" });
     setEditMode(false);
     setShowPopup(true);
   };
 
   const getCreatorName = (createdById) => {
-    if (!createdById) return { name: 'N/A', role: 'Not recorded' };
-    const creator = users.find(u => u.user_id === createdById);
-    return creator ? { name: creator.name, role: creator.role } : { name: createdById, role: 'Unknown' };
+    if (!createdById) return { name: "N/A", role: "Not recorded" };
+    const creator = users.find((u) => u.user_id === createdById);
+    return creator
+      ? { name: creator.name, role: creator.role }
+      : { name: createdById, role: "Unknown" };
   };
 
   const filteredCategories = searchValue
-    ? categories.filter(
-      (category) => {
-        const name = category.category_name || category.name || '';
-        const description = category.category_description || category.description || '';
-        return name.toLowerCase().includes(searchValue.toLowerCase()) ||
-          description.toLowerCase().includes(searchValue.toLowerCase());
-      }
-    )
+    ? categories.filter((category) => {
+        const name = category.category_name || category.name || "";
+        const description =
+          category.category_description || category.description || "";
+        return (
+          name.toLowerCase().includes(searchValue.toLowerCase()) ||
+          description.toLowerCase().includes(searchValue.toLowerCase())
+        );
+      })
     : categories;
 
   const title = "Category Management";
   const buttonText = "Add Category";
   const columns = [
     // { header: 'ID', accessor: 'category_id' },
-    { header: 'Name', accessor: 'category_name' },
+    { header: "Name", accessor: "category_name" },
     {
-      header: 'Bo Quantity',
-      accessor: 'book_count',
+      header: "Bo Quantity",
+      accessor: "book_count",
       render: (category) => {
-        const count = books.filter(b => b.category_id === category.category_id).length;
-        return (
-          <span className=" text-sm font-medium ">
-            {count}
-          </span>
-        );
-      }
+        const count = books.filter(
+          (b) => b.category_id === category.category_id,
+        ).length;
+        return <span className="text-sm font-medium">{count}</span>;
+      },
     },
-    { header: 'Action', accessor: 'action' },
+    { header: "Action", accessor: "action" },
   ];
 
   const formPopup = (
@@ -196,13 +207,18 @@ function Categories({ searchValue, setSearchValue }) {
           setSelectedCategory(null);
         }}
         title="View Category"
-        data={selectedCategory ? {
-          'Category ID': selectedCategory.category_id,
-          'Name': selectedCategory.category_name,
-        } : null}
-        savedBy={selectedCategory ? getCreatorName(selectedCategory.created_by) : null}
-      >
-      </ViewDetailsPopup>
+        data={
+          selectedCategory
+            ? {
+                "Category ID": selectedCategory.category_id,
+                Name: selectedCategory.category_name,
+              }
+            : null
+        }
+        savedBy={
+          selectedCategory ? getCreatorName(selectedCategory.created_by) : null
+        }
+      ></ViewDetailsPopup>
     </>
   );
 }

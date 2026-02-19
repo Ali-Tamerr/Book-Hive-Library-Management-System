@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from "react";
 import { Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-
-import LogoIcon from "../assets/logo.svg?react";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
@@ -16,7 +14,10 @@ import { getCurrentUser } from "../services/auth.api";
 
 function Dashboard() {
   const currentUser = getCurrentUser();
-  const { data: users = [], isLoading: usersLoading } = useUsers();
+  const { data: usersData, isLoading: usersLoading } = useUsers();
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
   const { data: books = [], isLoading: booksLoading } = useBooks();
   const { data: categories = [], isLoading: categoriesLoading } =
     useCategories();

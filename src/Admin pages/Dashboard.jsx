@@ -22,10 +22,14 @@ function Dashboard() {
 
   // Use React Query hooks - much cleaner!
   const {
-    data: users = [],
+    data: usersData,
     isLoading: usersLoading,
     refetch: refetchUsers,
   } = useUsers();
+
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
 
   const { data: books = [], isLoading: booksLoading } = useBooks();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
@@ -215,7 +219,7 @@ function Dashboard() {
 
         <div className="flex min-h-0 w-full flex-1 flex-col gap-6 max-[1540px]:mt-6">
           {isSuperAdmin ? (
-            <div className="grid w-full grid-cols-2 gap-6 max-[900px]:grid-cols-1">
+            <div className="grid h-full w-full auto-rows-fr grid-cols-2 gap-6 max-[900px]:grid-cols-1">
               <DashboardCard title="Borrowed Books">
                 {renderTransactionList(borrowedItems, "No borrowed books")}
               </DashboardCard>
@@ -235,21 +239,30 @@ function Dashboard() {
               />
             </div>
           ) : (
-            <>
-              <div className="mx-auto w-full max-w-[420px]">
-                <DashboardCard title="Borrowed Books">
-                  {renderTransactionList(borrowedItems, "No borrowed books")}
-                </DashboardCard>
-              </div>
+            <div className="mx-auto w-full max-w-[900px]">
               <div className="grid w-full grid-cols-2 gap-6 max-[900px]:grid-cols-1">
-                <DashboardCard title="Overdue Borrowers">
+                <div className="col-span-2 flex justify-center max-[900px]:col-span-1">
+                  <DashboardCard
+                    title="Borrowed Books"
+                    className="h-auto min-h-[260px]"
+                  >
+                    {renderTransactionList(borrowedItems, "No borrowed books")}
+                  </DashboardCard>
+                </div>
+                <DashboardCard
+                  title="Overdue Borrowers"
+                  className="h-auto min-h-[260px]"
+                >
                   {renderTransactionList(overdueItems, "No overdue books")}
                 </DashboardCard>
-                <DashboardCard title="Returned Books">
+                <DashboardCard
+                  title="Returned Books"
+                  className="h-auto min-h-[260px]"
+                >
                   {renderTransactionList(returnedItems, "No returned books")}
                 </DashboardCard>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

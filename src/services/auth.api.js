@@ -1,6 +1,88 @@
 
 import { getAllUsers, createUser } from './users.api';
 
+const normalizeUsersArray = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+
+  if (Array.isArray(payload.data)) return payload.data;
+  if (Array.isArray(payload.users)) return payload.users;
+  if (Array.isArray(payload.items)) return payload.items;
+  if (Array.isArray(payload.results)) return payload.results;
+
+  if (payload.data && typeof payload.data === 'object') {
+    if (Array.isArray(payload.data.items)) return payload.data.items;
+    if (Array.isArray(payload.data.users)) return payload.data.users;
+    if (Array.isArray(payload.data.results)) return payload.data.results;
+  }
+
+  return [];
+};
+
+const getPagingMeta = (payload, fallbackPage, fallbackLimit) => {
+  const source =
+    payload && typeof payload === 'object' && payload.data && typeof payload.data === 'object'
+      ? payload.data
+      : payload;
+
+  const page = Number(source?.page ?? source?.currentPage ?? fallbackPage);
+  const limit = Number(source?.limit ?? source?.pageSize ?? fallbackLimit);
+  const total = Number(source?.total ?? source?.totalCount ?? source?.count ?? 0);
+
+  return {
+    page: Number.isFinite(page) && page > 0 ? page : fallbackPage,
+    limit: Number.isFinite(limit) && limit > 0 ? limit : fallbackLimit,
+    total: Number.isFinite(total) && total >= 0 ? total : 0,
+  };
+};
+
+const getAllUsersForAuth = async () => {
+  const firstPage = 1;
+  const pageSize = 200;
+  const maxPages = 200;
+
+  const firstResponse = await getAllUsers({ page: firstPage, limit: pageSize });
+  const firstUsers = normalizeUsersArray(firstResponse);
+
+  if (Array.isArray(firstResponse)) {
+    return firstUsers;
+  }
+
+  const { page, limit, total } = getPagingMeta(firstResponse, firstPage, pageSize);
+  const users = [...firstUsers];
+
+  if (total > 0 && users.length >= total) {
+    return users;
+  }
+
+  if (firstUsers.length < limit && total === 0) {
+    return users;
+  }
+
+  let currentPage = page + 1;
+  while (currentPage <= maxPages) {
+    const response = await getAllUsers({ page: currentPage, limit });
+    const pageUsers = normalizeUsersArray(response);
+
+    if (!pageUsers.length) break;
+
+    users.push(...pageUsers);
+
+    const pageMeta = getPagingMeta(response, currentPage, limit);
+    if (pageMeta.total > 0 && users.length >= pageMeta.total) {
+      break;
+    }
+
+    if (pageUsers.length < pageMeta.limit) {
+      break;
+    }
+
+    currentPage += 1;
+  }
+
+  return users;
+};
+
 const persistAuthSession = (user) => {
   localStorage.setItem('currentUser', JSON.stringify(user));
 
@@ -23,7 +105,7 @@ const persistAuthSession = (user) => {
 
 export const login = async (phoneNumber, password) => {
   try {
-    const users = await getAllUsers();
+    const users = await getAllUsersForAuth();
     
     if (!Array.isArray(users)) {
       throw new Error('Failed to fetch users. Please try again.');
@@ -62,7 +144,7 @@ export const login = async (phoneNumber, password) => {
 
 export const signup = async (userData) => {
   try {
-    const users = await getAllUsers();
+    const users = await getAllUsersForAuth();
     if (!Array.isArray(users)) {
       throw new Error('Failed to fetch users. Please try again.');
     }
@@ -98,7 +180,7 @@ export const signup = async (userData) => {
 
     if (!createdUser || createdUser === '' || typeof createdUser === 'string') {
       console.log('API returned empty/invalid response, fetching user by phone number...');
-      const allUsers = await getAllUsers();
+      const allUsers = await getAllUsersForAuth();
       user = Array.isArray(allUsers)
         ? allUsers.find(
             (u) => String(u.phone_number || '').trim() === String(userData.contact || '').trim(),

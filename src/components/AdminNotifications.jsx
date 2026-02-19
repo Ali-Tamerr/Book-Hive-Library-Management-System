@@ -39,7 +39,8 @@ const AdminNotifications = () => {
     password_hash: "",
   });
 
-  const { data: users = [] } = useUsers();
+  const { data } = useUsers();
+  const users = data ? data.pages.flatMap((page) => page.data || []) : [];
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser(); // Needed if we decide to support edit, or for userForm logic
   const deleteRequestMutation = useDeleteUserRequest();
