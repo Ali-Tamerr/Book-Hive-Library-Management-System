@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Eye } from "lucide-react";
 import CommonLayout from "../Layouts/CommonLayout";
 import { useReturnedBooks } from "../hooks/useReturnedBooks";
 import { useBooks } from "../hooks/useBooks";
@@ -9,7 +8,7 @@ import { getCurrentUser } from "../services/auth.api";
 
 function ReturnedBooksContent({ searchValue, customTitle }) {
   const currentUser = getCurrentUser();
-  const { data: returnedBooks = [], isLoading, error } = useReturnedBooks();
+  const { data: returnedBooks = [], isLoading } = useReturnedBooks();
   const { data: books = [] } = useBooks();
   const { data: bookCopies = [] } = useBookCopies();
   const { data: categories = [] } = useCategories();
@@ -57,12 +56,7 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
     { header: "Category", accessor: "category" },
     { header: "Due Date", accessor: "due_date" },
     { header: "Date & Time", accessor: "created_at" },
-    { header: "Action", accessor: "action" },
   ];
-
-  const handleView = (book) => {
-    console.log("View book details:", book);
-  };
 
   const tableData = filteredBooks.map((book) => ({
     ...book,
@@ -94,17 +88,6 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
       formPopup={null}
       isUserPage={true}
       customTitle={customTitle}
-      customActionRenderer={(book) => (
-        <div className="flex justify-center">
-          <button
-            onClick={() => handleView(book)}
-            className="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-200"
-          >
-            <Eye size={16} />
-            View
-          </button>
-        </div>
-      )}
     />
   );
 }

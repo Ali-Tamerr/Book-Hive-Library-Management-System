@@ -88,6 +88,18 @@ function UserManagement({ searchValue, setSearchValue }) {
     );
   }
 
+  useEffect(() => {
+    const handleOpenRequests = () => {
+      setShowRequestsPopup(true);
+    };
+
+    window.addEventListener("openUserRequests", handleOpenRequests);
+
+    return () => {
+      window.removeEventListener("openUserRequests", handleOpenRequests);
+    };
+  }, []);
+
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {

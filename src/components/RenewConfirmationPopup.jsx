@@ -35,11 +35,15 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
     <Popup
       show={show}
       onClose={onClose}
-      title="Renew Confirmation"
+      title={
+        <span className="text-[#0a0f33] dark:text-[#D7D7D7]">
+          Renew Confirmation
+        </span>
+      }
       icon={<RotateCcw size={26} />}
       maxWidthClass="max-w-[900px]"
-      closeButtonClassName="border-[#0a0f33] text-[#0a0f33]"
-      dividerClassName="bg-[#d1d5db]"
+      closeButtonClassName="border-[#0a0f33] text-[#0a0f33] dark:border-[#d7d7d7] dark:text-[#d7d7d7]"
+      dividerClassName="bg-[#d1d5db] dark:bg-[#2C2D33]"
     >
       <div className="flex flex-col items-center   gap-6 text-[#0a0f33]">
         <div className="flex w-full gap-8 max-[650px]:flex-col">
