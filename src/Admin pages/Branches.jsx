@@ -117,12 +117,13 @@ function Branches({ searchValue, setSearchValue }) {
   const title = "Branch Management";
   const buttonText = "Add Branch";
   const columns = [
-    { header: 'ID', accessor: 'branch_id' },
+    // { header: 'ID', accessor: 'branch_id' },
     { header: 'Name', accessor: 'name' },
+    { header: 'Contact No', accessor: 'contact_number' },
     { header: 'Location', accessor: 'location' },
-    { header: 'Contact Number', accessor: 'contact_number' },
+    
     {
-      header: 'Book Count',
+      header: 'Bo Quantity',
       accessor: 'book_count',
       render: (branch) => {
         const count = bookCopies.filter(bc => bc.branch_id === branch.branch_id).length;

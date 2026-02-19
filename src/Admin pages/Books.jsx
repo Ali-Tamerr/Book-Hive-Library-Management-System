@@ -17,6 +17,7 @@ import { getCurrentUser } from "../services/auth.api";
 
 function Books({ searchValue, setSearchValue }) {
   const currentUser = getCurrentUser();
+  const isSuperAdmin = currentUser?.role === "Super Admin";
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -225,9 +226,9 @@ function Books({ searchValue, setSearchValue }) {
   };
 
   const title = "Book Management";
-  const buttonText = "Add Book";
+  const buttonText = isSuperAdmin ? "Add Book" : null;
   const columns = [
-    { header: "ID", accessor: "book_id" },
+    // { header: "ID", accessor: "book_id" },
     { header: "Name", accessor: "name" },
     {
       header: "Category",
@@ -256,7 +257,7 @@ function Books({ searchValue, setSearchValue }) {
         return "Available";
       },
     },
-    { header: "Action", accessor: "action" },
+    ...(isSuperAdmin ? [{ header: "Action", accessor: "action" }] : []),
   ];
 
   const formPopup = (

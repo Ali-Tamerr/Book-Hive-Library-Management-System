@@ -5,27 +5,18 @@ import {
   useUpdateUser,
   useDeleteUser,
 } from "../hooks/useUsers.js";
-import {
-  useUserRequests,
-  useApproveUserRequest,
-  useRejectUserRequest,
-  useDeleteUserRequest,
-} from "../hooks/useUserRequests.js";
+import { useBranches } from "../hooks/useBranches.js";
 import {
   useBookTransactions,
-  useUpdateBookTransaction,
   useDeleteBookTransaction,
 } from "../hooks/useBookTransactions.js";
 import {
   useReservations,
   useDeleteReservation,
 } from "../hooks/useReservations.js";
-import { useBooks } from "../hooks/useBooks.js";
-import { useBookCopies, useUpdateBookCopy } from "../hooks/useBookCopies.js";
 import UserFormPopup from "../components/UserFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
-import ViewRequestsPopup from "../components/ViewRequestsPopup.jsx";
 import RenewConfirmationPopup from "../components/RenewConfirmationPopup.jsx";
 import CommonLayout from "../Layouts/CommonLayout.jsx";
 import { FilePenLine, Trash2, ReceiptText, RotateCcw } from "lucide-react";
@@ -44,8 +35,6 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showRenewPopup, setShowRenewPopup] = useState(false);
   const [selectedRenewUser, setSelectedRenewUser] = useState(null);
-  const [showRequestsPopup, setShowRequestsPopup] = useState(false);
-  const [pendingRequestId, setPendingRequestId] = useState(null);
   const [deleteWarning, setDeleteWarning] = useState(null);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
   const [formError, setFormError] = useState(null);
@@ -61,34 +50,43 @@ function UserManagement({ searchValue, setSearchValue }) {
     password_hash: "",
   });
 
-  const { data: users = [], isLoading } = useUsers();
+  const { data: users = [], isLoading, isError, error } = useUsers();
+  const { data: branches = [] } = useBranches();
+
+  // Debugging logs
+  useEffect(() => {
+    if (Object.keys(users).length > 0 || isError) {
+      console.log("UserManagement Debug:", {
+        usersCount: users.length,
+        isError,
+        error: error?.message,
+        currentUserRole: currentUser?.role,
+        currentUserBranch: getUserBranchName(currentUser),
+      });
+    }
+  }, [users, isError, error, currentUser]);
+
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
 
-  const { data: userRequests = [], isLoading: isLoadingRequests } =
-    useUserRequests();
-  const approveRequestMutation = useApproveUserRequest();
-  const rejectRequestMutation = useRejectUserRequest();
-  const deleteRequestMutation = useDeleteUserRequest();
-
-  const { data: bookTransactions = [], isLoading: isLoadingBookTransactions } =
-    useBookTransactions();
-  const updateBookTransactionMutation = useUpdateBookTransaction();
+  const { data: bookTransactions = [] } = useBookTransactions();
   const deleteBookTransactionMutation = useDeleteBookTransaction();
-  const { data: books = [] } = useBooks();
-  const updateBookCopyMutation = useUpdateBookCopy();
-  const { data: bookCopies = [] } = useBookCopies();
   const { data: reservations = [] } = useReservations();
   const deleteReservationMutation = useDeleteReservation();
 
-  const pendingBookRequests = bookTransactions.filter(
-    (t) => t.status === "Pending" && t.transaction_type === "Check-Out",
-  );
-
-  const pendingReturnRequests = bookTransactions.filter(
-    (t) => t.status === "Pending" && t.transaction_type === "Check-In",
-  );
+  if (isError) {
+    return (
+      <div className="p-10 text-center text-red-500">
+        <h2 className="text-xl font-bold">Error Loading Users</h2>
+        <p>{error?.message || "Unknown error occurred"}</p>
+        <p className="mt-2 text-sm text-gray-500">
+          Check if the backend is running and the API endpoint "/api/Users" is
+          accessible.
+        </p>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const handleOpenRequests = () => {
@@ -160,15 +158,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         });
       } else {
         await createUserMutation.mutateAsync(apiData);
-        if (pendingRequestId) {
-          try {
-            await deleteRequestMutation.mutateAsync(pendingRequestId);
-            console.log("Request deleted successfully:", pendingRequestId);
-          } catch (deleteError) {
-            console.error("Failed to delete request:", deleteError);
-          }
-          setPendingRequestId(null);
-        }
       }
       setFormData({
         id: "",
@@ -324,17 +313,61 @@ function UserManagement({ searchValue, setSearchValue }) {
     setSelectedUser(user);
     setShowViewDetails(true);
   };
-  
+
   const handleRenew = (user) => {
     setSelectedRenewUser(user);
     setShowRenewPopup(true);
   };
 
-  const handleConfirmRenew = () => {
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const handleConfirmRenew = async (selectedPlan) => {
     if (!selectedRenewUser) return;
-    console.log("Renew confirmed for user:", selectedRenewUser);
-    setShowRenewPopup(false);
-    setSelectedRenewUser(null);
+
+    // Calculate new expiration date
+    const currentEnd = selectedRenewUser.subscription_end_date
+      ? new Date(selectedRenewUser.subscription_end_date)
+      : new Date();
+    const now = new Date();
+
+    // If active, extend from end date. If expired/null, extend from now.
+    const baseDate = currentEnd > now ? currentEnd : now;
+    const newEndDate = new Date(baseDate);
+    newEndDate.setMonth(newEndDate.getMonth() + 1);
+
+    console.log(
+      "Renewing user:",
+      selectedRenewUser.user_id,
+      "New Date:",
+      newEndDate,
+    );
+
+    try {
+      // Exclude created_by to avoid issues if backend strictly checks joins/foreign keys on update
+      // (though usually fine, consistent with handleAddUser)
+      const { created_by, ...userData } = selectedRenewUser;
+
+      await updateUserMutation.mutateAsync({
+        id: selectedRenewUser.user_id,
+        data: {
+          ...userData,
+          plan: selectedPlan || selectedRenewUser.plan || null,
+          subscription_end_date: newEndDate.toISOString(),
+        },
+      });
+      setShowRenewPopup(false);
+      setSelectedRenewUser(null);
+    } catch (error) {
+      console.error("Failed to renew user:", error);
+      alert("Failed to renew user plan. Please try again.");
+    }
   };
 
   const buttonBehaviour = () => {
@@ -351,32 +384,130 @@ function UserManagement({ searchValue, setSearchValue }) {
       password: "",
       password_hash: "",
     });
-    setPendingRequestId(null);
     setEditMode(false);
     setShowPopup(true);
   };
 
+  const normalizeText = (value) =>
+    String(value || "")
+      .trim()
+      .toLowerCase();
+
+  const getUserBranchId = (user) => {
+    if (!user) return null;
+
+    const directBranchId = user.branch_id ?? user.branchId;
+    if (
+      directBranchId !== undefined &&
+      directBranchId !== null &&
+      directBranchId !== ""
+    ) {
+      return String(directBranchId).trim();
+    }
+
+    const nestedBranchId = user.branch?.branch_id ?? user.branch?.id;
+    if (
+      nestedBranchId !== undefined &&
+      nestedBranchId !== null &&
+      nestedBranchId !== ""
+    ) {
+      return String(nestedBranchId).trim();
+    }
+
+    return null;
+  };
+
+  const getUserBranchName = (user) => {
+    if (!user) return "N/A";
+
+    const directBranchName = user.branch_name ?? user.branchName;
+    if (directBranchName) return directBranchName;
+
+    if (typeof user.branch === "string" && user.branch.trim()) {
+      return user.branch.trim();
+    }
+
+    const branchId = getUserBranchId(user);
+    if (!branchId) return "N/A";
+
+    const matchedBranch = branches.find(
+      (branch) => String(branch.branch_id).trim() === String(branchId).trim(),
+    );
+
+    return matchedBranch?.name || `Branch ${branchId}`;
+  };
+
+  const currentRole = normalizeText(currentUser?.role);
+  const isBranchScopedRole =
+    currentRole === "admin" || currentRole === "librarian";
+  const currentUserBranchId = getUserBranchId(currentUser);
+  const currentUserBranchName = normalizeText(getUserBranchName(currentUser));
+
+  const isSameBranch = (user) => {
+    // If the current user has no branch assigned, we assume they can view all users?
+    // Or we should handle this policy. For now, returning true to avoid empty list if branch is missing.
+    if (
+      !currentUserBranchId &&
+      (!currentUserBranchName || currentUserBranchName === "n/a")
+    ) {
+      return true;
+    }
+
+    const userBranchId = getUserBranchId(user);
+    if (currentUserBranchId && userBranchId) {
+      return String(userBranchId).trim() === String(currentUserBranchId).trim();
+    }
+
+    if (currentUserBranchName && currentUserBranchName !== "n/a") {
+      return normalizeText(getUserBranchName(user)) === currentUserBranchName;
+    }
+
+    return false;
+  };
+
   const visibleUsers = users.filter((user) => {
     const role = user.role?.toLowerCase() || "";
-    return role !== "super admin";
+    if (role === "super admin") return false;
+
+    if (!isSuperAdmin && (role === "admin" || role === "librarian")) {
+      return false;
+    }
+
+    if (isBranchScopedRole) {
+      return isSameBranch(user);
+    }
+
+    return true;
   });
-  const filteredUsers = searchValue
-    ? visibleUsers.filter(
-        (user) =>
-          user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          user.user_id?.toString().includes(searchValue),
-      )
-    : visibleUsers;
+
+  const filteredUsers = (
+    searchValue
+      ? visibleUsers.filter(
+          (user) =>
+            user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            user.user_id?.toString().includes(searchValue) ||
+            getUserBranchName(user)
+              .toLowerCase()
+              .includes(searchValue.toLowerCase()),
+        )
+      : visibleUsers
+  ).map((user) => ({
+    ...user,
+    formatted_exp_date: formatDate(user.subscription_end_date),
+    branch_display: getUserBranchName(user),
+  }));
 
   const title = "User Management";
-  const buttonText = "Add User";
+  const buttonText = isSuperAdmin ? "Add User" : null;
   const columns = [
     { header: "User ID", accessor: "user_id" },
     { header: "Name", accessor: "name" },
-    { header: "Email", accessor: "email" },
-    { header: "Plan", accessor: "plan" },
     { header: "Contact No", accessor: "phone_number" },
+    // { header: "Email", accessor: "email" },
+    ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display" }] : []),
+    { header: "Plan", accessor: "plan" },
+    { header: "Exp Date", accessor: "formatted_exp_date" },
     { header: "Action", accessor: "action" },
   ];
 
@@ -538,6 +669,7 @@ function UserManagement({ searchValue, setSearchValue }) {
                 "User ID": selectedUser.user_id,
                 Name: selectedUser.name,
                 Email: selectedUser.email,
+                Branch: getUserBranchName(selectedUser),
                 "Phone Number": selectedUser.phone_number,
                 Plan: selectedUser.plan || "N/A",
               }
@@ -545,148 +677,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         }
         savedBy={selectedUser ? getCreatorName(selectedUser.created_by) : null}
       ></ViewDetailsPopup>
-      <ViewRequestsPopup
-        show={showRequestsPopup}
-        onClose={() => setShowRequestsPopup(false)}
-        requests={userRequests}
-        isLoading={isLoadingRequests}
-        onApprove={(request) => {
-          setFormData({
-            id: "",
-            user_id: "",
-            name: request.name || "",
-            email: request.email || "",
-            phone_number: request.phone_number || "",
-            plan: request.plan || "",
-            role: "User",
-            status: "Active",
-            password: request.password || "",
-            password_hash: "",
-          });
-          setPendingRequestId(request.request_id);
-          setShowRequestsPopup(false);
-          setEditMode(false);
-          setShowPopup(true);
-        }}
-        onReject={async (request) => {
-          try {
-            await rejectRequestMutation.mutateAsync({
-              id: request.request_id,
-              data: {
-                name: request.name,
-                email: request.email,
-                password: request.password,
-                phone_number: request.phone_number,
-                plan: request.plan,
-                status: "Rejected",
-              },
-            });
-          } catch (error) {
-            console.error("Failed to reject request:", error);
-            alert("Failed to reject request. Please try again.");
-          }
-        }}
-        bookRequests={pendingBookRequests}
-        isLoadingBooks={isLoadingBookTransactions}
-        users={users}
-        books={books}
-        bookCopies={bookCopies}
-        onApproveBook={async (request) => {
-          console.log("Admin approving borrow request:", request);
-          try {
-            const bookCopy = bookCopies.find(
-              (bc) => bc.book_copy_id === request.book_id,
-            );
-
-            if (bookCopy) {
-              await updateBookCopyMutation.mutateAsync({
-                id: bookCopy.book_copy_id,
-                data: {
-                  ...bookCopy,
-                  status: "Borrowed",
-                },
-              });
-            } else {
-              console.warn(
-                "Book copy not found for update, proceeding with transaction approval.",
-              );
-            }
-
-            const updatedRequest = {
-              ...request,
-              status: "Completed", // Reverted to "Completed" to match existing system convention
-            };
-            console.log(
-              "Setting transaction status to:",
-              updatedRequest.status,
-            );
-
-            await updateBookTransactionMutation.mutateAsync({
-              id: request.transaction_id,
-              data: updatedRequest,
-            });
-          } catch (error) {
-            console.error("Failed to approve book request:", error);
-            alert("Failed to approve book request. Please try again.");
-          }
-        }}
-        onRejectBook={async (request) => {
-          try {
-            await deleteBookTransactionMutation.mutateAsync(
-              request.transaction_id,
-            );
-          } catch (error) {
-            console.error("Failed to reject book request:", error);
-            alert("Failed to reject book request. Please try again.");
-          }
-        }}
-        returnRequests={pendingReturnRequests}
-        isLoadingReturns={isLoadingBookTransactions}
-        onApproveReturn={async (request) => {
-          try {
-            const originalBorrow = bookTransactions.find(
-              (t) =>
-                t.book_id === request.book_id &&
-                t.user_id === request.user_id &&
-                t.transaction_type === "Check-Out" &&
-                t.status === "Completed" &&
-                !t.return_date,
-            );
-
-            if (originalBorrow) {
-              await updateBookTransactionMutation.mutateAsync({
-                id: originalBorrow.transaction_id,
-                data: {
-                  ...originalBorrow,
-                  return_date: new Date().toISOString(),
-                  status: "Completed",
-                },
-              });
-            }
-
-            await updateBookTransactionMutation.mutateAsync({
-              id: request.transaction_id,
-              data: {
-                ...request,
-                status: "Completed",
-              },
-            });
-          } catch (error) {
-            console.error("Failed to approve return request:", error);
-            alert("Failed to approve return request. Please try again.");
-          }
-        }}
-        onRejectReturn={async (request) => {
-          try {
-            await deleteBookTransactionMutation.mutateAsync(
-              request.transaction_id,
-            );
-          } catch (error) {
-            console.error("Failed to reject return request:", error);
-            alert("Failed to reject return request. Please try again.");
-          }
-        }}
-      />
       <RenewConfirmationPopup
         show={showRenewPopup}
         onClose={() => {

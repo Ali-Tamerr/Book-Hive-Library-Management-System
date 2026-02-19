@@ -1,13 +1,34 @@
-import React, { useState } from 'react';
-import { BookOpen, Copy } from 'lucide-react';
-import FormLayout from '../Layouts/FormLayout.jsx';
-import BookCopiesPopup from './BookCopiesPopup.jsx';
+import React, { useState, useRef } from "react";
+import { BookOpen, Copy, Image } from "lucide-react";
+import FormLayout from "../Layouts/FormLayout.jsx";
+import BookCopiesPopup from "./BookCopiesPopup.jsx";
 
-function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBook, setShowPopup, setEditMode, categories }) {
+function BookFormPopup({
+  showPopup,
+  editMode,
+  formData,
+  setFormData,
+  handleAddBook,
+  setShowPopup,
+  setEditMode,
+  categories,
+}) {
   const [showCopiesPopup, setShowCopiesPopup] = useState(false);
+  const fileInputRef = useRef(null);
 
   const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create a fake URL for preview/demo purposes since we don't have a real upload endpoint
+      const imageUrl = URL.createObjectURL(file);
+      setFormData({ ...formData, image_url: imageUrl });
+      // Reset input value to allow selecting the same file again if needed
+      e.target.value = "";
+    }
   };
 
   const handleSaveBookCopies = (copiesArray) => {
@@ -23,16 +44,16 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
     e.preventDefault();
     // Validate required fields
     if (!formData.name || !formData.name.trim()) {
-      alert('Please enter a book name');
+      alert("Please enter a book name");
       return;
     }
     const qty = parseInt(formData.quantity, 10);
     if (!qty || qty < 1) {
-      alert('Please enter a valid quantity');
+      alert("Please enter a valid quantity");
       return;
     }
     if (!formData.category_id) {
-      alert('Please select a category');
+      alert("Please select a category");
       return;
     }
 
@@ -40,48 +61,66 @@ function BookFormPopup({ showPopup, editMode, formData, setFormData, handleAddBo
   };
 
   const inputs = [
-    { name: 'name', type: 'text', placeholder: 'Name', required: true },
-    { name: 'quantity', type: 'number', placeholder: 'Quantity', required: true },
     {
-      name: 'category_id',
-      type: 'select',
-      placeholder: 'Category',
-      options: (categories || []).map(cat => ({ value: cat.category_id, label: cat.category_name })),
+      name: "name",
+      type: "text",
+      placeholder: "Name",
+      required: true,
+      rightIcon: <Image size={24} />,
+      onRightIconClick: () => fileInputRef.current?.click(),
     },
-    // {
-    //   name: 'copy_indicator',
-    //   type: 'custom',
-    //   render: () => (
-    //     <div className="flex justify-center w-full">
-    //       <div className="w-[150px] h-[45px] rounded-xl border border-[#3D3E3E] flex items-center justify-center bg-white text-[#0a0f33]">
-    //         <Copy size={20} />
-    //       </div>
-    //     </div>
-    //   )
-    // },
+    {
+      name: "quantity",
+      type: "number",
+      placeholder: "Quantity",
+      required: true,
+    },
+    {
+      name: "category_id",
+      type: "select",
+      placeholder: "Category",
+      options: (categories || []).map((cat) => ({
+        value: cat.category_id,
+        label: cat.category_name,
+      })),
+    },
   ];
 
   const customLayout = [
-    { columns: 1, inputs: ['name'] },
-    { columns: 2, inputs: ['quantity', 'category_id'] },
-    { columns: 1, inputs: ['copy_indicator'] },
+    { columns: 1, inputs: ["name"] },
+    { columns: 2, inputs: ["quantity", "category_id"] },
   ];
 
   return (
     <>
       <FormLayout
         show={showPopup}
-        onClose={() => { setShowPopup(false); setEditMode(false); }}
-        title={editMode ? 'Edit Book' : 'Add Book'}
+        onClose={() => {
+          setShowPopup(false);
+          setEditMode(false);
+        }}
+        title={editMode ? "Edit Book" : "Add Book"}
         onSubmit={handleSubmit}
         inputs={inputs}
         formData={formData}
         onFormChange={onFormChange}
         submitButtonText="Enter Ids"
-        onCancel={() => { setShowPopup(false); setEditMode(false); }}
+        onCancel={() => {
+          setShowPopup(false);
+          setEditMode(false);
+        }}
         icon={<BookOpen size={24} strokeWidth={2.3} />}
         customLayout={customLayout}
-      />
+      >
+        {/* Hidden file input for cover image upload */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+      </FormLayout>
       <BookCopiesPopup
         show={showCopiesPopup}
         onClose={() => setShowCopiesPopup(false)}
