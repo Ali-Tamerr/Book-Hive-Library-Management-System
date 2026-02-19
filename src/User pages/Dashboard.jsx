@@ -4,6 +4,7 @@ import { Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import LogoIcon from "../assets/logo.svg?react";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
+import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import { useUsers } from "../hooks/useUsers";
 import { useBooks } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
@@ -31,6 +32,7 @@ function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeTab, setActiveTab] = useState("recommended");
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedBook, setSelectedBook] = useState(null);
   const booksPerPage = 8;
 
   const loading =
@@ -282,7 +284,10 @@ function Dashboard() {
                     <h3 className="mb-1.5 text-center text-sm font-semibold text-[#0b0c28] text-black dark:text-[#D7D7D7]">
                       {book.name || "Untitled"}
                     </h3>
-                    <button className="cursor pointer whitespace-nowrap rounded-xl bg-[#0b0c28] dark:bg-[#D7D7D7] text-white dark:text-black px-4 py-2 text-xs font-bold text-white transition-colors">
+                    <button
+                      className="cursor-pointer whitespace-nowrap rounded-xl bg-[#0b0c28] px-4 py-2 text-xs font-bold text-white transition-colors dark:bg-[#D7D7D7] dark:text-black"
+                      onClick={() => setSelectedBook(book)}
+                    >
                       Explore Now
                     </button>
                   </div>
@@ -303,6 +308,27 @@ function Dashboard() {
             </div>
           </div>
         </section>
+        {selectedBook && (
+          <ViewDetailsPopup
+            show={!!selectedBook}
+            onClose={() => setSelectedBook(null)}
+            title="Book Details"
+            data={{
+              "Book Name": selectedBook.name,
+              Author: selectedBook.author || "N/A",
+              Category:
+                categories.find(
+                  (c) => c.category_id === selectedBook.category_id,
+                )?.category_name ||
+                selectedBook.category ||
+                "N/A",
+              Language: selectedBook.language || "N/A",
+              Status: selectedBook.status || "N/A",
+              Description:
+                selectedBook.description || "No description available.",
+            }}
+          />
+        )}
       </main>
     </div>
   );
