@@ -170,7 +170,7 @@ function Dashboard() {
 
     if (items.length === 0) {
       return (
-        <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500 dark:bg-[#E3E3E3] dark:text-[#121317]">
+        <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500 dark:bg-transparent dark:text-[#121317]">
           {emptyText}
         </li>
       );
@@ -179,7 +179,7 @@ function Dashboard() {
     return items.map((item) => (
       <li
         key={item.id}
-        className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#0a0f33] dark:bg-[#E3E3E3]"
+        className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#0a0f33] "
       >
        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full ">
                      <User className="h-full w-full text-[#0a0f33] dark:text-[#0a0f33]" />
@@ -197,6 +197,9 @@ function Dashboard() {
       </li>
     ));
   };
+
+  const compactCardClass =
+    "!flex-none !w-[310px] !min-w-[310px] !h-auto max-[900px]:!w-full max-[900px]:max-w-[420px]";
 
   return (
     <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[1540px]:py-4 max-[1080px]:px-11 max-[430px]:w-dvw max-[430px]:px-4">
@@ -239,25 +242,31 @@ function Dashboard() {
               />
             </div>
           ) : (
-            <div className="mx-auto w-full max-w-[900px]">
-              <div className="grid w-full grid-cols-2 gap-6 max-[900px]:grid-cols-1">
-                <div className="col-span-2 flex justify-center max-[900px]:col-span-1">
+            <div className="mx-auto mt-2 w-full max-w-[680px]">
+              <div className="flex justify-center">
+                <div className="max-[900px]:w-full max-[900px]:max-w-[420px]">
                   <DashboardCard
                     title="Borrowed Books"
-                    className="h-auto min-h-[260px]"
+                    className={compactCardClass}
+                    listClassName="pt-2"
                   >
                     {renderTransactionList(borrowedItems, "No borrowed books")}
                   </DashboardCard>
                 </div>
+              </div>
+
+              <div className="mt-5 grid w-full grid-cols-2 place-items-center gap-6 max-[900px]:mt-4 max-[900px]:grid-cols-1">
                 <DashboardCard
                   title="Overdue Borrowers"
-                  className="h-auto min-h-[260px]"
+                  className={compactCardClass}
+                  listClassName="pt-2"
                 >
                   {renderTransactionList(overdueItems, "No overdue books")}
                 </DashboardCard>
                 <DashboardCard
                   title="Returned Books"
-                  className="h-auto min-h-[260px]"
+                  className={compactCardClass}
+                  listClassName="pt-2"
                 >
                   {renderTransactionList(returnedItems, "No returned books")}
                 </DashboardCard>
