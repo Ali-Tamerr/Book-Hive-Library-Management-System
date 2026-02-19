@@ -11,18 +11,21 @@ const Popup = ({
   maxWidthClass,
   closeButtonClassName,
   dividerClassName,
+  heightClass,
 }) => {
   const isVisible = show !== undefined ? show : isOpen;
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div
+      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm ${heightClass || ""}`}
+    >
       {/* Overlay click to close */}
       <div className="absolute inset-0" onClick={onClose}></div>
 
       <div
-        className={`relative ${maxWidthClass ? maxWidthClass : "max-w-2xl"} flex max-h-[90vh] w-full flex-col rounded-xl bg-white p-14 pb-0 shadow-xl dark:border dark:border-[#2C2D33] dark:bg-[#131418]`}
+        className={`relative ${maxWidthClass ? maxWidthClass : "max-w-2xl"} flex max-h-[90vh] w-full flex-col rounded-xl bg-white p-14 pb-0 shadow-xl dark:border dark:border-[#E8E8E8] dark:bg-[#131418]`}
       >
         <div className="flex shrink-0 items-center justify-between pb-5">
           <div className="flex items-center gap-4">
@@ -42,9 +45,10 @@ const Popup = ({
             <X size={14} />
           </button>
         </div>
-        <div className={`mx-auto h-[1px] w-[100%] bg-black dark:bg-[#2C2D33] ${dividerClassName || ""}`}></div>
+        <div
+          className={`mx-auto h-[1px] w-[100%] bg-black dark:bg-[#2C2D33] ${dividerClassName || ""}`}
+        ></div>
         <div className="overflow-y-auto px-4 py-8">{children}</div>
-
       </div>
     </div>
   );
