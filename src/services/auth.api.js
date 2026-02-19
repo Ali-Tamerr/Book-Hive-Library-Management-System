@@ -38,17 +38,38 @@ const getPagingMeta = (payload, fallbackPage, fallbackLimit) => {
 
 const getAllUsersForAuth = async () => {
   const firstPage = 1;
-  const pageSize = 200;
+  const pageSize = 50;
   const maxPages = 200;
 
-  const firstResponse = await getAllUsers({ page: firstPage, limit: pageSize });
+  const fetchPageWithFallback = async (page, preferredLimit) => {
+    const limitsToTry = [preferredLimit, 25, 12];
+    let lastError = null;
+
+    for (const limit of limitsToTry) {
+      try {
+        const response = await getAllUsers({ page, limit });
+        return { response, usedLimit: limit };
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    throw lastError;
+  };
+
+  const { response: firstResponse, usedLimit: firstUsedLimit } =
+    await fetchPageWithFallback(firstPage, pageSize);
   const firstUsers = normalizeUsersArray(firstResponse);
 
   if (Array.isArray(firstResponse)) {
     return firstUsers;
   }
 
-  const { page, limit, total } = getPagingMeta(firstResponse, firstPage, pageSize);
+  const { page, limit, total } = getPagingMeta(
+    firstResponse,
+    firstPage,
+    firstUsedLimit,
+  );
   const users = [...firstUsers];
 
   if (total > 0 && users.length >= total) {
@@ -61,7 +82,7 @@ const getAllUsersForAuth = async () => {
 
   let currentPage = page + 1;
   while (currentPage <= maxPages) {
-    const response = await getAllUsers({ page: currentPage, limit });
+    const { response } = await fetchPageWithFallback(currentPage, limit);
     const pageUsers = normalizeUsersArray(response);
 
     if (!pageUsers.length) break;

@@ -694,6 +694,8 @@ function UserManagement({ searchValue, setSearchValue }) {
         formPopup={formPopup}
         customActionRenderer={customActionRenderer}
         onScroll={handleScroll}
+        onLoadMore={fetchNextPage}
+        hasMore={hasNextPage}
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}
