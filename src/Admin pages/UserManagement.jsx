@@ -41,7 +41,6 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [formData, setFormData] = useState({
     id: "",
     name: "",
-    email: "",
     phone_number: "",
     plan: "",
     role: "User",
@@ -125,7 +124,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       const apiData = {
         user_id: formData.user_id.trim(),
         name: formData.name,
-        email: formData.email,
         phone_number: formData.phone_number,
         role: selectedRole,
         plan: formData.plan || null,
@@ -165,13 +163,13 @@ function UserManagement({ searchValue, setSearchValue }) {
         id: "",
         user_id: "",
         name: "",
-        email: "",
         phone_number: "",
         plan: "",
         role: "User",
         status: "Active",
         password: "",
         password_hash: "",
+        branch_id: "",
       });
       setShowPopup(false);
       setEditMode(false);
@@ -214,7 +212,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       id: user.user_id,
       user_id: user.user_id,
       name: user.name || "",
-      email: user.email || "",
       phone_number: user.phone_number || "",
       plan: user.plan || "",
       role: user.role || "User",
@@ -379,7 +376,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       id: "",
       user_id: "",
       name: "",
-      email: "",
       phone_number: "",
       plan: "",
       role: "User",
@@ -489,7 +485,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       ? visibleUsers.filter(
           (user) =>
             user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-            user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
             user.user_id?.toString().includes(searchValue) ||
             getUserBranchName(user)
               .toLowerCase()
@@ -508,7 +503,6 @@ function UserManagement({ searchValue, setSearchValue }) {
     { header: "User ID", accessor: "user_id" },
     { header: "Name", accessor: "name" },
     { header: "Contact No", accessor: "phone_number" },
-    // { header: "Email", accessor: "email" },
     ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display" }] : []),
     { header: "Plan", accessor: "plan" },
     { header: "Exp Date", accessor: "formatted_exp_date" },
@@ -673,7 +667,6 @@ function UserManagement({ searchValue, setSearchValue }) {
             ? {
                 "User ID": selectedUser.user_id,
                 Name: selectedUser.name,
-                Email: selectedUser.email,
                 Branch: getUserBranchName(selectedUser),
                 "Phone Number": selectedUser.phone_number,
                 Plan: selectedUser.plan || "N/A",

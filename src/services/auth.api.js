@@ -1,9 +1,8 @@
 
-import { getAllUsers, getUserByName, createUser } from './users.api';
-import { API_BASE_URL } from './api.config';
+import { getAllUsers, createUser } from './users.api';
 
 
-export const login = async (email, password) => {
+export const login = async (phoneNumber, password) => {
   try {
     const users = await getAllUsers();
     
@@ -13,21 +12,21 @@ export const login = async (email, password) => {
     
     console.log('Total users fetched:', users.length);
 
-    const user = users.find(u => {
-      const emailMatch = u.email?.toLowerCase() === email?.toLowerCase();
-      return emailMatch;
-    });
+    const normalizedPhone = String(phoneNumber || '').trim();
+    const user = users.find(
+      (u) => String(u.phone_number || '').trim() === normalizedPhone,
+    );
 
     if (!user) {
-      console.error('User not found for email:', email);
-      throw new Error('User not found. Please check your email.');
+      console.error('User not found for phone number:', phoneNumber);
+      throw new Error('User not found. Please check your phone number.');
     }
 
-    console.log('User found:', { email: user.email, role: user.role });
+    console.log('User found:', { phone_number: user.phone_number, role: user.role });
 
     const storedPassword = user.password_hash || user.password || '';
     if (storedPassword !== password) {
-      console.error('Password mismatch for user:', email);
+      console.error('Password mismatch for user:', phoneNumber);
       throw new Error('Incorrect password. Please try again.');
     }
 
@@ -51,16 +50,17 @@ export const signup = async (userData) => {
     if (!Array.isArray(users)) {
       throw new Error('Failed to fetch users. Please try again.');
     }
-    const existingUser = users.find(u => u.email.toLowerCase() === userData.email.toLowerCase());
+    const existingUser = users.find(
+      (u) => String(u.phone_number || '').trim() === String(userData.contact || '').trim(),
+    );
 
     if (existingUser) {
-      throw new Error('This email is already linked to another account.');
+      throw new Error('This phone number is already linked to another account.');
     }
 
     console.log('Creating user with data:', {
       user_id: userData.user_id,
       name: userData.name,
-      email: userData.email,
       phone_number: userData.contact,
       password_hash: userData.password,
       role: 'User',
@@ -70,7 +70,6 @@ export const signup = async (userData) => {
     const createdUser = await createUser({
       user_id: userData.user_id,
       name: userData.name,
-      email: userData.email,
       phone_number: userData.contact,
       password_hash: userData.password,
       role: 'User',
@@ -82,13 +81,17 @@ export const signup = async (userData) => {
     let user = createdUser;
 
     if (!createdUser || createdUser === '' || typeof createdUser === 'string') {
-      console.log('API returned empty/invalid response, fetching user by email...');
+      console.log('API returned empty/invalid response, fetching user by phone number...');
       const allUsers = await getAllUsers();
-      user = Array.isArray(allUsers) ? allUsers.find(u => u.email.toLowerCase() === userData.email.toLowerCase()) : null;
+      user = Array.isArray(allUsers)
+        ? allUsers.find(
+            (u) => String(u.phone_number || '').trim() === String(userData.contact || '').trim(),
+          )
+        : null;
       console.log('Found user after fetch:', user);
     }
 
-    if (!user || !user.email) {
+    if (!user || !user.user_id) {
       throw new Error('Failed to create or retrieve user account');
     }
 
