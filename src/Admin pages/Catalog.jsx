@@ -27,16 +27,17 @@ function Catalog({ searchValue, setSearchValue }) {
         position="first"
       />
       <TabButton
-        label="Returned Books"
-        isActive={localActiveTab === "returned"}
-        onClick={() => setLocalActiveTab("returned")}
-      />
-      <TabButton
         label="Overdue Borrowers"
         isActive={localActiveTab === "overdue"}
         onClick={() => setLocalActiveTab("overdue")}
         position="last"
       />
+      <TabButton
+        label="Returned Books"
+        isActive={localActiveTab === "returned"}
+        onClick={() => setLocalActiveTab("returned")}
+      />
+     
     </div>
   );
 
