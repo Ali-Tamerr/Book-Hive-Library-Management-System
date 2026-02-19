@@ -199,7 +199,7 @@ function Dashboard() {
   };
 
   const compactCardClass =
-    "!flex-none !w-[310px] !min-w-[310px] !h-auto max-[900px]:!w-full max-[900px]:max-w-[420px]";
+    "!flex-none !w-[320px] !min-w-[320px] !h-full !min-h-[250px] max-[900px]:!w-full max-[900px]:max-w-[420px]";
 
   return (
     <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[1540px]:py-4 max-[1080px]:px-11 max-[430px]:w-dvw max-[430px]:px-4">
@@ -242,9 +242,8 @@ function Dashboard() {
               />
             </div>
           ) : (
-            <div className="mx-auto mt-2 w-full max-w-[680px]">
-              <div className="flex justify-center">
-                <div className="max-[900px]:w-full max-[900px]:max-w-[420px]">
+            <div className="mx-auto mt-2 flex h-full min-h-0 w-full max-w-[700px] flex-col gap-5">
+              <div className="flex min-h-0 flex-1 justify-center max-[900px]:block max-[900px]:w-full max-[900px]:max-w-[420px] max-[900px]:self-center">
                   <DashboardCard
                     title="Borrowed Books"
                     className={compactCardClass}
@@ -253,9 +252,8 @@ function Dashboard() {
                     {renderTransactionList(borrowedItems, "No borrowed books")}
                   </DashboardCard>
                 </div>
-              </div>
 
-              <div className="mt-5 grid w-full grid-cols-2 place-items-center gap-6 max-[900px]:mt-4 max-[900px]:grid-cols-1">
+              <div className="grid min-h-0 flex-1 w-full auto-rows-fr grid-cols-2 place-items-stretch gap-6 max-[900px]:grid-cols-1">
                 <DashboardCard
                   title="Overdue Borrowers"
                   className={compactCardClass}
