@@ -30,12 +30,12 @@ function Catalog({ searchValue, setSearchValue }) {
         label="Overdue Borrowers"
         isActive={localActiveTab === "overdue"}
         onClick={() => setLocalActiveTab("overdue")}
-        position="last"
       />
       <TabButton
         label="Returned Books"
         isActive={localActiveTab === "returned"}
         onClick={() => setLocalActiveTab("returned")}
+        position="last"
       />
      
     </div>
