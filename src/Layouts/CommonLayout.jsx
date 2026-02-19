@@ -66,7 +66,7 @@ const CommonLayout = ({
       </div>
 
       <section className="flex h-full flex-1 gap-6 rounded-lg">
-        <div className="flex h-full flex-1 items-start gap-4 overflow-x-auto rounded-lg bg-white dark:bg-[#121317]">
+        <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 flex h-full flex-1 gap-4 overflow-auto rounded-lg bg-white pb-4 dark:bg-[#121317]">
           <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead>
               <tr>

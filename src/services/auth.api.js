@@ -1,6 +1,25 @@
 
 import { getAllUsers, createUser } from './users.api';
 
+const persistAuthSession = (user) => {
+  localStorage.setItem('currentUser', JSON.stringify(user));
+
+  const token =
+    typeof user?.token === 'string'
+      ? user.token
+      : typeof user?.accessToken === 'string'
+        ? user.accessToken
+        : null;
+
+  if (token) {
+    localStorage.setItem('authToken', token);
+  } else {
+    localStorage.removeItem('authToken');
+  }
+
+  window.dispatchEvent(new Event('userUpdated'));
+};
+
 
 export const login = async (phoneNumber, password) => {
   try {
@@ -32,10 +51,7 @@ export const login = async (phoneNumber, password) => {
 
     console.log('Password verified successfully');
 
-    localStorage.setItem('authToken', JSON.stringify(user));
-    localStorage.setItem('currentUser', JSON.stringify(user));
-
-    window.dispatchEvent(new Event('userUpdated'));
+    persistAuthSession(user);
 
     return user;
   } catch (error) {
@@ -95,12 +111,9 @@ export const signup = async (userData) => {
       throw new Error('Failed to create or retrieve user account');
     }
 
-    localStorage.setItem('authToken', JSON.stringify(user));
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    persistAuthSession(user);
 
     console.log('User saved to localStorage:', user);
-
-    window.dispatchEvent(new Event('userUpdated'));
 
     return user;
   } catch (error) {
@@ -121,11 +134,9 @@ export const getCurrentUser = () => {
 };
 
 export const setCurrentUser = (user) => {
-  localStorage.setItem('authToken', JSON.stringify(user));
-  localStorage.setItem('currentUser', JSON.stringify(user));
-  window.dispatchEvent(new Event('userUpdated'));
+  persistAuthSession(user);
 };
 
 export const isAuthenticated = () => {
-  return !!localStorage.getItem('authToken');
+  return !!localStorage.getItem('currentUser');
 };
