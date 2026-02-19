@@ -456,6 +456,10 @@ function UserManagement({ searchValue, setSearchValue }) {
     const role = user.role?.toLowerCase() || "";
     if (role === "super admin") return false;
 
+    if (!isSuperAdmin && (role === "admin" || role === "librarian")) {
+      return false;
+    }
+
     if (isBranchScopedRole) {
       return isSameBranch(user);
     }
