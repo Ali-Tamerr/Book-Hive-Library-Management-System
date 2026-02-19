@@ -169,13 +169,7 @@ const CommonLayout = ({
             </tbody>
           </table>
         </div>
-        {isUserPage && (
-          <div className="flex h-full w-28 flex-col items-center justify-center gap-2 rounded-tl-lg bg-[#0a0f33] dark:bg-[#121317] dark:bg-white">
-            <span className="text-upright text-2xl tracking-[5px] text-white dark:text-black">
-              BOOK&nbsp;&nbsp;HIVE
-            </span>
-          </div>
-        )}
+        {isUserPage && null}
       </section>
       {formPopup}
     </div>
