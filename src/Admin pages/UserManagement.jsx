@@ -48,6 +48,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     status: "Active",
     password: "",
     password_hash: "",
+    branch_id: "",
   });
 
   const { data: users = [], isLoading, isError, error } = useUsers();
@@ -131,6 +132,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         status: formData.status || "Active",
         password_hash: formData.password,
         created_by: currentUser?.user_id || null,
+        branch_id: formData.branch_id ? parseInt(formData.branch_id, 10) : null,
       };
 
       console.log("Sending user data:", JSON.stringify(apiData, null, 2));
@@ -219,6 +221,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       status: user.status || "Active",
       password: "",
       password_hash: user.password_hash || "",
+      branch_id: user.branch_id || "",
     });
     setEditMode(true);
     setShowPopup(true);
@@ -383,6 +386,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       status: "Active",
       password: "",
       password_hash: "",
+      branch_id: "",
     });
     setEditMode(false);
     setShowPopup(true);
@@ -623,6 +627,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       isSuperAdmin={isSuperAdmin}
       error={formError}
       nextUserId={nextUserId}
+      branches={branches}
     />
   );
 

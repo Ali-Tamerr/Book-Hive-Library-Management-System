@@ -14,6 +14,7 @@ function UserFormPopup({
   isSuperAdmin = false,
   error,
   nextUserId,
+  branches = [],
 }) {
   const userIdInputRef = React.useRef(null);
 
@@ -92,6 +93,18 @@ function UserFormPopup({
     ],
   };
 
+  const branchInput = {
+    name: "branch_id",
+    type: "select",
+    placeholder: "Branch",
+    required: false,
+    autocomplete: "off",
+    options: branches.map((b) => ({
+      value: b.branch_id,
+      label: b.name,
+    })),
+  };
+
   const userIdInput = {
     name: "user_id",
     type: "custom",
@@ -126,16 +139,16 @@ function UserFormPopup({
 
   const inputs = isSuperAdmin
     ? isRoleAdmin
-      ? [...baseInputs, roleInput]
-      : [...baseInputs, planInput, roleInput, userIdInput]
+      ? [...baseInputs, roleInput, branchInput]
+      : [...baseInputs, planInput, roleInput, branchInput, userIdInput]
     : [...baseInputs, planInput, userIdInput];
 
   const customLayout = isSuperAdmin
     ? [
         { columns: 2, inputs: ["name", "phone_number"] },
         isRoleAdmin
-          ? { columns: 1, inputs: ["role"] }
-          : { columns: 2, inputs: ["plan", "role"] },
+          ? { columns: 2, inputs: ["role", "branch_id"] }
+          : { columns: 3, inputs: ["plan", "role", "branch_id"] },
         {
           type: "flex",
           inputs: [
