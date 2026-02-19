@@ -575,7 +575,7 @@ const ViewRequestsPopup = ({
         </div> */}
 
         <div className="flex justify-center gap-3">
-          <FormButton onClick={onClose} isPrimary="false">
+          <FormButton onClick={onClose} isPrimary={false}>
             CLOSE
           </FormButton>
         </div>

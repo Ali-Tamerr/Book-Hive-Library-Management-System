@@ -14,6 +14,7 @@ import {
   useReservations,
   useDeleteReservation,
 } from "../hooks/useReservations.js";
+
 import UserFormPopup from "../components/UserFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
@@ -50,12 +51,45 @@ function UserManagement({ searchValue, setSearchValue }) {
     branch_id: "",
   });
 
-  const { data: users = [], isLoading, isError, error } = useUsers();
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useUsers();
   const { data: branches = [] } = useBranches();
+
+  const users = data ? data.pages.flatMap((page) => page.data || []) : [];
+
+  // Infinite Scroll Handler
+  const handleScroll = (e) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.target;
+    console.log("Scroll:", {
+      scrollTop,
+      clientHeight,
+      scrollHeight,
+      diff: scrollHeight - scrollTop - clientHeight,
+      hasNextPage,
+      isFetchingNextPage,
+    });
+
+    // Trigger update when scrolled to bottom (within 50px)
+    if (
+      scrollHeight - scrollTop - clientHeight < 50 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      console.log("Fetching next page...");
+      fetchNextPage();
+    }
+  };
 
   // Debugging logs
   useEffect(() => {
-    if (Object.keys(users).length > 0 || isError) {
+    if (users.length > 0 || isError) {
       console.log("UserManagement Debug:", {
         usersCount: users.length,
         isError,
@@ -99,6 +133,24 @@ function UserManagement({ searchValue, setSearchValue }) {
       window.removeEventListener("openUserRequests", handleOpenRequests);
     };
   }, []);
+
+  // Backup: Window Scroll Listener (in case layout allows body scroll)
+  useEffect(() => {
+    const handleWindowScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 100
+      ) {
+        if (hasNextPage && !isFetchingNextPage) {
+          console.log("Window scroll bottom reached, fetching next page...");
+          fetchNextPage();
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleWindowScroll);
+    return () => window.removeEventListener("scroll", handleWindowScroll);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -641,6 +693,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         columns={columns}
         formPopup={formPopup}
         customActionRenderer={customActionRenderer}
+        onScroll={handleScroll}
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}

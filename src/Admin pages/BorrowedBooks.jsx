@@ -44,7 +44,10 @@ function BorrowedBooks({
 
   const { data: borrowedBooks = [], isLoading } = useBorrowedBooks();
   const { data: books = [] } = useBooks();
-  const { data: users = [] } = useUsers();
+  const { data: usersData } = useUsers();
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
   const { data: bookCopies = [] } = useBookCopies();
   const { data: branches = [] } = useBranches();
   const createBorrowedBookMutation = useCreateBorrowedBook();

@@ -20,11 +20,12 @@ const CommonLayout = ({
   isUserPage = false,
   customTitle,
   secondaryButton,
+  onScroll,
 }) => {
   const FormPopupComponent = formPopup;
 
   return (
-    <div className="flex h-full flex-col gap-5 overflow-y-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
+    <div className="flex min-h-screen flex-col gap-5 p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
       <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
         <div className="flex items-center justify-between max-[856px]:gap-2">
           {customTitle ? (
@@ -65,8 +66,8 @@ const CommonLayout = ({
         </div>
       </div>
 
-      <section className="flex h-full flex-1 gap-6 rounded-lg">
-        <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700 flex h-full flex-1 gap-4 overflow-auto rounded-lg bg-white pb-4 dark:bg-[#121317]">
+      <section className="flex min-h-0 flex-1 gap-6 rounded-lg">
+        <div className="h-full flex-1 gap-4 rounded-lg bg-white pb-4 dark:bg-[#121317]">
           <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead>
               <tr>

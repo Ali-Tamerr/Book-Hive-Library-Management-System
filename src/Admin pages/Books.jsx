@@ -9,6 +9,7 @@ import { useCategories } from "../hooks/useCategories.js";
 import { useUsers } from "../hooks/useUsers.js";
 import { useBookCopies } from "../hooks/useBookCopies.js";
 import { useBorrowedBooks } from "../hooks/useBorrowedBooks.js";
+import { useBranches } from "../hooks/useBranches.js";
 import BookFormPopup from "../components/BookFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
@@ -37,7 +38,10 @@ function Books({ searchValue, setSearchValue }) {
   const { data: books = [], isLoading } = useBooks();
   const { data: categories = [], isLoading: isLoadingCategories } =
     useCategories();
-  const { data: users = [] } = useUsers();
+  const { data: usersData, isLoading: isLoadingUsers } = useUsers();
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
   const { data: bookCopies = [] } = useBookCopies();
   const { data: transactions = [] } = useBorrowedBooks();
   const createBookMutation = useCreateBook();
@@ -175,42 +179,80 @@ function Books({ searchValue, setSearchValue }) {
       : { name: createdById, role: "Unknown" };
   };
 
-  const filteredBooks = searchValue
-    ? books.filter((book) => {
-        const name = book.name || "";
-        const book_id = book.book_id || "";
-        return (
-          name.toLowerCase().includes(searchValue.toLowerCase()) ||
-          book_id.toString().includes(searchValue)
-        );
-      })
-    : books;
+  const { data: branches = [] } = useBranches();
+
+  const getUserBranchId = (user) => {
+    if (!user) return null;
+    const directBranchId = user.branch_id ?? user.branchId;
+    if (directBranchId !== undefined && directBranchId !== null)
+      return String(directBranchId).trim();
+    const nestedBranchId = user.branch?.branch_id ?? user.branch?.id;
+    if (nestedBranchId !== undefined && nestedBranchId !== null)
+      return String(nestedBranchId).trim();
+    return null;
+  };
+
+  const currentUserBranchId = getUserBranchId(currentUser);
+
+  // Filter books based on branch and search value
+  const filteredBooks = books.filter((book) => {
+    // 1. Filter by Branch (Permission)
+    if (!isSuperAdmin) {
+      if (!currentUserBranchId) return false; // If admin has no branch, show nothing? Or all? Assuming restricted.
+
+      // Check if this book has ANY copy in the current user's branch
+      const hasCopyWithBranch = bookCopies.some(
+        (copy) =>
+          copy.book_id === book.book_id &&
+          String(copy.branch_id).trim() === String(currentUserBranchId).trim(),
+      );
+
+      if (!hasCopyWithBranch) return false;
+    }
+
+    // 2. Filter by Search (Search bar)
+    if (searchValue) {
+      const name = book.name || "";
+      const book_id = book.book_id || "";
+      return (
+        name.toLowerCase().includes(searchValue.toLowerCase()) ||
+        book_id.toString().includes(searchValue)
+      );
+    }
+
+    return true;
+  });
 
   const getAvailableCopiesCount = (bookId) => {
-    const copies = bookCopies.filter((copy) => copy.book_id === bookId);
+    // Filter copies by book ID AND by branch (if not Super Admin)
+    const copies = bookCopies.filter((copy) => {
+      const isBookMatch = copy.book_id === bookId;
+      if (!isSuperAdmin && currentUserBranchId) {
+        return (
+          isBookMatch &&
+          String(copy.branch_id).trim() === String(currentUserBranchId).trim()
+        );
+      }
+      return isBookMatch;
+    });
+
     if (!copies.length) return 0;
 
-    // Count active transactions for these copies
-    // Robust check: match copy ID or parent book ID, and ensure transaction is active
-    // Count active transactions for these copies
-    // Robust check: match copy ID or parent book ID, and ensure transaction is active
+    // Count active transactions for these SPECIFIC copies
     const activeTransactions = transactions.filter((t) => {
       if (!t || !t.book_id) return false;
       const txBookId = String(t.book_id).trim();
 
-      // Match against copy ID (string) or parent book ID (int->string)
-      const isRelevant =
-        copies.some((c) => String(c.book_copy_id).trim() == txBookId) ||
-        String(bookId).trim() == txBookId;
+      // Ensure transaction matches one of the valid copies we just filtered
+      const isRelevant = copies.some(
+        (c) => String(c.book_copy_id).trim() == txBookId,
+      );
 
       if (!isRelevant) return false;
 
       const type = (t.transaction_type || "").toLowerCase().trim();
       const status = (t.status || "").toLowerCase().trim();
 
-      // "Open", "Active", "Approved" -> Active loan.
-      // "Check-Out", "Borrow" -> Lending transaction.
-      // Also check "Completed" if return_date is missing (implies ongoing loan per system convention)
       const isCompletedActive = status === "completed" && !t.return_date;
       const isActiveStatus =
         ["open", "active", "approved", "overdue"].includes(status) ||
@@ -219,8 +261,6 @@ function Books({ searchValue, setSearchValue }) {
 
       return isLendingType && isActiveStatus;
     });
-
-    // console.log(`Book ${bookId}: Total Copies=${copies.length}, Active Loans=${activeTransactions.length}, Available=${Math.max(0, copies.length - activeTransactions.length)}`);
 
     return Math.max(0, copies.length - activeTransactions.length);
   };
