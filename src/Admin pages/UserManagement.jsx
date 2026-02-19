@@ -493,7 +493,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     { header: "Name", accessor: "name" },
     { header: "Contact No", accessor: "phone_number" },
     // { header: "Email", accessor: "email" },
-    { header: "Branch", accessor: "branch_display" },
+    ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display" }] : []),
     { header: "Plan", accessor: "plan" },
     { header: "Exp Date", accessor: "formatted_exp_date" },
     { header: "Action", accessor: "action" },
