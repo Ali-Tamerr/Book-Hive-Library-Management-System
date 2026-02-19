@@ -56,7 +56,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `category_id` | int | FK → `Categories.category_id` |
 | `quantity` | smallint (int16) | **required**, must be >= 0 |
 | `sale_price` | numeric(10,2) | nullable |
-| `image_url` | bytea | nullable — base64 string in JSON payloads |
+| `image_url` | bytea | nullable — base64 string in JSON payloads (URLs may be returned if stored as text) |
 | `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
@@ -375,7 +375,7 @@ interface BookDTO {
   category_id: number;
   quantity: number;
   sale_price?: number;        // numeric(10,2)
-  image_url?: string;        // base64-encoded bytes
+  image_url?: string;        // base64-encoded bytes or URL
   created_by?: string;        // User ID who created this book
   created_at?: string;        // ISO-8601 timestamp
   updated_at?: string;        // ISO-8601 timestamp
