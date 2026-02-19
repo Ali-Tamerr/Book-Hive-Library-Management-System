@@ -67,13 +67,13 @@ const CommonLayout = ({
 
       <section className="flex h-full flex-1 gap-6 rounded-lg">
         <div className="flex h-full flex-1 items-start gap-4 overflow-x-auto rounded-lg bg-white dark:bg-[#121317]">
-          <table className="w-full min-w-max border-collapse text-left text-sm dark:text-[#E8E8E8]">
+          <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead>
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className="whitespace-nowrap p-3 text-center font-medium"
+                    className="p-3 text-center font-medium"
                   >
                     {col.header}
                   </th>
@@ -157,7 +157,7 @@ const CommonLayout = ({
                       return (
                         <td
                           key={col.accessor}
-                          className="whitespace-nowrap p-3 text-center dark:text-white"
+                          className="p-3 text-center dark:text-white"
                         >
                           {cellContent}
                         </td>
