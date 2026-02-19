@@ -482,15 +482,15 @@ function UserManagement({ searchValue, setSearchValue }) {
   }));
 
   const title = "User Management";
-  const buttonText = "Add User";
+  const buttonText = isSuperAdmin ? "Add User" : null;
   const columns = [
     { header: "User ID", accessor: "user_id" },
     { header: "Name", accessor: "name" },
-    { header: "Email", accessor: "email" },
+    { header: "Contact No", accessor: "phone_number" },
+    // { header: "Email", accessor: "email" },
     { header: "Branch", accessor: "branch_display" },
     { header: "Plan", accessor: "plan" },
     { header: "Exp Date", accessor: "formatted_exp_date" },
-    { header: "Contact No", accessor: "phone_number" },
     { header: "Action", accessor: "action" },
   ];
 
