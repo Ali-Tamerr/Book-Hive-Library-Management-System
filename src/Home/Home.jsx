@@ -40,20 +40,20 @@ const Home = () => {
       image: new URL('./assets/img/9780439023528.jpg', import.meta.url).href,
     },
     {
-      name: 'Concurrency in Go',
+      name: 'Blue Ocean Strategy',
       category: 'Sports',
       language: 'English',
       branch: 'Alexandria',
       availability: 'Available',
-      image: new URL('./assets/img/Concurrency-in-Go-768x1008.jpg', import.meta.url).href,
+      image: new URL('./assets/img/91YCWH4jFdL.jpg', import.meta.url).href,
     },
     {
-      name: 'Real world Haskell',
+      name: ' The Autobiography',
       category: 'Biography',
       language: 'English',
       branch: 'Cairo',
       availability: 'Available',
-      image: new URL('./assets/img/716VQYKJfsL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
+      image: new URL('./assets/img/71STVuBmK+L._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
     },
   ];
 
@@ -221,7 +221,7 @@ const Home = () => {
               <div className="home__swiper swiper">
                 <div className="swiper-wrapper">
                   <article className="home__article swiper-slide">
-                    <img src={new URL('./assets/img/Concurrency-in-Go-768x1008.jpg', import.meta.url).href} alt="image" className="home__img" />
+                    <img src={new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="image" className="home__img" />
                   </article>
                   <article className="home__article swiper-slide">
                     <img src={new URL('./assets/img/91YCWH4jFdL.jpg', import.meta.url).href} alt="image" className="home__img" />
@@ -294,8 +294,8 @@ const Home = () => {
                 </div>
               </div>
               <div className="about-right" aria-hidden="true">
-                <img className="book back" src={new URL('./assets/img/1.webp', import.meta.url).href} alt="Sir Bobby Charlton book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                <img className="book front" src={new URL('./assets/img/81dugtP5foL._AC_UF894,1000_QL80_.jpg', import.meta.url).href} alt="Arsene Wenger book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                <img className="book back" src={new URL('https://kniga.lv/icache/233421b7/6565f306/e91c3d96.jpg', import.meta.url).href} alt="Sir Bobby Charlton book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                <img className="book front" src={new URL('./assets/img/54545345365 - Copy.jpg', import.meta.url).href} alt="Arsene Wenger book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
               </div>
             </div>
           </div>
