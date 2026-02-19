@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { Eye } from 'lucide-react';
+import React from 'react';
 import CommonLayout from '../Layouts/CommonLayout';
 import { useReturnedBooks } from '../hooks/useReturnedBooks';
 
 function ReturnedBooksContent({ searchValue, customTitle }) {
-    const { data: returnedBooks = [], isLoading, error } = useReturnedBooks();
+    const { data: returnedBooks = [], isLoading } = useReturnedBooks();
 
     const filteredBooks = searchValue
         ? returnedBooks.filter(book =>
@@ -20,12 +19,7 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
         { header: 'Due Date', accessor: 'due_date' },
         { header: 'Date & Time', accessor: 'created_at' },
         { header: 'Return Date', accessor: 'return_date' },
-        { header: 'Action', accessor: 'action' },
     ];
-
-    const handleView = (book) => {
-        console.log('View book details:', book);
-    };
 
     const tableData = filteredBooks.map(book => ({
         ...book,
@@ -49,15 +43,6 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
             formPopup={null}
             isUserPage={true}
             customTitle={customTitle}
-            customActionRenderer={(book) => (
-                <button
-                    onClick={() => handleView(book)}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer"
-                >
-                    <Eye size={16} />
-                    View
-                </button>
-            )}
         />
     );
 }
