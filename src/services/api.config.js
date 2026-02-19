@@ -17,20 +17,31 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
-    if (token) {
-      try {
-        const tokenData = JSON.parse(token);
-        // Check if tokenData is an object with a 'token' property, otherwise use it directly
-        const actualToken =
-          tokenData && typeof tokenData === "object"
-            ? tokenData.token || tokenData.accessToken || tokenData
-            : tokenData;
-        config.headers.Authorization = `Bearer ${actualToken}`;
-      } catch (e) {
-        // If token is not JSON, use it as string
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    if (!token) {
+      return config;
     }
+
+    let actualToken = null;
+
+    try {
+      const tokenData = JSON.parse(token);
+      if (typeof tokenData === "string") {
+        actualToken = tokenData;
+      } else if (tokenData && typeof tokenData === "object") {
+        if (typeof tokenData.token === "string") {
+          actualToken = tokenData.token;
+        } else if (typeof tokenData.accessToken === "string") {
+          actualToken = tokenData.accessToken;
+        }
+      }
+    } catch {
+      actualToken = token;
+    }
+
+    if (typeof actualToken === "string" && actualToken.trim().length > 0) {
+      config.headers.Authorization = `Bearer ${actualToken.trim()}`;
+    }
+
     return config;
   },
   (error) => {
