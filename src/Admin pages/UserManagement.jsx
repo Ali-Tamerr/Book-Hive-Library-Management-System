@@ -50,8 +50,22 @@ function UserManagement({ searchValue, setSearchValue }) {
     password_hash: "",
   });
 
-  const { data: users = [], isLoading } = useUsers();
+  const { data: users = [], isLoading, isError, error } = useUsers();
   const { data: branches = [] } = useBranches();
+
+  // Debugging logs
+  useEffect(() => {
+    if (Object.keys(users).length > 0 || isError) {
+      console.log("UserManagement Debug:", {
+        usersCount: users.length,
+        isError,
+        error: error?.message,
+        currentUserRole: currentUser?.role,
+        currentUserBranch: getUserBranchName(currentUser),
+      });
+    }
+  }, [users, isError, error, currentUser]);
+
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
@@ -60,6 +74,19 @@ function UserManagement({ searchValue, setSearchValue }) {
   const deleteBookTransactionMutation = useDeleteBookTransaction();
   const { data: reservations = [] } = useReservations();
   const deleteReservationMutation = useDeleteReservation();
+
+  if (isError) {
+    return (
+      <div className="p-10 text-center text-red-500">
+        <h2 className="text-xl font-bold">Error Loading Users</h2>
+        <p>{error?.message || "Unknown error occurred"}</p>
+        <p className="mt-2 text-sm text-gray-500">
+          Check if the backend is running and the API endpoint "/api/Users" is
+          accessible.
+        </p>
+      </div>
+    );
+  }
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -357,12 +384,20 @@ function UserManagement({ searchValue, setSearchValue }) {
     if (!user) return null;
 
     const directBranchId = user.branch_id ?? user.branchId;
-    if (directBranchId !== undefined && directBranchId !== null && directBranchId !== "") {
+    if (
+      directBranchId !== undefined &&
+      directBranchId !== null &&
+      directBranchId !== ""
+    ) {
       return String(directBranchId).trim();
     }
 
     const nestedBranchId = user.branch?.branch_id ?? user.branch?.id;
-    if (nestedBranchId !== undefined && nestedBranchId !== null && nestedBranchId !== "") {
+    if (
+      nestedBranchId !== undefined &&
+      nestedBranchId !== null &&
+      nestedBranchId !== ""
+    ) {
       return String(nestedBranchId).trim();
     }
 
@@ -390,11 +425,21 @@ function UserManagement({ searchValue, setSearchValue }) {
   };
 
   const currentRole = normalizeText(currentUser?.role);
-  const isBranchScopedRole = currentRole === "admin" || currentRole === "librarian";
+  const isBranchScopedRole =
+    currentRole === "admin" || currentRole === "librarian";
   const currentUserBranchId = getUserBranchId(currentUser);
   const currentUserBranchName = normalizeText(getUserBranchName(currentUser));
 
   const isSameBranch = (user) => {
+    // If the current user has no branch assigned, we assume they can view all users?
+    // Or we should handle this policy. For now, returning true to avoid empty list if branch is missing.
+    if (
+      !currentUserBranchId &&
+      (!currentUserBranchName || currentUserBranchName === "n/a")
+    ) {
+      return true;
+    }
+
     const userBranchId = getUserBranchId(user);
     if (currentUserBranchId && userBranchId) {
       return String(userBranchId).trim() === String(currentUserBranchId).trim();
@@ -425,7 +470,9 @@ function UserManagement({ searchValue, setSearchValue }) {
             user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
             user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
             user.user_id?.toString().includes(searchValue) ||
-            getUserBranchName(user).toLowerCase().includes(searchValue.toLowerCase()),
+            getUserBranchName(user)
+              .toLowerCase()
+              .includes(searchValue.toLowerCase()),
         )
       : visibleUsers
   ).map((user) => ({

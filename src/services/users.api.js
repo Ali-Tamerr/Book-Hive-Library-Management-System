@@ -1,6 +1,6 @@
-import { apiGet, apiPost, apiPut, apiDelete } from './api.config';
+import { apiGet, apiPost, apiPut, apiDelete } from "./api.config";
 
-const BASE_ENDPOINT = '/Users';
+const BASE_ENDPOINT = "/Users";
 
 export const getAllUsers = async () => {
   return await apiGet(BASE_ENDPOINT);
@@ -8,7 +8,7 @@ export const getAllUsers = async () => {
 
 // Get user by ID
 export const getUserById = async (id) => {
-  return await apiGet(`${BASE_ENDPOINT}/${id}`);
+  return await apiGet(`${BASE_ENDPOINT}/byid/${id}`);
 };
 
 // Get user by name

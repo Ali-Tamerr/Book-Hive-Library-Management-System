@@ -34,14 +34,22 @@ const FormInput = ({
       <input type={type} {...commonProps} />
     );
 
-  if (!label) {
+  if (!label && !rightIcon) {
     return inputElement;
   }
 
   return (
-    <div>
-      <label className="block text-sm font-medium">{label}</label>
+    <div className={rightIcon ? "relative w-full" : ""}>
+      {label && <label className="block text-sm font-medium">{label}</label>}
       {inputElement}
+      {rightIcon && (
+        <div
+          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-[#0b0b3b] dark:text-[#D7D7D7]"
+          onClick={onRightIconClick}
+        >
+          {rightIcon}
+        </div>
+      )}
     </div>
   );
 };
