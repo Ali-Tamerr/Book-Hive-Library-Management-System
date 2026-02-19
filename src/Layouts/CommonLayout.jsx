@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { FilePenLine, Trash2, ReceiptText } from "lucide-react";
 import SearchBar from "../components/SearchBar.jsx";
 import ButtonOne from "../components/ButtonOne.jsx";
@@ -21,8 +21,33 @@ const CommonLayout = ({
   customTitle,
   secondaryButton,
   onScroll,
+  onLoadMore,
+  hasMore,
 }) => {
   const FormPopupComponent = formPopup;
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoading && onLoadMore) {
+          console.log("Intersecting bottom sentinel, loading more...");
+          onLoadMore();
+        }
+      },
+      { rootMargin: "200px", threshold: 0 },
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMore, onLoadMore, isLoading]);
 
   return (
     <div className="flex min-h-screen flex-col gap-5 p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
@@ -169,6 +194,15 @@ const CommonLayout = ({
               )}
             </tbody>
           </table>
+          {hasMore && (
+            <div
+              ref={observerTarget}
+              onClick={onLoadMore}
+              className="h-10 w-full cursor-pointer p-2 text-center text-gray-500 transition-colors hover:text-gray-800"
+            >
+              Load More (Scroll or Click)
+            </div>
+          )}
         </div>
         {isUserPage && null}
       </section>
