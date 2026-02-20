@@ -294,8 +294,8 @@ const Home = () => {
                 </div>
               </div>
               <div className="about-right" aria-hidden="true">
-                <img className="book back" src={new URL('https://kniga.lv/icache/233421b7/6565f306/e91c3d96.jpg', import.meta.url).href} alt="Sir Bobby Charlton book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                <img className="book front" src={new URL('./assets/img/54545345365 - Copy.jpg', import.meta.url).href} alt="Arsene Wenger book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                <img className="book back" src={new URL('./assets/img/81VT2VfXZYL._AC_UF894,1000_QL80_.jpg', import.meta.url).href} alt="Sir Bobby Charlton book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                <img className="book front" src={new URL('./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="Arsene Wenger book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
               </div>
             </div>
           </div>
