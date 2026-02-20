@@ -30,8 +30,14 @@ function Catalog({ searchValue, setSearchValue }) {
         label="Overdue Borrowers"
         isActive={localActiveTab === "overdue"}
         onClick={() => setLocalActiveTab("overdue")}
+      />
+      <TabButton
+        label="Returned Books"
+        isActive={localActiveTab === "returned"}
+        onClick={() => setLocalActiveTab("returned")}
         position="last"
       />
+     
     </div>
   );
 
@@ -43,6 +49,15 @@ function Catalog({ searchValue, setSearchValue }) {
           setSearchValue={setSearchValue}
           customTitle={tabButtons}
           hideButton={true}
+        />
+      )}
+      {localActiveTab === "returned" && (
+        <BorrowedBooks
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+          customTitle={tabButtons}
+          hideButton={true}
+          showReturned={true}
         />
       )}
       {localActiveTab === "overdue" && (

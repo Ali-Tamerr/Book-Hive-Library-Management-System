@@ -131,10 +131,10 @@ function Categories({ searchValue, setSearchValue }) {
   const title = "Category Management";
   const buttonText = "Add Category";
   const columns = [
-    { header: 'ID', accessor: 'category_id' },
+    // { header: 'ID', accessor: 'category_id' },
     { header: 'Name', accessor: 'category_name' },
     {
-      header: 'Book Count',
+      header: 'Bo Quantity',
       accessor: 'book_count',
       render: (category) => {
         const count = books.filter(b => b.category_id === category.category_id).length;

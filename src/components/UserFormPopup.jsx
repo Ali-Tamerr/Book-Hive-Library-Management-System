@@ -114,7 +114,7 @@ function UserFormPopup({
               placeholder="User ID"
               required
               autoComplete="off"
-              className="w-full h-[50px] px-4 py-3 rounded-xl border-1 border-[#3D3E3E] dark:border-[#2C2D33] bg-white dark:bg-[#1A1B20] text-black dark:text-[#D7D7D7] placeholder-[#727374] dark:placeholder-[#5A5B60] outline-none focus:border-[#1e255e] dark:focus:border-[#D7D7D7] text-[13px]"
+              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] bg-white px-4 py-4 text-[13px] text-black placeholder-[#727374] outline-none focus:border-[#1e255e] dark:border-[#3D3E3E] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#5A5B60] dark:focus:border-[#D7D7D7]"
             />
           </div>
         </div>

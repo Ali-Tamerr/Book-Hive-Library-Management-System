@@ -42,6 +42,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `role` | string(20) | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"` |
 | `status` | string(20) | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
+| `subscription_end_date` | timestamp | nullable — subscription expiration (timestamp without time zone) |
 | `created_by` | string(20) | nullable, FK → `Users.user_id` (self-referential), ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
@@ -55,7 +56,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `category_id` | int | FK → `Categories.category_id` |
 | `quantity` | smallint (int16) | **required**, must be >= 0 |
 | `sale_price` | numeric(10,2) | nullable |
-| `image_url` | text | nullable |
+| `image_url` | bytea | nullable — base64 string in JSON payloads |
 | `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
@@ -239,7 +240,8 @@ POST /api/Users
   "phone_number": "+1234567890",
   "role": "User",
   "status": "Active",
-  "plan": "Professional"
+  "plan": "Professional",
+  "subscription_end_date": "2025-12-31T23:59:59Z"
 }
 ```
 
@@ -251,7 +253,7 @@ POST /api/Books
   "category_id": 4,
   "quantity": 3,
   "sale_price": 39.99,
-  "image_url": "https://example.com/clean-code.jpg",
+  "image_url": "BASE64_ENCODED_IMAGE_BYTES",
   "BookCopies": [
     { "book_copy_id": "BC-0001", "branch_id": 1 },
     { "book_copy_id": "BC-0002", "branch_id": 1 },
@@ -361,7 +363,7 @@ interface BookDTO {
   category_id: number;
   quantity: number;
   sale_price?: number;        // numeric(10,2)
-  image_url?: string;
+  image_url?: string;        // base64-encoded bytes
   created_by?: string;        // User ID who created this book
   created_at?: string;        // ISO-8601 timestamp
   updated_at?: string;        // ISO-8601 timestamp
@@ -374,7 +376,7 @@ interface BookDTO {
 ## Behavior and Implementation Notes (for UI/AI generation)
 
 - **Atomic operations:** Multi-step changes (BookDetail + BookCopies) use explicit transactions. UI should treat create/update as all-or-nothing and implement retry/error handling on 4xx/5xx.
-- **Return flow:** To mark a return, call `POST /api/BookTransactions/return` with `transaction_id` (and optional `returned_at`). Backend sets `returned_at` (defaults to UTC now) and status to `Returned`; database trigger may also set `return_date`.
+- **Return flow:** To mark a return, call `POST /api/BookTransactions/return` with `transaction_id` (and optional `return_date`). Backend sets `return_date` (defaults to UTC now) and status to `Returned`.
 - **Error handling:** API returns:
   - `400` for validation failures (include readable error message)
   - `404` for missing resources
@@ -421,6 +423,7 @@ interface User {
   role: 'Super Admin' | 'Admin' | 'User';
   status: 'Active' | 'Inactive' | 'Banned';
   plan?: 'Discover' | 'Enterprise' | 'Professional';
+  subscription_end_date?: string;
   created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;
   updated_at?: string;
@@ -446,7 +449,7 @@ interface BookDetail {
   category_id: number;
   quantity: number;          // smallint, >= 0
   sale_price?: number;       // numeric(10,2)
-  image_url?: string;
+  image_url?: string;        // base64-encoded bytes
   created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;
   updated_at?: string;
@@ -536,7 +539,10 @@ UserRequests (standalone, no FK relationships)
 
 ## Changelog
 
-### Latest Update (Book return marker)
+### Latest Update (User subscription end date)
+- Added `subscription_end_date` (timestamp) to `Users` for plan expiration tracking.
+
+### Previous Update (Book return marker)
 - Removed `returned_at` (dropped from DB). Return flow now uses `return_date`.
 - `POST /api/BookTransactions/return` sets `return_date` (defaults to current UTC) and status to `Returned`.
 
