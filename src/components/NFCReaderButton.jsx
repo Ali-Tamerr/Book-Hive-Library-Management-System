@@ -45,7 +45,7 @@ const NFCReaderButton = ({ onDataReceived, inputRef, isFlexOne = "false" }) => {
       </button>
 
       {/* Wireless Button */}
-      <button
+      {/* <button
         type="button"
         onClick={toggleWireless}
         className={` ${isFlexOne === "true" ? "flex-1" : ""} w-26 flex cursor-pointer items-center justify-center gap-2 rounded-[12px] text-[13px] font-medium transition-colors ${
@@ -61,7 +61,7 @@ const NFCReaderButton = ({ onDataReceived, inputRef, isFlexOne = "false" }) => {
           <Wifi size={18} />
         )}
         {isWireless ? "Active" : "Wireless"}
-      </button>
+      </button> */}
     </div>
   );
 };

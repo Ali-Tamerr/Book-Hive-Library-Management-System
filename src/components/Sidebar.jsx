@@ -27,6 +27,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
   const isAdmin =
     currentUser &&
     (currentUser.role === "Admin" || currentUser.role === "Super Admin");
+  const isSuperAdmin = currentUser?.role === "Super Admin";
   // Sidebar behavior: Always expanded for Admins, Always collapsed for Users (no hover)
   const isExpanded = isAdmin;
 
@@ -168,26 +169,30 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                 text="Users"
                 toggleSidebar={toggleSidebar}
               />
-              <NavLink
-                isExpanded={isExpanded}
-                active={location.pathname === "/admin/branches"}
-                onClick={() => {
-                  navigate("/admin/branches");
-                }}
-                icon={<MapPin size={18} strokeWidth={2.3} />}
-                text="Branches"
-                toggleSidebar={toggleSidebar}
-              />
-              <NavLink
-                isExpanded={isExpanded}
-                active={location.pathname === "/admin/categories"}
-                onClick={() => {
-                  navigate("/admin/categories");
-                }}
-                icon={<Shapes size={18} strokeWidth={2.3} />}
-                text="Categories"
-                toggleSidebar={toggleSidebar}
-              />
+              {isSuperAdmin && (
+                <>
+                  <NavLink
+                    isExpanded={isExpanded}
+                    active={location.pathname === "/admin/branches"}
+                    onClick={() => {
+                      navigate("/admin/branches");
+                    }}
+                    icon={<MapPin size={18} strokeWidth={2.3} />}
+                    text="Branches"
+                    toggleSidebar={toggleSidebar}
+                  />
+                  <NavLink
+                    isExpanded={isExpanded}
+                    active={location.pathname === "/admin/categories"}
+                    onClick={() => {
+                      navigate("/admin/categories");
+                    }}
+                    icon={<Shapes size={18} strokeWidth={2.3} />}
+                    text="Categories"
+                    toggleSidebar={toggleSidebar}
+                  />
+                </>
+              )}
             </nav>
             <div className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-[#0a0f33] to-transparent dark:from-[#D7D7D7]" />
           </div>
