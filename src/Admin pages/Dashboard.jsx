@@ -22,10 +22,14 @@ function Dashboard() {
 
   // Use React Query hooks - much cleaner!
   const {
-    data: users = [],
+    data: usersData,
     isLoading: usersLoading,
     refetch: refetchUsers,
   } = useUsers();
+
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
 
   const { data: books = [], isLoading: booksLoading } = useBooks();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
@@ -82,7 +86,7 @@ function Dashboard() {
   const getUserName = (userId) => {
     const user = users.find((u) => u.user_id === userId || u.id === userId);
     if (!user) return "Unknown";
-    return user.full_name || user.name || user.username || user.email || "User";
+    return user.full_name || user.name || user.username || "User";
   };
 
   const buildTransactionItem = (transaction) => ({
@@ -142,7 +146,6 @@ function Dashboard() {
         user.full_name ||
         user.username ||
         `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-        user.email ||
         "Unknown",
       adminId: user.user_id ?? user.id,
       subtitle: `Librarian Branch: ${getBranchName(user)} \u2022 ${user.status || "Active"}`,
@@ -167,7 +170,7 @@ function Dashboard() {
 
     if (items.length === 0) {
       return (
-        <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500 dark:bg-[#E3E3E3] dark:text-[#121317]">
+        <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500 dark:bg-transparent dark:text-[#121317]">
           {emptyText}
         </li>
       );
@@ -176,11 +179,11 @@ function Dashboard() {
     return items.map((item) => (
       <li
         key={item.id}
-        className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#0a0f33] dark:bg-[#E3E3E3]"
+        className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#0a0f33] "
       >
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0a0f33] dark:bg-[#0a0f33]">
-          <User size={14} className="text-white dark:text-[#121317]" />
-        </div>
+       <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full ">
+                     <User className="h-full w-full text-[#0a0f33] dark:text-[#0a0f33]" />
+                   </div>
         <div className="h-full w-[1.8px] rounded-full bg-[#0b0b3b] dark:bg-[#0a0f33]"></div>
         <div className="flex-1 overflow-hidden">
           <p className="truncate text-sm font-medium text-[#0a0f33] dark:text-[#121317]">
@@ -194,6 +197,9 @@ function Dashboard() {
       </li>
     ));
   };
+
+  const compactCardClass =
+    "!flex-none !w-[320px] !min-w-[320px] !h-full !min-h-[250px] max-[900px]:!w-full max-[900px]:max-w-[420px]";
 
   return (
     <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[1540px]:py-4 max-[1080px]:px-11 max-[430px]:w-dvw max-[430px]:px-4">
@@ -216,7 +222,7 @@ function Dashboard() {
 
         <div className="flex min-h-0 w-full flex-1 flex-col gap-6 max-[1540px]:mt-6">
           {isSuperAdmin ? (
-            <div className="grid w-full grid-cols-2 gap-6 max-[900px]:grid-cols-1">
+            <div className="grid h-full w-full auto-rows-fr grid-cols-2 gap-6 max-[900px]:grid-cols-1">
               <DashboardCard title="Borrowed Books">
                 {renderTransactionList(borrowedItems, "No borrowed books")}
               </DashboardCard>
@@ -236,21 +242,34 @@ function Dashboard() {
               />
             </div>
           ) : (
-            <>
-              <div className="mx-auto w-full max-w-[420px]">
-                <DashboardCard title="Borrowed Books">
-                  {renderTransactionList(borrowedItems, "No borrowed books")}
-                </DashboardCard>
-              </div>
-              <div className="grid w-full grid-cols-2 gap-6 max-[900px]:grid-cols-1">
-                <DashboardCard title="Overdue Borrowers">
+            <div className="mx-auto mt-2 flex h-full min-h-0 w-full max-w-[700px] flex-col gap-5">
+              <div className="flex min-h-0 flex-1 justify-center max-[900px]:block max-[900px]:w-full max-[900px]:max-w-[420px] max-[900px]:self-center">
+                  <DashboardCard
+                    title="Borrowed Books"
+                    className={compactCardClass}
+                    listClassName="pt-2"
+                  >
+                    {renderTransactionList(borrowedItems, "No borrowed books")}
+                  </DashboardCard>
+                </div>
+
+              <div className="grid min-h-0 flex-1 w-full auto-rows-fr grid-cols-2 place-items-stretch gap-6 max-[900px]:grid-cols-1">
+                <DashboardCard
+                  title="Overdue Borrowers"
+                  className={compactCardClass}
+                  listClassName="pt-2"
+                >
                   {renderTransactionList(overdueItems, "No overdue books")}
                 </DashboardCard>
-                <DashboardCard title="Returned Books">
+                <DashboardCard
+                  title="Returned Books"
+                  className={compactCardClass}
+                  listClassName="pt-2"
+                >
                   {renderTransactionList(returnedItems, "No returned books")}
                 </DashboardCard>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -1,10 +1,11 @@
-export const REFETCH_INTERVAL = 5000;
+export const REFETCH_INTERVAL = false;
 
 export const adminQueryOptions = {
-  staleTime: 2000,
+  staleTime: 30000,
   refetchInterval: REFETCH_INTERVAL,
   refetchIntervalInBackground: false,
-  refetchOnWindowFocus: true,
+  refetchOnWindowFocus: false,
   refetchOnMount: true,
   refetchOnReconnect: true,
+  retry: 1,
 };

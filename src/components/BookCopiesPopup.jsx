@@ -108,7 +108,7 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex gap-3 px-10">
-          <div className="flex-1">
+          <div className="w-auto">
             <NFCReaderButton onDataReceived={handleNFCData} />
           </div>
           <div className="relative flex-1">
@@ -121,12 +121,17 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
               onClick={() => setIsBranchSelectOpen(!isBranchSelectOpen)}
               onBlur={() => setIsBranchSelectOpen(false)}
               required
-              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] bg-white px-4 py-4 text-[13px] text-black placeholder-[#727374] outline-none focus:border-[#1e255e] dark:border-[#3D3E3E] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#5A5B60] dark:focus:border-[#D7D7D7] appearance-none"
-              
+              className="h-[50px] w-full appearance-none rounded-xl border border-[#3D3E3E] bg-white px-4 py-4 text-[13px] text-black placeholder-[#727374] outline-none focus:border-[#1e255e] dark:border-[#3D3E3E] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#5A5B60] dark:focus:border-[#D7D7D7]"
             >
-              <option value="">Select Branch</option>
+              <option value="" disabled hidden>
+                Select Branch
+              </option>
               {branches.map((branch) => (
-                <option key={branch.branch_id} value={branch.branch_id}>
+                <option
+                  key={branch.branch_id}
+                  value={branch.branch_id}
+                  className="bg-white text-black dark:bg-[#121317] dark:text-[#D7D7D7]"
+                >
                   {branch.name}
                 </option>
               ))}

@@ -2,8 +2,8 @@ import { apiGet, apiPost, apiPut, apiDelete } from "./api.config";
 
 const BASE_ENDPOINT = "/Users";
 
-export const getAllUsers = async () => {
-  return await apiGet(BASE_ENDPOINT);
+export const getAllUsers = async ({ page = 1, limit = 12 } = {}) => {
+  return await apiGet(`${BASE_ENDPOINT}?page=${page}&limit=${limit}`);
 };
 
 // Get user by ID
