@@ -16,6 +16,7 @@ import {
   MapPin,
   Compass,
   Shapes,
+  MessageSquare,
 } from "lucide-react";
 import { logout, getCurrentUser } from "../services/auth.api";
 
@@ -98,6 +99,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                 }}
                 icon={<Home size={18} strokeWidth={2.3} />}
                 text="Dashboard"
+                toggleSidebar={toggleSidebar}
               />
               {/* Books NavLink Removed */}
               <NavLink
@@ -108,6 +110,17 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
                 }}
                 icon={<Compass size={18} strokeWidth={2.3} />}
                 text="Catalog"
+                toggleSidebar={toggleSidebar}
+              />
+              <NavLink
+                isExpanded={isExpanded}
+                active={location.pathname === "/user/chatbot"}
+                onClick={() => {
+                  navigate("/user/chatbot");
+                }}
+                icon={<MessageSquare size={18} strokeWidth={2.3} />}
+                text="Chatbot"
+                toggleSidebar={toggleSidebar}
               />
             </nav>
             <div className="pointer-events-none absolute bottom-0 left-0 -ml-[0.6px] h-20 w-full bg-gradient-to-t from-[#0a0f33] to-transparent dark:from-[#D7D7D7]" />
