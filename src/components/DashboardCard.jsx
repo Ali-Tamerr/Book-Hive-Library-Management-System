@@ -1,12 +1,14 @@
 import React from "react";
 
-function DashboardCard({ title, children }) {
+function DashboardCard({ title, children, className = "", listClassName = "" }) {
   return (
-    <div className="flex h-full w-full min-w-[330px] flex-1 flex-col gap-2.5 rounded-[11px] bg-white px-3.5 py-7 dark:bg-[#D7D7D7]">
+    <div
+      className={`flex h-full w-full min-w-[330px] flex-1 flex-col gap-2.5 rounded-[11px] bg-white px-3.5 py-7 dark:bg-[#D7D7D7] ${className}`}
+    >
       <h4 className="self-center text-lg font-medium text-[#0a0f33] dark:text-[#121317]">
         {title}
       </h4>
-      <ul className="flex-1 space-y-2 overflow-y-auto pr-1 pt-3">
+      <ul className={`flex-1 space-y-2 overflow-y-auto pr-1 pt-3 ${listClassName}`}>
         {children}
       </ul>
     </div>

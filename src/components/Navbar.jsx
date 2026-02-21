@@ -26,10 +26,13 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const location = useLocation();
 
   const currentUser = getCurrentUser();
-  const roleLabel =
-    currentUser?.role?.toLowerCase() === "admin"
-      ? "Librarian"
-      : currentUser?.role || "User";
+  const getRoleLabel = () => {
+    const role = currentUser?.role?.toLowerCase();
+    if (role === "admin") return "Librarian";
+    if (role === "user") return currentUser?.plan || "User";
+    return currentUser?.role || "User";
+  };
+  const roleLabel = getRoleLabel();
 
   useEffect(() => {
     const handleUpdate = () => {

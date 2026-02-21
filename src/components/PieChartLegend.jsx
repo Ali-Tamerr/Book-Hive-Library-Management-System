@@ -1,5 +1,5 @@
 import React from "react";
-import LogoIcon from "../assets/logo.svg?react";
+import ColorableLogo from "./ColorableLogo";
 
 const PieChartLegend = ({ variant = "mobile", className }) => {
   if (variant === "mobile") {
@@ -46,7 +46,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
       className={`flex items-center gap-7 whitespace-nowrap rounded-md bg-white px-8 py-5 max-[1540px]:hidden dark:bg-[#D7D7D7] ${className || ""}`}
     >
       <div className="block max-[1650px]:hidden">
-        <LogoIcon className="w-17 -mr-1.5 h-16 text-[#0a0f33] dark:text-black" />
+        <ColorableLogo className="w-17 -mr-1.5 h-16 text-[#0a0f33] dark:text-black" />
       </div>
       <div className="block h-[112%] w-0.5 rounded-full bg-[#0a0f33] max-[1650px]:hidden dark:bg-black"></div>
       <div className="flex flex-col gap-5">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import LogoIcon from "../assets/logo.svg?react";
+import ColorableLogo from "./ColorableLogo";
 import {
   Home,
   BookOpen,
@@ -74,8 +74,8 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
         <div className="pointer-events-none absolute right-0 top-0 z-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200" />
 
         <div className="relative z-10 h-40 self-center px-4 text-center">
-          <LogoIcon
-            className={` invert dark:invert-0 mx-auto transition-all duration-300 ${isExpanded ? "h-13 w-13" : "h-14 w-12"} max-[1080px]:h-22 max-[1080px]:w-20`}
+          <ColorableLogo
+            className={`mx-auto text-white transition-all duration-300 dark:text-black ${isExpanded ? "h-13 w-13" : "h-14 w-12"} max-[1080px]:h-22 max-[1080px]:w-20`}
           />
 
           <h2
