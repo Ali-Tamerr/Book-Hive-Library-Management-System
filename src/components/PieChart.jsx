@@ -7,7 +7,7 @@ const PieChart = ({
   className,
 }) => {
   const size = 9999;
-  const radius = size / 2 - 10;
+  const radius = size / 2;
   const center = size / 2;
 
   const totalForChart = totalBorrowed || 0;
@@ -19,7 +19,7 @@ const PieChart = ({
   if (totalForChart === 0 || (currentlyBorrowed === 0 && returnedBooks === 0)) {
     return (
       <div
-        className={`flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px] ${className || ""}`}
+        className={`flex h-full w-full items-center justify-center ${className || ""}`}
       >
         <svg viewBox={`0 0 ${size} ${size}`} className="block h-full w-full">
           <circle
@@ -81,12 +81,12 @@ const PieChart = ({
 
   return (
     <div
-      className={`flex h-full w-full items-center justify-center max-[1540px]:max-h-[300px] max-[1540px]:max-w-[300px] ${className || ""}`}
+      className={`flex h-full w-full items-center justify-center ${className || ""}`}
     >
       <svg
         viewBox={`0 0 ${size} ${size}`}
         className="block h-full w-full"
-        preserveAspectRatio="xMidYMin meet"
+        preserveAspectRatio="xMidYMid meet"
       >
         {isBorrowedFullCircle ? (
           <circle
