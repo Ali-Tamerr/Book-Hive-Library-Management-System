@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User, RotateCcw } from "lucide-react";
+import { User } from "lucide-react";
 import { useUsers } from "../hooks/useUsers";
 import { useBooks } from "../hooks/useBooks";
 import { useOverdueBooks } from "../hooks/useOverdueBooks";
@@ -13,11 +13,21 @@ import { isUserOnline } from "../services/userActivity.api";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import AdminDashboardCard from "../components/AdminDashboardCard.jsx";
+import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
+import maximizeCircleIcon from "../assets/icons/maximize-circle.svg";
 
 function Dashboard() {
+  const normalizeListResponse = (payload) => {
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload?.data)) return payload.data;
+    if (Array.isArray(payload?.items)) return payload.items;
+    return [];
+  };
+
   const currentUser = getCurrentUser();
   const isSuperAdmin = currentUser?.role === "Super Admin";
   const [loadingAdmins, setLoadingAdmins] = useState({});
+  const [selectedTransactionItem, setSelectedTransactionItem] = useState(null);
   useUserActivity();
 
   // Use React Query hooks - much cleaner!
@@ -31,13 +41,19 @@ function Dashboard() {
     ? usersData.pages.flatMap((page) => page.data || [])
     : [];
 
-  const { data: books = [], isLoading: booksLoading } = useBooks();
-  const { data: branches = [], isLoading: branchesLoading } = useBranches();
-  const { data: bookCopies = [] } = useBookCopies();
-  const { data: overdueBooksData = [], isLoading: overdueLoading } =
+  const { data: booksData, isLoading: booksLoading } = useBooks();
+  const { data: branchesData, isLoading: branchesLoading } = useBranches();
+  const { data: bookCopiesData } = useBookCopies();
+  const { data: overdueBooksRaw, isLoading: overdueLoading } =
     useOverdueBooks();
-  const { data: bookTransactions = [], isLoading: transactionsLoading } =
+  const { data: bookTransactionsRaw, isLoading: transactionsLoading } =
     useBookTransactions();
+
+  const books = normalizeListResponse(booksData);
+  const branches = normalizeListResponse(branchesData);
+  const bookCopies = normalizeListResponse(bookCopiesData);
+  const overdueBooksData = normalizeListResponse(overdueBooksRaw);
+  const bookTransactions = normalizeListResponse(bookTransactionsRaw);
 
   const handleRefreshAdmins = (adminId) => {
     setLoadingAdmins((prev) => ({ ...prev, [adminId]: true }));
@@ -51,16 +67,14 @@ function Dashboard() {
     usersLoading || booksLoading || overdueLoading || transactionsLoading;
   const librariansLoading = usersLoading || branchesLoading;
 
-  const borrowedTransactions = Array.isArray(bookTransactions)
-    ? bookTransactions.filter(
-        (t) => t.transaction_type === "Check-Out" && t.status === "Completed",
-      )
-    : [];
+  const borrowedTransactions = bookTransactions.filter(
+    (t) => t?.transaction_type === "Check-Out",
+  );
   const returnedTransactions = borrowedTransactions.filter(
-    (t) => t.return_date,
+    (t) => t?.status === "Returned" || !!t?.return_date,
   );
   const currentlyBorrowedTransactions = borrowedTransactions.filter(
-    (t) => !t.return_date,
+    (t) => t?.status !== "Returned" && !t?.return_date,
   );
   const returnedBooks = returnedTransactions.length;
   const currentlyBorrowed = currentlyBorrowedTransactions.length;
@@ -99,17 +113,38 @@ function Dashboard() {
       transaction.book_title ||
       transaction.book_name ||
       getBookName(transaction.book_id),
+    transactionType: transaction.transaction_type || "N/A",
+    status: transaction.status || "N/A",
+    borrowType: transaction.borrow_type || "N/A",
+    transactionId: transaction.transaction_id || transaction.id || "N/A",
+    userId: transaction.user_id || "N/A",
+    bookCopyId: transaction.book_id || "N/A",
+    dueDate: transaction.due_date || "N/A",
+    returnDate: transaction.return_date || "N/A",
+    createdAt: transaction.created_at || "N/A",
   });
+
+  const formatSimpleDate = (value) => {
+    if (!value || value === "N/A") return "N/A";
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return value;
+    return parsed.toLocaleDateString();
+  };
 
   const borrowedItems = currentlyBorrowedTransactions
     .slice(0, 5)
-    .map(buildTransactionItem);
-  const overdueItems = (Array.isArray(overdueBooksData) ? overdueBooksData : [])
-    .slice(0, 5)
-    .map(buildTransactionItem);
-  const returnedItems = returnedTransactions
-    .slice(0, 5)
-    .map(buildTransactionItem);
+    .map((transaction) => ({
+      ...buildTransactionItem(transaction),
+      sourceCard: "borrowed",
+    }));
+  const overdueItems = overdueBooksData.slice(0, 5).map((transaction) => ({
+    ...buildTransactionItem(transaction),
+    sourceCard: "overdue",
+  }));
+  const returnedItems = returnedTransactions.slice(0, 5).map((transaction) => ({
+    ...buildTransactionItem(transaction),
+    sourceCard: "returned",
+  }));
 
   const branchesById = new Map(
     branches.map((branch) => [
@@ -170,7 +205,7 @@ function Dashboard() {
 
     if (items.length === 0) {
       return (
-        <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500 dark:bg-transparent dark:text-[#121317]">
+        <li className="rounded-md text-center p-2.5 text-xs text-gray-500 dark:bg-transparent dark:text-[#121317]">
           {emptyText}
         </li>
       );
@@ -193,10 +228,34 @@ function Dashboard() {
             Book Name: {item.bookName}
           </p>
         </div>
-        <RotateCcw className="h-6 w-6 text-[#0a0f33] dark:text-[#121317]" />
+        <button
+          type="button"
+          onClick={() => setSelectedTransactionItem(item)}
+          className="inline-flex h-6 w-6 items-center justify-center text-[#0a0f33] cursor-pointer transition-opacity hover:opacity-80 dark:text-[#121317]"
+          aria-label="View row details"
+        >
+          <img
+            src={maximizeCircleIcon}
+            alt="View details"
+            className="h-6 w-6"
+          />
+        </button>
       </li>
     ));
   };
+
+  const selectedDetails = selectedTransactionItem
+    ? {
+        "User Name": selectedTransactionItem.userName,
+        "Book Name": selectedTransactionItem.bookName,
+        "Due Date": formatSimpleDate(selectedTransactionItem.dueDate),
+        ...(selectedTransactionItem.sourceCard === "returned"
+          ? {
+              "Return Date": formatSimpleDate(selectedTransactionItem.returnDate),
+            }
+          : {}),
+      }
+    : null;
 
   const compactCardClass =
     "!flex-none !w-[320px] !min-w-[320px] !h-full !min-h-[250px] max-[900px]:!w-full max-[900px]:max-w-[420px]";
@@ -273,6 +332,13 @@ function Dashboard() {
           )}
         </div>
       </div>
+
+      <ViewDetailsPopup
+        show={!!selectedTransactionItem}
+        onClose={() => setSelectedTransactionItem(null)}
+        title="Transaction Details"
+        data={selectedDetails}
+      />
     </section>
   );
 }
