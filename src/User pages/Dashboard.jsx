@@ -312,9 +312,9 @@ function Dashboard() {
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="h-54 flex w-32 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
+                    className="h-64 flex w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
                   >
-                    <div className="mb-2 flex h-28 w-full items-center justify-center overflow-hidden rounded-md">
+                    <div className="flex h-36 w-full items-center justify-center overflow-hidden rounded-md">
                       {getImageUrl(book.image_url) ? (
                         <img
                           src={getImageUrl(book.image_url)}
@@ -335,11 +335,11 @@ function Dashboard() {
                       )}
                     </div>
                     <div className="flex w-full flex-col gap-1">
-                      <h3 className="mb-1 line-clamp-1 text-center text-xs font-semibold text-[#0b0c28] text-black dark:text-[#D7D7D7]">
+                      <h3 className="line-clamp-2 text-center text-md font-semibold text-[#0b0c28] text-black dark:text-[#D7D7D7]">
                         {book.name || "Untitled"}
                       </h3>
                       <button
-                        className="w-full cursor-pointer whitespace-nowrap rounded-xl bg-[#0b0c28] px-3 py-1.5 text-[10px] font-bold text-white transition-colors dark:bg-[#D7D7D7] dark:text-black"
+                        className="w-full cursor-pointer whitespace-nowrap rounded-xl bg-[#0b0c28] py-1.5 text-[17px] font-bold text-white transition-colors dark:bg-[#D7D7D7] dark:text-black"
                         onClick={() => setSelectedBook(book)}
                       >
                         Explore Now
