@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronDown, ArrowLeft, ArrowRight } from "lucide-react";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
@@ -93,8 +93,7 @@ function Dashboard() {
     if (!currentUser?.user_id) return null;
     return (
       users.find(
-        (u) =>
-          String(u.user_id ?? u.id ?? "") === String(currentUser.user_id),
+        (u) => String(u.user_id ?? u.id ?? "") === String(currentUser.user_id),
       ) || null
     );
   }, [users, currentUser?.user_id]);
@@ -209,17 +208,19 @@ function Dashboard() {
         </div>
         <section className="flex h-full gap-3 max-[640px]:flex-col">
           <div
-            className={`min-[1540px]:ml-18 flex w-full flex-1 flex-col items-center justify-center gap-3 max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full`}
+            className={`min-[1540px]:ml-18 flex-3 flex w-full flex-col items-center justify-center gap-3 max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full`}
           >
             <div className="flex h-full w-full flex-col items-center justify-start rounded-md min-[1200px]:mb-6">
-              <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full max-w-[630px] flex-col items-center justify-start gap-6 p-4 max-[380px]:w-[110%]">
-                <div className="h-fit w-full max-[640px]:min-h-[162px] max-[640px]:w-full max-[340px]:-ml-9">
-                  <PieChart
-                    totalBorrowed={stats.totalBorrowed}
-                    currentlyBorrowed={stats.currentlyBorrowed}
-                    returnedBooks={stats.returnedBooks}
-                    className="!max-h-full !max-w-full"
-                  />
+              <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-6 overflow-hidden  max-[380px]:w-[110%]">
+                <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center overflow-hidden max-[640px]:min-h-[162px] max-[340px]:-ml-9">
+                  <div className="absolute inset-0 flex items-center justify-center ">
+                    <PieChart
+                      totalBorrowed={stats.totalBorrowed}
+                      currentlyBorrowed={stats.currentlyBorrowed}
+                      returnedBooks={stats.returnedBooks}
+                      className="h-full w-full"
+                    />
+                  </div>
                 </div>
                 <PieChartLegend
                   variant="mobile"
@@ -232,18 +233,18 @@ function Dashboard() {
               </div>
             </div>
           </div>
-          <div className="flex w-full flex-col gap-[18px] min-[640px]:h-full min-[640px]:flex-1">
-            <div className="flex items-center justify-between border-b border-[#EAEAEA] dark:border-[#2C2D33]">
-              <div className="flex gap-5">
+          <div className="min-[640px]:flex-4 flex w-full flex-col gap-[18px] min-[640px]:h-full">
+            <div className="flex items-center justify-between border-b border-[#525252] dark:border-[#2C2D33]">
+              <div className="flex gap-16">
                 <button
                   onClick={() => {
                     setActiveTab("recommended");
                     setCurrentPage(0);
                   }}
-                  className={`font-regular relative pb-1.5 text-base transition-colors ${
+                  className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
                     activeTab === "recommended"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
-                      : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      : "text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recommended
@@ -253,53 +254,54 @@ function Dashboard() {
                     setActiveTab("recently");
                     setCurrentPage(0);
                   }}
-                  className={`font-regular relative pb-1.5 text-base transition-colors ${
+                  className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
                     activeTab === "recently"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
-                      : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      : "text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recently added
                 </button>
               </div>
-              <div className="flex items-center gap-1.5 pb-1.5">
+              <div className="flex items-center gap-3 pb-1.5">
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage === 0}
-                  className={`rounded p-1 transition-colors ${
+                  className={`rounded transition-colors ${
                     currentPage === 0
-                      ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
-                      : "text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-[#2C2D33]"
+                      ? "cursor-not-allowed text-[#525252] dark:text-gray-600"
+                      : "text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
-                  <ChevronLeft size={18} />
+                  <ArrowLeft size={20} strokeWidth={1.5} />
                 </button>
-                <div className="flex gap-1">
-                  <div
-                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors dark:bg-[#585858]`}
-                  />
-                  <div
-                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors dark:bg-[#585858]`}
-                  />
-                  <div
-                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors dark:bg-[#585858]`}
-                  />
+                <div className="flex gap-4">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-[1.5px] w-[10px] rounded-full transition-colors ${
+                        i === Math.min(currentPage, 2)
+                          ? "bg-[#525252] dark:bg-white"
+                          : "bg-[#000035] dark:bg-[#585858]"
+                      }`}
+                    />
+                  ))}
                 </div>
                 <button
                   onClick={handleNextPage}
                   disabled={currentPage >= totalPages - 1}
-                  className={`rounded p-1 transition-colors ${
+                  className={`rounded transition-colors ${
                     currentPage >= totalPages - 1
-                      ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
-                      : "text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-[#2C2D33]"
+                      ? "cursor-not-allowed text-[#525252] dark:text-gray-600"
+                      : "text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
-                  <ChevronRight size={18} />
+                  <ArrowRight size={20} strokeWidth={1.5} />
                 </button>
               </div>
             </div>
 
-            <div className="grid w-full grid-cols-4 place-items-center gap-6 max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2">
+            <div className="grid w-full grid-cols-4 place-items-center gap-y-5 max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2">
               {loading ? (
                 <div className="col-span-full py-9 text-center text-gray-500">
                   Loading books...
@@ -312,7 +314,7 @@ function Dashboard() {
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="h-64 flex w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
+                    className="flex h-60 w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
                   >
                     <div className="flex h-36 w-full items-center justify-center overflow-hidden rounded-md">
                       {getImageUrl(book.image_url) ? (
@@ -335,7 +337,7 @@ function Dashboard() {
                       )}
                     </div>
                     <div className="flex w-full flex-col gap-1">
-                      <h3 className="line-clamp-2 text-center text-md font-semibold text-[#0b0c28] text-black dark:text-[#D7D7D7]">
+                      <h3 className="text-md line-clamp-2 text-center font-semibold text-[#0b0c28] text-black dark:text-[#D7D7D7]">
                         {book.name || "Untitled"}
                       </h3>
                       <button
@@ -349,10 +351,10 @@ function Dashboard() {
                 ))
               )}
             </div>
-            <div className="mt-auto mb-10 flex w-full justify-center">
-              <div className="w-fit rounded-md bg-white p-3 pr-6 text-md dark:bg-transparent">
+            <div className="mb-10 mt-auto flex w-full justify-center">
+              <div className="text-md w-fit rounded-md bg-white p-3 pr-6 dark:bg-transparent">
                 <p className="text-[#0b0c28] dark:text-white">
-                  Dear {currentUser?.name || "Ahmed"}, please note that your
+                  Dear {currentUser?.name || "User"}, please note that your
                   subscription will expire on{" "}
                   <span className="block font-bold">
                     {subscriptionExpirationLabel}.
