@@ -20,10 +20,10 @@ const AdminDashboardCard = ({
         displayAdmins.map((admin) => (
           <li
             key={admin.id}
-            className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#0a0f33] dark:bg-[#E3E3E3]"
+            className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#0a0f33] "
           >
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0a0f33] dark:bg-[#0a0f33]">
-              <User size={14} className="text-white dark:text-[#121317]" />
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full ">
+              <User className="h-full w-full text-[#0a0f33] dark:text-[#0a0f33]" />
             </div>
             <div className="h-full w-[1.8px] rounded-full bg-[#0b0b3b] dark:bg-[#0a0f33]"></div>
             <div className="flex-1 overflow-hidden">
@@ -41,7 +41,7 @@ const AdminDashboardCard = ({
           </li>
         ))
       ) : (
-        <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500 dark:bg-[#E3E3E3] dark:text-[#121317]">
+        <li className="rounded-md bg-[#f5f7fb] p-2.5 text-xs text-gray-500 dark:bg-transparent dark:text-[#121317]">
           {emptyLabel}
         </li>
       )}

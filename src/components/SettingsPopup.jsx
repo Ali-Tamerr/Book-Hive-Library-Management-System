@@ -56,7 +56,6 @@ const SettingsPopup = ({ show, onClose }) => {
             const userData = {
                 user_id: currentUser.user_id,
                 name: currentUser.name,
-                email: currentUser.email,
                 phone_number: currentUser.phone_number,
                 role: currentUser.role,
                 status: currentUser.status || 'Active',

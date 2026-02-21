@@ -31,7 +31,6 @@ const AdminNotifications = () => {
     id: "",
     user_id: "",
     name: "",
-    email: "",
     phone_number: "",
     plan: "",
     role: "User",
@@ -40,7 +39,8 @@ const AdminNotifications = () => {
     password_hash: "",
   });
 
-  const { data: users = [] } = useUsers();
+  const { data } = useUsers();
+  const users = data ? data.pages.flatMap((page) => page.data || []) : [];
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser(); // Needed if we decide to support edit, or for userForm logic
   const deleteRequestMutation = useDeleteUserRequest();
@@ -150,7 +150,6 @@ const AdminNotifications = () => {
       const apiData = {
         user_id: formData.user_id.trim(),
         name: formData.name,
-        email: formData.email,
         phone_number: formData.phone_number,
         role: selectedRole,
         plan: formData.plan || null,
@@ -177,7 +176,6 @@ const AdminNotifications = () => {
         id: "",
         user_id: "",
         name: "",
-        email: "",
         phone_number: "",
         plan: "",
         role: "User",
@@ -223,6 +221,7 @@ const AdminNotifications = () => {
       <ViewRequestsPopup
         show={showRequestsPopup}
         onClose={() => setShowRequestsPopup(false)}
+        currentUser={currentUser}
         requests={userRequests}
         isLoading={isLoadingRequests}
         onApprove={(request) => {
@@ -230,7 +229,6 @@ const AdminNotifications = () => {
             id: "",
             user_id: "",
             name: request.name || "",
-            email: request.email || "",
             phone_number: request.phone_number || "",
             plan: request.plan || "",
             role: "User",

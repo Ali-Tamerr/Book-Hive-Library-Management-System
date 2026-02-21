@@ -1,19 +1,62 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllUsers, getUserById, createUser, updateUser, deleteUser } from '../services/users.api';
-import { adminQueryOptions } from './queryConfig';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+  useQuery,
+} from "@tanstack/react-query";
+import {
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+} from "../services/users.api";
+import { adminQueryOptions } from "./queryConfig";
 
 export const userKeys = {
-  all: ['users'],
-  lists: () => [...userKeys.all, 'list'],
+  all: ["users"],
+  lists: () => [...userKeys.all, "list"],
   list: (filters) => [...userKeys.lists(), { filters }],
-  details: () => [...userKeys.all, 'detail'],
+  // Separate key for infinite queries to avoid conflicts
+  infinite: () => [...userKeys.all, "infinite"],
+  details: () => [...userKeys.all, "detail"],
   detail: (id) => [...userKeys.details(), id],
 };
 
 export const useUsers = () => {
-  return useQuery({
-    queryKey: userKeys.lists(),
-    queryFn: getAllUsers,
+  return useInfiniteQuery({
+    queryKey: userKeys.infinite(),
+    queryFn: ({ pageParam = 1 }) => getAllUsers({ page: pageParam, limit: 12 }),
+    getNextPageParam: (lastPage, allPages) => {
+      console.log("lastPage structure:", lastPage);
+      // Robust pagination logic
+      const total = lastPage.total || lastPage.totalCount || 0;
+      const currentPage = lastPage.page || allPages.length;
+
+      // Calculate total loaded so far
+      const totalLoaded = allPages.reduce(
+        (acc, page) => acc + (page.data?.length || 0),
+        0,
+      );
+
+      console.log(
+        `Pagination Debug: total=${total}, loaded=${totalLoaded}, currentPage=${currentPage}, hasMore=${totalLoaded < total}`,
+      );
+
+      if (total > 0) {
+        if (totalLoaded < total) {
+          return currentPage + 1;
+        }
+      } else {
+        // Fallback: If no total is provided, assume more pages if last page was full
+        const lastPageLength = lastPage.data?.length || 0;
+        const LIMIT = 12;
+        if (lastPageLength === LIMIT) {
+          return currentPage + 1;
+        }
+      }
+      return undefined;
+    },
     ...adminQueryOptions,
   });
 };
@@ -30,7 +73,7 @@ export const useUser = (id) => {
 // Create user mutation
 export const useCreateUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: createUser,
     onSuccess: () => {
@@ -42,12 +85,14 @@ export const useCreateUser = () => {
 // Update user mutation
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, data }) => updateUser(id, data),
     onSuccess: (data, variables) => {
       // Update the specific user in cache
-      queryClient.invalidateQueries({ queryKey: userKeys.detail(variables.id) });
+      queryClient.invalidateQueries({
+        queryKey: userKeys.detail(variables.id),
+      });
       // Refetch all users
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
     },
@@ -57,7 +102,7 @@ export const useUpdateUser = () => {
 // Delete user mutation
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
@@ -66,4 +111,3 @@ export const useDeleteUser = () => {
     },
   });
 };
-

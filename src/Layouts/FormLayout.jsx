@@ -54,17 +54,32 @@ const FormLayout = ({
           {customLayout.map((row, rowIndex) => {
             if (row.type === "flex") {
               return (
-                <div key={rowIndex} className="flex gap-4">
+                <div
+                  key={rowIndex}
+                  className={`flex gap-4 ${row.justify === "center" ? "justify-center" : ""}`}
+                >
                   {row.inputs.map((inputConfig) => {
                     const inputName =
                       typeof inputConfig === "string"
                         ? inputConfig
                         : inputConfig.name;
                     const flexValue =
-                      typeof inputConfig === "object" ? inputConfig.flex : 1;
+                      typeof inputConfig === "object"
+                        ? inputConfig.flex
+                        : 1;
+                    const wrapperClassName =
+                      typeof inputConfig === "object"
+                        ? inputConfig.className || ""
+                        : "";
                     const input = inputs.find((inp) => inp.name === inputName);
                     return input ? (
-                      <div key={inputName} style={{ flex: flexValue }}>
+                      <div
+                        key={inputName}
+                        className={wrapperClassName}
+                        style={
+                          flexValue !== undefined ? { flex: flexValue } : undefined
+                        }
+                      >
                         {renderInput(input)}
                       </div>
                     ) : null;

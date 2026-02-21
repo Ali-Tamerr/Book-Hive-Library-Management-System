@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { FilePenLine, Trash2, ReceiptText } from "lucide-react";
 import SearchBar from "../components/SearchBar.jsx";
 import ButtonOne from "../components/ButtonOne.jsx";
@@ -20,11 +20,37 @@ const CommonLayout = ({
   isUserPage = false,
   customTitle,
   secondaryButton,
+  onScroll,
+  onLoadMore,
+  hasMore,
 }) => {
   const FormPopupComponent = formPopup;
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoading && onLoadMore) {
+          console.log("Intersecting bottom sentinel, loading more...");
+          onLoadMore();
+        }
+      },
+      { rootMargin: "200px", threshold: 0 },
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMore, onLoadMore, isLoading]);
 
   return (
-    <div className="flex h-full flex-col gap-5 overflow-y-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
+    <div className="flex min-h-screen flex-col gap-5 p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
       <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
         <div className="flex items-center justify-between max-[856px]:gap-2">
           {customTitle ? (
@@ -65,8 +91,8 @@ const CommonLayout = ({
         </div>
       </div>
 
-      <section className="flex h-full flex-1 gap-6 rounded-lg">
-        <div className="flex h-full flex-1 items-start gap-4 overflow-x-auto rounded-lg bg-white dark:bg-[#121317]">
+      <section className="flex min-h-0 flex-1 gap-6 rounded-lg">
+        <div className="h-full flex-1 gap-4 rounded-lg bg-white pb-4 dark:bg-[#121317]">
           <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead>
               <tr>
@@ -168,6 +194,15 @@ const CommonLayout = ({
               )}
             </tbody>
           </table>
+          {hasMore && (
+            <div
+              ref={observerTarget}
+              onClick={onLoadMore}
+              className="h-10 w-full cursor-pointer p-2 text-center text-gray-500 transition-colors hover:text-gray-800"
+            >
+              Load More (Scroll or Click)
+            </div>
+          )}
         </div>
         {isUserPage && null}
       </section>

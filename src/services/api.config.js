@@ -5,6 +5,160 @@ const rawApiUrl =
 export const API_BASE_URL = rawApiUrl.replace(/^['"]|['"]$/g, "");
 console.log("API_BASE_URL configured as:", API_BASE_URL);
 
+const inferMimeFromBytes = (bytes) => {
+  if (!bytes || bytes.length < 4) return "image/jpeg";
+
+  if (
+    bytes[0] === 0x89 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x4e &&
+    bytes[3] === 0x47
+  ) {
+    return "image/png";
+  }
+
+  if (bytes[0] === 0xff && bytes[1] === 0xd8) {
+    return "image/jpeg";
+  }
+
+  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+    return "image/gif";
+  }
+
+  if (
+    bytes[0] === 0x52 &&
+    bytes[1] === 0x49 &&
+    bytes[2] === 0x46 &&
+    bytes[3] === 0x46 &&
+    bytes[8] === 0x57 &&
+    bytes[9] === 0x45 &&
+    bytes[10] === 0x42 &&
+    bytes[11] === 0x50
+  ) {
+    return "image/webp";
+  }
+
+  return "image/jpeg";
+};
+
+const normalizeImageValue = (input) => {
+  if (!input) return null;
+  if (typeof input === "string") return input.trim();
+
+  if (Array.isArray(input)) {
+    try {
+      const binary = String.fromCharCode(...input);
+      return btoa(binary);
+    } catch {
+      return null;
+    }
+  }
+
+  if (typeof input === "object") {
+    if (typeof input.base64 === "string") return input.base64.trim();
+    if (typeof input.data === "string") return input.data.trim();
+    if (Array.isArray(input.data)) {
+      try {
+        const binary = String.fromCharCode(...input.data);
+        return btoa(binary);
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  return String(input).trim();
+};
+
+const decodeBase64ToBytes = (base64) => {
+  const clean = base64.replace(/\s+/g, "");
+  const binary = atob(clean);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return bytes;
+};
+
+export const getImageUrl = (rawValue) => {
+  const value = normalizeImageValue(rawValue);
+  if (!value) return null;
+
+  if (value.startsWith("data:")) return value;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+
+  if (value.startsWith("\\x")) {
+    try {
+      const hex = value.slice(2);
+      const bytes = new Uint8Array(
+        hex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
+      );
+      const binary = String.fromCharCode(...bytes);
+      const base64 = btoa(binary);
+      const mime = inferMimeFromBytes(bytes);
+      return `data:${mime};base64,${base64}`;
+    } catch (error) {
+      console.error("Failed to convert hex image:", error);
+      return null;
+    }
+  }
+
+  const looksLikePath =
+    /^\/?(uploads|images|assets)\//i.test(value) ||
+    /^[./]/.test(value) ||
+    /\\/.test(value) ||
+    /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico|avif)$/i.test(value);
+
+  if (looksLikePath) {
+    const normalizedPath = value.replace(/\\/g, "/");
+    const rootUrl = API_BASE_URL.replace(/\/api\/?$/, "");
+    const formattedPath = normalizedPath.startsWith("/")
+      ? normalizedPath
+      : `/${normalizedPath}`;
+    return `${rootUrl}${formattedPath}`;
+  }
+
+  const looksLikeBase64 =
+    /^[A-Za-z0-9+/=_\-\r\n]+$/.test(value) && value.length > 40;
+  if (looksLikeBase64) {
+    try {
+      const normalized = value
+        .replace(/-/g, "+")
+        .replace(/_/g, "/")
+        .replace(/\s+/g, "");
+      const bytes = decodeBase64ToBytes(normalized);
+
+      const decodedTextSample = new TextDecoder("utf-8", {
+        fatal: false,
+      }).decode(bytes.slice(0, 64));
+
+      if (decodedTextSample.startsWith("data:image/")) {
+        return decodedTextSample;
+      }
+
+      const firstDecodedLooksLikeBase64 = /^[A-Za-z0-9+/=_\-]+$/.test(
+        decodedTextSample.trim(),
+      );
+      if (firstDecodedLooksLikeBase64 && decodedTextSample.trim().length > 30) {
+        const second = decodedTextSample
+          .trim()
+          .replace(/-/g, "+")
+          .replace(/_/g, "/");
+        const secondBytes = decodeBase64ToBytes(second);
+        const secondMime = inferMimeFromBytes(secondBytes);
+        return `data:${secondMime};base64,${second}`;
+      }
+
+      const mime = inferMimeFromBytes(bytes);
+      return `data:${mime};base64,${normalized}`;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+};
+
 // Create Axios instance with default config
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -17,20 +171,31 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
-    if (token) {
-      try {
-        const tokenData = JSON.parse(token);
-        // Check if tokenData is an object with a 'token' property, otherwise use it directly
-        const actualToken =
-          tokenData && typeof tokenData === "object"
-            ? tokenData.token || tokenData.accessToken || tokenData
-            : tokenData;
-        config.headers.Authorization = `Bearer ${actualToken}`;
-      } catch (e) {
-        // If token is not JSON, use it as string
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    if (!token) {
+      return config;
     }
+
+    let actualToken = null;
+
+    try {
+      const tokenData = JSON.parse(token);
+      if (typeof tokenData === "string") {
+        actualToken = tokenData;
+      } else if (tokenData && typeof tokenData === "object") {
+        if (typeof tokenData.token === "string") {
+          actualToken = tokenData.token;
+        } else if (typeof tokenData.accessToken === "string") {
+          actualToken = tokenData.accessToken;
+        }
+      }
+    } catch {
+      actualToken = token;
+    }
+
+    if (typeof actualToken === "string" && actualToken.trim().length > 0) {
+      config.headers.Authorization = `Bearer ${actualToken.trim()}`;
+    }
+
     return config;
   },
   (error) => {
