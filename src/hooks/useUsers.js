@@ -28,7 +28,6 @@ export const useUsers = () => {
     queryKey: userKeys.infinite(),
     queryFn: ({ pageParam = 1 }) => getAllUsers({ page: pageParam, limit: 12 }),
     getNextPageParam: (lastPage, allPages) => {
-      console.log("lastPage structure:", lastPage);
       // Robust pagination logic
       const total = lastPage.total || lastPage.totalCount || 0;
       const currentPage = lastPage.page || allPages.length;
@@ -39,9 +38,7 @@ export const useUsers = () => {
         0,
       );
 
-      console.log(
-        `Pagination Debug: total=${total}, loaded=${totalLoaded}, currentPage=${currentPage}, hasMore=${totalLoaded < total}`,
-      );
+     
 
       if (total > 0) {
         if (totalLoaded < total) {
