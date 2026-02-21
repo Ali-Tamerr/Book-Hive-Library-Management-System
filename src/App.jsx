@@ -30,6 +30,7 @@ const UserBorrowedBooks = lazy(() => import("./User pages/UserBorrowedBooks"));
 const UserReturnedBooks = lazy(() => import("./User pages/UserReturnedBooks"));
 const UserLibraryLane = lazy(() => import("./User pages/UserLibraryLane"));
 const UserCatalog = lazy(() => import("./User pages/UserCatalog"));
+const UserChatbot = lazy(() => import("./User pages/UserChatbot"));
 
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
@@ -236,6 +237,7 @@ function App() {
             <Route path="/user/dashboard" element={<UserDashboard />} />
             {/* <Route path="/user/books" element={<UserBooks />} /> */}
             <Route path="/user/catalog" element={<UserCatalog />} />
+            <Route path="/user/chatbot" element={<UserChatbot />} />
             <Route
               path="/user/catalog/borrowed"
               element={<UserBorrowedBooks />}
