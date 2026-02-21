@@ -1,9 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-
-import LogoIcon from "../assets/logo.svg?react";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
+import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import { useUsers } from "../hooks/useUsers";
 import { useBooks } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
@@ -12,62 +11,14 @@ import { useBranches } from "../hooks/useBranches";
 import { useOverdueBooks } from "../hooks/useOverdueBooks";
 import { useBookTransactions } from "../hooks/useBookTransactions";
 import { getCurrentUser } from "../services/auth.api";
-import JuhanCruyff from "../Home/assets/img/Juhan Cruyff.png";
-
-const dummyBooks = [
-  {
-    book_id: -1,
-    name: "MY TURN",
-    author: "JUAN CARLOS",
-    image_url: JuhanCruyff,
-  },
-  {
-    book_id: -2,
-    name: "MY TURN",
-    author: "JUAN CARLOS",
-    image_url: JuhanCruyff,
-  },
-  {
-    book_id: -3,
-    name: "MY TURN",
-    author: "JUAN CARLOS",
-    image_url: JuhanCruyff,
-  },
-  {
-    book_id: -4,
-    name: "MY TURN",
-    author: "JUAN CARLOS",
-    image_url: JuhanCruyff,
-  },
-  {
-    book_id: -5,
-    name: "MY TURN",
-    author: "JUAN CARLOS",
-    image_url: JuhanCruyff,
-  },
-  {
-    book_id: -6,
-    name: "MY TURN",
-    author: "JUAN CARLOS",
-    image_url: JuhanCruyff,
-  },
-  {
-    book_id: -7,
-    name: "MY TURN",
-    author: "JUAN CARLOS",
-    image_url: JuhanCruyff,
-  },
-  {
-    book_id: -8,
-    name: "MY TURN",
-    author: "JUAN CARLOS",
-    image_url: JuhanCruyff,
-  },
-];
+import { getImageUrl } from "../services/api.config";
 
 function Dashboard() {
   const currentUser = getCurrentUser();
-  const { data: users = [], isLoading: usersLoading } = useUsers();
+  const { data: usersData, isLoading: usersLoading } = useUsers();
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
   const { data: books = [], isLoading: booksLoading } = useBooks();
   const { data: categories = [], isLoading: categoriesLoading } =
     useCategories();
@@ -83,7 +34,25 @@ function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeTab, setActiveTab] = useState("recommended");
   const [currentPage, setCurrentPage] = useState(0);
-  const booksPerPage = 8;
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [booksPerPage, setBooksPerPage] = useState(8);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 1300) {
+        setBooksPerPage(4); // 2 cols * 2 rows
+      } else if (width < 1400) {
+        setBooksPerPage(6); // 3 cols * 2 rows
+      } else {
+        setBooksPerPage(8); // 4 cols * 2 rows
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const loading =
     usersLoading ||
@@ -120,6 +89,40 @@ function Dashboard() {
     returnedBooks: userReturnedBooks,
   };
 
+  const currentUserFromList = useMemo(() => {
+    if (!currentUser?.user_id) return null;
+    return (
+      users.find(
+        (u) =>
+          String(u.user_id ?? u.id ?? "") === String(currentUser.user_id),
+      ) || null
+    );
+  }, [users, currentUser?.user_id]);
+
+  const subscriptionExpirationRaw =
+    currentUserFromList?.subscription_end_date ||
+    currentUserFromList?.subscription_expiration_date ||
+    currentUserFromList?.subscription_expiry_date ||
+    currentUserFromList?.plan_expiration_date ||
+    currentUserFromList?.expiration_date ||
+    currentUser?.subscription_end_date ||
+    currentUser?.subscription_expiration_date ||
+    currentUser?.subscription_expiry_date ||
+    currentUser?.plan_expiration_date ||
+    currentUser?.expiration_date ||
+    null;
+
+  const subscriptionExpirationLabel = useMemo(() => {
+    if (!subscriptionExpirationRaw) return "N/A";
+    const parsedDate = new Date(subscriptionExpirationRaw);
+    if (Number.isNaN(parsedDate.getTime())) return "N/A";
+    return parsedDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    });
+  }, [subscriptionExpirationRaw]);
+
   const filteredBooks = useMemo(() => {
     let result = [...books];
 
@@ -138,22 +141,17 @@ function Dashboard() {
     }
 
     if (activeTab === "recently") {
-      result = result.sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at),
-      );
-    }
-
-    // Pad with dummy books if needed (only if searched/filtered count is less than 8, or always? User said "if another book is added ... remove one from dummy")
-    // This implies filling the view to 8.
-    if (result.length < 8) {
-      const needed = 8 - result.length;
-      result = [...result, ...dummyBooks.slice(0, needed)];
+      result = result.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
+        return dateB - dateA || b.book_id - a.book_id;
+      });
     }
 
     return result;
   }, [books, searchValue, selectedCategory, activeTab]);
 
-  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+  const totalPages = Math.ceil(filteredBooks.length / booksPerPage) || 1;
   const paginatedBooks = filteredBooks.slice(
     currentPage * booksPerPage,
     (currentPage + 1) * booksPerPage,
@@ -169,7 +167,7 @@ function Dashboard() {
 
   return (
     <div className="flex h-full w-full">
-      <main className="flex h-full flex-1 flex-col gap-[18px] px-[27px] py-[18px]">
+      <main className="flex h-full flex-1 flex-col gap-3 px-5 py-3">
         <div className="flex w-full items-center gap-3.5">
           <div className="relative flex-1">
             <Search
@@ -184,7 +182,7 @@ function Dashboard() {
                 setSearchValue(e.target.value);
                 setCurrentPage(0);
               }}
-              className="w-full rounded-md border border-zinc-400 bg-white py-2.5 pl-10 pr-3.5 text-sm transition-colors focus:border-[#0b0c28] focus:outline-none dark:border-[#292D32] dark:bg-[#121317] dark:text-white"
+              className="w-full rounded-md border border-zinc-400 bg-white py-1.5 pl-10 pr-3.5 text-sm transition-colors focus:outline-none dark:border-[#292D32] dark:bg-[#121317] dark:text-[#D7D7D7]"
             />
           </div>
           <div className="mr-22 relative w-full min-w-[162px] max-w-[531px] flex-1">
@@ -194,7 +192,7 @@ function Dashboard() {
                 setSelectedCategory(e.target.value);
                 setCurrentPage(0);
               }}
-              className="w-full cursor-pointer appearance-none rounded-md border border-zinc-400 bg-white px-3.5 py-2.5 pr-9 text-sm transition-colors focus:border-[#0b0c28] focus:outline-none dark:border-[#292D32] dark:bg-[#121317] dark:text-white"
+              className="w-full cursor-pointer appearance-none rounded-md border border-zinc-400 bg-white px-3.5 py-1.5 pr-9 text-sm transition-colors focus:outline-none dark:border-[#292D32] dark:bg-[#121317] dark:text-[#D7D7D7]"
             >
               <option value="">Category</option>
               {categories.map((cat) => (
@@ -209,12 +207,12 @@ function Dashboard() {
             />
           </div>
         </div>
-        <section className="flex h-full gap-[22px] max-[640px]:flex-col">
+        <section className="flex h-full gap-3 max-[640px]:flex-col">
           <div
-            className={`min-[1540px]:ml-18 flex w-full flex-1 flex-col items-center justify-center gap-[18px] max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full`}
+            className={`min-[1540px]:ml-18 flex w-full flex-1 flex-col items-center justify-center gap-3 max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full`}
           >
-            <div className="min-[1200px]:mb-13 flex h-full w-full flex-col items-center justify-start rounded-md">
-              <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full max-w-[630px] flex-col items-center justify-start gap-10 p-10 max-[380px]:w-[110%]">
+            <div className="flex h-full w-full flex-col items-center justify-start rounded-md min-[1200px]:mb-6">
+              <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full max-w-[630px] flex-col items-center justify-start gap-6 p-4 max-[380px]:w-[110%]">
                 <div className="h-fit w-full max-[640px]:min-h-[162px] max-[640px]:w-full max-[340px]:-ml-9">
                   <PieChart
                     totalBorrowed={stats.totalBorrowed}
@@ -235,7 +233,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="flex w-full flex-col gap-[18px] min-[640px]:h-full min-[640px]:flex-1">
-            <div className="flex items-center justify-between border-b">
+            <div className="flex items-center justify-between border-b border-[#EAEAEA] dark:border-[#2C2D33]">
               <div className="flex gap-5">
                 <button
                   onClick={() => {
@@ -244,7 +242,7 @@ function Dashboard() {
                   }}
                   className={`font-regular relative pb-1.5 text-base transition-colors ${
                     activeTab === "recommended"
-                      ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-white dark:after:bg-white"
+                      ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
@@ -257,34 +255,34 @@ function Dashboard() {
                   }}
                   className={`font-regular relative pb-1.5 text-base transition-colors ${
                     activeTab === "recently"
-                      ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-white dark:after:bg-white"
+                      ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recently added
                 </button>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 pb-1.5">
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage === 0}
                   className={`rounded p-1 transition-colors ${
                     currentPage === 0
-                      ? "cursor-not-allowed text-gray-300"
-                      : "text-gray-800 hover:bg-gray-100"
+                      ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
+                      : "text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-[#2C2D33]"
                   }`}
                 >
                   <ChevronLeft size={18} />
                 </button>
                 <div className="flex gap-1">
                   <div
-                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors`}
+                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors dark:bg-[#585858]`}
                   />
                   <div
-                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors`}
+                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors dark:bg-[#585858]`}
                   />
                   <div
-                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors`}
+                    className={`h-0.5 w-2 rounded-full bg-gray-300 transition-colors dark:bg-[#585858]`}
                   />
                 </div>
                 <button
@@ -292,8 +290,8 @@ function Dashboard() {
                   disabled={currentPage >= totalPages - 1}
                   className={`rounded p-1 transition-colors ${
                     currentPage >= totalPages - 1
-                      ? "cursor-not-allowed text-gray-800"
-                      : "text-gray-300 hover:bg-gray-100"
+                      ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
+                      : "text-gray-800 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-[#2C2D33]"
                   }`}
                 >
                   <ChevronRight size={18} />
@@ -301,7 +299,7 @@ function Dashboard() {
               </div>
             </div>
 
-            <div className="gap-13 grid w-full grid-cols-4 place-items-center max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2">
+            <div className="grid w-full grid-cols-4 place-items-center gap-6 max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2">
               {loading ? (
                 <div className="col-span-full py-9 text-center text-gray-500">
                   Loading books...
@@ -314,52 +312,80 @@ function Dashboard() {
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="flex h-60 w-36 cursor-pointer flex-col items-center overflow-hidden rounded-lg bg-white p-4 transition-shadow"
+                    className="h-54 flex w-32 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
                   >
-                    <div className="mb-2.5 flex h-36 w-full items-center justify-center overflow-hidden rounded-md">
-                      {book.image_url ? (
+                    <div className="mb-2 flex h-28 w-full items-center justify-center overflow-hidden rounded-md">
+                      {getImageUrl(book.image_url) ? (
                         <img
-                          src={book.image_url}
+                          src={getImageUrl(book.image_url)}
                           alt={book.name}
-                          className="h-full w-full object-contain"
+                          className="h-full w-full object-contain text-black dark:text-[#D7D7D7]"
                         />
                       ) : (
-                        <div className="p-2 text-center text-black">
-                          <div className="line-clamp-2 text-xs font-bold uppercase tracking-wider opacity-80">
+                        <div className="p-2 text-center text-black dark:text-[#D7D7D7]">
+                          <div className="line-clamp-2 text-xs font-bold uppercase tracking-wider text-black opacity-80 dark:text-[#D7D7D7]">
                             {book.name}
                           </div>
                           {book.author && (
-                            <div className="mt-1 text-[10px] opacity-60">
+                            <div className="mt-1 text-[10px] text-black opacity-60 dark:text-[#D7D7D7]">
                               {book.author}
                             </div>
                           )}
                         </div>
                       )}
                     </div>
-                    <h3 className="mb-1.5 line-clamp-1 text-center text-sm font-semibold text-[#0b0c28]">
-                      {book.name || "Untitled"}
-                    </h3>
-                    <button className="rounded-md bg-[#0b0c28] px-5 py-2 text-xs text-white transition-colors hover:bg-[#1a1b4b]">
-                      Explore Now
-                    </button>
+                    <div className="flex w-full flex-col gap-1">
+                      <h3 className="mb-1 line-clamp-1 text-center text-xs font-semibold text-[#0b0c28] text-black dark:text-[#D7D7D7]">
+                        {book.name || "Untitled"}
+                      </h3>
+                      <button
+                        className="w-full cursor-pointer whitespace-nowrap rounded-xl bg-[#0b0c28] px-3 py-1.5 text-[10px] font-bold text-white transition-colors dark:bg-[#D7D7D7] dark:text-black"
+                        onClick={() => setSelectedBook(book)}
+                      >
+                        Explore Now
+                      </button>
+                    </div>
                   </div>
                 ))
               )}
             </div>
-            <div className="my-auto flex w-full justify-center">
-              <div className="pr-13 w-fit rounded-md bg-white p-6 text-lg">
-                <p className="text-[#0b0c28]">
+            <div className="mt-auto mb-10 flex w-full justify-center">
+              <div className="w-fit rounded-md bg-white p-3 pr-6 text-md dark:bg-transparent">
+                <p className="text-[#0b0c28] dark:text-white">
                   Dear {currentUser?.name || "Ahmed"}, please note that your
                   subscription will expire on{" "}
-                  <span className="block font-bold">1/1/2026.</span>
+                  <span className="block font-bold">
+                    {subscriptionExpirationLabel}.
+                  </span>
                 </p>
-                <p className="mt-2 text-[#0b0c28]">
+                <p className="mt-1 text-[#0b0c28] dark:text-white">
                   To renew your subscription, kindly visit the nearest branch.
                 </p>
               </div>
             </div>
           </div>
         </section>
+        {selectedBook && (
+          <ViewDetailsPopup
+            show={!!selectedBook}
+            onClose={() => setSelectedBook(null)}
+            title="Book Details"
+            data={{
+              "Book Name": selectedBook.name,
+              Author: selectedBook.author || "N/A",
+              Category:
+                categories.find(
+                  (c) => c.category_id === selectedBook.category_id,
+                )?.category_name ||
+                selectedBook.category ||
+                "N/A",
+              Language: selectedBook.language || "N/A",
+              Status: selectedBook.status || "N/A",
+              Description:
+                selectedBook.description || "No description available.",
+            }}
+          />
+        )}
       </main>
     </div>
   );

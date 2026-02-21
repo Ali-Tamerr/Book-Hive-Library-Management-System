@@ -14,6 +14,7 @@ import {
   useReservations,
   useDeleteReservation,
 } from "../hooks/useReservations.js";
+
 import UserFormPopup from "../components/UserFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
@@ -41,21 +42,54 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [formData, setFormData] = useState({
     id: "",
     name: "",
-    email: "",
     phone_number: "",
     plan: "",
     role: "User",
     status: "Active",
     password: "",
     password_hash: "",
+    branch_id: "",
   });
 
-  const { data: users = [], isLoading, isError, error } = useUsers();
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useUsers();
   const { data: branches = [] } = useBranches();
+
+  const users = data ? data.pages.flatMap((page) => page.data || []) : [];
+
+  // Infinite Scroll Handler
+  const handleScroll = (e) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.target;
+    console.log("Scroll:", {
+      scrollTop,
+      clientHeight,
+      scrollHeight,
+      diff: scrollHeight - scrollTop - clientHeight,
+      hasNextPage,
+      isFetchingNextPage,
+    });
+
+    // Trigger update when scrolled to bottom (within 50px)
+    if (
+      scrollHeight - scrollTop - clientHeight < 50 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      console.log("Fetching next page...");
+      fetchNextPage();
+    }
+  };
 
   // Debugging logs
   useEffect(() => {
-    if (Object.keys(users).length > 0 || isError) {
+    if (users.length > 0 || isError) {
       console.log("UserManagement Debug:", {
         usersCount: users.length,
         isError,
@@ -100,6 +134,24 @@ function UserManagement({ searchValue, setSearchValue }) {
     };
   }, []);
 
+  // Backup: Window Scroll Listener (in case layout allows body scroll)
+  useEffect(() => {
+    const handleWindowScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 100
+      ) {
+        if (hasNextPage && !isFetchingNextPage) {
+          console.log("Window scroll bottom reached, fetching next page...");
+          fetchNextPage();
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleWindowScroll);
+    return () => window.removeEventListener("scroll", handleWindowScroll);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
@@ -124,13 +176,13 @@ function UserManagement({ searchValue, setSearchValue }) {
       const apiData = {
         user_id: formData.user_id.trim(),
         name: formData.name,
-        email: formData.email,
         phone_number: formData.phone_number,
         role: selectedRole,
         plan: formData.plan || null,
         status: formData.status || "Active",
         password_hash: formData.password,
         created_by: currentUser?.user_id || null,
+        branch_id: formData.branch_id ? parseInt(formData.branch_id, 10) : null,
       };
 
       console.log("Sending user data:", JSON.stringify(apiData, null, 2));
@@ -163,13 +215,13 @@ function UserManagement({ searchValue, setSearchValue }) {
         id: "",
         user_id: "",
         name: "",
-        email: "",
         phone_number: "",
         plan: "",
         role: "User",
         status: "Active",
         password: "",
         password_hash: "",
+        branch_id: "",
       });
       setShowPopup(false);
       setEditMode(false);
@@ -212,13 +264,13 @@ function UserManagement({ searchValue, setSearchValue }) {
       id: user.user_id,
       user_id: user.user_id,
       name: user.name || "",
-      email: user.email || "",
       phone_number: user.phone_number || "",
       plan: user.plan || "",
       role: user.role || "User",
       status: user.status || "Active",
       password: "",
       password_hash: user.password_hash || "",
+      branch_id: user.branch_id || "",
     });
     setEditMode(true);
     setShowPopup(true);
@@ -376,13 +428,13 @@ function UserManagement({ searchValue, setSearchValue }) {
       id: "",
       user_id: "",
       name: "",
-      email: "",
       phone_number: "",
       plan: "",
       role: "User",
       status: "Active",
       password: "",
       password_hash: "",
+      branch_id: "",
     });
     setEditMode(false);
     setShowPopup(true);
@@ -485,7 +537,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       ? visibleUsers.filter(
           (user) =>
             user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
-            user.email?.toLowerCase().includes(searchValue.toLowerCase()) ||
             user.user_id?.toString().includes(searchValue) ||
             getUserBranchName(user)
               .toLowerCase()
@@ -504,7 +555,6 @@ function UserManagement({ searchValue, setSearchValue }) {
     { header: "User ID", accessor: "user_id" },
     { header: "Name", accessor: "name" },
     { header: "Contact No", accessor: "phone_number" },
-    // { header: "Email", accessor: "email" },
     ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display" }] : []),
     { header: "Plan", accessor: "plan" },
     { header: "Exp Date", accessor: "formatted_exp_date" },
@@ -623,6 +673,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       isSuperAdmin={isSuperAdmin}
       error={formError}
       nextUserId={nextUserId}
+      branches={branches}
     />
   );
 
@@ -642,6 +693,9 @@ function UserManagement({ searchValue, setSearchValue }) {
         columns={columns}
         formPopup={formPopup}
         customActionRenderer={customActionRenderer}
+        onScroll={handleScroll}
+        onLoadMore={fetchNextPage}
+        hasMore={hasNextPage}
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}
@@ -668,7 +722,6 @@ function UserManagement({ searchValue, setSearchValue }) {
             ? {
                 "User ID": selectedUser.user_id,
                 Name: selectedUser.name,
-                Email: selectedUser.email,
                 Branch: getUserBranchName(selectedUser),
                 "Phone Number": selectedUser.phone_number,
                 Plan: selectedUser.plan || "N/A",

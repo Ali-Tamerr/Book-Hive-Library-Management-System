@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useBranches } from '../hooks/useBranches';
-import LogoIcon from '../assets/logo.svg?react';
+import ColorableLogo from './ColorableLogo';
 
 function BranchesPopup({ isOpen, onClose }) {
     const { data: branches = [], isLoading } = useBranches();
@@ -20,7 +20,7 @@ function BranchesPopup({ isOpen, onClose }) {
                     <div className="flex justify-between items-start mb-8">
                         <h2 className="text-3xl font-bold text-[#0a0f33]">Our Branches</h2>
                         <div className="flex items-center gap-2">
-                            <LogoIcon className="w-16 h-16 text-[#0a0f33]" />
+                            <ColorableLogo className="w-16 h-16 text-[#0a0f33]" />
                             <div className="flex flex-col">
                                 <span className="text-xl text-[#0a0f33]">BookHive</span>
                                 <span className="text-lg text-center text-[#0a0f33] font-['Merienda_One',cursive]">Library</span>

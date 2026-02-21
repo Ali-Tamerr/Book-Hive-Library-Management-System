@@ -14,6 +14,7 @@ function UserFormPopup({
   isSuperAdmin = false,
   error,
   nextUserId,
+  branches = [],
 }) {
   const userIdInputRef = React.useRef(null);
 
@@ -42,13 +43,6 @@ function UserFormPopup({
       placeholder: "Name",
       required: true,
       autocomplete: "name",
-    },
-    {
-      name: "email",
-      type: "email",
-      placeholder: "Email",
-      required: true,
-      autocomplete: "email",
     },
     {
       name: "phone_number",
@@ -92,19 +86,31 @@ function UserFormPopup({
     ],
   };
 
+  const branchInput = {
+    name: "branch_id",
+    type: "select",
+    placeholder: "Branch",
+    required: false,
+    autocomplete: "off",
+    options: branches.map((b) => ({
+      value: b.branch_id,
+      label: b.name,
+    })),
+  };
+
   const userIdInput = {
     name: "user_id",
     type: "custom",
     render: (data, onChange) => (
       <div>
         <div className="flex items-center gap-2">
-          <div className="flex-1">
+          <div className="w-auto">
             <NFCReaderButton
               onDataReceived={handleNFCData}
               inputRef={userIdInputRef}
             />
           </div>
-          <div className="flex-2">
+          <div className="flex-1">
             <input
               ref={userIdInputRef}
               name="user_id"
@@ -124,38 +130,48 @@ function UserFormPopup({
 
   const isRoleAdmin = formData.role === "Admin";
 
-  const inputs = isSuperAdmin
+  const editInputs = [
+    baseInputs.find((input) => input.name === "name"),
+    baseInputs.find((input) => input.name === "phone_number"),
+    baseInputs.find((input) => input.name === "password"),
+    branchInput,
+    planInput,
+  ].filter(Boolean);
+
+  const addInputs = isSuperAdmin
     ? isRoleAdmin
-      ? [...baseInputs, roleInput]
-      : [...baseInputs, planInput, roleInput, userIdInput]
+      ? [...baseInputs, roleInput, branchInput]
+      : [...baseInputs, planInput, roleInput, branchInput, userIdInput]
     : [...baseInputs, planInput, userIdInput];
 
-  const customLayout = isSuperAdmin
+  const inputs = editMode ? editInputs : addInputs;
+
+  const editCustomLayout = [
+    { columns: 2, inputs: ["name", "phone_number"] },
+    { columns: 2, inputs: ["password", "branch_id"] },
+    {
+      type: "flex",
+      justify: "center",
+      inputs: [{ name: "plan", className: "w-[calc(50%-0.5rem)]" }],
+    },
+  ];
+
+  const addCustomLayout = isSuperAdmin
     ? [
         { columns: 2, inputs: ["name", "phone_number"] },
         isRoleAdmin
-          ? { columns: 1, inputs: ["role"] }
-          : { columns: 2, inputs: ["plan", "role"] },
-        {
-          type: "flex",
-          inputs: [
-            { name: "email", flex: 2 },
-            { name: "password", flex: 1 },
-          ],
-        },
+          ? { columns: 1, inputs: ["password"] }
+          : { columns: 2, inputs: ["password", "plan"] },
+        { columns: 2, inputs: ["role", "branch_id"] },
         ...(isRoleAdmin ? [] : [{ columns: 1, inputs: ["user_id"] }]),
       ]
     : [
-        { columns: 3, inputs: ["name", "phone_number", "plan"] },
-        {
-          type: "flex",
-          inputs: [
-            { name: "email", flex: 2 },
-            { name: "password", flex: 1 },
-          ],
-        },
+        { columns: 2, inputs: ["name", "phone_number"] },
+        { columns: 2, inputs: ["password", "plan"] },
         { columns: 1, inputs: ["user_id"] },
       ];
+
+  const customLayout = editMode ? editCustomLayout : addCustomLayout;
 
   return (
     <FormLayout

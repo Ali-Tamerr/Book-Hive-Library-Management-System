@@ -36,13 +36,13 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 |-------|------|-------------|
 | `user_id` | string(20) | PK |
 | `name` | string(50) | **required** |
-| `email` | string(100) | **required**, unique |
 | `password_hash` | string(255) | **required** |
 | `phone_number` | string(20) | **required**, unique |
 | `role` | string(20) | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"` |
 | `status` | string(20) | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
 | `subscription_end_date` | timestamp | nullable — subscription expiration (timestamp without time zone) |
+| `branch_id` | int | nullable, FK → `Branches.branch_id`, ON DELETE SET NULL |
 | `created_by` | string(20) | nullable, FK → `Users.user_id` (self-referential), ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
@@ -56,7 +56,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `category_id` | int | FK → `Categories.category_id` |
 | `quantity` | smallint (int16) | **required**, must be >= 0 |
 | `sale_price` | numeric(10,2) | nullable |
-| `image_url` | bytea | nullable — base64 string in JSON payloads |
+| `image_url` | bytea | nullable — base64 string in JSON payloads (URLs may be returned if stored as text) |
 | `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
 | `updated_at` | timestamp | default: `now()` |
@@ -162,10 +162,10 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 ### Users
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/Users` | Returns `UserDTO[]` with related books info |
+| GET | `/api/Users` | Returns paged `UserDTO[]`; query: `page` (default 1), `limit` (default 12) |
 | GET | `/api/Users/byid/{user_id}` | Returns single `UserDTO` |
 | GET | `/api/Users/{name}` | Search users by name |
-| POST | `/api/Users` | Create User; body: `{ user_id, name, email, password_hash, phone_number, role?, status?, plan?, created_by? }` |
+| POST | `/api/Users` | Create User; body: `{ user_id, name, password_hash, phone_number, role?, status?, plan?, created_by? }` |
 | PUT | `/api/Users/{user_id}` | Update User |
 | PUT | `/api/Users/{user_id}/activity` | Update user's `last_activity_at` timestamp |
 | PUT | `/api/Users/activity` | Update activity by body: `{ user_id, LastActivityAt? }` |
@@ -235,13 +235,24 @@ POST /api/Users
 {
   "user_id": "user-001",
   "name": "John Doe",
-  "email": "john@example.com",
   "password_hash": "hashed_password_here",
   "phone_number": "+1234567890",
   "role": "User",
   "status": "Active",
   "plan": "Professional",
-  "subscription_end_date": "2025-12-31T23:59:59Z"
+  "subscription_end_date": "2025-12-31T23:59:59Z",
+  "branch_id": 2
+}
+```
+
+### List Users (paged)
+```json
+GET /api/Users?page=1&limit=12
+{
+  "data": [ /* UserDTO[] */ ],
+  "total": 150,
+  "page": 1,
+  "limit": 12
 }
 ```
 
@@ -344,11 +355,12 @@ POST /api/BookTransactions/return
 interface UserDTO {
   user_id: string;
   name: string;
-  email: string;
   phone_number: string;
   role: string;
   password_hash: string;
   plan?: string;              // User's subscription plan (nullable)
+  subscription_end_date?: string;
+  branch_id?: number;
   booksReserved: string[];    // Book names or copy IDs
   booksBought: string[];      // Book names from Purchase transactions
   LastActivityAt: string | null;
@@ -363,7 +375,7 @@ interface BookDTO {
   category_id: number;
   quantity: number;
   sale_price?: number;        // numeric(10,2)
-  image_url?: string;        // base64-encoded bytes
+  image_url?: string;        // base64-encoded bytes or URL
   created_by?: string;        // User ID who created this book
   created_at?: string;        // ISO-8601 timestamp
   updated_at?: string;        // ISO-8601 timestamp
@@ -417,13 +429,13 @@ interface Category {
 interface User {
   user_id: string;           // max 20 chars
   name: string;              // max 50 chars
-  email: string;             // max 100 chars
   password_hash: string;     // max 255 chars
   phone_number: string;      // max 20 chars
   role: 'Super Admin' | 'Admin' | 'User';
   status: 'Active' | 'Inactive' | 'Banned';
   plan?: 'Discover' | 'Enterprise' | 'Professional';
   subscription_end_date?: string;
+  branch_id?: number;
   created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;
   updated_at?: string;

@@ -17,6 +17,7 @@ const EXPIRATION_DAYS = 7;
 const ViewRequestsPopup = ({
   show,
   onClose,
+  currentUser = null,
   requests = [],
   onApprove,
   onReject,
@@ -37,6 +38,83 @@ const ViewRequestsPopup = ({
   const [searchValue, setSearchValue] = useState("");
   const [showRejected, setShowRejected] = useState(false);
   const [activeTab, setActiveTab] = useState("users");
+
+  const normalizeBranchValue = (value) => {
+    if (value === undefined || value === null) return null;
+    return String(value).trim().toLowerCase();
+  };
+
+  const currentUserRole = String(currentUser?.role || "").toLowerCase();
+  const isBranchScopedRole =
+    currentUserRole === "admin" || currentUserRole === "librarian";
+
+  const currentUserBranch =
+    normalizeBranchValue(currentUser?.branch_id) ||
+    normalizeBranchValue(currentUser?.branchId) ||
+    normalizeBranchValue(currentUser?.branch) ||
+    normalizeBranchValue(currentUser?.branch_name) ||
+    normalizeBranchValue(currentUser?.branchName);
+
+  const shouldApplyBranchFilter = isBranchScopedRole && !!currentUserBranch;
+
+  const userBranchByUserId = useMemo(() => {
+    const map = new Map();
+
+    users.forEach((user) => {
+      const userId = user?.user_id ?? user?.id;
+      if (userId === undefined || userId === null) return;
+
+      const branchValue =
+        normalizeBranchValue(user?.branch_id) ||
+        normalizeBranchValue(user?.branchId) ||
+        normalizeBranchValue(user?.branch) ||
+        normalizeBranchValue(user?.branch_name) ||
+        normalizeBranchValue(user?.branchName);
+
+      if (branchValue) {
+        map.set(String(userId), branchValue);
+      }
+    });
+
+    return map;
+  }, [users]);
+
+  const getRequestBranch = (request) => {
+    const directBranch =
+      normalizeBranchValue(request?.branch_id) ||
+      normalizeBranchValue(request?.branchId) ||
+      normalizeBranchValue(request?.branch) ||
+      normalizeBranchValue(request?.branch_name) ||
+      normalizeBranchValue(request?.branchName);
+
+    if (directBranch) return directBranch;
+
+    const userId = request?.user_id ?? request?.id;
+    if (userId !== undefined && userId !== null) {
+      return userBranchByUserId.get(String(userId)) || null;
+    }
+
+    return null;
+  };
+
+  const getBookRequestBranch = (request) => {
+    const directBranch = getRequestBranch(request);
+    if (directBranch) return directBranch;
+
+    const copyId = request?.book_id ?? request?.book_copy_id;
+    const copy = bookCopies.find(
+      (bc) => (bc?.book_copy_id ?? bc?.id) === copyId,
+    );
+
+    const copyBranch =
+      normalizeBranchValue(copy?.branch_id) ||
+      normalizeBranchValue(copy?.branchId) ||
+      normalizeBranchValue(copy?.branch);
+
+    if (copyBranch) return copyBranch;
+
+    return null;
+  };
 
   const isExpired = (createdAt) => {
     if (!createdAt) return false;
@@ -71,6 +149,12 @@ const ViewRequestsPopup = ({
       }
     });
 
+    if (shouldApplyBranchFilter) {
+      filtered = filtered.filter(
+        (request) => getRequestBranch(request) === currentUserBranch,
+      );
+    }
+
     if (searchValue.trim()) {
       const searchLower = searchValue.toLowerCase();
       filtered = filtered.filter(
@@ -85,7 +169,14 @@ const ViewRequestsPopup = ({
       const dateB = new Date(b.created_at || 0);
       return dateB - dateA;
     });
-  }, [requests, searchValue, showRejected]);
+  }, [
+    requests,
+    searchValue,
+    showRejected,
+    shouldApplyBranchFilter,
+    currentUserBranch,
+    userBranchByUserId,
+  ]);
 
   const filteredBookRequests = useMemo(() => {
     let filtered = bookRequests.filter((request) => {
@@ -95,6 +186,12 @@ const ViewRequestsPopup = ({
         return request.status === "Pending";
       }
     });
+
+    if (shouldApplyBranchFilter) {
+      filtered = filtered.filter(
+        (request) => getBookRequestBranch(request) === currentUserBranch,
+      );
+    }
 
     if (searchValue.trim()) {
       const searchLower = searchValue.toLowerCase();
@@ -117,7 +214,17 @@ const ViewRequestsPopup = ({
       const dateB = new Date(b.created_at || 0);
       return dateB - dateA;
     });
-  }, [bookRequests, searchValue, showRejected, users, books, bookCopies]);
+  }, [
+    bookRequests,
+    searchValue,
+    showRejected,
+    users,
+    books,
+    bookCopies,
+    shouldApplyBranchFilter,
+    currentUserBranch,
+    userBranchByUserId,
+  ]);
 
   const filteredFeedbackRequests = useMemo(() => {
     let filtered = feedbackRequests.filter((request) => {
@@ -127,6 +234,12 @@ const ViewRequestsPopup = ({
         return request.status === "Pending";
       }
     });
+
+    if (shouldApplyBranchFilter) {
+      filtered = filtered.filter(
+        (request) => getRequestBranch(request) === currentUserBranch,
+      );
+    }
 
     if (searchValue.trim()) {
       const searchLower = searchValue.toLowerCase();
@@ -146,7 +259,15 @@ const ViewRequestsPopup = ({
       const dateB = new Date(b.created_at || 0);
       return dateB - dateA;
     });
-  }, [feedbackRequests, searchValue, showRejected, users]);
+  }, [
+    feedbackRequests,
+    searchValue,
+    showRejected,
+    users,
+    shouldApplyBranchFilter,
+    currentUserBranch,
+    userBranchByUserId,
+  ]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -227,11 +348,29 @@ const ViewRequestsPopup = ({
 
   const getTotalData = () => {
     if (activeTab === "users")
-      return requests.filter((r) => r.status !== "Rejected");
+      return requests
+        .filter((r) => r.status !== "Rejected")
+        .filter((r) =>
+          shouldApplyBranchFilter
+            ? getRequestBranch(r) === currentUserBranch
+            : true,
+        );
     if (activeTab === "books")
-      return bookRequests.filter((r) => r.status !== "Rejected");
+      return bookRequests
+        .filter((r) => r.status !== "Rejected")
+        .filter((r) =>
+          shouldApplyBranchFilter
+            ? getBookRequestBranch(r) === currentUserBranch
+            : true,
+        );
     if (activeTab === "feedback")
-      return feedbackRequests.filter((r) => r.status !== "Rejected");
+      return feedbackRequests
+        .filter((r) => r.status !== "Rejected")
+        .filter((r) =>
+          shouldApplyBranchFilter
+            ? getRequestBranch(r) === currentUserBranch
+            : true,
+        );
     return [];
   };
 
@@ -575,7 +714,7 @@ const ViewRequestsPopup = ({
         </div> */}
 
         <div className="flex justify-center gap-3">
-          <FormButton onClick={onClose} isPrimary="false">
+          <FormButton onClick={onClose} isPrimary={false}>
             CLOSE
           </FormButton>
         </div>
