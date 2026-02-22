@@ -370,9 +370,18 @@ function Dashboard() {
             show={!!selectedBook}
             onClose={() => setSelectedBook(null)}
             title="Book Details"
+            imageUrl={getImageUrl(selectedBook.image_url)}
+            imageAlt={selectedBook.name || "Book cover"}
             data={{
               "Book Name": selectedBook.name,
-              Author: selectedBook.author || "N/A",
+              ...(selectedBook.author ? { Author: selectedBook.author } : {}),
+              Branch:
+                selectedBook.branch ||
+                branches.find(
+                  (branch) =>
+                    String(branch.branch_id) === String(selectedBook.branch_id),
+                )?.name ||
+                "N/A",
               Category:
                 categories.find(
                   (c) => c.category_id === selectedBook.category_id,
