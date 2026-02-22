@@ -1,5 +1,5 @@
 /*=============== GOOGLE FONTS ===============*/
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Merienda+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 /*=============== VARIABLES CSS ===============*/
 :root {
   --header-height: 4.5rem;
@@ -16,8 +16,8 @@
 
   /*========== Font and typography ==========*/
   /*.5rem = 8px | 1rem = 16px ...*/
-  --body-font: "Montserrat", sans-serif;
-  --second-font: "Merienda One", cursive;
+  --body-font: "Bebas Neue", sans-serif;
+  --second-font: "Bebas Neue", sans-serif;
   --biggest-font-size: 2rem;
   --h1-font-size: 1.5rem;
   --h2-font-size: 1.25rem;
@@ -1013,7 +1013,7 @@ body.dark-theme{
   .home-page *{box-sizing:border-box}
   .home-page{
     margin:0;
-    font-family:"Montserrat",system-ui,Arial,sans-serif;
+    font-family:"Bebas Neue",system-ui,Arial,sans-serif;
     background:var(--page-bg);
     color:var(--accent);
     -webkit-font-smoothing:antialiased;
@@ -1631,7 +1631,7 @@ body.dark-theme{
     .home-page *{box-sizing:border-box}
     .home-page{
       margin:0;
-      font-family: "Montserrat", system-ui, Arial, sans-serif;
+      font-family: "Bebas Neue", system-ui, Arial, sans-serif;
       background:var(--page-bg);
       color:var(--accent);
       -webkit-font-smoothing:antialiased;
@@ -2137,7 +2137,7 @@ body.dark-theme{
 }
 .footer {
   padding: 60px 20px 30px;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   color: #525252;
 }
 
