@@ -32,7 +32,7 @@ const Popup = ({
       <div className="absolute inset-0" onClick={onClose}></div>
 
       <div
-        className={`relative ${maxWidthClass ? maxWidthClass : "max-w-2xl"} flex max-h-[90vh] w-full flex-col rounded-xl bg-white p-14 pb-0 shadow-xl dark:border dark:border-[#E8E8E8] dark:bg-[#131418] ${panelClassName || ""}`}
+        className={`popup-typography relative ${maxWidthClass ? maxWidthClass : "max-w-2xl"} flex max-h-[90vh] w-full flex-col rounded-xl bg-white p-14 pb-0 shadow-xl dark:border dark:border-[#E8E8E8] dark:bg-[#131418] ${panelClassName || ""}`}
       >
         {!hideHeader && (
           <div
@@ -47,7 +47,7 @@ const Popup = ({
                 </div>
               )}
               <h2
-                className={`text-xl font-bold text-[#0a0f33] dark:text-white ${titleClassName || ""}`}
+                className={`text-xl font-bold text-[#0a0f33] dark:text-white font-['Bebas_Neue',sans-serif] ${titleClassName || ""}`}
               >
                 {title}
               </h2>

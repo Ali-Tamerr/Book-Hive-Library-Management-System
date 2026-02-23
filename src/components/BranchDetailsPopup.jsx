@@ -6,7 +6,7 @@ const BranchDetailsPopup = ({ isOpen, onClose, branch }) => {
 
     return (
         <div className="overlay">
-            <div className="popup">
+            <div className="popup popup-typography">
                 <h2>Branch Details</h2>
 
                 <p><strong>Name:</strong> {branch.name}</p>

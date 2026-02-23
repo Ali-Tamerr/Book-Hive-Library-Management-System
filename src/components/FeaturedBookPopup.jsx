@@ -21,7 +21,7 @@ const FeaturedBookPopup = ({ isOpen, onClose, book, onBookNow }) => {
   return (
     <div className="featured-popup-overlay" onClick={onClose}>
       <div
-        className="featured-popup"
+        className="featured-popup popup-typography"
         role="dialog"
         aria-modal="true"
         aria-label="Book details"

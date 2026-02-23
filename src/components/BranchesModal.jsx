@@ -30,7 +30,7 @@ const BranchesModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="branches-overlay" onClick={onClose}>
-      <div className="branches-popup" onClick={(e) => e.stopPropagation()}>
+      <div className="branches-popup popup-typography" onClick={(e) => e.stopPropagation()}>
         <button className="branches-close" onClick={onClose}>Close</button>
 
         <div className="branches-header">
