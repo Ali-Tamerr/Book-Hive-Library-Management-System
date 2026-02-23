@@ -36,7 +36,7 @@ const AboutBranchesPopup = ({ isOpen, onClose }) => {
   return (
     <div className="branches-popup-overlay" onClick={onClose}>
       <div
-        className="branches-popup"
+        className="branches-popup popup-typography"
         role="dialog"
         aria-modal="true"
         aria-labelledby="branches-popup-title"

@@ -206,14 +206,11 @@ const Home = () => {
           <div className="home__container container grid">
             <div className="home__data">
               <h1 className="home__title">
-                Browse & <br />
-                Select E-Books
+                 One Library, 
+Infinite Stories <br />
               </h1>
               <p className="home__description">
-                Find the best e-books from your favorite
-                writers, explore hundreds of books with all
-                possible categories, take advantage of the
-                50% discount and much more.
+              With Bookhive, every book has a place and every reader has a path: search, borrow, and renew in a few clicks, while librarians track everything effortlessly.
               </p>
               <a href="#featured" className="button" onClick={(e) => scrollToSection(e, 'featured')}>Explore Now</a>
             </div>

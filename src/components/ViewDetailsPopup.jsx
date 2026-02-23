@@ -182,7 +182,7 @@ const ViewDetailsPopup = ({
                       <div className="min-w-0">
                         <p
                           className="truncate text-[18px] leading-tight text-[#050549]"
-                          style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
+                          style={{ fontFamily: "'Noto Sans Georgian', sans-serif" }}
                         >
                           {review.reviewer}
                         </p>
@@ -196,7 +196,7 @@ const ViewDetailsPopup = ({
                     <button
                       type="button"
                       className="h-[54px] min-w-[150px] cursor-pointer rounded-[10px] bg-[#00004f] px-6 text-[32px] text-white transition-colors hover:bg-[#161669]"
-                      style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
+                      style={{ fontFamily: "'Noto Sans Georgian', sans-serif" }}
                     >
                       Replay
                     </button>
@@ -209,7 +209,7 @@ const ViewDetailsPopup = ({
                   type="button"
                   onClick={onClose}
                   className="h-[54px] min-w-[150px] cursor-pointer rounded-[10px] bg-[#00004f] px-6 text-[34px] text-white transition-colors hover:bg-[#161669]"
-                  style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
+                  style={{ fontFamily: "'Noto Sans Georgian', sans-serif" }}
                 >
                   Comment
                 </button>

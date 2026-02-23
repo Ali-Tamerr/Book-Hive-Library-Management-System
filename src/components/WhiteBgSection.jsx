@@ -21,6 +21,8 @@ const WhiteBgSection = ({
 
     const bgClass = isDarkMode ? "bg-[#121317]" : "bg-white";
     const textClass = isDarkMode ? "text-white" : "text-[#0a0f33]";
+    const headingFontClass = "font-['Bebas_Neue',sans-serif]";
+    const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
     const logoSrc = isDarkMode ? logoLight : logoDark;
     const logoAlt = "BookHive Logo";
 
@@ -41,22 +43,22 @@ const WhiteBgSection = ({
                     className={`absolute ${backButton.position === 'left' ? 'top-4 left-0 border-l-0 rounded-l' : 'top-4 right-0 border-r-0 rounded-r'} ${isDarkMode
                         ? 'border border-white text-white hover:bg-white hover:text-[#121317]'
                         : 'border border-[#0a0f33] text-[#0a0f33] hover:bg-[#0a0f33] hover:text-white'
-                        } rounded-full px-4 py-1 text-xs font-medium transition-colors cursor-pointer`}
+                        } ${contentFontClass} rounded-full px-4 py-1 text-xs font-medium transition-colors cursor-pointer`}
                 >
                     {backButton.text}
                 </button>
             )}
 
-            <div className={`flex flex-col gap-4 justify-center items-center ${mobileOnly ? 'max-[1080px]:h-screen w-[85%] max-[1080px]:w-full max-w-[650px]' : 'w-full'}`}>
+            <div className={`flex flex-col gap-4 justify-center items-center ${contentFontClass} ${mobileOnly ? 'max-[1080px]:h-screen w-[85%] max-[1080px]:w-full max-w-[650px]' : 'w-full'}`}>
                 {logoWithTitle ? (
                     <div className="flex gap-6 items-center">
-                        <h2 className={`text-4xl inline font-semibold ${textClass}`}>{title}</h2>
+                        <h2 className={`text-4xl inline font-semibold ${headingFontClass} ${textClass}`}>{title}</h2>
                         <img src={logoSrc} alt={logoAlt} className="w-36 h-auto" />
                     </div>
                 ) : (
                     <>
                         <img src={logoSrc} alt={logoAlt} className="w-32 h-auto mb-6" />
-                        <h2 className={`text-3xl max-[1080px]:text-2xl font-semibold ${textClass} mb-4`}>{title}</h2>
+                        <h2 className={`text-3xl max-[1080px]:text-2xl font-semibold ${headingFontClass} ${textClass} mb-4`}>{title}</h2>
                     </>
                 )}
 

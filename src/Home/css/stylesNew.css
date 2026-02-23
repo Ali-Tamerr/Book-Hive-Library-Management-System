@@ -1,5 +1,5 @@
 /*=============== GOOGLE FONTS ===============*/
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap');
 /*=============== VARIABLES CSS ===============*/
 :root {
   --header-height: 4.5rem;
@@ -18,6 +18,7 @@
   /*.5rem = 8px | 1rem = 16px ...*/
   --body-font: "Bebas Neue", sans-serif;
   --second-font: "Bebas Neue", sans-serif;
+  --content-font: "Noto Sans Georgian", sans-serif;
   --biggest-font-size: 2rem;
   --h1-font-size: 1.5rem;
   --h2-font-size: 1.25rem;
@@ -2234,6 +2235,34 @@ body.dark-theme{
   margin-top: 40px;
   font-weight: 600;
   color: #333;
+}
+
+/* Keep section headings on Bebas Neue while content uses Noto Sans Georgian */
+.section-about .about-text,
+.section-about .stat .num,
+.section-about .stat .label,
+.section-about .about-cta,
+.featured .featured__card .featured__title,
+.featured .featured__card .button,
+#home .home__description,
+#home .button,
+.services .services__description,
+#plans .subheading,
+#plans .plan-title,
+#plans .price,
+#plans .price span,
+#plans .price small,
+#plans .feature,
+#plans .feature .tick,
+#plans .btn,
+#testimonial .testimonial__title,
+#testimonial .testimonial__description,
+.footer .logo-text .sub,
+.footer .footer-description,
+.footer .footer-links li,
+.footer .footer-links a,
+.footer .footer-copy {
+  font-family: var(--content-font);
 }
 
 /* RESPONSIVE */

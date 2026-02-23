@@ -6,7 +6,7 @@ const BookPopup = ({ isOpen, onClose, book }) => {
 
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="popup" onClick={(e) => e.stopPropagation()}>
+      <div className="popup popup-typography" onClick={(e) => e.stopPropagation()}>
         
         <button className="back-btn" onClick={onClose}>Back</button>
 

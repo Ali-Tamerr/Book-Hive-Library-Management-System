@@ -22,6 +22,8 @@ const DarkBgSection = ({
     const textColor = isDarkMode ? "text-[#121317]" : "text-white";
     const borderColor = isDarkMode ? "border-[#121317]" : "border-white";
     const hoverBg = isDarkMode ? "hover:bg-[#121317] hover:text-white" : "hover:bg-white hover:text-[#000035]";
+    const headingFontClass = "font-['Bebas_Neue',sans-serif]";
+    const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
     const logoSrc = isDarkMode ? logoDark : logoLight;
     const logoAlt = "BookHive Logo";
 
@@ -32,7 +34,7 @@ const DarkBgSection = ({
             {backButton && (
                 <button
                     onClick={backButton.onClick}
-                    className={`absolute ${backButton.position === 'left' ? 'top-4 left-4' : 'top-4 right-4'} border ${borderColor} ${textColor} ${hoverBg} rounded-sm px-4 py-1 text-xs font-medium transition-colors cursor-pointer`}
+                    className={`absolute ${backButton.position === 'left' ? 'top-4 left-4' : 'top-4 right-4'} border ${borderColor} ${textColor} ${hoverBg} ${contentFontClass} rounded-sm px-4 py-1 text-xs font-medium transition-colors cursor-pointer`}
                 >
                     {backButton.text}
                 </button>
@@ -45,17 +47,17 @@ const DarkBgSection = ({
                     style={logoStyle}
                 />
             )}
-            <h1 className={`text-[73px] text-center -mb-8 ${textColor}`}>
+            <h1 className={`text-[73px] text-center -mb-8 ${headingFontClass} ${textColor}`}>
                 BookHive
                 <br />
-                <span className="block font-['Bebas_Neue',sans-serif] text-[50px] -mt-6 font-medium">Library</span>
+                <span className={`block ${headingFontClass} text-[50px] -mt-6 font-medium`}>Library</span>
             </h1>
-            <p className={`text-xl ${textColor} max-w-100 text-center cursor-default`}>{message}</p>
+            <p className={`text-xl ${contentFontClass} ${textColor} max-w-100 text-center cursor-default`}>{message}</p>
             <div className="flex flex-col gap-4 w-full max-w-[300px]">
                 {buttonText && onButtonClick && (
                     <button
                         onClick={onButtonClick}
-                        className={`border-2 ${borderColor} ${textColor} font-semibold text-lg w-full px-10 py-4 rounded-[20px] ${hoverBg} transition-colors cursor-pointer`}
+                        className={`border-2 ${borderColor} ${textColor} ${contentFontClass} font-semibold text-lg w-full px-10 py-4 rounded-[20px] ${hoverBg} transition-colors cursor-pointer`}
                     >
                         {buttonText}
                     </button>
@@ -63,7 +65,7 @@ const DarkBgSection = ({
                 {secondButtonText && onSecondButtonClick && (
                     <button
                         onClick={onSecondButtonClick}
-                        className={`border-2 ${borderColor} ${textColor} font-semibold text-lg w-full px-10 py-4 rounded-[20px] ${hoverBg} transition-colors cursor-pointer`}
+                        className={`border-2 ${borderColor} ${textColor} ${contentFontClass} font-semibold text-lg w-full px-10 py-4 rounded-[20px] ${hoverBg} transition-colors cursor-pointer`}
                     >
                         {secondButtonText}
                     </button>
