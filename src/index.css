@@ -1,4 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Merienda+One&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Merienda+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@100..900&display=swap");
+
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("./Fonts/BebasNeue Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("./Fonts/BebasNeue Light.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("./Fonts/BebasNeue Book.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("./Fonts/BebasNeue Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("./Fonts/BebasNeue Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark-theme, .dark-theme *));
@@ -7,6 +48,102 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+.noto-sans-georgian-thin {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.noto-sans-georgian-extralight {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.noto-sans-georgian-light {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.noto-sans-georgian-regular {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.noto-sans-georgian-medium {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.noto-sans-georgian-semibold {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.noto-sans-georgian-bold {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.noto-sans-georgian-extrabold {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.noto-sans-georgian-black {
+  font-family: "Noto Sans Georgian", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.bebas-neue-thin {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.bebas-neue-extralight {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.bebas-neue-light {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.bebas-neue-regular {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.bebas-neue-bold {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.bebas-neue-extrabold {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.bebas-neue-black {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 900;
+  font-style: normal;
 }
 
 .montserrat {
@@ -81,7 +218,9 @@ body {
   width: 100%;
   overflow-x: hidden;
   overscroll-behavior-x: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 body.dark-theme {

@@ -135,7 +135,7 @@ function Layout({
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
       />
-      <main className="montserrat-regular flex h-full flex-1 flex-col overflow-hidden">
+      <main className="bebas-neue-regular flex h-full flex-1 flex-col overflow-hidden">
         <Navbar
           key={`navbar-${location.pathname}`}
           searchValue={searchValue}

@@ -1,104 +1,104 @@
 /*=============== GOOGLE FONTS ===============*/
 
 /*=============== SERVICES ===============*/
-.services__container{
+.services__container {
   row-gap: 3rem;
 }
 
-.services__card{
+.services__card {
   text-align: center;
 }
 
-.services__card i{
+.services__card i {
   display: block;
   font-size: 3rem;
   color: var(--first-color);
   margin-bottom: 1rem;
 }
 
-.services__title{
+.services__title {
   font-size: var(--h3-font-size);
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 /*=============== SCROLL BAR ===============*/
-::-webkit-scrollbar{
-  width: .6rem;
-  border-radius: .5rem;
+::-webkit-scrollbar {
+  width: 0.6rem;
+  border-radius: 0.5rem;
   background-color: hsl(230, 16%, 85%);
 }
 
-::-webkit-scrollbar-thumb{
-  border-radius: .5rem;
+::-webkit-scrollbar-thumb {
+  border-radius: 0.5rem;
   background-color: hsl(230, 16%, 65%);
 }
 
-::-webkit-scrollbar-thumb:hover{
+::-webkit-scrollbar-thumb:hover {
   background-color: hsl(230, 16%, 55%);
 }
 
 /*=============== FOOTER (Original) ===============*/
-.footer{
+.footer {
   padding-block: 4rem 6rem;
 }
 
-.footer__container{
+.footer__container {
   row-gap: 3rem;
 }
 
-.footer__logo{
+.footer__logo {
   display: inline-flex;
   align-items: center;
-  column-gap: .5rem;
+  column-gap: 0.5rem;
   color: var(--first-color);
   font-size: var(--h3-font-size);
   font-family: var(--second-font);
   margin-bottom: 1.25rem;
 }
 
-.footer__logo i{
+.footer__logo i {
   font-size: 1.25rem;
 }
 
-.footer__data{
+.footer__data {
   grid-template-columns: repeat(2, max-content);
   gap: 3rem 2rem;
 }
 
-.footer__title{
+.footer__title {
   font-size: var(--h3-font-size);
   margin-bottom: 1.25rem;
 }
 
-.footer__links{
+.footer__links {
   display: grid;
-  row-gap: .5rem;
+  row-gap: 0.5rem;
 }
 
-.footer__link{
+.footer__link {
   color: var(--text-color);
-  transition: color .4s;
+  transition: color 0.4s;
 }
 
-.footer__link:hover{
+.footer__link:hover {
   color: var(--first-color);
 }
 
-.footer__info{
+.footer__info {
   font-style: normal;
 }
 
-.footer__social{
+.footer__social {
   display: flex;
   column-gap: 1.25rem;
 }
 
-.footer__socail-link{
+.footer__socail-link {
   font-size: 1.25rem;
   color: var(--first-color);
 }
 
-.footer__copy{
+.footer__copy {
   display: block;
   margin-top: 5rem;
   text-align: center;
