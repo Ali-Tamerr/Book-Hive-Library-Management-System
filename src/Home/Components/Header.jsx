@@ -31,7 +31,7 @@ const Header = ({
             />
           </a>
 
-          <div className="max-[1150px]:duration-400 max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full max-[1150px]:bg-[var(--container-color)] max-[1150px]:px-16 max-[1150px]:py-5 max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1)] max-[1150px]:transition-[background-color] min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center dark:bg-[#15161a] dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:min-[1150px]:shadow-none">
+          <div className="max-[1150px]:duration-400 pl-35 max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full max-[1150px]:bg-[var(--container-color)] max-[1150px]:px-16 max-[1150px]:py-5 max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1)] max-[1150px]:transition-[background-color] min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center dark:bg-[#15161a] dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:min-[1150px]:shadow-none">
             <ul className="flex items-center justify-between min-[1150px]:gap-x-24">
               <NavLink
                 href="#home"
