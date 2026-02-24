@@ -26,6 +26,7 @@ const FeedbackPopup = ({ show, onClose }) => {
       const newFeedback = {
         request_id: Date.now(), // Mock ID
         user_id: currentUser?.user_id || "Guest",
+        user_name: currentUser?.fullname || currentUser?.user_id || "Guest",
         description: feedbackText,
         rate: rating,
         created_at: new Date().toISOString(),

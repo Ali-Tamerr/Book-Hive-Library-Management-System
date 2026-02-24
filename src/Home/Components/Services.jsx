@@ -1,4 +1,5 @@
 import React from "react";
+import ServiceCard from "./ServiceCard";
 
 const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
   return (
@@ -13,60 +14,24 @@ const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
           margin: "0 auto",
         }}
       >
-        <article
-          className="services__card mt-10 flex flex-col items-center text-center"
-          data-reveal
-        >
-          <div className="mb-4 flex h-20 items-end justify-center">
-            <img
-              src={freeShippingIcon}
-              alt="Free Shipping"
-              className="block max-h-full w-auto object-contain dark:brightness-0 dark:invert"
-            />
-          </div>
-          <h3 className="services__title mb-2 font-[family-name:var(--body-font)] text-[30px] font-normal text-[var(--first-color)] dark:!text-[#f1f1f3]">
-            Smart Catalog
-          </h3>
-          <p className="services__description font-[family-name:var(--second-font)] font-bold text-[#525252] dark:!text-[#a9abb2]">
-            Search, filter, and explore every book in your library easily
-          </p>
-        </article>
-        <article
-          className="services__card mt-10 flex flex-col items-center text-center"
-          data-reveal
-        >
-          <div className="mb-4 flex h-20 items-end justify-center">
-            <img
-              src={secureInfoIcon}
-              alt="Secure Information"
-              className="block max-h-full w-auto object-contain dark:brightness-0 dark:invert"
-            />
-          </div>
-          <h3 className="services__title mb-2 font-[family-name:var(--body-font)] text-[30px] font-normal text-[var(--first-color)] dark:!text-[#f1f1f3]">
-            Secure Information
-          </h3>
-          <p className="services__description font-[family-name:var(--second-font)] font-bold text-[#525252] dark:!text-[#a9abb2]">
-            100% Secure Information
-          </p>
-        </article>
-        <article
-          className="services__card mt-10 flex flex-col items-center text-center"
-          data-reveal
-        >
-          <div className="mb-4 flex h-20 items-end justify-center">
-            <img
-              src={chatbotIcon}
-              alt="Chatbot"
-              className="block max-h-full w-auto object-contain dark:brightness-0 dark:invert"
-            />
-          </div>
-          <h3 className="services__title mb-2 font-[family-name:var(--body-font)] text-[30px] font-normal text-[var(--first-color)] dark:!text-[#f1f1f3]">
-            ChatBot
-          </h3>
-          <p className="services__description font-[family-name:var(--second-font)] font-bold text-[#525252] dark:!text-[#a9abb2]">
-            Talk with us anytime
-          </p>
-        </article>
+        <ServiceCard
+          iconSrc={freeShippingIcon}
+          iconAlt="Free Shipping"
+          title="Smart Catalog"
+          description="Search, filter, and explore every book in your library easily"
+        />
+        <ServiceCard
+          iconSrc={secureInfoIcon}
+          iconAlt="Secure Information"
+          title="Secure Information"
+          description="100% Secure Information"
+        />
+        <ServiceCard
+          iconSrc={chatbotIcon}
+          iconAlt="Chatbot"
+          title="ChatBot"
+          description="Talk with us anytime"
+        />
       </div>
     </section>
   );
