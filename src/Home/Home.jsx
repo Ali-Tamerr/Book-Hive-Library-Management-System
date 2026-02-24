@@ -10,7 +10,7 @@ import FeaturedBookPopup from "../components/FeaturedBookPopup";
 import PageLoader from "../components/PageLoader";
 import logoIcon from "../assets/bookhive_icon_only_black-removebg-preview 2.svg";
 import testimonialImg1 from "../assets/img/testimonial-perfil-1.png";
-import freeShippingIcon from "../assets/free shipping.png";
+import freeShippingIcon from "../assets/smart catalog.png";
 import secureInfoIcon from "../assets/secure information.png";
 import chatbotIcon from "../assets/chatbot.png";
 
@@ -254,7 +254,7 @@ const Home = () => {
   return (
     <>
       {!pageLoaded && (
-        <PageLoader className="!fixed !z-[9999] bg-[hsl(230,100%,96%)] dark:bg-[#111214]" />
+        <PageLoader className="!fixed !z-[9999] bg-[#E8E8E8] dark:bg-[#111214]" />
       )}
       <div
         className="duration-400 m-0 scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
