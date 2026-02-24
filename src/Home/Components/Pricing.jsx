@@ -1,180 +1,126 @@
 import React from "react";
 
+const plansData = [
+  {
+    id: "plan-discover",
+    title: "Discover",
+    price: "$99",
+    features: [
+      "Borrow up to 3 books per month.",
+      "Loan period: 7 days per book.",
+      "1 renewal per book",
+    ],
+    isPopular: false,
+  },
+  {
+    id: "plan-enterprise",
+    title: "Enterprise",
+    price: "$299",
+    features: [
+      "Borrow up to 15 books per month",
+      "Loan period: 21 days per book.",
+      "3 renewal per book",
+    ],
+    isPopular: true,
+  },
+  {
+    id: "plan-pro",
+    title: "Professional",
+    price: "$199",
+    features: [
+      "Borrow up to 10 books per month",
+      "Loan period: 14 days per book.",
+      "2 renewal per book",
+    ],
+    isPopular: false,
+  },
+];
+
+const PricingCard = ({ plan, setIsLoginOpen }) => {
+  return (
+    <article
+      className={`plan flex w-full flex-col justify-start rounded-[18px] px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-[transform,box-shadow] duration-[300ms] ease-in-out max-[680px]:min-h-[380px] ${
+        plan.isPopular
+          ? "center flex-8 -mt-5 min-h-[520px] border-2 bg-[var(--center-bg)] pt-16 max-[1000px]:mt-0 max-[1000px]:min-h-[420px] dark:!border-[#E3E3E3] dark:!shadow-[0_18px_28px_rgba(0,0,0,0.4)]"
+          : "flex-7 min-h-[660px] bg-[var(--card-bg)]"
+      }`}
+      role="listitem"
+      aria-labelledby={plan.id}
+    >
+      <div
+        id={plan.id}
+        className={`font-[family-name:var(--body-font)] text-[55px] font-extrabold uppercase tracking-wider text-[var(--accent)]`}
+      >
+        {plan.title}
+      </div>
+      <div
+        className={`price mb-10 font-[family-name:Inter,sans-serif] text-[50px] font-normal text-[var(--accent)] dark:!text-[#e3e4e8]`}
+      >
+        <span>{plan.price} / Per Month</span>
+      </div>
+      <div className="features mb-12 mt-4 flex-1 text-left">
+        {plan.features.map((feature, index) => (
+          <div
+            key={index}
+            className="my-8 flex items-start gap-3 font-[family-name:var(--second-font)] text-[23px] font-normal text-[#121317] dark:!text-[#cfd1d7]"
+          >
+            <span className="mt-1 inline-block flex-none text-[28px] leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
+              &#10003;
+            </span>
+            {feature}
+          </div>
+        ))}
+      </div>
+      <a
+        className={`btn mx-auto mt-4 inline-block rounded-[14px] px-20 py-3 font-[family-name:var(--second-font)] text-[28px] font-normal no-underline transition-all duration-[300ms] ease-in-out ${
+          plan.isPopular
+            ? "dark:hover:border-[#E3E3E3] border border-[#000035] bg-[#000035] text-white hover:border-[#000022] hover:bg-[#000022] dark:border-[#E3E3E3] dark:bg-[#E3E3E3] dark:text-black dark:hover:bg-black dark:hover:text-[#e3e4e8]"
+            : "border border-[#000035] bg-white text-[var(--accent)] hover:border-[#000035] hover:bg-[#E3E3E3] hover:text-[#0a0b2b] dark:border-[#E3E3E3] dark:bg-transparent dark:text-[#e3e4e8] dark:hover:border-[#E3E3E3] dark:hover:bg-[#E3E3E3] dark:hover:text-black"
+        }`}
+        href="#"
+        role="button"
+        aria-label={`Subscribe to ${plan.title}`}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsLoginOpen(true);
+        }}
+      >
+        Subscribe
+      </a>
+    </article>
+  );
+};
+
 const Pricing = ({ setIsLoginOpen }) => {
   return (
     <section
-      className="section px-5 py-14 pb-[72px]"
+      className="section px-24 py-14 pb-[72px]"
       id="plans"
       aria-labelledby="pricing-heading"
     >
-      <div className="mx-auto max-w-[var(--max-w)] px-5 text-center">
+      <div className="mx-auto max-w-[1875px] text-center">
         <h1
           id="pricing-heading"
-          className="heading mb-2.5 font-[family-name:var(--body-font)] text-[44px] font-normal text-[var(--accent)] max-[680px]:text-[32px] dark:text-[#e3e4e8]"
+          className="mb-16 text-center font-[family-name:var(--body-font)] text-[80px] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)]"
         >
           Choose The best Plan
         </h1>
-        <p className="subheading mb-10 font-[family-name:var(--second-font)] font-medium text-[var(--muted)] max-[680px]:text-sm dark:text-[#b3b6bd]">
+        <p className="subheading mb-20 font-[family-name:var(--second-font)] text-[26px] font-medium text-[var(--muted)] max-[680px]:text-sm dark:text-[#b3b6bd]">
           choose a plan that's right for your growing team. Simple pricing &amp;
           No hidden charges.
         </p>
 
         <div
-          className="plans grid grid-cols-3 items-stretch gap-[var(--gap)] rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-white p-9 shadow-[var(--card-shadow)] max-[1000px]:grid-cols-2 max-[1000px]:p-7 max-[680px]:grid-cols-1 max-[680px]:p-[22px] dark:!border-none dark:!bg-transparent dark:!shadow-none"
+          className="plans px-13 flex flex-col items-stretch gap-16 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-white py-14 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none"
           role="list"
         >
-          <article
-            className="plan flex min-h-[420px] flex-col justify-start rounded-[var(--card-radius)] border-none bg-[var(--card-bg)] px-7 py-[34px] text-[var(--accent)] shadow-[0_10px_18px_rgba(10,10,35,0.08)] transition-[transform,box-shadow] duration-[280ms] ease-in-out hover:shadow-[var(--card-shadow-hover)] max-[680px]:min-h-[380px] dark:border-none dark:shadow-[0_18px_28px_rgba(0,0,0,0.4)]"
-            role="listitem"
-            aria-labelledby="plan-discover"
-          >
-            <div
-              id="plan-discover"
-              className="plan-title mb-[18px] font-[family-name:var(--body-font)] text-2xl font-normal uppercase tracking-wider text-[var(--accent)]"
-            >
-              Discover
-            </div>
-            <div className="price mb-6 font-[family-name:Inter,sans-serif] text-[30px] font-normal text-[var(--accent)] dark:!text-[#e3e4e8]">
-              <span className="small-price text-[30px]">$99</span>
-              <small className="ml-2 text-lg font-normal text-[var(--accent)] dark:!text-[#b9bbc1]">
-                / Per Month
-              </small>
-            </div>
-            <div className="features mb-7 mt-1.5 flex-1 text-left">
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-[15px] font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                Borrow up to 3 books per month.
-              </div>
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-[15px] font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                Loan period: 7 days per book.
-              </div>
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-[15px] font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                1 renewal per book
-              </div>
-            </div>
-            <a
-              className="btn mx-auto mt-3 inline-block rounded-xl border border-[var(--accent)] bg-white px-8 py-2.5 font-[family-name:var(--second-font)] font-normal text-[var(--accent)] no-underline transition-[background,color,transform,box-shadow] duration-[180ms] ease-in-out hover:border-[#D7D7D7] hover:bg-[#D7D7D7] hover:text-[#0a0b2b] dark:!border-[#7b7f88] dark:!bg-transparent dark:!text-[#e3e4e8] dark:!shadow-none dark:hover:!border-[#d7d7d7] dark:hover:!bg-[#d7d7d7] dark:hover:!text-[#0a0b2b]"
-              href="#"
-              role="button"
-              aria-label="Subscribe to Discover"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsLoginOpen(true);
-              }}
-            >
-              Subscribe
-            </a>
-          </article>
-
-          <article
-            className="plan center -mt-2.5 flex min-h-[450px] flex-col justify-start rounded-[var(--card-radius)] border-2 border-[var(--center-border)] bg-[var(--center-bg)] px-7 py-[34px] pt-10 text-[var(--accent)] shadow-[0_16px_28px_rgba(10,10,35,0.14)] transition-[transform,box-shadow] duration-[280ms] ease-in-out hover:shadow-[0_18px_32px_rgba(10,10,35,0.16)] max-[1000px]:mt-0 max-[1000px]:min-h-[420px] max-[680px]:min-h-[380px] dark:!border-2 dark:!border-[#d7d7d7] dark:!shadow-[0_18px_28px_rgba(0,0,0,0.4)]"
-            role="listitem"
-            aria-labelledby="plan-enterprise"
-          >
-            <div
-              id="plan-enterprise"
-              className="plan-title mb-[18px] font-[family-name:var(--body-font)] text-[26px] font-normal uppercase tracking-wider text-[var(--accent)]"
-            >
-              Enterprise
-            </div>
-            <div className="price mb-6 font-[family-name:Inter,sans-serif] text-[34px] font-normal text-[var(--accent)] dark:!text-[#e3e4e8]">
-              <span>$299</span>
-              <small className="ml-2 text-lg font-normal text-[var(--accent)] dark:!text-[#b9bbc1]">
-                / Per Month
-              </small>
-            </div>
-            <div className="features mb-7 mt-1.5 flex-1 text-left">
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-base font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                Borrow up to 15 books per month
-              </div>
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-base font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                Loan period: 21 days per book.
-              </div>
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-base font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                3 renewal per book
-              </div>
-            </div>
-            <a
-              className="btn mx-auto mt-3 inline-block rounded-xl border border-[var(--accent)] bg-[var(--accent)] px-8 py-2.5 font-[family-name:var(--second-font)] font-normal text-white no-underline shadow-[0_8px_16px_rgba(10,11,43,0.18)] transition-[background,color,transform,box-shadow] duration-[180ms] ease-in-out dark:!border-[#d7d7d7] dark:!bg-[#d7d7d7] dark:!text-[#111214] dark:!shadow-[0_10px_18px_rgba(0,0,0,0.35)] dark:hover:!border-[#f0f0f0] dark:hover:!bg-[#f0f0f0] dark:hover:!text-[#15161b]"
-              href="#"
-              role="button"
-              aria-label="Subscribe to Enterprise"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsLoginOpen(true);
-              }}
-            >
-              Subscribe
-            </a>
-          </article>
-
-          <article
-            className="plan flex min-h-[420px] flex-col justify-start rounded-[var(--card-radius)] border-none bg-[var(--card-bg)] px-7 py-[34px] text-[var(--accent)] shadow-[0_10px_18px_rgba(10,10,35,0.08)] transition-[transform,box-shadow] duration-[280ms] ease-in-out hover:shadow-[var(--card-shadow-hover)] max-[680px]:min-h-[380px] dark:border-none dark:shadow-[0_18px_28px_rgba(0,0,0,0.4)]"
-            role="listitem"
-            aria-labelledby="plan-pro"
-          >
-            <div
-              id="plan-pro"
-              className="plan-title mb-[18px] font-[family-name:var(--body-font)] text-2xl font-normal uppercase tracking-wider text-[var(--accent)]"
-            >
-              Professional
-            </div>
-            <div className="price mb-6 font-[family-name:Inter,sans-serif] text-[30px] font-normal text-[var(--accent)] dark:!text-[#e3e4e8]">
-              <span className="small-price text-[30px]">$199</span>
-              <small className="ml-2 text-lg font-normal text-[var(--accent)] dark:!text-[#b9bbc1]">
-                / Per Month
-              </small>
-            </div>
-            <div className="features mb-7 mt-1.5 flex-1 text-left">
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-[15px] font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                Borrow up to 10 books per month
-              </div>
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-[15px] font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                Loan period: 14 days per book.
-              </div>
-              <div className="feature my-3 flex items-start gap-3 font-[family-name:var(--second-font)] text-[15px] font-normal text-[var(--accent)] dark:!text-[#cfd1d7]">
-                <span className="tick mt-px inline-block flex-none text-lg leading-none text-[var(--accent)] dark:!text-[#e3e4e8]">
-                  &#10003;
-                </span>
-                2 renewal per book
-              </div>
-            </div>
-            <a
-              className="btn mx-auto mt-3 inline-block rounded-xl border border-[var(--accent)] bg-white px-8 py-2.5 font-[family-name:var(--second-font)] font-normal text-[var(--accent)] no-underline transition-[background,color,transform,box-shadow] duration-[180ms] ease-in-out hover:border-[#D7D7D7] hover:bg-[#D7D7D7] hover:text-[#0a0b2b] dark:!border-[#7b7f88] dark:!bg-transparent dark:!text-[#e3e4e8] dark:!shadow-none dark:hover:!border-[#d7d7d7] dark:hover:!bg-[#d7d7d7] dark:hover:!text-[#0a0b2b]"
-              href="#"
-              role="button"
-              aria-label="Subscribe to Professional"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsLoginOpen(true);
-              }}
-            >
-              Subscribe
-            </a>
-          </article>
+          {plansData.map((plan) => (
+            <PricingCard
+              key={plan.id}
+              plan={plan}
+              setIsLoginOpen={setIsLoginOpen}
+            />
+          ))}
         </div>
       </div>
     </section>

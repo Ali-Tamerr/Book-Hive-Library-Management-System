@@ -8,10 +8,10 @@ const Testimonials = ({
 }) => {
   return (
     <section className="py-20 pb-4" id="testimonial">
-      <h2 className="mb-8 text-center font-[family-name:var(--body-font)] text-[length:var(--h1-font-size)] font-extrabold">
-        Customer Opinions
+      <h2 className="mb-16 text-center font-[family-name:var(--body-font)] text-[80px] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)]">
+        CUSTOMER OPINIONS
       </h2>
-      <div className="mx-auto w-full max-w-[1220px] px-6" data-reveal>
+      <div className="mx-auto w-full max-w-[1875px] px-6" data-reveal>
         <div className="relative">
           <div className="overflow-hidden">
             <div
@@ -30,27 +30,30 @@ const Testimonials = ({
                   return (
                     <article
                       key={fb.request_id}
-                      className="duration-400 shrink-0 border-2 border-[var(--border-color)] bg-[var(--container-color)] px-12 py-8 pb-10 text-center transition-[border,background-color] dark:border-[#e4e4e7] dark:bg-[#f7f7f7] dark:shadow-[0_10px_26px_rgba(0,0,0,0.28)]"
-                      style={{ width: `${100 / testimonialPerView}%` }}
+                      className="duration-400 shrink-0 rounded-[24px] bg-white px-16 py-14 pb-16 text-center transition-colors dark:bg-[#D4D4D4]"
+                      style={{
+                        width: `${90 / testimonialPerView}%`,
+                        margin: "0 30px",
+                      }}
                     >
                       {fb.user_image || fb.image ? (
                         <img
                           src={fb.user_image || fb.image}
                           alt={fb.user_name || fb.user_id || "Guest"}
-                          className="mx-auto mb-6 h-[100px] w-[100px] rounded-full object-cover"
+                          className="mx-auto mb-10 h-[140px] w-[140px] rounded-full object-cover"
                         />
                       ) : (
-                        <div className="mx-auto mb-6 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-black text-white dark:bg-white dark:text-black">
-                          <i className="ri-user-line text-5xl"></i>
+                        <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#000035] text-white dark:bg-black">
+                          <i className="ri-user-line text-[70px]"></i>
                         </div>
                       )}
-                      <h2 className="mb-3 font-[family-name:var(--body-font)] text-[length:var(--h2-font-size)] font-normal dark:!text-[#1b1c20]">
+                      <h2 className="mb-6 font-[family-name:var(--body-font)] text-[52px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-black">
                         {fb.user_name || fb.user_id || "Guest"}
                       </h2>
-                      <p className="mb-5 font-[family-name:var(--second-font)] text-[length:var(--small-font-size)] font-bold dark:!text-[#5f6167]">
+                      <p className="mx-auto mb-10 max-w-[800px] font-[family-name:var(--second-font)] text-[30px] font-bold leading-relaxed text-[#525252] dark:!text-[#1a1a1a]">
                         {fb.description || "Great experience!"}
                       </p>
-                      <div className="text-[var(--first-color)]">
+                      <div className="text-[44px] text-[#000035] dark:text-black">
                         {Array.from({ length: fullStars }, (_, i) => (
                           <i key={`full-${i}`} className="ri-star-fill"></i>
                         ))}
@@ -66,8 +69,8 @@ const Testimonials = ({
                   );
                 })
               ) : (
-                <div className="flex w-full items-center justify-center py-16">
-                  <p className="font-[family-name:var(--second-font)] text-lg font-bold text-[var(--muted)]">
+                <div className="flex w-full items-center justify-center py-20">
+                  <p className="font-[family-name:var(--second-font)] text-[32px] font-bold text-[var(--muted)]">
                     No feedback yet. Be the first to share your experience!
                   </p>
                 </div>

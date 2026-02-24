@@ -3,13 +3,13 @@ import ServiceCard from "./ServiceCard";
 
 const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
   return (
-    <section className="services py-20 pb-4">
+    <section className="services py-28 pb-[1.4rem]">
       <div
-        className="services__container grid max-w-6xl px-5"
+        className="services__container grid max-w-[1700px] px-5"
         style={{
           gridTemplateColumns: "repeat(3, 1fr)",
           columnGap: 0,
-          rowGap: "3rem",
+          rowGap: "4.2rem",
           justifyContent: "stretch",
           margin: "0 auto",
         }}
