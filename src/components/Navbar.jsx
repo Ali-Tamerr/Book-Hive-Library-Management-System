@@ -17,7 +17,7 @@ import GlobalSearchPopup from "./GlobalSearchPopup";
 import SettingsPopup from "./SettingsPopup";
 import AdminNotifications from "./AdminNotifications";
 import FeedbackPopup from "./FeedbackPopup";
-import FeedbackIcon from "../Home/assets/img/ix_feedback-filled.svg?react";
+import FeedbackIcon from "../assets/img/ix_feedback-filled.svg?react";
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
@@ -29,7 +29,8 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
 
   const localUser = getCurrentUser();
   const { data: userProfile } = useUser(localUser?.user_id);
-  const currentUser = userProfile && userProfile.user_id ? userProfile : localUser;
+  const currentUser =
+    userProfile && userProfile.user_id ? userProfile : localUser;
   const getRoleLabel = () => {
     const role = currentUser?.role?.toLowerCase();
     if (role === "admin") return "Librarian";
@@ -102,7 +103,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
     <>
       <header className="flex h-min flex-1 items-center justify-between bg-white px-4 py-4 text-[#0a0f33] shadow-[0_2px_6px_rgba(0,0,0,0.05)] dark:bg-[#121317] dark:text-[#E8E8E8]">
         <div className="flex-2 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#D7D7D7] overflow-hidden">
+          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
             {currentUser?.image_url ? (
               <img
                 src={getImageUrl(currentUser.image_url)}

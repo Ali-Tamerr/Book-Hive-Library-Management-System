@@ -1,5 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Merienda+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Merienda+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@100..900&display=swap");
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark-theme, .dark-theme *));
 
 @font-face {
   font-family: "Bebas Neue";
@@ -40,9 +44,70 @@
   font-style: normal;
   font-display: swap;
 }
-@import "tailwindcss";
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+  transition-delay: 0.5s;
+}
 
-@custom-variant dark (&:where(.dark-theme, .dark-theme *));
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+:root {
+  --header-height: 4.5rem;
+  --first-color: #000035;
+  --title-color: hsl(230, 70%, 16%);
+  --text-color: hsl(230, 16%, 45%);
+  --border-color: hsl(230, 50%, 90%);
+  --white-color: hsl(0, 0%, 100%);
+  --body-color: hsl(230, 100%, 96%);
+  --container-color: hsl(230, 100%, 97%);
+  --body-font: "Bebas Neue", sans-serif;
+  --second-font: "Noto Sans Georgian", cursive;
+  --biggest-font-size: 2rem;
+  --h1-font-size: 1.5rem;
+  --h2-font-size: 1.25rem;
+  --h3-font-size: 2rem;
+  --normal-font-size: 0.938rem;
+  --small-font-size: 0.813rem;
+  --smaller-font-size: 0.75rem;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semi-bold: 600;
+  --z-tooltip: 10;
+  --z-fixed: 100;
+  --btn-bg: #0a0b2b;
+  --btn-color: #fff;
+  --page-bg: #eef1ff;
+  --accent: #0a0b2b;
+  --muted: #6f7390;
+  --card-bg: #ffffff;
+  --card-radius: 14px;
+  --card-border: #d6d9e6;
+  --card-shadow: 0 12px 22px rgba(10, 10, 35, 0.12);
+  --card-shadow-hover: 0 16px 26px rgba(10, 10, 35, 0.16);
+  --center-bg: #ffffff;
+  --center-border: #0a0b2b;
+  --max-w: 1500px;
+  --gap: 32px;
+}
+
+@media screen and (min-width: 1150px) {
+  :root {
+    --biggest-font-size: 3.5rem;
+    --h1-font-size: 2.25rem;
+    --h2-font-size: 1.5rem;
+    --h3-font-size: 1.25rem;
+    --normal-font-size: 1rem;
+    --small-font-size: 0.875rem;
+    --smaller-font-size: 0.813rem;
+  }
+}
 
 *,
 *::before,
@@ -201,14 +266,6 @@
   text-orientation: sideways-right;
 }
 
-html {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  overscroll-behavior-x: none;
-}
-
 body {
   font-family: "Montserrat", sans-serif;
   margin: 0;
@@ -216,14 +273,24 @@ body {
   min-height: 100vh;
   background: #f4f6fb;
   width: 100%;
-  overflow-x: hidden;
-  overscroll-behavior-x: none;
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
 }
 
 body.dark-theme {
+  --title-color: #f7f7f7;
+  --text-color: #b9bbc1;
+  --border-color: #2a2c31;
+  --white-color: #ffffff;
+  --body-color: #111214;
+  --container-color: #17181b;
+  --page-bg: #111214;
+  --accent: #f7f7f7;
+  --muted: #a9abb2;
+  --card-bg: #15161b;
+  --center-bg: #15161b;
+  --white: #151515;
   background: #121317;
 }
 
@@ -290,4 +357,16 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: hsl(24, 32%, 55%);
+}
+
+.dark-theme::-webkit-scrollbar {
+  background-color: hsl(230, 16%, 15%);
+}
+
+.dark-theme::-webkit-scrollbar-thumb {
+  background-color: hsl(230, 16%, 25%);
+}
+
+.dark-theme::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(230, 16%, 35%);
 }
