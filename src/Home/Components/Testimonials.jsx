@@ -33,7 +33,7 @@ const Testimonials = ({
                       key={fb.request_id}
                       className="duration-400 shrink-0 rounded-[24px] bg-white px-16 py-14 pb-16 text-center transition-colors dark:bg-[#D4D4D4]"
                       style={{
-                        width: `${90 / testimonialPerView}%`,
+                        width: `calc(${100 / testimonialPerView}% - 60px)`,
                         margin: "0 30px",
                       }}
                     >
