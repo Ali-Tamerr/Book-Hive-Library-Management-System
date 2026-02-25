@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Popup from "./Popup.jsx";
-import { ReceiptText, Star, StarHalf } from "lucide-react";
+import { ReceiptText, Star, StarHalf, UserRound } from "lucide-react";
 import reviewerAvatar from "../assets/img/testimonial-perfil-1.png";
 import { useBookReviews } from "../hooks/useBookReviews.js";
 import RateBookPopup from "./RateBookPopup.jsx";
@@ -64,7 +64,7 @@ const ViewDetailsPopup = ({
   if (categoryEntry?.[0]) usedKeys.add(categoryEntry[0]);
 
   const remainingEntries = normalizedEntries.filter(
-    ([key]) => !usedKeys.has(key),
+    ([key]) => !usedKeys.has(key) && String(key).toLowerCase() !== "book id",
   );
 
   const toDisplayValue = (value) => {
@@ -187,7 +187,7 @@ const ViewDetailsPopup = ({
 
             {hasCustomContent ? (
               <div className="mt-8">{children}</div>
-            ) : (
+            ) : bookId ? (
               <div className="mt-8 flex flex-col gap-5">
                 <h4
                   className="text-4xl text-[#050549] sm:text-[48px]"
@@ -213,15 +213,17 @@ const ViewDetailsPopup = ({
                         className="flex min-h-[96px] items-center justify-between gap-4 rounded-[12px] border border-[#d8d8d8] bg-[#efefef] px-3 py-2 shadow-[0_2px_0_rgba(0,0,0,0.15)]"
                       >
                         <div className="flex min-w-0 items-center gap-3">
-                          <img
-                            src={
-                              review.user_image_url
-                                ? `data:image/png;base64,${review.user_image_url}`
-                                : reviewerAvatar
-                            }
-                            alt={review.user_name}
-                            className="h-16 w-16 rounded-full object-cover"
-                          />
+                          <div className="flex h-16 w-16 min-w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+                            {review.user_image_url ? (
+                              <img
+                                src={`data:image/png;base64,${review.user_image_url}`}
+                                alt={review.user_name}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <UserRound className="h-16 w-16 text-[#0b0c28]" />
+                            )}
+                          </div>
                           <div className="min-w-0">
                             <p
                               className="truncate text-[18px] leading-tight text-[#050549]"
@@ -268,7 +270,7 @@ const ViewDetailsPopup = ({
                   </button>
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </Popup>
