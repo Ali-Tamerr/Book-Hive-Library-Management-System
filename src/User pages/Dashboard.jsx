@@ -281,8 +281,8 @@ function Dashboard() {
                       key={i}
                       className={`h-[1.5px] w-[10px] rounded-full transition-colors ${
                         i === Math.min(currentPage, 2)
-                          ? "bg-[#525252] dark:bg-white"
-                          : "bg-[#000035] dark:bg-[#585858]"
+                          ? "bg-[#000035] dark:bg-[#585858]"
+                          : "bg-[#525252] dark:bg-white"
                       }`}
                     />
                   ))}

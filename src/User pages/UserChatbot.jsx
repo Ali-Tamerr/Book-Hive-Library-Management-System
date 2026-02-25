@@ -90,22 +90,16 @@ function UserChatbot() {
           strokeWidth={2.4}
           className="text-[#00004f] dark:text-[#ebebf0]"
         />
-        <h1
-          className="text-[52px] leading-none tracking-[0.4px] text-[#050549] dark:text-[#ebebf0]"
-          style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
-        >
+        <h1 className="bebas-neue-regular text-[52px] leading-none tracking-[0.4px] text-[#050549] dark:text-[#ebebf0]">
           CHATBOT
         </h1>
       </div>
 
-      <div className="grid min-h-0 items-start gap-6 xl:grid-cols-[390px_minmax(0,1120px)]">
-        <div className="flex min-h-0 flex-col gap-5">
+      <div className="flex min-h-0 items-start gap-[10%] ">
+        <div className="flex min-h-0 flex-1 flex-col gap-5">
           <section className="flex h-[450px] shrink-0 flex-col overflow-hidden rounded-[16px] border border-[#dedede] bg-[#f4f4f4] dark:border-[#babec6] dark:bg-[#dbdde1]">
             <div className="border-b border-[#8f8fb1] px-7 pb-4 pt-6 dark:border-[#8f93a4]">
-              <h2
-                className="text-[44px] leading-none text-[#050549] dark:text-[#121747]"
-                style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
-              >
+              <h2 className="bebas-neue-regular text-[44px] leading-none text-[#050549] dark:text-[#121747]">
                 CONVERSATION
               </h2>
             </div>
@@ -162,8 +156,7 @@ function UserChatbot() {
             <div className="border-t border-[#8f8fb1] px-4 py-4 dark:border-[#8f93a4]">
               <button
                 type="button"
-                className="mx-auto flex h-10 min-w-[122px] items-center justify-center rounded-[12px] bg-[#00004f] px-6 text-[34px] leading-none text-white transition-colors hover:bg-[#161669] dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
-                style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
+                className="bebas-neue-regular mx-auto flex h-10 min-w-[122px] items-center justify-center rounded-[12px] bg-[#00004f] px-6 text-[34px] leading-none text-white transition-colors hover:bg-[#161669] dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
               >
                 New Chat
               </button>
@@ -171,10 +164,7 @@ function UserChatbot() {
           </section>
 
           <section className="shrink-0 rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-5 pb-5 pt-6 dark:border-[#babec6] dark:bg-[#dbdde1]">
-            <h2
-              className="text-[44px] leading-none text-[#050549] dark:text-[#121747]"
-              style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
-            >
+            <h2 className="noto-sans-georgian-medium text-[44px] leading-none text-[#050549] dark:text-[#121747]">
               QUICK ACTION
             </h2>
             <div className="mt-5 grid grid-cols-2 gap-3">
@@ -182,8 +172,7 @@ function UserChatbot() {
                 <button
                   key={action}
                   type="button"
-                  className="h-10 rounded-[12px] bg-[#00004f] px-3 text-[26px] leading-none text-white transition-colors hover:bg-[#161669] dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
-                  style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
+                  className="noto-sans-georgian-bold h-10 rounded-[12px] bg-[#00004f] px-3 text-[20px] leading-none text-white transition-colors hover:bg-[#161669] dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
                 >
                   {action}
                 </button>
@@ -192,24 +181,27 @@ function UserChatbot() {
           </section>
         </div>
 
-        <section className="flex min-h-[530px] w-full flex-col rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-6 pb-4 pt-6 lg:px-8 dark:border-[#babec6] dark:bg-[#dbdde1] xl:ml-25">
+        <section className=" flex-2 flex min-h-[530px] w-full flex-col rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-6 pb-4 pt-6 lg:px-8 dark:border-[#babec6] dark:bg-[#dbdde1]">
           <div className="flex items-center justify-center gap-2 text-[#050549] dark:text-[#121747]">
             <Bot size={20} strokeWidth={2.1} />
-            <h2
-              className="text-[46px] leading-none"
-              style={{ fontFamily: "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif" }}
-            >
+            <h2 className="bebas-neue-regular text-[46px] leading-none">
               LIBRARY BOT
             </h2>
             <span className="ml-2 mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            <span className="mt-1 text-sm text-[#4f4f4f] dark:text-[#60657a]">Online</span>
+            <span className="mt-1 text-sm text-[#4f4f4f] dark:text-[#60657a]">
+              Online
+            </span>
           </div>
 
-          <div className="mt-5 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-[14px] bg-[#e1e1e1] p-5 dark:bg-[#cfd2d7] lg:p-6">
+          <div className="mt-5 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-[14px] bg-[#e1e1e1] p-5 lg:p-6 dark:bg-[#cfd2d7]">
             {messages.map((message) =>
               message.sender === "bot" ? (
                 <div key={message.id} className="flex items-center gap-3">
-                  <Bot size={18} strokeWidth={2.1} className="text-[#050549] dark:text-[#121747]" />
+                  <Bot
+                    size={18}
+                    strokeWidth={2.1}
+                    className="text-[#050549] dark:text-[#121747]"
+                  />
                   <div className="max-w-[70%] rounded-[8px] bg-[#d9d9d9] px-3 py-2 text-[14px] font-semibold text-[#050549] dark:bg-[#e2e4e8] dark:text-[#121747]">
                     {message.text}
                   </div>
