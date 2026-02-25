@@ -41,6 +41,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `role` | string(20) | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"` |
 | `status` | string(20) | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
+| `image_url` | bytea | nullable — base64 string in JSON payloads |
 | `subscription_end_date` | timestamp | nullable — subscription expiration (timestamp without time zone) |
 | `branch_id` | int | nullable, FK → `Branches.branch_id`, ON DELETE SET NULL |
 | `created_by` | string(20) | nullable, FK → `Users.user_id` (self-referential), ON DELETE SET NULL |
@@ -55,7 +56,6 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `name` | string(255) | **required** |
 | `category_id` | int | FK → `Categories.category_id` |
 | `quantity` | smallint (int16) | **required**, must be >= 0 |
-| `sale_price` | numeric(10,2) | nullable |
 | `image_url` | bytea | nullable — base64 string in JSON payloads (URLs may be returned if stored as text) |
 | `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
@@ -121,6 +121,38 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `created_at` | timestamp | default: `now()` |
 
 > **Note:** UserRequests are standalone registration requests. Admins review these requests and manually create Users separately. The `request_id` is auto-generated and should not be included in POST requests.
+ 
+### Feedback
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `request_id` | bigint | PK, identity |
+| `user_id` | string(20) | **required**, FK → `Users.user_id` |
+| `description` | string(1000) | **required** |
+| `rate` | int | **required**, 1-5 |
+| `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
+| `created_at` | timestamp | default: `now()` |
+
+Endpoints:
+
+- GET `/api/Feedbacks` — Returns `FeedbackDTO[]`; includes `user_name` joined from `Users`.
+- GET `/api/Feedbacks/approved` — Returns approved feedbacks for public display.
+- POST `/api/Feedbacks` — Create feedback; body: `{ user_id, description, rate }` (server sets `status = "Pending"`, `created_at = now()`).
+- PUT `/api/Feedbacks/{request_id}` — Update status; body: `{ status }` (allowed: `Pending`/`Approved`/`Rejected`).
+- DELETE `/api/Feedbacks/{request_id}` — Delete feedback.
+
+FeedbackDTO shape:
+
+```typescript
+interface FeedbackDTO {
+  request_id: number;
+  user_id: string;
+  user_name: string;       // joined from Users.name
+  description: string;
+  rate: number;           // 1-5
+  status: 'Pending' | 'Approved' | 'Rejected';
+  created_at: string;     // ISO-8601
+}
+```
 
 ---
 
@@ -240,6 +272,7 @@ POST /api/Users
   "role": "User",
   "status": "Active",
   "plan": "Professional",
+  "image_url": "BASE64_ENCODED_IMAGE_BYTES",
   "subscription_end_date": "2025-12-31T23:59:59Z",
   "branch_id": 2
 }
@@ -263,7 +296,6 @@ POST /api/Books
   "name": "Clean Code",
   "category_id": 4,
   "quantity": 3,
-  "sale_price": 39.99,
   "image_url": "BASE64_ENCODED_IMAGE_BYTES",
   "BookCopies": [
     { "book_copy_id": "BC-0001", "branch_id": 1 },
@@ -359,6 +391,7 @@ interface UserDTO {
   role: string;
   password_hash: string;
   plan?: string;              // User's subscription plan (nullable)
+  image_url?: string;         // base64-encoded bytes
   subscription_end_date?: string;
   branch_id?: number;
   booksReserved: string[];    // Book names or copy IDs
@@ -434,6 +467,7 @@ interface User {
   role: 'Super Admin' | 'Admin' | 'User';
   status: 'Active' | 'Inactive' | 'Banned';
   plan?: 'Discover' | 'Enterprise' | 'Professional';
+  image_url?: string;        // base64-encoded bytes
   subscription_end_date?: string;
   branch_id?: number;
   created_by?: string;       // max 20 chars, FK to Users.user_id
@@ -460,7 +494,6 @@ interface BookDetail {
   name: string;              // max 255 chars
   category_id: number;
   quantity: number;          // smallint, >= 0
-  sale_price?: number;       // numeric(10,2)
   image_url?: string;        // base64-encoded bytes
   created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;

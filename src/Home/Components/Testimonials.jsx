@@ -1,4 +1,5 @@
 import React from "react";
+import { getImageUrl } from "../../services/api.config";
 
 const Testimonials = ({
   feedbacks,
@@ -38,7 +39,7 @@ const Testimonials = ({
                     >
                       {fb.user_image || fb.image ? (
                         <img
-                          src={fb.user_image || fb.image}
+                          src={getImageUrl(fb.user_image || fb.image)}
                           alt={fb.user_name || fb.user_id || "Guest"}
                           className="mx-auto mb-10 h-[140px] w-[140px] rounded-full object-cover"
                         />
@@ -51,7 +52,7 @@ const Testimonials = ({
                         {fb.user_name || fb.user_id || "Guest"}
                       </h2>
                       <p className="mx-auto mb-10 max-w-[800px] font-[family-name:var(--second-font)] text-[30px] font-bold leading-relaxed text-[#525252] dark:!text-[#1a1a1a]">
-                        {fb.description || "Great experience!"}
+                        {fb.feedback || fb.description || "Great experience!"}
                       </p>
                       <div className="text-[44px] text-[#000035] dark:text-black">
                         {Array.from({ length: fullStars }, (_, i) => (
