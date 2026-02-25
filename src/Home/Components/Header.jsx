@@ -15,7 +15,7 @@ const Header = ({
   return (
     <>
       <header
-        className={`duration-400 fixed top-0 z-[100] w-full bg-[var(--body-color)] transition-[box-shadow,background-color] dark:border-b dark:border-[rgba(255,255,255,0.06)] dark:bg-[#15161a] ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
+        className={`duration-450 fixed top-0 z-[100] w-full bg-[var(--body-color)] transition-alldark:border-b dark:border-[rgba(255,255,255,0.06)] dark:bg-[#15161a] ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
         id="header"
       >
         <nav className="flex h-[130px] items-center justify-between px-10 xl:pr-24 ">
@@ -31,7 +31,7 @@ const Header = ({
             />
           </a>
 
-          <div className="max-[1150px]:duration-400 max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full max-[1150px]:bg-[var(--container-color)] max-[1150px]:px-16 max-[1150px]:py-5 max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1)] max-[1150px]:transition-[background-color] min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center dark:bg-[#15161a] dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:min-[1150px]:shadow-none">
+          <div className="max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full  max-[1150px]:px-16 max-[1150px]:py-5 max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1) min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:min-[1150px]:shadow-none">
             <ul className="flex w-full items-center justify-around min-[1150px]:px-30">
               <NavLink
                 href="#home"
