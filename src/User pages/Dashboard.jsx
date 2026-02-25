@@ -211,9 +211,9 @@ function Dashboard() {
             className={`min-[1540px]:ml-18 flex-3 flex w-full flex-col items-center justify-center gap-3 max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full`}
           >
             <div className="flex h-full w-full flex-col items-center justify-start rounded-md min-[1200px]:mb-6">
-              <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-6 overflow-hidden  max-[380px]:w-[110%]">
+              <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-6 overflow-hidden max-[380px]:w-[110%]">
                 <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center overflow-hidden max-[640px]:min-h-[162px] max-[340px]:-ml-9">
-                  <div className="absolute inset-0 flex items-center justify-center ">
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <PieChart
                       totalBorrowed={stats.totalBorrowed}
                       currentlyBorrowed={stats.currentlyBorrowed}
@@ -375,6 +375,7 @@ function Dashboard() {
             imageUrl={getImageUrl(selectedBook.image_url)}
             imageAlt={selectedBook.name || "Book cover"}
             data={{
+              "Book ID": selectedBook.book_id,
               "Book Name": selectedBook.name,
               ...(selectedBook.author ? { Author: selectedBook.author } : {}),
               Branch:
