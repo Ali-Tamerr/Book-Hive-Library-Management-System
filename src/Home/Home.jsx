@@ -160,6 +160,10 @@ const Home = () => {
       document.body.classList.remove("dark-theme");
       setThemeIcon("ri-sun-line");
     }
+
+    // specific Home page body background color fix
+    document.body.classList.add("home-page-active");
+    return () => document.body.classList.remove("home-page-active");
   }, []);
 
   const toggleTheme = () => {

@@ -108,11 +108,7 @@ function Layout({
 
   if (isHomePage) {
     return (
-      <Suspense
-        fallback={
-          <PageLoader className="bg-[hsl(230,100%,96%)] dark:bg-[#111214]" />
-        }
-      >
+      <Suspense>
         {children}
       </Suspense>
     );
@@ -120,7 +116,7 @@ function Layout({
 
   if (isAuthRoute) {
     return (
-      <div className="h-screen bg-[#F2F2F2] text-[#0a0f33]">
+      <div className="h-screen bg-[#E8E8E8] text-[#0a0f33]">
         <Suspense fallback={<PageLoader />}>{children}</Suspense>
       </div>
     );
