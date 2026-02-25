@@ -1,6 +1,6 @@
 import React from "react";
 import { Bot, MessageSquareText, Search, SendHorizontal } from "lucide-react";
-import userAvatar from "../Home/assets/img/testimonial-perfil-1.png";
+import userAvatar from "../assets/img/testimonial-perfil-1.png";
 
 const conversations = [
   {

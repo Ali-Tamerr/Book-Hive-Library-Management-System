@@ -1,7 +1,7 @@
 import React from "react";
 import Popup from "./Popup.jsx";
 import { ReceiptText } from "lucide-react";
-import reviewerAvatar from "../Home/assets/img/testimonial-perfil-1.png";
+import reviewerAvatar from "../assets/img/testimonial-perfil-1.png";
 
 const ViewDetailsPopup = ({
   show,
