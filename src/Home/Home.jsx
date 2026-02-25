@@ -169,12 +169,12 @@ const Home = () => {
     if (isDark) {
       body.classList.remove("dark-theme");
       setThemeIcon("ri-sun-line");
-      localStorage.setItem("selected-theme", "dark");
+      localStorage.setItem("selected-theme", "light");
       localStorage.setItem("selected-icon", "ri-sun-line");
     } else {
       body.classList.add("dark-theme");
       setThemeIcon("ri-moon-line");
-      localStorage.setItem("selected-theme", "light");
+      localStorage.setItem("selected-theme", "dark");
       localStorage.setItem("selected-icon", "ri-moon-line");
     }
   };
