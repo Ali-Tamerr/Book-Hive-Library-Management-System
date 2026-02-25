@@ -152,6 +152,37 @@ interface FeedbackDTO {
   status: 'Pending' | 'Approved' | 'Rejected';
   created_at: string;     // ISO-8601
 }
+
+### BookReviews
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `review_id` | int | PK, identity |
+| `book_id` | int | FK → `BookDetails.book_id` |
+| `user_id` | string(20) | FK → `Users.user_id` |
+| `rating` | int | required, 1-5 |
+| `review_text` | string(1000) | nullable |
+| `created_at` | timestamp | default: `now()` |
+
+Endpoints:
+
+- GET `/api/BookReviews/book/{book_id}` — Returns `BookReviewDTO[]` for the specified book; includes `user_name` and `user_image_url` joined from `Users`.
+- POST `/api/BookReviews` — Create review; body: `{ book_id, user_id, rating, review_text? }` (server sets `created_at = now()`). Clear navigation properties on incoming payloads.
+- DELETE `/api/BookReviews/{review_id}` — Delete review by id.
+
+BookReviewDTO shape:
+
+```typescript
+interface BookReviewDTO {
+  review_id: number;
+  book_id: number;
+  user_id: string;
+  user_name: string;
+  user_image_url?: string; // base64-encoded avatar bytes or null
+  rating: number;         // 1-5
+  review_text?: string;
+  created_at?: string;    // ISO-8601
+}
+```
 ```
 
 ---
