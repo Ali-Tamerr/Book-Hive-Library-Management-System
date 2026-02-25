@@ -101,7 +101,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
 
   return (
     <>
-      <header className="flex h-min flex-1 items-center justify-between bg-white px-4 py-4 text-[#0a0f33] shadow-[0_2px_6px_rgba(0,0,0,0.05)] dark:bg-[#121317] dark:text-[#E8E8E8]">
+      <header className="flex h-min w-full items-center justify-between bg-white px-4 py-4 text-[#0a0f33] shadow-[0_2px_6px_rgba(0,0,0,0.05)] dark:bg-[#121317] dark:text-[#E8E8E8]">
         <div className="flex-2 flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
             {currentUser?.image_url ? (
