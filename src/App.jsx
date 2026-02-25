@@ -127,7 +127,7 @@ function Layout({
   }
 
   return (
-    <div className="flex h-screen bg-[#F2F2F2] text-[#0a0f33] transition-colors duration-300 dark:bg-[#121317] dark:text-[#E8E8E8]">
+    <div className="role-pages-typography flex h-screen bg-[#F2F2F2] text-[#0a0f33] transition-colors duration-300 dark:bg-[#121317] dark:text-[#E8E8E8]">
       <Sidebar
         key={`sidebar-${location.pathname}`}
         activeTab={activeTab}
@@ -135,7 +135,7 @@ function Layout({
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
       />
-      <main className="bebas-neue-regular flex h-full flex-1 flex-col overflow-hidden">
+      <main className="flex h-full flex-1 flex-col overflow-hidden">
         <Navbar
           key={`navbar-${location.pathname}`}
           searchValue={searchValue}

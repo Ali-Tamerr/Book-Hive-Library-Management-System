@@ -1,5 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Merienda+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Bebas+Neue&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Georgian:wght@400;500;600;700&display=swap');
 
 @import "tailwindcss";
 
@@ -215,41 +216,41 @@
 }
 
 .montserrat {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
 }
 
 .montserrat-medium {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
 }
 
 .montserrat-light {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
 }
 
 .montserrat-regular {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
 }
 
 .montserrat-semibold {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-optical-sizing: auto;
   font-weight: 600;
   font-style: normal;
 }
 
 .montserrat-bold {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;
@@ -270,7 +271,7 @@
 }
 
 body {
-  font-family: "Montserrat", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -334,6 +335,35 @@ body.dark-theme .app-popup .settings-credentials-input {
 
 body.dark-theme .app-popup .settings-credentials-input::placeholder {
   color: #8b9097;
+}
+
+/* Global popup typography: headings stay Bebas, content uses Noto */
+.popup-typography {
+  font-family: "Noto Sans Georgian", sans-serif;
+}
+
+.popup-typography h1,
+.popup-typography h2,
+.popup-typography h3,
+.popup-typography h4,
+.popup-typography h5,
+.popup-typography h6 {
+  font-family: "Bebas Neue", sans-serif;
+}
+
+/* User/Librarian/Super Admin pages typography */
+.role-pages-typography {
+  font-family: "Noto Sans Georgian", sans-serif;
+}
+
+.role-pages-typography h1,
+.role-pages-typography h2,
+.role-pages-typography h3,
+.role-pages-typography h4,
+.role-pages-typography h5,
+.role-pages-typography h6,
+.role-pages-typography th {
+  font-family: "Bebas Neue", sans-serif;
 }
 
 #root {

@@ -25,6 +25,8 @@ const DarkBgSection = ({
   const hoverBg = isDarkMode
     ? "hover:bg-[#121317] hover:text-white"
     : "hover:bg-white hover:text-[#000035]";
+    const headingFontClass = "font-['Bebas_Neue',sans-serif]";
+    const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
   const logoSrc = isDarkMode ? logoDark : logoLight;
   const logoAlt = "BookHive Logo";
 
@@ -50,15 +52,19 @@ const DarkBgSection = ({
           style={logoStyle}
         />
       )}
-      <h1 className={`-mb-8 text-center text-[73px] ${textColor}`}>
+      <h1
+        className={`-mb-8 text-center text-[73px] ${headingFontClass} ${textColor}`}
+      >
         BookHive
         <br />
-        <span className="-mt-6 block font-['Merienda_One',cursive] text-[50px] font-medium">
+        <span
+          className={`-mt-6 block ${headingFontClass} text-[50px] font-medium`}
+        >
           Library
         </span>
       </h1>
       <p
-        className={`text-xl ${textColor} max-w-100 cursor-default text-center`}
+        className={`text-xl ${contentFontClass} ${textColor} max-w-100 cursor-default text-center`}
       >
         {message}
       </p>
@@ -66,7 +72,7 @@ const DarkBgSection = ({
         {buttonText && onButtonClick && (
           <button
             onClick={onButtonClick}
-            className={`border-2 ${borderColor} ${textColor} w-full rounded-[20px] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
+            className={`border-2 ${borderColor} ${contentFontClass} ${textColor} w-full rounded-[20px] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
           >
             {buttonText}
           </button>
@@ -74,7 +80,7 @@ const DarkBgSection = ({
         {secondButtonText && onSecondButtonClick && (
           <button
             onClick={onSecondButtonClick}
-            className={`border-2 ${borderColor} ${textColor} w-full rounded-[20px] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
+            className={`border-2 ${borderColor} ${contentFontClass} ${textColor} w-full rounded-[20px] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
           >
             {secondButtonText}
           </button>

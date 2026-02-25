@@ -21,6 +21,8 @@ const WhiteBgSection = ({
 
   const bgClass = isDarkMode ? "bg-[#121317]" : "bg-white";
   const textClass = isDarkMode ? "text-white" : "text-[#0a0f33]";
+    const headingFontClass = "font-['Bebas_Neue',sans-serif]";
+    const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
   const logoSrc = isDarkMode ? logoLight : logoDark;
   const logoAlt = "BookHive Logo";
 
@@ -45,18 +47,20 @@ const WhiteBgSection = ({
             isDarkMode
               ? "border border-white text-white hover:bg-white hover:text-[#121317]"
               : "border border-[#0a0f33] text-[#0a0f33] hover:bg-[#0a0f33] hover:text-white"
-          } cursor-pointer rounded-full px-4 py-1 text-xs font-medium transition-colors`}
+          } ${contentFontClass} cursor-pointer rounded-full px-4 py-1 text-xs font-medium transition-colors`}
         >
           {backButton.text}
         </button>
       )}
 
       <div
-        className={`flex flex-col items-center justify-center gap-4 ${mobileOnly ? "w-[85%] max-w-[650px] max-[1080px]:h-screen max-[1080px]:w-full" : "w-full"}`}
+        className={`flex flex-col items-center justify-center gap-4 ${contentFontClass} ${mobileOnly ? "w-[85%] max-w-[650px] max-[1080px]:h-screen max-[1080px]:w-full" : "w-full"}`}
       >
         {logoWithTitle ? (
           <div className="flex items-center gap-6">
-            <h2 className={`inline text-4xl font-semibold ${textClass}`}>
+            <h2
+              className={`inline text-4xl font-semibold ${headingFontClass} ${textClass}`}
+            >
               {title}
             </h2>
             <img src={logoSrc} alt={logoAlt} className="h-auto w-36" />
@@ -65,7 +69,7 @@ const WhiteBgSection = ({
           <>
             <img src={logoSrc} alt={logoAlt} className="mb-6 h-auto w-32" />
             <h2
-              className={`text-3xl font-semibold max-[1080px]:text-2xl ${textClass} mb-4`}
+              className={`text-3xl font-semibold max-[1080px]:text-2xl ${headingFontClass} ${textClass} mb-4`}
             >
               {title}
             </h2>

@@ -26,7 +26,7 @@ const FeaturedBookPopup = ({ isOpen, onClose, book, onBookNow }) => {
       onClick={onClose}
     >
       <div
-        className="flex max-h-[90vh] w-[min(900px,96vw)] flex-col gap-4 overflow-hidden rounded-[10px] border border-[#d1d1dd] bg-white px-6 pb-8 pt-3 shadow-[0_12px_28px_rgba(10,10,35,0.18)] dark:border-[#242732] dark:bg-[#14161b] dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]"
+        className="popup-typography flex max-h-[90vh] w-[min(900px,96vw)] flex-col gap-4 overflow-hidden rounded-[10px] border border-[#d1d1dd] bg-white px-6 pb-8 pt-3 shadow-[0_12px_28px_rgba(10,10,35,0.18)] dark:border-[#242732] dark:bg-[#14161b] dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]"
         role="dialog"
         aria-modal="true"
         aria-label="Book details"

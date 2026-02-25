@@ -9,7 +9,7 @@ const BookPopup = ({ isOpen, onClose, book }) => {
       onClick={onClose}
     >
       <div
-        className="w-[800px] max-w-[95%] rounded-xl bg-white px-[30px] py-[20px]"
+        className="popup-typography w-[800px] max-w-[95%] rounded-xl bg-white px-[30px] py-[20px]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
