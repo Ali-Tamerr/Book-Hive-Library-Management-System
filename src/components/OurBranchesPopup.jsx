@@ -48,7 +48,7 @@ const OurBranchesPopup = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="flex max-h-[90vh] w-[min(940px,96vw)] flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#d1d1dd] bg-white px-[22px] pb-7 pt-3 shadow-[0_12px_28px_rgba(10,10,35,0.18)] max-[700px]:gap-1.5 max-[700px]:p-[14px] max-[700px]:pb-5 dark:border-[#242732] dark:bg-[#14161b] dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]"
+        className="branches-popup popup-typography flex max-h-[90vh] w-[min(940px,96vw)] flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#d1d1dd] bg-white px-[22px] pb-7 pt-3 shadow-[0_12px_28px_rgba(10,10,35,0.18)] max-[700px]:gap-1.5 max-[700px]:p-[14px] max-[700px]:pb-5 dark:border-[#242732] dark:bg-[#14161b] dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="branches-popup-title"

@@ -32,7 +32,7 @@ const BranchesModal = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="relative min-h-[500px] w-[90%] max-w-[1200px] rounded-[14px] bg-white px-10 py-8 dark:bg-[#121317] dark:text-[#E8E8E8]"
+        className="popup-typography relative min-h-[500px] w-[90%] max-w-[1200px] rounded-[14px] bg-white px-10 py-8 dark:bg-[#121317] dark:text-[#E8E8E8]"
         onClick={(e) => e.stopPropagation()}
       >
         <button

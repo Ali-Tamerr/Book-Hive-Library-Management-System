@@ -15,6 +15,7 @@ import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
 import CommonLayout from "../Layouts/CommonLayout.jsx";
 import { getCurrentUser } from "../services/auth.api";
+import { getImageUrl } from "../services/api.config";
 
 function Books({ searchValue, setSearchValue }) {
   const currentUser = getCurrentUser();
@@ -194,6 +195,26 @@ function Books({ searchValue, setSearchValue }) {
 
   const currentUserBranchId = getUserBranchId(currentUser);
 
+  const getBookBranchLabel = (bookId) => {
+    const relatedCopies = bookCopies.filter((copy) => copy.book_id === bookId);
+    if (relatedCopies.length === 0) return "N/A";
+
+    const uniqueBranchNames = [
+      ...new Set(
+        relatedCopies
+          .map((copy) => {
+            const matchedBranch = branches.find(
+              (branch) => String(branch.branch_id) === String(copy.branch_id),
+            );
+            return matchedBranch?.name || null;
+          })
+          .filter(Boolean),
+      ),
+    ];
+
+    return uniqueBranchNames.length > 0 ? uniqueBranchNames.join(", ") : "N/A";
+  };
+
   // Filter books based on branch and search value
   const filteredBooks = books.filter((book) => {
     // 1. Filter by Branch (Permission)
@@ -346,11 +367,15 @@ function Books({ searchValue, setSearchValue }) {
           setSelectedBook(null);
         }}
         title="View Book"
+        imageUrl={selectedBook ? getImageUrl(selectedBook.image_url) : null}
+        imageAlt={selectedBook?.name || "Book cover"}
         data={
           selectedBook
             ? {
                 "Book ID": selectedBook.book_id,
                 Name: selectedBook.name,
+                ...(selectedBook.author ? { Author: selectedBook.author } : {}),
+                Branch: getBookBranchLabel(selectedBook.book_id),
                 Category:
                   categories.find(
                     (cat) => cat.category_id === selectedBook.category_id,

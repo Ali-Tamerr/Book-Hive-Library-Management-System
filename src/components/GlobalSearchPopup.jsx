@@ -126,13 +126,13 @@ function GlobalSearchPopup({ show, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="flex h-[80vh] w-11/12 max-w-[1000px] flex-col rounded-lg bg-white p-8">
+      <div className="popup-typography flex h-[80vh] w-11/12 max-w-[1000px] flex-col rounded-lg bg-white p-8">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-[#D7D7D7] p-4 text-[#0b0b3b]">
               <Search size={24} />
             </div>
-            <span className="text-lg font-bold text-[#000035]">
+            <span className="text-lg font-bold text-[#000035] font-['Bebas_Neue',sans-serif]">
               Global Search
             </span>
           </div>
