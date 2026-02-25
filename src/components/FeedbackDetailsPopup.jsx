@@ -84,7 +84,9 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
             Message
           </label>
           <div className="rounded-xl border border-[#3D3E3E] bg-white p-4 text-sm text-[#1e255e] dark:bg-[#121317] dark:text-[#D7D7D7]">
-            {feedback.description || "No content provided."}
+            {feedback.feedback ||
+              feedback.description ||
+              "No content provided."}
           </div>
         </div>
 

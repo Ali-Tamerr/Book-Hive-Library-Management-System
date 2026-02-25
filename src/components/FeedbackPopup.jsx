@@ -5,6 +5,7 @@ import FormButton from "./FormButton.jsx";
 import FormInput from "./FormInput.jsx";
 
 import { getCurrentUser } from "../services/auth.api";
+import { useCreateFeedback } from "../hooks/useFeedbacks.js";
 
 const FeedbackPopup = ({ show, onClose }) => {
   const [rating, setRating] = useState(0);
@@ -12,6 +13,8 @@ const FeedbackPopup = ({ show, onClose }) => {
   const [feedbackText, setFeedbackText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+
+  const createFeedbackMutation = useCreateFeedback();
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -24,27 +27,13 @@ const FeedbackPopup = ({ show, onClose }) => {
     try {
       const currentUser = getCurrentUser();
       const newFeedback = {
-        request_id: Date.now(), // Mock ID
         user_id: currentUser?.user_id || "Guest",
-        user_name: currentUser?.fullname || currentUser?.user_id || "Guest",
         description: feedbackText,
-        rate: rating,
-        created_at: new Date().toISOString(),
-        status: "Pending",
+        feedback: feedbackText,
+        rate: Math.round(rating),
       };
 
-      // Mock saving to localStorage for demo purposes
-      const existingFeedback = JSON.parse(
-        localStorage.getItem("mock_feedback_requests") || "[]",
-      );
-      localStorage.setItem(
-        "mock_feedback_requests",
-        JSON.stringify([...existingFeedback, newFeedback]),
-      );
-      window.dispatchEvent(new Event("mockFeedbackUpdated")); // Custom event to notify AdminNotifications
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await createFeedbackMutation.mutateAsync(newFeedback);
 
       setRating(0);
       setFeedbackText("");

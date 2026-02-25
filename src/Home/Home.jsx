@@ -96,27 +96,31 @@ const Home = () => {
       }
     };
 
-    const loadFeedbacks = () => {
+    const loadFeedbacks = async () => {
       try {
-        const stored = JSON.parse(
-          localStorage.getItem("mock_feedback_requests") || "[]",
-        );
-        const approved = stored.filter((f) => f.status === "Approved");
-        setFeedbacks(approved);
-      } catch {
+        const approved = await apiGet("/Feedbacks/approved");
+        const dataArray = Array.isArray(approved)
+          ? approved
+          : approved.data || [];
+        setFeedbacks(dataArray);
+      } catch (error) {
+        console.error("Failed to fetch feedbacks:", error);
         setFeedbacks([]);
       }
     };
 
-    Promise.all([fetchBooks(), fetchStats()]).then(() => {
-      loadFeedbacks();
+    Promise.all([fetchBooks(), fetchStats()]).then(async () => {
+      await loadFeedbacks();
       setTimeout(() => setIsContentReady(true), 100);
     });
 
     const handleFeedbackUpdate = () => loadFeedbacks();
     window.addEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
-    return () =>
+    window.addEventListener("userUpdated", handleFeedbackUpdate);
+    return () => {
       window.removeEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
+      window.removeEventListener("userUpdated", handleFeedbackUpdate);
+    };
   }, []);
 
   useEffect(() => {
