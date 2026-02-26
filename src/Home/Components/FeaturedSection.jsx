@@ -1,4 +1,5 @@
 import React from "react";
+import LazyImage from "../../components/LazyImage";
 
 const FeaturedSection = ({
   featuredBooks,
@@ -34,7 +35,7 @@ const FeaturedSection = ({
                     margin: "0 30px",
                   }}
                 >
-                  <img
+                  <LazyImage
                     src={book.image}
                     alt={book.name}
                     className="mx-auto mb-8 max-h-[500px] !w-full !max-w-none rounded-[14px] object-cover"

@@ -3,6 +3,7 @@ import { Search, ChevronDown, ArrowLeft, ArrowRight } from "lucide-react";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
+import LazyImage from "../components/LazyImage";
 import { useUsers } from "../hooks/useUsers";
 import { useBooks } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
@@ -318,7 +319,7 @@ function Dashboard() {
                   >
                     <div className="flex h-36 w-full items-center justify-center overflow-hidden rounded-md">
                       {getImageUrl(book.image_url) ? (
-                        <img
+                        <LazyImage
                           src={getImageUrl(book.image_url)}
                           alt={book.name}
                           className="h-full w-full object-contain text-black dark:text-[#D7D7D7]"

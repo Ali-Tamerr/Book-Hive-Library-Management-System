@@ -25,12 +25,14 @@ const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
           iconAlt="Secure Information"
           title="Secure Information"
           description="100% Secure Information"
+          delay="0.4s"
         />
         <ServiceCard
           iconSrc={chatbotIcon}
           iconAlt="Chatbot"
           title="ChatBot"
           description="Talk with us anytime"
+          delay="0.6s"
         />
       </div>
     </section>
