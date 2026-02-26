@@ -74,7 +74,7 @@ const PricingCard = ({ plan, setIsLoginOpen }) => {
       <a
         className={`btn mx-auto mt-4 inline-block rounded-[14px] px-20 py-3 font-[family-name:var(--second-font)] text-[28px] font-normal no-underline transition-all duration-[300ms] ease-in-out ${
           plan.isPopular
-            ? "border border-[#000035] bg-[#000035] text-white hover:border-[#000022] hover:bg-[#000022] dark:border-[#E3E3E3] dark:bg-[#E3E3E3] dark:text-black dark:hover:border-[#E3E3E3] dark:hover:bg-black dark:hover:text-[#e3e4e8]"
+            ? "border border-[#000035] bg-white text-[var(--accent)] hover:border-[#000022] hover:bg-[#000022] hover:text-white group-hover:border-[#000035] group-hover:bg-[#000035] group-hover:text-white dark:border-[#E3E3E3] dark:bg-transparent dark:text-[#e3e4e8] dark:hover:border-[#E3E3E3] dark:hover:bg-[#E3E3E3] dark:hover:text-black group-hover:dark:border-[#E3E3E3] group-hover:dark:bg-[#E3E3E3] group-hover:dark:text-black"
             : "border border-[#000035] bg-white text-[var(--accent)] hover:border-[#000035] hover:bg-[#E3E3E3] hover:text-[#0a0b2b] dark:border-[#E3E3E3] dark:bg-transparent dark:text-[#e3e4e8] dark:hover:border-[#E3E3E3] dark:hover:bg-[#E3E3E3] dark:hover:text-black"
         }`}
         href="#"
