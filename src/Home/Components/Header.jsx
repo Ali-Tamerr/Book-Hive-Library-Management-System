@@ -15,10 +15,10 @@ const Header = ({
   return (
     <>
       <header
-        className={`duration-400 fixed top-0 z-[100] w-full bg-[var(--body-color)] transition-alldark:border-b dark:border-[rgba(255,255,255,0.06)]  ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
+        className={`duration-400 transition-alldark:border-b fixed left-0 right-0 top-0 z-[100] mx-auto w-full max-w-[1920px] bg-[var(--body-color)] dark:border-[rgba(255,255,255,0.06)] ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
         id="header"
       >
-        <nav className="flex h-[130px] items-center justify-between px-10 xl:pr-24 ">
+        <nav className="flex h-[130px] items-center justify-between px-10 xl:pr-24">
           <a
             href="#"
             className="inline-flex items-center gap-x-2 font-medium text-[var(--first-color)]"
@@ -31,8 +31,8 @@ const Header = ({
             />
           </a>
 
-          <div className="max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full  max-[1150px]:px-16 max-[1150px]:py-5 max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1) min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:min-[1150px]:shadow-none">
-            <ul className="flex w-full items-center justify-around min-[1150px]:px-30">
+          <div className="max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1) max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full max-[1150px]:px-16 max-[1150px]:py-5 min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:min-[1150px]:shadow-none">
+            <ul className="min-[1150px]:px-30 flex w-full items-center justify-around">
               <NavLink
                 href="#home"
                 sectionId="home"
@@ -97,7 +97,7 @@ const Header = ({
       </header>
 
       <div
-        className={`duration-400 fixed left-0 z-[100] h-full w-full bg-[hsla(230,12%,96%,0.6)] px-6 pt-32 backdrop-blur-[12px] transition-[top] dark:bg-[rgba(17,18,20,0.88)] ${isSearchOpen ? "top-0" : "top-[-100%]"}`}
+        className={`duration-400 fixed left-0 right-0 z-[100] mx-auto h-full w-full max-w-[1920px] bg-[hsla(230,12%,96%,0.6)] px-6 pt-32 backdrop-blur-[12px] transition-[top] dark:bg-[rgba(17,18,20,0.88)] ${isSearchOpen ? "top-0" : "top-[-100%]"}`}
       >
         <form
           action=""

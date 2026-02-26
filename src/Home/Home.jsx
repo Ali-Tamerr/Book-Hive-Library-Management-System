@@ -265,9 +265,12 @@ const Home = () => {
         <PageLoader className="!fixed !z-[9999] bg-[#E8E8E8] dark:bg-[#111214]" />
       )}
       <div
-        className="duration-400 m-0 scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
+        className="duration-400 m-0 mx-auto max-w-[1920px] scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
         ref={homeRef}
-        style={{ visibility: pageLoaded ? "visible" : "hidden" }}
+        style={{
+          visibility: pageLoaded ? "visible" : "hidden",
+          zoom: 0.8,
+        }}
       >
         <Header
           logoIcon={logoIcon}
