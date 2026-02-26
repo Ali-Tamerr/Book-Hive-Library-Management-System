@@ -86,7 +86,18 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
                   onError={(e) => (e.currentTarget.style.display = "none")}
                 />
               </>
-            ) : null}
+            ) : (
+              <>
+                <LazyImage
+                  className="book back absolute left-0 z-[1] h-[700px] w-[450px] origin-center -translate-y-4 -rotate-12 rounded-lg bg-white object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
+                  src={null}
+                />
+                <LazyImage
+                  className="book front absolute right-0 z-[2] h-[700px] w-[450px] origin-center translate-y-6 rotate-12 rounded-lg bg-white object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
+                  src={null}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

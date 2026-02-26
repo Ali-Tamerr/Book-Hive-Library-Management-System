@@ -42,24 +42,29 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
                 })(),
               }}
             >
-              {heroBooks.length > 0
-                ? heroBooks.map((book, i) => (
-                    <article
-                      key={book.book_id}
-                      className="shrink-0 transition-[scale] duration-500 ease-in-out min-[1220px]:w-[407px] dark:!rounded-[6px] dark:!shadow-[0_16px_30px_rgba(0,0,0,0.35)]"
-                      style={{
-                        marginRight: "27px",
-                        scale: i === heroIndex ? "1" : "0.8",
-                      }}
-                    >
-                      <LazyImage
-                        src={book.image}
-                        alt={book.name}
-                        className="rounded-xs !h-[563px] !w-[422px] !max-w-none !object-cover"
-                      />
-                    </article>
-                  ))
-                : null}
+              {(heroBooks.length > 0
+                ? heroBooks
+                : Array.from({ length: 3 }).map((_, i) => ({
+                    book_id: `skeleton-hero-${i}`,
+                    name: "Loading...",
+                    image: null,
+                  }))
+              ).map((book, i) => (
+                <article
+                  key={book.book_id}
+                  className="shrink-0 transition-[scale] duration-500 ease-in-out min-[1220px]:w-[407px] dark:!rounded-[6px] dark:!shadow-[0_16px_30px_rgba(0,0,0,0.35)]"
+                  style={{
+                    marginRight: "27px",
+                    scale: i === heroIndex ? "1" : "0.8",
+                  }}
+                >
+                  <LazyImage
+                    src={book.image}
+                    alt={book.name}
+                    className="rounded-xs !h-[563px] !w-[422px] !max-w-none !object-cover"
+                  />
+                </article>
+              ))}
             </div>
           </div>
         </div>
