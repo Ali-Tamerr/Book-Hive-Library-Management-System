@@ -1,11 +1,13 @@
 import React from "react";
 import { getImageUrl } from "../../services/api.config";
+import LazyImage from "../../components/LazyImage";
 
 const Testimonials = ({
   feedbacks,
   testimonialIndex,
   testimonialPerView,
   testimonialImg1,
+  isLoading = false,
 }) => {
   return (
     <section className="py-20 pb-4" id="testimonial">
@@ -24,7 +26,29 @@ const Testimonials = ({
                     : "none",
               }}
             >
-              {feedbacks.length > 0 ? (
+              {isLoading ? (
+                Array.from({ length: testimonialPerView }).map((_, idx) => (
+                  <article
+                    key={`skeleton-${idx}`}
+                    className="duration-400 shrink-0 rounded-[24px] bg-white px-16 py-14 pb-16 text-center transition-colors dark:bg-[#D4D4D4]"
+                    style={{
+                      width: `calc(${100 / testimonialPerView}% - 60px)`,
+                      margin: "0 30px",
+                    }}
+                  >
+                    <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#e6e7eb] dark:bg-[#1b1b1b]">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent border-white/30" />
+                    </div>
+                    <div className="mb-6 h-8 w-48 mx-auto rounded bg-[#e6e7eb] dark:bg-[#1b1b1b]" />
+                    <div className="mx-auto mb-10 h-20 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#1b1b1b]" />
+                    <div className="text-[44px] text-[#000035] dark:text-black">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <i key={i} className="ri-star-line"></i>
+                      ))}
+                    </div>
+                  </article>
+                ))
+              ) : feedbacks.length > 0 ? (
                 feedbacks.map((fb) => {
                   const fullStars = Math.floor(fb.rate);
                   const hasHalf = fb.rate % 1 >= 0.5;
@@ -37,13 +61,13 @@ const Testimonials = ({
                         margin: "0 30px",
                       }}
                     >
-                      {fb.user_image || fb.image ? (
-                        <img
-                          src={getImageUrl(fb.user_image || fb.image)}
-                          alt={fb.user_name || fb.user_id || "Guest"}
-                          className="mx-auto mb-10 h-[140px] w-[140px] rounded-full object-cover"
-                        />
-                      ) : (
+                        {fb.user_image || fb.image ? (
+                          <LazyImage
+                            src={getImageUrl(fb.user_image || fb.image)}
+                            alt={fb.user_name || fb.user_id || "Guest"}
+                            className="mx-auto mb-10 h-[140px] w-[140px] rounded-full object-cover"
+                          />
+                        ) : (
                         <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#000035] text-white dark:bg-black">
                           <i className="ri-user-line text-[70px]"></i>
                         </div>

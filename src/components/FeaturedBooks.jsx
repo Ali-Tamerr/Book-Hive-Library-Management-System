@@ -1,4 +1,5 @@
 import { useState } from "react";
+import LazyImage from "./LazyImage";
 import BookPopup from "./BookPopup";
 import "./BookPopup.css";
 
@@ -36,7 +37,7 @@ const FeaturedBooks = () => {
               className="book-card"
               onClick={() => setSelectedBook(book)}
             >
-              <img src={book.image} alt={book.name} />
+              <LazyImage src={book.image} alt={book.name} className="w-full h-auto object-cover" />
               <h4>{book.name}</h4>
               <button className="button">Explore Now</button>
             </div>

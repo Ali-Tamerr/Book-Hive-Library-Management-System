@@ -38,6 +38,7 @@ const Home = () => {
   const [aboutBooks, setAboutBooks] = useState([]);
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
   const [feedbacks, setFeedbacks] = useState([]);
+  const [isFeedbacksLoading, setIsFeedbacksLoading] = useState(false);
   const [isContentReady, setIsContentReady] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -52,9 +53,12 @@ const Home = () => {
   const heroContainerRef = useRef(null);
 
   useEffect(() => {
+    console.debug("Home: mount - starting data fetch effects");
     const fetchBooks = async () => {
+      console.debug("Home: fetchBooks called");
       try {
         const data = await apiGet("/Books");
+        console.debug("Home: fetchBooks apiGet returned", data && (Array.isArray(data) ? data.length : (data.data || []).length));
         const books = Array.isArray(data) ? data : data.data || [];
         const sorted = [...books].sort(
           (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
@@ -80,12 +84,18 @@ const Home = () => {
     };
 
     const fetchStats = async () => {
+      console.debug("Home: fetchStats called");
       try {
         const [branchData, bookData, catData] = await Promise.all([
           apiGet("/Branches"),
           apiGet("/Books"),
           apiGet("/Categories"),
         ]);
+        console.debug("Home: fetchStats returned", {
+          branches: branchData && branchData.length,
+          books: bookData && bookData.length,
+          categories: catData && catData.length,
+        });
         setStats({
           branches: Array.isArray(branchData) ? branchData.length : 0,
           books: Array.isArray(bookData) ? bookData.length : 0,
@@ -97,15 +107,20 @@ const Home = () => {
     };
 
     const loadFeedbacks = async () => {
+      console.debug("Home: loadFeedbacks called");
       try {
+        setIsFeedbacksLoading(true);
         const approved = await apiGet("/Feedbacks/approved");
+        console.debug("Home: loadFeedbacks returned", approved && (Array.isArray(approved) ? approved.length : (approved.data || []).length));
         const dataArray = Array.isArray(approved)
           ? approved
           : approved.data || [];
         setFeedbacks(dataArray);
+        setIsFeedbacksLoading(false);
       } catch (error) {
         console.error("Failed to fetch feedbacks:", error);
         setFeedbacks([]);
+        setIsFeedbacksLoading(false);
       }
     };
 
@@ -126,28 +141,13 @@ const Home = () => {
   useEffect(() => {
     if (!isContentReady) return;
 
-    const waitForImages = () => {
-      const container = homeRef.current;
-      if (!container) {
-        setPageLoaded(true);
-        return;
-      }
-      const imgs = Array.from(container.querySelectorAll("img"));
-      const promises = imgs.map((img) => {
-        if (img.complete) return Promise.resolve();
-        return new Promise((resolve) => {
-          img.addEventListener("load", resolve, { once: true });
-          img.addEventListener("error", resolve, { once: true });
-        });
-      });
+    // When basic HTML/CSS/text is ready, show the page loader immediately
+    // Do NOT wait for all images to load — images will lazy-load individually.
+    const rafId = requestAnimationFrame(() => {
+      setTimeout(() => setPageLoaded(true), 50);
+    });
 
-      const timeout = new Promise((resolve) => setTimeout(resolve, 5000));
-      Promise.race([Promise.all(promises), timeout]).then(() =>
-        setPageLoaded(true),
-      );
-    };
-
-    requestAnimationFrame(waitForImages);
+    return () => cancelAnimationFrame(rafId);
   }, [isContentReady]);
 
   useEffect(() => {
@@ -163,6 +163,9 @@ const Home = () => {
 
     // specific Home page body background color fix
     document.body.classList.add("home-page-active");
+    // mark content ready very early so the loader can hide while images load lazily
+    requestAnimationFrame(() => setIsContentReady(true));
+
     return () => document.body.classList.remove("home-page-active");
   }, []);
 
@@ -320,6 +323,7 @@ const Home = () => {
             testimonialIndex={testimonialIndex}
             testimonialPerView={testimonialPerView}
             testimonialImg1={testimonialImg1}
+            isLoading={isFeedbacksLoading}
           />
         </main>
 

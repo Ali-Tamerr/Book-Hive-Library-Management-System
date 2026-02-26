@@ -91,181 +91,183 @@ function UserChatbot() {
   };
 
   return (
-    <div className="h-full w-full bg-[#e7e7e7] px-6 py-8 text-[#050549] transition-colors duration-300 lg:px-10 dark:bg-[#0b0d14] dark:text-[#ebebf0]">
-      <div className="mb-8 flex items-center gap-3">
-        <MessageSquareText
-          size={28}
-          strokeWidth={2.4}
-          className="text-[#00004f] dark:text-[#ebebf0]"
-        />
-        <h1 className="bebas-neue-regular text-[52px] leading-none tracking-[0.4px] text-[#050549] dark:text-[#ebebf0]">
-          CHATBOT
-        </h1>
-      </div>
-
-      <div className="flex min-h-0 items-start gap-[10%]">
-        <div className="flex min-h-0 flex-1 flex-col gap-5">
-          <section className="flex h-[450px] shrink-0 flex-col overflow-hidden rounded-[16px] border border-[#dedede] bg-[#f4f4f4] dark:border-[#babec6] dark:bg-[#dbdde1]">
-            <div className="border-b border-[#8f8fb1] px-7 pb-4 pt-6 dark:border-[#8f93a4]">
-              <h2 className="bebas-neue-regular text-[44px] leading-none text-[#050549] dark:text-[#121747]">
-                CONVERSATION
-              </h2>
-            </div>
-
-            <div className="px-2 pb-2 pt-5">
-              <div className="relative">
-                <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-[#050549] dark:text-[#121747]"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  placeholder="Search Conversations"
-                  className="h-11 w-full rounded-[10px] border border-[#52558a] bg-transparent py-2 pl-10 pr-3 text-sm text-[#050549] outline-none placeholder:text-[#52558a] dark:border-[#555d80] dark:text-[#121747] dark:placeholder:text-[#555d80]"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-6 py-10 text-center">
-              <MessageSquareText
-                size={48}
-                className="mb-3 text-[#8f8fb1] opacity-50"
-              />
-              <p className="text-lg font-medium text-[#8f8fb1]">
-                Your previous chat sessions will appear here soon.
-              </p>
-            </div>
-
-            <div className="border-t border-[#8f8fb1] px-4 py-4 dark:border-[#8f93a4]">
-              <button
-                type="button"
-                onClick={handleNewChat}
-                className="bebas-neue-regular mx-auto flex h-10 min-w-[122px] items-center justify-center rounded-[12px] bg-[#00004f] px-6 text-[34px] leading-none text-white transition-colors hover:bg-[#161669] dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
-              >
-                New Chat
-              </button>
-            </div>
-          </section>
-
-          <section className="shrink-0 rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-5 pb-5 pt-6 dark:border-[#babec6] dark:bg-[#dbdde1]">
-            <h2 className="noto-sans-georgian-medium text-[44px] leading-none text-[#050549] dark:text-[#121747]">
-              QUICK ACTION
-            </h2>
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              {quickActions.map((action) => (
-                <button
-                  key={action}
-                  type="button"
-                  onClick={() => handleSendMessage(action)}
-                  disabled={chatMutation.isPending}
-                  className="noto-sans-georgian-bold h-10 rounded-[12px] bg-[#00004f] px-3 text-[20px] leading-none text-white transition-colors hover:bg-[#161669] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
-                >
-                  {action}
-                </button>
-              ))}
-            </div>
-          </section>
+    <div className="flex h-full w-full items-center justify-center bg-[#e7e7e7] px-6 py-8 text-[#050549] transition-colors duration-300 lg:px-10 dark:bg-[#0b0d14] dark:text-[#ebebf0]">
+      <div className="h-[800px] w-full">
+        <div className="flex items-center gap-3">
+          <MessageSquareText
+            size={28}
+            strokeWidth={2.4}
+            className="text-[#00004f] dark:text-[#ebebf0]"
+          />
+          <h1 className="bebas-neue-regular text-[52px] leading-none tracking-[0.4px] text-[#050549] dark:text-[#ebebf0]">
+            CHATBOT
+          </h1>
         </div>
 
-        <section className="flex-2 flex min-h-[530px] w-full flex-col rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-6 pb-4 pt-6 lg:px-8 dark:border-[#babec6] dark:bg-[#dbdde1]">
-          <div className="flex items-center justify-center gap-2 text-[#050549] dark:text-[#121747]">
-            <Bot size={20} strokeWidth={2.1} />
-            <h2 className="bebas-neue-regular text-[46px] leading-none">
-              LIBRARY BOT
-            </h2>
-            <span className="ml-2 mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            <span className="mt-1 text-sm text-[#4f4f4f] dark:text-[#60657a]">
-              Online
-            </span>
+        <div className="flex h-fit items-start gap-[10%]">
+          <div className="flex h-full flex-1 flex-col gap-5">
+            <section className="flex h-[450px] shrink-0 flex-col overflow-hidden rounded-[16px] border border-[#dedede] bg-[#f4f4f4] dark:border-[#babec6] dark:bg-[#dbdde1]">
+              <div className="border-b border-[#8f8fb1] px-7 pb-4 pt-6 dark:border-[#8f93a4]">
+                <h2 className="bebas-neue-regular text-[44px] leading-none text-[#050549] dark:text-[#121747]">
+                  CONVERSATION
+                </h2>
+              </div>
+
+              <div className="px-2 pb-2 pt-5">
+                <div className="relative">
+                  <Search
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[#050549] dark:text-[#121747]"
+                    size={16}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search Conversations"
+                    className="h-11 w-full rounded-[10px] border border-[#52558a] bg-transparent py-2 pl-10 pr-3 text-sm text-[#050549] outline-none placeholder:text-[#52558a] dark:border-[#555d80] dark:text-[#121747] dark:placeholder:text-[#555d80]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-6 py-10 text-center">
+                <MessageSquareText
+                  size={48}
+                  className="mb-3 text-[#8f8fb1] opacity-50"
+                />
+                <p className="text-lg font-medium text-[#8f8fb1]">
+                  Your previous chat sessions will appear here soon.
+                </p>
+              </div>
+
+              <div className="border-t border-[#8f8fb1] px-4 py-4 dark:border-[#8f93a4]">
+                <button
+                  type="button"
+                  onClick={handleNewChat}
+                  className="bebas-neue-regular mx-auto flex h-10 min-w-[122px] items-center justify-center rounded-[12px] bg-[#00004f] px-6 text-[34px] leading-none text-white transition-colors hover:bg-[#161669] dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
+                >
+                  New Chat
+                </button>
+              </div>
+            </section>
+
+            <section className="shrink-0 rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-5 pb-5 pt-6 dark:border-[#babec6] dark:bg-[#dbdde1]">
+              <h2 className="noto-sans-georgian-medium text-[44px] leading-none text-[#050549] dark:text-[#121747]">
+                QUICK ACTION
+              </h2>
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                {quickActions.map((action) => (
+                  <button
+                    key={action}
+                    type="button"
+                    onClick={() => handleSendMessage(action)}
+                    disabled={chatMutation.isPending}
+                    className="noto-sans-georgian-bold h-10 rounded-[12px] bg-[#00004f] px-3 text-[20px] leading-none text-white transition-colors hover:bg-[#161669] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
+                  >
+                    {action}
+                  </button>
+                ))}
+              </div>
+            </section>
           </div>
 
-          <div className="mt-5 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-[14px] bg-[#e1e1e1] p-5 lg:p-6 dark:bg-[#cfd2d7]">
-            {messages.map((message) =>
-              message.sender === "bot" ? (
-                <div key={message.id} className="flex items-start gap-3">
+          <section className="flex-2 flex h-full w-full flex-col rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-6 pb-4 pt-6 lg:px-8 dark:border-[#babec6] dark:bg-[#dbdde1]">
+            <div className="flex items-center justify-center gap-2 text-[#050549] dark:text-[#121747]">
+              <Bot size={20} strokeWidth={2.1} />
+              <h2 className="bebas-neue-regular text-[46px] leading-none">
+                LIBRARY BOT
+              </h2>
+              <span className="ml-2 mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              <span className="mt-1 text-sm text-[#4f4f4f] dark:text-[#60657a]">
+                Online
+              </span>
+            </div>
+
+            <div className="mt-5 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-[14px] bg-[#e1e1e1] p-5 lg:p-6 dark:bg-[#cfd2d7]">
+              {messages.map((message) =>
+                message.sender === "bot" ? (
+                  <div key={message.id} className="flex items-start gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D7D7D7]">
+                      <Bot
+                        size={20}
+                        strokeWidth={2.1}
+                        className="text-[#050549] dark:text-[#121747]"
+                      />
+                    </span>
+                    <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#050549] dark:bg-[#e2e4e8] dark:text-[#121747]">
+                      {message.text}
+                    </div>
+                  </div>
+                ) : (
+                  <div key={message.id} className="flex justify-end">
+                    <div className="flex items-start gap-3">
+                      <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tl-[12px] bg-[#00004f] px-4 py-3 text-[15px] font-semibold text-white dark:bg-[#1d2142] dark:text-white">
+                        {message.text}
+                      </div>
+                      <img
+                        src={
+                          currentUser?.image_url
+                            ? getImageUrl(currentUser.image_url)
+                            : userAvatar
+                        }
+                        alt="User avatar"
+                        className="h-9 w-9 shrink-0 rounded-full object-cover"
+                      />
+                    </div>
+                  </div>
+                ),
+              )}
+
+              {chatMutation.isPending && (
+                <div className="flex items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D7D7D7]">
                     <Bot
                       size={20}
                       strokeWidth={2.1}
-                      className="text-[#050549] dark:text-[#121747]"
+                      className="animate-pulse text-[#050549] dark:text-[#121747]"
                     />
                   </span>
-                  <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#050549] dark:bg-[#e2e4e8] dark:text-[#121747]">
-                    {message.text}
+                  <div className="rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 dark:bg-[#e2e4e8]">
+                    <span className="flex h-full items-center gap-1">
+                      <span
+                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                        style={{ animationDelay: "0ms" }}
+                      ></span>
+                      <span
+                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                        style={{ animationDelay: "150ms" }}
+                      ></span>
+                      <span
+                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                        style={{ animationDelay: "300ms" }}
+                      ></span>
+                    </span>
                   </div>
                 </div>
-              ) : (
-                <div key={message.id} className="flex justify-end">
-                  <div className="flex items-start gap-3">
-                    <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tl-[12px] bg-[#00004f] px-4 py-3 text-[15px] font-semibold text-white dark:bg-[#1d2142] dark:text-white">
-                      {message.text}
-                    </div>
-                    <img
-                      src={
-                        currentUser?.image_url
-                          ? getImageUrl(currentUser.image_url)
-                          : userAvatar
-                      }
-                      alt="User avatar"
-                      className="h-9 w-9 shrink-0 rounded-full object-cover"
-                    />
-                  </div>
-                </div>
-              ),
-            )}
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
-            {chatMutation.isPending && (
-              <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D7D7D7]">
-                  <Bot
-                    size={20}
-                    strokeWidth={2.1}
-                    className="animate-pulse text-[#050549] dark:text-[#121747]"
-                  />
-                </span>
-                <div className="rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 dark:bg-[#e2e4e8]">
-                  <span className="flex h-full items-center gap-1">
-                    <span
-                      className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                      style={{ animationDelay: "0ms" }}
-                    ></span>
-                    <span
-                      className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                      style={{ animationDelay: "150ms" }}
-                    ></span>
-                    <span
-                      className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                      style={{ animationDelay: "300ms" }}
-                    ></span>
-                  </span>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          <form
-            className="mt-4 flex items-center gap-3 rounded-[12px] border border-[#7d7d90] bg-[#f1f1f1] px-3 py-2 dark:border-[#84899a] dark:bg-[#dde0e5]"
-            onSubmit={handleFormSubmit}
-          >
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              disabled={chatMutation.isPending}
-              placeholder="Type your message"
-              className="flex-1 bg-transparent text-lg text-[#050549] outline-none placeholder:text-[#7b7b8f] disabled:opacity-50 dark:text-[#121747] dark:placeholder:text-[#6c7184]"
-            />
-            <button
-              type="submit"
-              disabled={!inputValue.trim() || chatMutation.isPending}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#00004f] text-white transition-colors hover:bg-[#161669] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
-              aria-label="Send message"
+            <form
+              className="mt-4 flex items-center gap-3 rounded-[12px] border border-[#7d7d90] bg-[#f1f1f1] px-3 py-2 dark:border-[#84899a] dark:bg-[#dde0e5]"
+              onSubmit={handleFormSubmit}
             >
-              <SendHorizontal size={17} />
-            </button>
-          </form>
-        </section>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                disabled={chatMutation.isPending}
+                placeholder="Type your message"
+                className="flex-1 bg-transparent text-lg text-[#050549] outline-none placeholder:text-[#7b7b8f] disabled:opacity-50 dark:text-[#121747] dark:placeholder:text-[#6c7184]"
+              />
+              <button
+                type="submit"
+                disabled={!inputValue.trim() || chatMutation.isPending}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#00004f] text-white transition-colors hover:bg-[#161669] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
+                aria-label="Send message"
+              >
+                <SendHorizontal size={17} />
+              </button>
+            </form>
+          </section>
+        </div>
       </div>
     </div>
   );

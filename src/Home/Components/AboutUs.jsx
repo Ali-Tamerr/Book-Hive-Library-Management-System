@@ -1,4 +1,5 @@
 import React from "react";
+import LazyImage from "../../components/LazyImage";
 
 const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
   return (
@@ -6,6 +7,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
       className="section-about px-7 py-20 pb-[100px]"
       id="about"
       aria-labelledby="about-heading"
+      data-reveal
     >
       <div className="mx-auto max-w-[1875px] px-5">
         <h2
@@ -71,13 +73,13 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
           >
             {aboutBooks.length >= 2 ? (
               <>
-                <img
+                <LazyImage
                   className="book back absolute left-0 z-[1] h-[700px] w-[450px] origin-center -translate-y-4 -rotate-12 rounded-lg bg-white object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
                   src={aboutBooks[0].image}
                   alt={aboutBooks[0].name}
                   onError={(e) => (e.currentTarget.style.display = "none")}
                 />
-                <img
+                <LazyImage
                   className="book front absolute right-0 z-[2] h-[700px] w-[450px] origin-center translate-y-6 rotate-12 rounded-lg bg-white object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
                   src={aboutBooks[1].image}
                   alt={aboutBooks[1].name}
