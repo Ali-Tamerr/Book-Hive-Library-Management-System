@@ -39,7 +39,7 @@ const plansData = [
 const PricingCard = ({ plan, setIsLoginOpen }) => {
   return (
     <article
-      className={`plan group flex w-full flex-col justify-start rounded-[18px] px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-[transform,box-shadow] duration-[300ms] ease-in-out max-[680px]:min-h-[380px] ${
+      className={`plan group flex w-full flex-col justify-start rounded-[18px] px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-all duration-[300ms] ease-in-out max-[680px]:min-h-[380px] ${
         plan.isPopular
           ? "center flex-8 -mt-5 min-h-[520px] border-2 border-transparent bg-[var(--center-bg)] pt-16 hover:border-[#000035] max-[1000px]:mt-0 max-[1000px]:min-h-[420px] dark:!shadow-[0_18px_28px_rgba(0,0,0,0.4)] dark:hover:!border-[#E3E3E3]"
           : "flex-7 min-h-[660px] bg-[var(--card-bg)]"
@@ -74,7 +74,7 @@ const PricingCard = ({ plan, setIsLoginOpen }) => {
       <a
         className={`btn mx-auto mt-4 inline-block rounded-[14px] px-20 py-3 font-[family-name:var(--second-font)] text-[28px] font-normal no-underline transition-all duration-[300ms] ease-in-out ${
           plan.isPopular
-            ? "border border-[#000035] bg-white text-[var(--accent)] hover:border-[#000022] hover:bg-[#000022] hover:text-white group-hover:border-[#000035] group-hover:bg-[#000035] group-hover:text-white dark:border-[#E3E3E3] dark:bg-transparent dark:text-[#e3e4e8] dark:hover:border-[#E3E3E3] dark:hover:bg-[#E3E3E3] dark:hover:text-black group-hover:dark:border-[#E3E3E3] group-hover:dark:bg-[#E3E3E3] group-hover:dark:text-black"
+            ? "border border-[#000035] bg-white text-[var(--accent)] hover:border-[#000022] hover:bg-[#000022] hover:text-white group-hover:border-[#000035] group-hover:bg-[#000035] group-hover:text-white dark:border-[#E3E3E3] dark:bg-transparent dark:text-[#e3e4e8] dark:hover:border-[#E3E3E3] dark:hover:bg-[#E3E3E3] dark:hover:text-black group-hover:dark:border-[#E3E3E3] group-hover:dark:bg-[#E3E3E3]  group-hover:dark:text-black" 
             : "border border-[#000035] bg-white text-[var(--accent)] hover:border-[#000035] hover:bg-[#E3E3E3] hover:text-[#0a0b2b] dark:border-[#E3E3E3] dark:bg-transparent dark:text-[#e3e4e8] dark:hover:border-[#E3E3E3] dark:hover:bg-[#E3E3E3] dark:hover:text-black"
         }`}
         href="#"
