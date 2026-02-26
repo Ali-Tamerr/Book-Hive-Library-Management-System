@@ -26,7 +26,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
         <div className="grid gap-6" data-reveal>
           <div className="relative overflow-hidden" ref={heroContainerRef}>
             <div
-              className="flex scale-84 transition-transform duration-500 ease-in-out"
+              className="scale-84 flex transition-transform duration-500 ease-in-out"
               style={{
                 transform: (() => {
                   const container = heroContainerRef.current;

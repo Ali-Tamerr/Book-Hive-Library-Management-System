@@ -104,8 +104,8 @@ function UserChatbot() {
           </h1>
         </div>
 
-        <div className="flex h-fit items-start gap-[10%]">
-          <div className="flex h-full flex-1 flex-col gap-5">
+        <div className="flex items-stretch gap-[10%] pb-10">
+          <div className="flex flex-1 flex-col gap-5">
             <section className="flex h-[450px] shrink-0 flex-col overflow-hidden rounded-[16px] border border-[#dedede] bg-[#f4f4f4] dark:border-[#babec6] dark:bg-[#dbdde1]">
               <div className="border-b border-[#8f8fb1] px-7 pb-4 pt-6 dark:border-[#8f93a4]">
                 <h2 className="bebas-neue-regular text-[44px] leading-none text-[#050549] dark:text-[#121747]">
@@ -168,105 +168,107 @@ function UserChatbot() {
             </section>
           </div>
 
-          <section className="flex-2 flex h-full w-full flex-col rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-6 pb-4 pt-6 lg:px-8 dark:border-[#babec6] dark:bg-[#dbdde1]">
-            <div className="flex items-center justify-center gap-2 text-[#050549] dark:text-[#121747]">
-              <Bot size={20} strokeWidth={2.1} />
-              <h2 className="bebas-neue-regular text-[46px] leading-none">
-                LIBRARY BOT
-              </h2>
-              <span className="ml-2 mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-              <span className="mt-1 text-sm text-[#4f4f4f] dark:text-[#60657a]">
-                Online
-              </span>
-            </div>
+          <div className="relative min-w-0 flex-[2]">
+            <section className="absolute inset-0 flex flex-col rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-6 pb-4 pt-6 lg:px-8 dark:border-[#babec6] dark:bg-[#dbdde1]">
+              <div className="flex items-center justify-center gap-2 text-[#050549] dark:text-[#121747]">
+                <Bot size={20} strokeWidth={2.1} />
+                <h2 className="bebas-neue-regular text-[46px] leading-none">
+                  LIBRARY BOT
+                </h2>
+                <span className="ml-2 mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                <span className="mt-1 text-sm text-[#4f4f4f] dark:text-[#60657a]">
+                  Online
+                </span>
+              </div>
 
-            <div className="mt-5 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-[14px] bg-[#e1e1e1] p-5 lg:p-6 dark:bg-[#cfd2d7]">
-              {messages.map((message) =>
-                message.sender === "bot" ? (
-                  <div key={message.id} className="flex items-start gap-3">
+              <div className="mt-5 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-[14px] bg-[#e1e1e1] p-5 lg:p-6 dark:bg-[#cfd2d7]">
+                {messages.map((message) =>
+                  message.sender === "bot" ? (
+                    <div key={message.id} className="flex items-start gap-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D7D7D7]">
+                        <Bot
+                          size={20}
+                          strokeWidth={2.1}
+                          className="text-[#050549] dark:text-[#121747]"
+                        />
+                      </span>
+                      <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#050549] dark:bg-[#e2e4e8] dark:text-[#121747]">
+                        {message.text}
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={message.id} className="flex justify-end">
+                      <div className="flex items-start gap-3">
+                        <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tl-[12px] bg-[#00004f] px-4 py-3 text-[15px] font-semibold text-white dark:bg-[#1d2142] dark:text-white">
+                          {message.text}
+                        </div>
+                        <img
+                          src={
+                            currentUser?.image_url
+                              ? getImageUrl(currentUser.image_url)
+                              : userAvatar
+                          }
+                          alt="User avatar"
+                          className="h-9 w-9 shrink-0 rounded-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  ),
+                )}
+
+                {chatMutation.isPending && (
+                  <div className="flex items-center gap-3">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D7D7D7]">
                       <Bot
                         size={20}
                         strokeWidth={2.1}
-                        className="text-[#050549] dark:text-[#121747]"
+                        className="animate-pulse text-[#050549] dark:text-[#121747]"
                       />
                     </span>
-                    <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#050549] dark:bg-[#e2e4e8] dark:text-[#121747]">
-                      {message.text}
+                    <div className="rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 dark:bg-[#e2e4e8]">
+                      <span className="flex h-full items-center gap-1">
+                        <span
+                          className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                          style={{ animationDelay: "0ms" }}
+                        ></span>
+                        <span
+                          className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                          style={{ animationDelay: "150ms" }}
+                        ></span>
+                        <span
+                          className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                          style={{ animationDelay: "300ms" }}
+                        ></span>
+                      </span>
                     </div>
                   </div>
-                ) : (
-                  <div key={message.id} className="flex justify-end">
-                    <div className="flex items-start gap-3">
-                      <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tl-[12px] bg-[#00004f] px-4 py-3 text-[15px] font-semibold text-white dark:bg-[#1d2142] dark:text-white">
-                        {message.text}
-                      </div>
-                      <img
-                        src={
-                          currentUser?.image_url
-                            ? getImageUrl(currentUser.image_url)
-                            : userAvatar
-                        }
-                        alt="User avatar"
-                        className="h-9 w-9 shrink-0 rounded-full object-cover"
-                      />
-                    </div>
-                  </div>
-                ),
-              )}
+                )}
+                <div ref={messagesEndRef} />
+              </div>
 
-              {chatMutation.isPending && (
-                <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D7D7D7]">
-                    <Bot
-                      size={20}
-                      strokeWidth={2.1}
-                      className="animate-pulse text-[#050549] dark:text-[#121747]"
-                    />
-                  </span>
-                  <div className="rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 dark:bg-[#e2e4e8]">
-                    <span className="flex h-full items-center gap-1">
-                      <span
-                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                        style={{ animationDelay: "0ms" }}
-                      ></span>
-                      <span
-                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                        style={{ animationDelay: "150ms" }}
-                      ></span>
-                      <span
-                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                        style={{ animationDelay: "300ms" }}
-                      ></span>
-                    </span>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            <form
-              className="mt-4 flex items-center gap-3 rounded-[12px] border border-[#7d7d90] bg-[#f1f1f1] px-3 py-2 dark:border-[#84899a] dark:bg-[#dde0e5]"
-              onSubmit={handleFormSubmit}
-            >
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                disabled={chatMutation.isPending}
-                placeholder="Type your message"
-                className="flex-1 bg-transparent text-lg text-[#050549] outline-none placeholder:text-[#7b7b8f] disabled:opacity-50 dark:text-[#121747] dark:placeholder:text-[#6c7184]"
-              />
-              <button
-                type="submit"
-                disabled={!inputValue.trim() || chatMutation.isPending}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#00004f] text-white transition-colors hover:bg-[#161669] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
-                aria-label="Send message"
+              <form
+                className="mt-4 flex items-center gap-3 rounded-[12px] border border-[#7d7d90] bg-[#f1f1f1] px-3 py-2 dark:border-[#84899a] dark:bg-[#dde0e5]"
+                onSubmit={handleFormSubmit}
               >
-                <SendHorizontal size={17} />
-              </button>
-            </form>
-          </section>
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  disabled={chatMutation.isPending}
+                  placeholder="Type your message"
+                  className="flex-1 bg-transparent text-lg text-[#050549] outline-none placeholder:text-[#7b7b8f] disabled:opacity-50 dark:text-[#121747] dark:placeholder:text-[#6c7184]"
+                />
+                <button
+                  type="submit"
+                  disabled={!inputValue.trim() || chatMutation.isPending}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[#00004f] text-white transition-colors hover:bg-[#161669] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
+                  aria-label="Send message"
+                >
+                  <SendHorizontal size={17} />
+                </button>
+              </form>
+            </section>
+          </div>
         </div>
       </div>
     </div>

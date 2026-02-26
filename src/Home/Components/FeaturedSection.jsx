@@ -31,7 +31,7 @@ const FeaturedSection = ({
                   key={book.book_id}
                   className="duration-400 relative flex h-[760px] shrink-0 flex-col items-center overflow-hidden rounded-[24px] border-none bg-white p-[30px_35px] text-center shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-[box-shadow,background-color] dark:border-[#e4e4e7] dark:bg-[#f7f7f7] dark:shadow-[0_10px_26px_rgba(0,0,0,0.28)]"
                   style={{
-                    width: `calc(${100 / featuredPerView}% - 60px)`,
+                    width: `calc(${80 / featuredPerView}% - 60px)`,
                     margin: "0 30px",
                   }}
                 >
