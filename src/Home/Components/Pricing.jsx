@@ -38,12 +38,12 @@ const plansData = [
 
 const PricingCard = ({ plan, setIsLoginOpen }) => {
   return (
-    <article
-      className={`plan flex w-full flex-col justify-start rounded-[18px] px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-[transform,box-shadow] duration-[300ms] ease-in-out max-[680px]:min-h-[380px] ${
-        plan.isPopular
-          ? "center flex-8 -mt-5 min-h-[520px] border-2 bg-[var(--center-bg)] pt-16 max-[1000px]:mt-0 max-[1000px]:min-h-[420px] dark:!border-[#E3E3E3] dark:!shadow-[0_18px_28px_rgba(0,0,0,0.4)]"
-          : "flex-7 min-h-[660px] bg-[var(--card-bg)]"
-      }`}
+      <article
+        className={`plan group flex w-full flex-col justify-start rounded-[18px] px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-[transform,box-shadow] duration-[300ms] ease-in-out max-[680px]:min-h-[380px] ${
+          plan.isPopular
+            ? "center flex-8 -mt-5 min-h-[520px] border-2 border-transparent bg-[var(--center-bg)] pt-16 max-[1000px]:mt-0 max-[1000px]:min-h-[420px] hover:border-[#000035] dark:hover:!border-[#E3E3E3] dark:!shadow-[0_18px_28px_rgba(0,0,0,0.4)]"
+            : "flex-7 min-h-[660px] bg-[var(--card-bg)]"
+        }`}
       role="listitem"
       aria-labelledby={plan.id}
     >
