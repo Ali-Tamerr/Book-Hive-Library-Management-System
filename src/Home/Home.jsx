@@ -15,6 +15,10 @@ import secureInfoIcon from "../assets/secure information.png";
 import chatbotIcon from "../assets/chatbot.png";
 
 import { apiGet, getImageUrl } from "../services/api.config";
+import { useQueryClient } from '@tanstack/react-query';
+import { useBooks, bookKeys } from "../hooks/useBooks";
+import { useApprovedFeedbacks } from "../hooks/useFeedbacks";
+import { getAllBooks } from "../services/books.api";
 import Header from "./Components/Header";
 import Hero from "./Components/Hero";
 import Services from "./Components/Services";
@@ -36,10 +40,10 @@ const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [heroBooks, setHeroBooks] = useState([]);
   const [aboutBooks, setAboutBooks] = useState([]);
-  const [booksSource, setBooksSource] = useState(null);
+  const queryClient = useQueryClient();
+  const { data: booksSource, isLoading: booksLoading } = useBooks();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [isFeedbacksLoading, setIsFeedbacksLoading] = useState(false);
+  const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } = useApprovedFeedbacks();
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showShadowHeader, setShowShadowHeader] = useState(false);
@@ -56,13 +60,15 @@ const Home = () => {
     console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
       try {
-        // Include Books in the initial fetch so the books count is ready
-        // before the loading screen is dismissed.
+        // Prefetch books via React Query so the query cache is populated
+        // and we avoid duplicate network requests across components.
         const [branchData, catData, booksData] = await Promise.all([
           apiGet("/Branches"),
           apiGet("/Categories"),
-          apiGet("/Books"),
+          // fetchQuery will reuse an in-flight query if present
+          queryClient.fetchQuery(bookKeys.lists(), getAllBooks),
         ]);
+
         const booksCount = Array.isArray(booksData)
           ? booksData.length
           : booksData?.data?.length || 0;
@@ -111,31 +117,8 @@ const Home = () => {
     }
   }, [pageLoaded]);
 
-  // 2b. Fetch full books list once (in parallel with stats)
+  // 2b/2c. Derive hero/about/featured books from React Query's `useBooks`.
   useEffect(() => {
-    if (booksSource) return;
-
-    let cancelled = false;
-    const fetchBooks = async () => {
-      try {
-        const data = await apiGet("/Books");
-        if (cancelled) return;
-        setBooksSource(data);
-      } catch (error) {
-        console.error("Failed to fetch books for home:", error);
-      }
-    };
-
-    fetchBooks();
-    return () => {
-      cancelled = true;
-    };
-  }, [booksSource]);
-
-  // 2c. Derive hero/about/featured books from a single Books response
-  useEffect(() => {
-    if (!booksSource) return;
-
     const rawArray = Array.isArray(booksSource)
       ? booksSource
       : booksSource?.data || [];
@@ -147,11 +130,8 @@ const Home = () => {
       return;
     }
 
-    // Work on raw data first (cheap), then convert images only for the
-    // small subset of books we actually show on the homepage.
     const sortedRawByDate = [...rawArray].sort(
-      (a, b) =>
-        new Date(b.created_at || 0) - new Date(a.created_at || 0),
+      (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
     );
 
     const heroRaw = sortedRawByDate.slice(0, 12);
@@ -166,26 +146,16 @@ const Home = () => {
       image: getImageUrl(book.image_url) || "",
     });
 
-    const heroList = heroRaw
-      .map(toViewModel)
-      .filter((b) => b.image)
-      .slice(0, 10);
+    const heroList = heroRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
 
-    const featuredList = featuredRaw
-      .map(toViewModel)
-      .filter((b) => b.image)
-      .slice(0, 10);
+    const featuredList = featuredRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
 
-    // About Us should reuse covers already used in other sections (Hero/Featured),
-    // to avoid picking slow/bad images from the full dataset.
     const poolMap = new Map();
     [...heroList, ...featuredList].forEach((b) => {
       if (!b?.book_id) return;
       poolMap.set(b.book_id, b);
     });
-    const pool = poolMap.size ? Array.from(poolMap.values()) : heroList.length
-      ? heroList
-      : featuredList;
+    const pool = poolMap.size ? Array.from(poolMap.values()) : heroList.length ? heroList : featuredList;
 
     const pickTwo = (list) => {
       if (!list.length) return [];
@@ -197,9 +167,6 @@ const Home = () => {
     };
 
     const aboutSelected = pickTwo(pool || []);
-
-    // If we didn't randomly pick two distinct books (e.g. only one exists),
-    // pad the list so About Us always has two covers to render.
     while (aboutSelected.length < 2 && heroList.length) {
       aboutSelected.push(heroList[aboutSelected.length % heroList.length]);
     }
@@ -231,78 +198,9 @@ const Home = () => {
     }
   }, [heroBooks, aboutBooks, featuredBooks]);
 
-  // 2e. Once booksSource is available, update the books count in stats
-  useEffect(() => {
-    if (!booksSource) return;
-    try {
-      const arr = Array.isArray(booksSource)
-        ? booksSource
-        : booksSource?.data || [];
-      setStats((prev) => ({
-        ...prev,
-        books: Array.isArray(arr) ? arr.length : prev.books,
-      }));
-    } catch {
-      // ignore count update errors
-    }
-  }, [booksSource]);
+  // books count is populated during initial `fetchStats` prefetch.
 
-  // 3. Load feedbacks (non-blocking for loading screen)
-  useEffect(() => {
-    const loadFeedbacks = async () => {
-      try {
-        setIsFeedbacksLoading(true);
-        const approved = await apiGet("/Feedbacks/approved");
-        const dataArray = Array.isArray(approved)
-          ? approved
-          : approved.data || [];
-        // Keep only the latest feedback per user so multiple approved
-        // entries from the same person don't show up as separate cards.
-        try {
-          if (Array.isArray(dataArray) && dataArray.length) {
-            const byUser = new Map();
-            dataArray.forEach((fb) => {
-              const userKey = fb.user_id || fb.user_name || fb.email || "anonymous";
-              const existing = byUser.get(userKey);
-              if (!existing) {
-                byUser.set(userKey, fb);
-                return;
-              }
-
-              // prefer the feedback with the newest timestamp (created_at or updated_at)
-              const existingDate = new Date(existing.updated_at || existing.created_at || 0).getTime();
-              const incomingDate = new Date(fb.updated_at || fb.created_at || 0).getTime();
-              if (incomingDate >= existingDate) {
-                byUser.set(userKey, fb);
-              }
-            });
-
-            const unique = Array.from(byUser.values());
-            setFeedbacks(unique);
-          } else {
-            setFeedbacks(dataArray);
-          }
-        } catch (err) {
-          console.error("Failed to dedupe feedbacks:", err);
-          setFeedbacks(dataArray);
-        }
-      } catch (error) {
-        console.error("Failed to fetch feedbacks:", error);
-        setFeedbacks([]);
-      } finally {
-        setIsFeedbacksLoading(false);
-      }
-    };
-    loadFeedbacks();
-
-    const handleFeedbackUpdate = () => loadFeedbacks();
-    window.addEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
-    window.addEventListener("userUpdated", handleFeedbackUpdate);
-    return () => {
-      window.removeEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
-      window.removeEventListener("userUpdated", handleFeedbackUpdate);
-    };
-  }, []);
+  // Feedbacks are loaded via `useApprovedFeedbacks` (React Query).
 
   useEffect(() => {
     const selectedTheme = localStorage.getItem("selected-theme");
@@ -472,7 +370,7 @@ const Home = () => {
           <Pricing setIsLoginOpen={setIsLoginOpen} />
 
           <Testimonials
-            feedbacks={feedbacks}
+            feedbacks={approvedFeedbacks}
             testimonialPerView={testimonialPerView}
             testimonialImg1={testimonialImg1}
             isLoading={isFeedbacksLoading}
