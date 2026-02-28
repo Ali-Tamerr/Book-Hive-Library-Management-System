@@ -1,16 +1,28 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import LoginPopup from '../shared/LoginPopup';
-import SignupPopup from '../shared/SignupPopup';
-import ForgotPasswordPopup from '../shared/ForgotPasswordPopup';
-import OTPPopup from '../shared/OTPPopup';
-import ResetPasswordPopup from '../shared/ResetPasswordPopup';
-import AboutBranchesPopup from '../components/AboutBranchesPopup';
-import FeaturedBookPopup from '../components/FeaturedBookPopup';
-import './css/swiper-bundle.min.css';
-import './css/styles.css';
-import './css/stylesNew.css';
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import LoginPopup from "../shared/LoginPopup";
+import SignupPopup from "../shared/SignupPopup";
+import ForgotPasswordPopup from "../shared/ForgotPasswordPopup";
+import OTPPopup from "../shared/OTPPopup";
+import ResetPasswordPopup from "../shared/ResetPasswordPopup";
+import AboutBranchesPopup from "../components/AboutBranchesPopup";
+import FeaturedBookPopup from "../components/FeaturedBookPopup";
+import PageLoader from "../components/PageLoader";
+import logoIcon from "../assets/bookhive_icon_only_black-removebg-preview 2.svg";
+import testimonialImg1 from "../assets/img/testimonial-perfil-1.png";
+import freeShippingIcon from "../assets/smart catalog.png";
+import secureInfoIcon from "../assets/secure information.png";
+import chatbotIcon from "../assets/chatbot.png";
 
+import { apiGet, getImageUrl } from "../services/api.config";
+import Header from "./Components/Header";
+import Hero from "./Components/Hero";
+import Services from "./Components/Services";
+import AboutUs from "./Components/AboutUs";
+import FeaturedSection from "./Components/FeaturedSection";
+import Pricing from "./Components/Pricing";
+import Testimonials from "./Components/Testimonials";
+import Footer from "./Components/Footer";
 const Home = () => {
   const navigate = useNavigate();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -20,70 +32,157 @@ const Home = () => {
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [activePopup, setActivePopup] = useState(null);
   const [selectedFeaturedBook, setSelectedFeaturedBook] = useState(null);
-  const [themeIcon, setThemeIcon] = useState('ri-moon-line');
+  const [themeIcon, setThemeIcon] = useState("ri-moon-line");
+  const [featuredBooks, setFeaturedBooks] = useState([]);
+  const [heroBooks, setHeroBooks] = useState([]);
+  const [aboutBooks, setAboutBooks] = useState([]);
+  const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [isFeedbacksLoading, setIsFeedbacksLoading] = useState(false);
+  const [isContentReady, setIsContentReady] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [showShadowHeader, setShowShadowHeader] = useState(false);
+  const [showScrollUp, setShowScrollUp] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const heroIntervalRef = useRef(null);
+  const homeRef = useRef(null);
+  const heroContainerRef = useRef(null);
 
-  const featuredBooks = [
-    {
-      name: 'My Turn',
-      category: 'Education',
-      language: 'English',
-      branch: 'Cairo',
-      availability: 'Available',
-      image: new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
-    },
-    {
-      name: 'The Hunger Games',
-      category: 'Biography',
-      language: 'English',
-      branch: 'Giza',
-      availability: 'Available',
-      image: new URL('./assets/img/9780439023528.jpg', import.meta.url).href,
-    },
-    {
-      name: 'Blue Ocean Strategy',
-      category: 'Sports',
-      language: 'English',
-      branch: 'Alexandria',
-      availability: 'Available',
-      image: new URL('./assets/img/91YCWH4jFdL.jpg', import.meta.url).href,
-    },
-    {
-      name: ' The Autobiography',
-      category: 'Biography',
-      language: 'English',
-      branch: 'Cairo',
-      availability: 'Available',
-      image: new URL('./assets/img/71STVuBmK+L._AC_UF1000,1000_QL80_.jpg', import.meta.url).href,
-    },
-  ];
-
-  // Initialize theme on mount
   useEffect(() => {
-    const selectedTheme = localStorage.getItem('selected-theme');
+    console.debug("Home: mount - starting data fetch effects");
+    const fetchBooks = async () => {
+      console.debug("Home: fetchBooks called");
+      try {
+        const data = await apiGet("/Books");
+        console.debug("Home: fetchBooks apiGet returned", data && (Array.isArray(data) ? data.length : (data.data || []).length));
+        const books = Array.isArray(data) ? data : data.data || [];
+        const sorted = [...books].sort(
+          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+        );
+        const mapped = sorted.map((book) => ({
+          book_id: book.book_id,
+          name: book.name,
+          category_id: book.category_id,
+          quantity: book.quantity,
+          image: getImageUrl(book.image_url) || "",
+        }));
 
-    if (selectedTheme === 'dark') {
-      document.body.classList.add('dark-theme');
-      setThemeIcon('ri-sun-line');
+        const withImages = mapped.filter((b) => b.image);
+        const recent10 = withImages.slice(0, 10);
+        setFeaturedBooks(recent10);
+        setHeroBooks(recent10);
+
+        const shuffled = [...withImages].sort(() => 0.5 - Math.random());
+        setAboutBooks(shuffled.slice(0, 2));
+      } catch (error) {
+        console.error("Failed to fetch featured books:", error);
+      }
+    };
+
+    const fetchStats = async () => {
+      console.debug("Home: fetchStats called");
+      try {
+        const [branchData, bookData, catData] = await Promise.all([
+          apiGet("/Branches"),
+          apiGet("/Books"),
+          apiGet("/Categories"),
+        ]);
+        console.debug("Home: fetchStats returned", {
+          branches: branchData && branchData.length,
+          books: bookData && bookData.length,
+          categories: catData && catData.length,
+        });
+        setStats({
+          branches: Array.isArray(branchData) ? branchData.length : 0,
+          books: Array.isArray(bookData) ? bookData.length : 0,
+          categories: Array.isArray(catData) ? catData.length : 0,
+        });
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      }
+    };
+
+    const loadFeedbacks = async () => {
+      console.debug("Home: loadFeedbacks called");
+      try {
+        setIsFeedbacksLoading(true);
+        const approved = await apiGet("/Feedbacks/approved");
+        console.debug("Home: loadFeedbacks returned", approved && (Array.isArray(approved) ? approved.length : (approved.data || []).length));
+        const dataArray = Array.isArray(approved)
+          ? approved
+          : approved.data || [];
+        setFeedbacks(dataArray);
+        setIsFeedbacksLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch feedbacks:", error);
+        setFeedbacks([]);
+        setIsFeedbacksLoading(false);
+      }
+    };
+
+    Promise.all([fetchBooks(), fetchStats()]).then(async () => {
+      await loadFeedbacks();
+      setTimeout(() => setIsContentReady(true), 100);
+    });
+
+    const handleFeedbackUpdate = () => loadFeedbacks();
+    window.addEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
+    window.addEventListener("userUpdated", handleFeedbackUpdate);
+    return () => {
+      window.removeEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
+      window.removeEventListener("userUpdated", handleFeedbackUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isContentReady) return;
+
+    // When basic HTML/CSS/text is ready, show the page loader immediately
+    // Do NOT wait for all images to load — images will lazy-load individually.
+    const rafId = requestAnimationFrame(() => {
+      setTimeout(() => setPageLoaded(true), 50);
+    });
+
+    return () => cancelAnimationFrame(rafId);
+  }, [isContentReady]);
+
+  useEffect(() => {
+    const selectedTheme = localStorage.getItem("selected-theme");
+
+    if (selectedTheme === "dark") {
+      document.body.classList.add("dark-theme");
+      setThemeIcon("ri-moon-line");
     } else {
-      document.body.classList.remove('dark-theme');
-      setThemeIcon('ri-moon-line');
+      document.body.classList.remove("dark-theme");
+      setThemeIcon("ri-sun-line");
     }
+
+    // specific Home page body background color fix
+    document.body.classList.add("home-page-active");
+    // mark content ready very early so the loader can hide while images load lazily
+    requestAnimationFrame(() => setIsContentReady(true));
+
+    return () => document.body.classList.remove("home-page-active");
   }, []);
 
   const toggleTheme = () => {
     const body = document.body;
-    const isDark = body.classList.contains('dark-theme');
+    const isDark = body.classList.contains("dark-theme");
 
     if (isDark) {
-      body.classList.remove('dark-theme');
-      setThemeIcon('ri-moon-line');
-      localStorage.setItem('selected-theme', 'light');
-      localStorage.setItem('selected-icon', 'ri-moon-line');
+      body.classList.remove("dark-theme");
+      setThemeIcon("ri-sun-line");
+      localStorage.setItem("selected-theme", "light");
+      localStorage.setItem("selected-icon", "ri-sun-line");
     } else {
-      body.classList.add('dark-theme');
-      setThemeIcon('ri-sun-line');
-      localStorage.setItem('selected-theme', 'dark');
-      localStorage.setItem('selected-icon', 'ri-sun-line');
+      body.classList.add("dark-theme");
+      setThemeIcon("ri-moon-line");
+      localStorage.setItem("selected-theme", "dark");
+      localStorage.setItem("selected-icon", "ri-moon-line");
     }
   };
 
@@ -91,441 +190,193 @@ const Home = () => {
     e.preventDefault();
     const section = document.getElementById(sectionId);
     if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+      section.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   useEffect(() => {
-    const loadScript = (src, id) => {
-      return new Promise((resolve, reject) => {
-        const existingScript = document.getElementById(id);
-        if (existingScript) {
-          resolve();
-          return;
-        }
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setShowShadowHeader(scrollY >= 50);
+      setShowScrollUp(scrollY >= 350);
 
-        const script = document.createElement('script');
-        script.src = src;
-        script.id = id;
-        script.onload = () => resolve();
-        script.onerror = () => reject();
-        document.body.appendChild(script);
+      const sections = document.querySelectorAll("section[id]");
+      sections.forEach((section) => {
+        const sectionHeight = section.offsetHeight;
+        const sectionTop = section.offsetTop - 58;
+        const sectionId = section.getAttribute("id");
+        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+          setActiveSection(sectionId);
+        }
       });
     };
 
-    const initScripts = async () => {
-      try {
-        await loadScript(new URL('./js/scrollreveal.min.js', import.meta.url).href, 'scrollreveal');
-        await loadScript(new URL('./js/swiper-bundle.min.js', import.meta.url).href, 'swiper');
-        await loadScript(new URL('./js/main.js', import.meta.url).href, 'main');
-      } catch (error) {
-        console.error('Error loading scripts:', error);
-      }
-    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    initScripts();
-  }, [navigate]);
+  useEffect(() => {
+    if (heroBooks.length === 0) return;
+    heroIntervalRef.current = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % heroBooks.length);
+    }, 3000);
+    return () => clearInterval(heroIntervalRef.current);
+  }, [heroBooks]);
+
+  const featuredPerView =
+    typeof window !== "undefined" && window.innerWidth >= 1150 ? 4 : 1;
+  const testimonialPerView =
+    typeof window !== "undefined" && window.innerWidth >= 1150 ? 3 : 1;
+
+  const featuredMaxIndex = Math.max(0, featuredBooks.length - featuredPerView);
+  const testimonialMaxIndex = Math.max(
+    0,
+    feedbacks.length - testimonialPerView,
+  );
+
+  const featuredPrev = useCallback(() => {
+    setFeaturedIndex((prev) => (prev <= 0 ? featuredMaxIndex : prev - 1));
+  }, [featuredMaxIndex]);
+
+  const featuredNext = useCallback(() => {
+    setFeaturedIndex((prev) => (prev >= featuredMaxIndex ? 0 : prev + 1));
+  }, [featuredMaxIndex]);
+
+  useEffect(() => {
+    if (!pageLoaded) return;
+
+    const els = document.querySelectorAll("[data-reveal]");
+    if (!els.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [pageLoaded]);
 
   return (
-    <div className="home-page">
-      <header className="header" id="header">
-        <nav className="nav">
-          <a href="#" className="nav__logo">
-            <img
-              src={new URL('./assets/bookhive_icon_only_black-removebg-preview 2.svg', import.meta.url).href}
-              alt="Book Hive Logo"
-              style={{ width: '60px', height: 'auto' }}
-            />
-          </a>
+    <>
+      {!pageLoaded && (
+        <PageLoader className="!fixed !z-[9999] bg-[#E8E8E8] dark:bg-[#111214]" />
+      )}
+      <div
+        className="duration-400 m-0 mx-auto max-w-[1920px] scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
+        ref={homeRef}
+        style={{
+          visibility: pageLoaded ? "visible" : "hidden",
+          zoom: 0.8,
+        }}
+      >
+        <Header
+          logoIcon={logoIcon}
+          activeSection={activeSection}
+          scrollToSection={scrollToSection}
+          setIsSearchOpen={setIsSearchOpen}
+          setIsLoginOpen={setIsLoginOpen}
+          themeIcon={themeIcon}
+          toggleTheme={toggleTheme}
+          showShadowHeader={showShadowHeader}
+          isSearchOpen={isSearchOpen}
+        />
 
-          <div className="nav__menu">
-            <ul className="nav__list">
-              <li className="nav__item">
-                <a href="#home" className="nav__link" onClick={(e) => scrollToSection(e, 'home')}>
-                  <i className="ri-home-4-line"></i>
-                  <span>Home</span>
-                </a>
-              </li>
-              <li className="nav__item">
-                <a href="#about" className="nav__link" onClick={(e) => scrollToSection(e, 'about')}>
-                  <i className="ri-information-line"></i>
-                  <span>About</span>
-                </a>
-              </li>
-              <li className="nav__item">
-                <a href="#featured" className="nav__link" onClick={(e) => scrollToSection(e, 'featured')}>
-                  <i className="ri-book-3-line"></i>
-                  <span>Featured</span>
-                </a>
-              </li>
-              <li className="nav__item">
-                <a href="#plans" className="nav__link" onClick={(e) => scrollToSection(e, 'plans')}>
-                  <i className="ri-price-tag-3-line"></i>
-                  <span>Plans</span>
-                </a>
-              </li>
-              <li className="nav__item">
-                <a href="#testimonial" className="nav__link" onClick={(e) => scrollToSection(e, 'testimonial')}>
-                  <i className="ri-message-3-line"></i>
-                  <span>Testimonial</span>
-                </a>
-              </li>
-            </ul>
-          </div>
+        <main className="overflow-hidden">
+          <Hero
+            scrollToSection={scrollToSection}
+            heroContainerRef={heroContainerRef}
+            heroIndex={heroIndex}
+            heroBooks={heroBooks}
+          />
 
-          <div className="nav__actions">
-            <i className="ri-search-line search-button" id="search-button"></i>
-            <i
-              className="ri-user-line login-button"
-              id="login-button"
-              onClick={() => setIsLoginOpen(true)}
-              style={{ cursor: 'pointer' }}
-            ></i>
-            <i
-              className={`${themeIcon} change-theme`}
-              onClick={toggleTheme}
-              style={{ cursor: 'pointer' }}
-            ></i>
-          </div>
-        </nav>
-      </header>
+          <Services
+            freeShippingIcon={freeShippingIcon}
+            secureInfoIcon={secureInfoIcon}
+            chatbotIcon={chatbotIcon}
+          />
 
-      {/*==================== SEARCH ====================*/}
-      <div className="search" id="search-content">
-        <form action="" className="search__form">
-          <i className="ri-search-line search__icon"></i>
-          <input type="search" placeholder="What are you looking for?" className="search__input" />
-        </form>
-        <i className="ri-close-line search__close" id="search-close"></i>
+          <AboutUs
+            stats={stats}
+            setActivePopup={setActivePopup}
+            aboutBooks={aboutBooks}
+          />
+
+          <FeaturedSection
+            featuredBooks={featuredBooks}
+            featuredIndex={featuredIndex}
+            featuredPerView={featuredPerView}
+            setSelectedFeaturedBook={setSelectedFeaturedBook}
+            featuredPrev={featuredPrev}
+            featuredNext={featuredNext}
+          />
+
+          <Pricing setIsLoginOpen={setIsLoginOpen} />
+
+          <Testimonials
+            feedbacks={feedbacks}
+            testimonialIndex={testimonialIndex}
+            testimonialPerView={testimonialPerView}
+            testimonialImg1={testimonialImg1}
+            isLoading={isFeedbacksLoading}
+          />
+        </main>
+
+        <Footer logoIcon={logoIcon} />
+
+        {/* <a
+          href="#"
+          className={`duration-400 fixed right-4 z-10 inline-flex bg-[var(--container-color)] p-1.5 text-xl text-[var(--title-color)] shadow-[0_2px_8px_hsla(0,0%,0%,0.1)] transition-[bottom,transform,background-color] hover:-translate-y-2 dark:shadow-[0_2px_8px_hsla(0,0%,0%,0.4)] ${showScrollUp ? "bottom-24 min-[1150px]:bottom-12" : "-bottom-1/2"}`}
+          id="scroll-up"
+        >
+          <i className="ri-arrow-up-line"></i>
+        </a> */}
+
+        <LoginPopup
+          isOpen={isLoginOpen}
+          onClose={() => setIsLoginOpen(false)}
+          onForgotPassword={() => setIsForgotPasswordOpen(true)}
+          onSignup={() => setIsSignupOpen(true)}
+        />
+        <SignupPopup
+          isOpen={isSignupOpen}
+          onClose={() => setIsSignupOpen(false)}
+          onLogin={() => setIsLoginOpen(true)}
+        />
+        <ForgotPasswordPopup
+          isOpen={isForgotPasswordOpen}
+          onClose={() => setIsForgotPasswordOpen(false)}
+          onOTP={() => setIsOTPOpen(true)}
+          onBack={() => setIsLoginOpen(true)}
+        />
+        <OTPPopup
+          isOpen={isOTPOpen}
+          onClose={() => setIsOTPOpen(false)}
+          onResetPassword={() => setIsResetPasswordOpen(true)}
+          onBack={() => setIsForgotPasswordOpen(true)}
+        />
+        <ResetPasswordPopup
+          isOpen={isResetPasswordOpen}
+          onClose={() => setIsResetPasswordOpen(false)}
+          onLogin={() => setIsLoginOpen(true)}
+          onBack={() => setIsOTPOpen(true)}
+        />
+        <AboutBranchesPopup
+          isOpen={activePopup === "branches"}
+          onClose={() => setActivePopup(null)}
+        />
+        <FeaturedBookPopup
+          isOpen={Boolean(selectedFeaturedBook)}
+          book={selectedFeaturedBook}
+          onClose={() => setSelectedFeaturedBook(null)}
+        />
       </div>
-
-      {/*==================== MAIN ====================*/}
-      <main className="main">
-        {/*==================== HOME ====================*/}
-        <section className="home section" id="home">
-          <div className="home__container container grid">
-            <div className="home__data">
-              <h1 className="home__title">
-                 One Library, 
-Infinite Stories <br />
-              </h1>
-              <p className="home__description">
-              With Bookhive, every book has a place and every reader has a path: search, borrow, and renew in a few clicks, while librarians track everything effortlessly.
-              </p>
-              <a href="#featured" className="button" onClick={(e) => scrollToSection(e, 'featured')}>Explore Now</a>
-            </div>
-            <div className="home__images">
-              <div className="home__swiper swiper">
-                <div className="swiper-wrapper">
-                  <article className="home__article swiper-slide">
-                    <img src={new URL('./assets/img/91mNmA7i+kL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="image" className="home__img" />
-                  </article>
-                  <article className="home__article swiper-slide">
-                    <img src={new URL('./assets/img/91YCWH4jFdL.jpg', import.meta.url).href} alt="image" className="home__img" />
-                  </article>
-                  <article className="home__article swiper-slide">
-                    <img src={new URL('./assets/img/71ZPgUTDn6L._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="image" className="home__img" />
-                  </article>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/*==================== SERVICES ====================*/}
-        <section className="services section">
-          <div className="services__container container grid">
-            <article className="services__card">
-              <i className="ri-truck-line"></i>
-              <h3 className="services__title">Free Shipping</h3>
-              <p className="services__description">Order More Than $100</p>
-            </article>
-            <article className="services__card">
-              <i className="ri-lock-2-line"></i>
-              <h3 className="services__title">Secure Payment</h3>
-              <p className="services__description">100% Secure Payment</p>
-            </article>
-            <article className="services__card">
-              <i className="ri-customer-service-2-line"></i>
-              <h3 className="services__title">24/7 Support</h3>
-              <p className="services__description">Call us anytime</p>
-            </article>
-          </div>
-        </section>
-
-        {/*==================== about us====================*/}
-        <section className="section-about" id="about" aria-labelledby="about-heading">
-          <div className="container">
-            <h2 id="about-heading" className="about-title">About Us</h2>
-            <div className="about-grid">
-              <div className="about-left">
-                <p className="about-text">
-                  We are a smart, technology-driven library system that uses RFID to make book management faster and easier.
-                  Our platform helps students and staff search, borrow, and track books efficiently with a modern and user-friendly design.
-                </p>
-                <div className="stats" role="list" aria-label="Quick facts">
-                  <div className="stat" role="listitem">
-                    <div className="num">5+</div>
-                    <div className="label">Branches</div>
-                  </div>
-                  <div className="stat" role="listitem">
-                    <div className="num">1K+</div>
-                    <div className="label">Books</div>
-                  </div>
-                  <div className="stat" role="listitem">
-                    <div className="num">100+</div>
-                    <div className="label">Category</div>
-                  </div>
-                </div>
-                <div>
-                  <a
-                    className="about-cta"
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setActivePopup('branches');
-                    }}
-                  >
-                    Where are we?
-                  </a>
-                </div>
-              </div>
-              <div className="about-right" aria-hidden="true">
-                <img className="book back" src={new URL('./assets/img/81VT2VfXZYL._AC_UF894,1000_QL80_.jpg', import.meta.url).href} alt="Sir Bobby Charlton book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                <img className="book front" src={new URL('./assets/img/81e85tPVJpL._AC_UF1000,1000_QL80_.jpg', import.meta.url).href} alt="Arsene Wenger book cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/*==================== FEATURED ====================*/}
-        <section className="featured section" id="featured">
-          <h2 className="section__title">Featured Books</h2>
-          <div className="featured__container container">
-            <div className="featured__swiper swiper">
-              <div className="swiper-wrapper">
-                {featuredBooks.map((book) => (
-                  <article key={book.name} className="featured__card swiper-slide">
-                    <img src={book.image} alt={book.name} className="featured__img" />
-                    <h2 className="featured__title">{book.name}</h2>
-                    <button className="button" onClick={() => setSelectedFeaturedBook(book)}>
-                      Book Now
-                    </button>
-                  </article>
-                ))}
-              </div>
-              <div className="swiper-button-prev">
-                <i className="ri-arrow-left-s-line"></i>
-              </div>
-              <div className="swiper-button-next">
-                <i className="ri-arrow-right-s-line"></i>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/*==================== choose the best plan ====================*/}
-        <section className="section" id="plans" aria-labelledby="pricing-heading">
-          <div className="container">
-            <h1 id="pricing-heading" className="heading">Choose The best Plan</h1>
-            <p className="subheading">choose a plan that's right for your growing team. Simple pricing &amp; No hidden charges.</p>
-
-            <div className="plans" role="list">
-              <article className="plan" role="listitem" aria-labelledby="plan-discover">
-                <div id="plan-discover" className="plan-title">Discover</div>
-                <div className="price">
-                  <span className="small-price">$99</span>
-                  <small>/ Per Month</small>
-                </div>
-                <div className="features">
-                  <div className="feature"><span className="tick">&#10003;</span>Borrow up to 3 books per month.</div>
-                  <div className="feature"><span className="tick">&#10003;</span>Loan period: 7 days per book.</div>
-                  <div className="feature"><span className="tick">&#10003;</span>1 renewal per book</div>
-                </div>
-                <a className="btn" href="#" role="button" aria-label="Subscribe to Discover" onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}>
-                  Subscribe
-                </a>
-              </article>
-
-              <article className="plan center" role="listitem" aria-labelledby="plan-enterprise">
-                <div id="plan-enterprise" className="plan-title">Enterprise</div>
-                <div className="price">
-                  <span>$299</span>
-                  <small>/ Per Month</small>
-                </div>
-                <div className="features">
-                  <div className="feature"><span className="tick">&#10003;</span>Borrow up to 15 books per month</div>
-                  <div className="feature"><span className="tick">&#10003;</span>Loan period: 21 days per book.</div>
-                  <div className="feature"><span className="tick">&#10003;</span>3 renewal per book</div>
-                </div>
-                <a className="btn" href="#" role="button" aria-label="Subscribe to Enterprise" onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}>
-                  Subscribe
-                </a>
-              </article>
-
-              <article className="plan" role="listitem" aria-labelledby="plan-pro">
-                <div id="plan-pro" className="plan-title">Professional</div>
-                <div className="price">
-                  <span className="small-price">$199</span>
-                  <small>/ Per Month</small>
-                </div>
-                <div className="features">
-                  <div className="feature"><span className="tick">&#10003;</span>Borrow up to 10 books per month</div>
-                  <div className="feature"><span className="tick">&#10003;</span>Loan period: 14 days per book.</div>
-                  <div className="feature"><span className="tick">&#10003;</span>2 renewal per book</div>
-                </div>
-                <a className="btn" href="#" role="button" aria-label="Subscribe to Professional" onClick={(e) => { e.preventDefault(); setIsLoginOpen(true); }}>
-                  Subscribe
-                </a>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        {/*==================== TESTIMONIAL ====================*/}
-        <section className="testimonial section" id="testimonial">
-          <h2 className="section__title">Customer Opinions</h2>
-          <div className="testimonial__container container">
-            <div className="testimonial__swiper swiper">
-              <div className="swiper-wrapper">
-                <article className="testimonial__card swiper-slide">
-                  <img src={new URL('./assets/img/testimonial-perfil-1.png', import.meta.url).href} alt="image" className="testimonial__img" />
-                  <h2 className="testimonial__title">Rial Loz</h2>
-                  <p className="testimonial__description">
-                    The best website to buy books, the purchase
-                    is very easy to make and has great discounts.
-                  </p>
-                  <div className="testimonial__stars">
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-half-fill"></i>
-                  </div>
-                </article>
-                <article className="testimonial__card swiper-slide">
-                  <img src={new URL('./assets/img/testimonial-perfil-2.png', import.meta.url).href} alt="image" className="testimonial__img" />
-                  <h2 className="testimonial__title">Rial Loz</h2>
-                  <p className="testimonial__description">
-                    The best website to buy books, the purchase
-                    is very easy to make and has great discounts.
-                  </p>
-                  <div className="testimonial__stars">
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-half-fill"></i>
-                  </div>
-                </article>
-                <article className="testimonial__card swiper-slide">
-                  <img src={new URL('./assets/img/testimonial-perfil-2.png', import.meta.url).href} alt="image" className="testimonial__img" />
-                  <h2 className="testimonial__title">Rial Loz</h2>
-                  <p className="testimonial__description">
-                    The best website to buy books, the purchase
-                    is very easy to make and has great discounts.
-                  </p>
-                  <div className="testimonial__stars">
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-fill"></i>
-                    <i className="ri-star-half-fill"></i>
-                  </div>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/*==================== FOOTER ====================*/}
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-col footer-brand">
-            <a href="#" className="footer-logo">
-              <img src={new URL('./assets/bookhive_icon_only_black-removebg-preview 2.svg', import.meta.url).href} alt="Book Hive Logo" style={{ width: '60px', height: 'auto' }} />
-              <div className="logo-text">
-                <span className="name">BookHive</span>
-                <span className="sub">Library</span>
-              </div>
-            </a>
-            <p className="footer-description">
-              Find and explore the best <br />
-              eBooks from all your <br />
-              favorite writers.
-            </p>
-          </div>
-          <div className="footer-col">
-            <h3 className="footer-title">About</h3>
-            <ul className="footer-links">
-              <li><a href="#">Who are we ?</a></li>
-              <li><a href="#">Our Branches</a></li>
-              <li><a href="#">Customer Feedback</a></li>
-            </ul>
-          </div>
-          <div className="footer-col">
-            <h3 className="footer-title">Contact</h3>
-            <ul className="footer-links">
-              <li>Cairo, Egypt</li>
-              <li>BookHive@gmail.com</li>
-              <li>01122334455</li>
-            </ul>
-          </div>
-          <div className="footer-col">
-            <h3 className="footer-title">Social</h3>
-            <div className="footer-social">
-              <a href="#"><i className="ri-facebook-circle-line"></i></a>
-              <a href="#"><i className="ri-instagram-line"></i></a>
-              <a href="#"><i className="ri-twitter-x-line"></i></a>
-            </div>
-          </div>
-        </div>
-        <p className="footer-copy">&copy; All Rights Reserved By BookHive</p>
-      </footer>
-
-      {/*========== SCROLL UP ==========*/}
-      <a href="#" className="scrollup" id="scroll-up">
-        <i className="ri-arrow-up-line"></i>
-      </a>
-
-      {/*========== AUTH POPUPS ==========*/}
-      <LoginPopup
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onForgotPassword={() => setIsForgotPasswordOpen(true)}
-        onSignup={() => setIsSignupOpen(true)}
-      />
-      <SignupPopup
-        isOpen={isSignupOpen}
-        onClose={() => setIsSignupOpen(false)}
-        onLogin={() => setIsLoginOpen(true)}
-      />
-      <ForgotPasswordPopup
-        isOpen={isForgotPasswordOpen}
-        onClose={() => setIsForgotPasswordOpen(false)}
-        onOTP={() => setIsOTPOpen(true)}
-        onBack={() => setIsLoginOpen(true)}
-      />
-      <OTPPopup
-        isOpen={isOTPOpen}
-        onClose={() => setIsOTPOpen(false)}
-        onResetPassword={() => setIsResetPasswordOpen(true)}
-        onBack={() => setIsForgotPasswordOpen(true)}
-      />
-      <ResetPasswordPopup
-        isOpen={isResetPasswordOpen}
-        onClose={() => setIsResetPasswordOpen(false)}
-        onLogin={() => setIsLoginOpen(true)}
-        onBack={() => setIsOTPOpen(true)}
-      />
-      <AboutBranchesPopup isOpen={activePopup === 'branches'} onClose={() => setActivePopup(null)} />
-      <FeaturedBookPopup
-        isOpen={Boolean(selectedFeaturedBook)}
-        book={selectedFeaturedBook}
-        onClose={() => setSelectedFeaturedBook(null)}
-      />
-    </div>
+    </>
   );
 };
 

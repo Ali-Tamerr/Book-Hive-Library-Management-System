@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useUser } from "../hooks/useUsers";
+import { getImageUrl } from "../services/api.config";
 import {
   Settings,
   Menu,
@@ -15,7 +17,7 @@ import GlobalSearchPopup from "./GlobalSearchPopup";
 import SettingsPopup from "./SettingsPopup";
 import AdminNotifications from "./AdminNotifications";
 import FeedbackPopup from "./FeedbackPopup";
-import FeedbackIcon from "../Home/assets/img/ix_feedback-filled.svg?react";
+import FeedbackIcon from "../assets/img/ix_feedback-filled.svg?react";
 
 const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
@@ -25,7 +27,10 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [, setForceUpdate] = useState(0);
   const location = useLocation();
 
-  const currentUser = getCurrentUser();
+  const localUser = getCurrentUser();
+  const { data: userProfile } = useUser(localUser?.user_id);
+  const currentUser =
+    userProfile && userProfile.user_id ? userProfile : localUser;
   const getRoleLabel = () => {
     const role = currentUser?.role?.toLowerCase();
     if (role === "admin") return "Librarian";
@@ -96,9 +101,19 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
 
   return (
     <>
-      <header className="flex h-min flex-1 items-center justify-between bg-white px-4 py-4 text-[#0a0f33] shadow-[0_2px_6px_rgba(0,0,0,0.05)] dark:bg-[#121317] dark:text-[#E8E8E8]">
+      <header className="flex h-min w-full items-center justify-between bg-white px-4 py-4 text-[#0a0f33] shadow-[0_2px_6px_rgba(0,0,0,0.05)] dark:bg-[#121317] dark:text-[#E8E8E8]">
         <div className="flex-2 flex items-center gap-3">
-          <UserRound className="h-12 w-12" />
+          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+            {currentUser?.image_url ? (
+              <img
+                src={getImageUrl(currentUser.image_url)}
+                alt="Profile"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <UserRound className="h-12 w-12" />
+            )}
+          </div>
           <div>
             <h3 className="text-lg font-semibold max-[480px]:text-sm max-[350px]:text-xs">
               {currentUser ? currentUser.name || "User" : "Loading..."}

@@ -50,7 +50,7 @@ const CommonLayout = ({
   }, [hasMore, onLoadMore, isLoading]);
 
   return (
-    <div className="flex min-h-screen flex-col gap-5 p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
+    <div className="flex min-h-full flex-1 flex-col gap-5 p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
       <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
         <div className="flex items-center justify-between max-[856px]:gap-2">
           {customTitle ? (
@@ -99,7 +99,7 @@ const CommonLayout = ({
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className="p-3 text-center font-medium"
+                    className="p-3 text-[18px] text-center tracking-widest font-medium"
                   >
                     {col.header}
                   </th>

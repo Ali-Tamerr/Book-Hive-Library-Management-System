@@ -101,26 +101,21 @@ function Layout({
     }
 
     const restrictedAdminOnlyRoutes = ["/admin/branches", "/admin/categories"];
-    if (role === "admin" && restrictedAdminOnlyRoutes.includes(location.pathname)) {
+    if (
+      role === "admin" &&
+      restrictedAdminOnlyRoutes.includes(location.pathname)
+    ) {
       return <Navigate to="/admin/dashboard" replace />;
     }
   }
 
   if (isHomePage) {
-    return (
-      <Suspense
-        fallback={
-          <PageLoader className="bg-[hsl(230,100%,96%)] dark:bg-[#111214]" />
-        }
-      >
-        {children}
-      </Suspense>
-    );
+    return <Suspense>{children}</Suspense>;
   }
 
   if (isAuthRoute) {
     return (
-      <div className="h-screen bg-[#F2F2F2] text-[#0a0f33]">
+      <div className="h-screen bg-[#E8E8E8] text-[#0a0f33]">
         <Suspense fallback={<PageLoader />}>{children}</Suspense>
       </div>
     );
@@ -142,7 +137,7 @@ function Layout({
           setSearchValue={setSearchValue}
           toggleSidebar={toggleSidebar}
         />
-        <div className="flex-99 [1540px]:py-0 h-0 min-h-0 overflow-auto">
+        <div className="[1540px]:py-0 flex h-0 min-h-0 flex-1 flex-col overflow-auto">
           <Suspense fallback={<PageLoader />}>{children}</Suspense>
         </div>
       </main>
