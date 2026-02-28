@@ -6,6 +6,9 @@ const PieChart = ({
   returnedBooks,
   className,
 }) => {
+  const borrowedColor = "var(--pie-borrowed-color)";
+  const returnedColor = "var(--pie-returned-color)";
+
   const size = 9999;
   const radius = size / 2;
   const center = size / 2;
@@ -22,12 +25,7 @@ const PieChart = ({
         className={`flex h-full w-full items-center justify-center ${className || ""}`}
       >
         <svg viewBox={`0 0 ${size} ${size}`} className="block h-full w-full">
-          <circle
-            cx={center}
-            cy={center}
-            r={radius}
-            className="fill-[#3D3E3E]"
-          />
+          <circle cx={center} cy={center} r={radius} fill={borrowedColor} />
         </svg>
       </div>
     );
@@ -89,12 +87,7 @@ const PieChart = ({
         preserveAspectRatio="xMidYMid meet"
       >
         {isBorrowedFullCircle ? (
-          <circle
-            cx={center}
-            cy={center}
-            r={radius}
-            className="fill-[#3D3E3E] dark:fill-[#D7D7D7]"
-          />
+          <circle cx={center} cy={center} r={radius} fill={borrowedColor} />
         ) : (
           borrowedDegrees > 0 && (
             <path
@@ -105,17 +98,12 @@ const PieChart = ({
                 borrowedStart,
                 borrowedEnd,
               )}
-              className="fill-[#3D3E3E] dark:fill-[#D7D7D7]"
+              fill={borrowedColor}
             />
           )
         )}
         {isReturnedFullCircle ? (
-          <circle
-            cx={center}
-            cy={center}
-            r={radius}
-            className="fill-[#000035]"
-          />
+          <circle cx={center} cy={center} r={radius} fill={returnedColor} />
         ) : (
           returnedDegrees > 0 && (
             <path
@@ -126,7 +114,7 @@ const PieChart = ({
                 returnedStart,
                 returnedEnd,
               )}
-              className="fill-[#000035]"
+              fill={returnedColor}
             />
           )
         )}
