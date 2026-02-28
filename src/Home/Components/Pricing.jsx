@@ -42,10 +42,10 @@ const PricingCard = ({ plan, setIsLoginOpen }) => {
 
   return (
     <article
-      className={`plan group flex w-full transform-gpu flex-col justify-start rounded-[18px] border-2 px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-all duration-[300ms] ease-in-out hover:-translate-y-3 hover:shadow-[0_16px_34px_rgba(0,0,0,0.2)] max-[680px]:min-h-[380px] dark:hover:shadow-[0_20px_36px_rgba(0,0,0,0.5)] ${
+        className={`plan group flex w-full transform-gpu flex-col justify-start rounded-[18px] border-2 px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-all duration-[300ms] ease-in-out hover:-translate-y-3 hover:shadow-[0_16px_34px_rgba(0,0,0,0.2)] max-[680px]:min-h-[380px] dark:hover:shadow-[0_20px_36px_rgba(0,0,0,0.5)] ${
         plan.isPopular
-          ? "center flex-8 -mt-5 min-h-[520px] bg-[var(--center-bg)] pt-16 max-[1000px]:mt-0 max-[1000px]:min-h-[420px] dark:!shadow-[0_18px_28px_rgba(0,0,0,0.4)]"
-          : "flex-7 min-h-[660px] bg-[var(--card-bg)]"
+          ? "center flex-8 -mt-5 min-h-[520px] bg-[var(--center-bg)] pt-16 max-[1000px]:mt-0 max-[1000px]:min-h-[420px] dark:bg-transparent"
+          : "flex-7 min-h-[660px] bg-[var(--card-bg)] dark:bg-transparent"
       } border-transparent hover:border-[#000035] dark:hover:!border-[#E3E3E3]`}
       role="listitem"
       aria-labelledby={plan.id}
@@ -111,8 +111,7 @@ const Pricing = ({ setIsLoginOpen }) => {
         </p>
 
         <div
-          className="plans px-13 flex flex-col items-stretch gap-16 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-white py-14 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none"
-          role="list"
+                  className="plans px-13 flex flex-col items-stretch gap-16 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-white py-14 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none"
         >
           {plansData.map((plan) => (
             <PricingCard
