@@ -56,12 +56,17 @@ const Home = () => {
     console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
       try {
-        const [branchData, catData] = await Promise.all([
+        const [branchData, bookData, catData] = await Promise.all([
           apiGet("/Branches"),
+          apiGet("/Books"),
           apiGet("/Categories"),
         ]);
+        const bookArray = Array.isArray(bookData)
+          ? bookData
+          : bookData?.data || [];
         setStats({
           branches: Array.isArray(branchData) ? branchData.length : 0,
+          books: Array.isArray(bookArray) ? bookArray.length : 0,
           categories: Array.isArray(catData) ? catData.length : 0,
         });
         // Numbers loaded — hide loading screen
@@ -127,34 +132,45 @@ const Home = () => {
   useEffect(() => {
     if (!pageLoaded || !booksSource) return;
 
-    const mapBooks = (books) => {
-      const arr = Array.isArray(books) ? books : books?.data || [];
-      return arr
-        .map((book) => ({
-          book_id: book.book_id,
-          name: book.name,
-          category_id: book.category_id,
-          quantity: book.quantity,
-          created_at: book.created_at,
-          image: getImageUrl(book.image_url) || "",
-        }))
-        .filter((b) => b.image);
-    };
+    const rawArray = Array.isArray(booksSource)
+      ? booksSource
+      : booksSource?.data || [];
 
-    const withImages = mapBooks(booksSource);
-    if (!withImages.length) {
+    if (!rawArray.length) {
       setHeroBooks([]);
       setAboutBooks([]);
       setFeaturedBooks([]);
       return;
     }
 
-    const sortedByDate = [...withImages].sort(
-      (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+    // Work on raw data first (cheap), then convert images only for the
+    // small subset of books we actually show on the homepage.
+    const sortedRawByDate = [...rawArray].sort(
+      (a, b) =>
+        new Date(b.created_at || 0) - new Date(a.created_at || 0),
     );
 
-    const heroList = sortedByDate.slice(0, 10);
-    const featuredList = sortedByDate.slice(0, 10);
+    const heroRaw = sortedRawByDate.slice(0, 12);
+    const featuredRaw = sortedRawByDate.slice(0, 12);
+
+    const toViewModel = (book) => ({
+      book_id: book.book_id,
+      name: book.name,
+      category_id: book.category_id,
+      quantity: book.quantity,
+      created_at: book.created_at,
+      image: getImageUrl(book.image_url) || "",
+    });
+
+    const heroList = heroRaw
+      .map(toViewModel)
+      .filter((b) => b.image)
+      .slice(0, 10);
+
+    const featuredList = featuredRaw
+      .map(toViewModel)
+      .filter((b) => b.image)
+      .slice(0, 10);
 
     // About Us should reuse covers already used in other sections (Hero/Featured),
     // to avoid picking slow/bad images from the full dataset.
@@ -163,7 +179,9 @@ const Home = () => {
       if (!b?.book_id) return;
       poolMap.set(b.book_id, b);
     });
-    const pool = poolMap.size ? Array.from(poolMap.values()) : withImages;
+    const pool = poolMap.size ? Array.from(poolMap.values()) : heroList.length
+      ? heroList
+      : featuredList;
 
     const pickTwo = (list) => {
       if (!list.length) return [];
@@ -174,12 +192,12 @@ const Home = () => {
       return [list[first], list[second]];
     };
 
-    const aboutSelected = pickTwo(pool);
+    const aboutSelected = pickTwo(pool || []);
 
     // If we didn't randomly pick two distinct books (e.g. only one exists),
     // pad the list so About Us always has two covers to render.
-    while (aboutSelected.length < 2 && withImages.length) {
-      aboutSelected.push(withImages[aboutSelected.length % withImages.length]);
+    while (aboutSelected.length < 2 && heroList.length) {
+      aboutSelected.push(heroList[aboutSelected.length % heroList.length]);
     }
 
     setHeroBooks(heroList);
@@ -209,22 +227,6 @@ const Home = () => {
       console.error("Failed to cache home books:", error);
     }
   }, [pageLoaded, heroBooks, aboutBooks, featuredBooks]);
-
-  // 2e. Once booksSource is available, update the books count in stats
-  useEffect(() => {
-    if (!booksSource) return;
-    try {
-      const arr = Array.isArray(booksSource)
-        ? booksSource
-        : booksSource?.data || [];
-      setStats((prev) => ({
-        ...prev,
-        books: Array.isArray(arr) ? arr.length : prev.books,
-      }));
-    } catch {
-      // ignore count update errors
-    }
-  }, [booksSource]);
 
   // 3. Load feedbacks (non-blocking for loading screen)
   useEffect(() => {
