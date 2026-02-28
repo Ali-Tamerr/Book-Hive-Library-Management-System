@@ -56,15 +56,12 @@ const Home = () => {
     console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
       try {
-        const [branchData, bookData, catData] = await Promise.all([
+        const [branchData, catData] = await Promise.all([
           apiGet("/Branches"),
-          apiGet("/Books"),
           apiGet("/Categories"),
         ]);
-        setBooksSource(bookData);
         setStats({
           branches: Array.isArray(branchData) ? branchData.length : 0,
-          books: Array.isArray(bookData) ? bookData.length : 0,
           categories: Array.isArray(catData) ? catData.length : 0,
         });
         // Numbers loaded — hide loading screen
@@ -105,7 +102,28 @@ const Home = () => {
     }
   }, [pageLoaded]);
 
-  // 2b. Derive hero/about/featured books from a single Books response after loading screen disappears
+  // 2b. Fetch full books list once, after loading screen disappears
+  useEffect(() => {
+    if (!pageLoaded || booksSource) return;
+
+    let cancelled = false;
+    const fetchBooks = async () => {
+      try {
+        const data = await apiGet("/Books");
+        if (cancelled) return;
+        setBooksSource(data);
+      } catch (error) {
+        console.error("Failed to fetch books for home:", error);
+      }
+    };
+
+    fetchBooks();
+    return () => {
+      cancelled = true;
+    };
+  }, [pageLoaded, booksSource]);
+
+  // 2c. Derive hero/about/featured books from a single Books response
   useEffect(() => {
     if (!pageLoaded || !booksSource) return;
 
@@ -169,7 +187,7 @@ const Home = () => {
     setAboutBooks(aboutSelected);
   }, [pageLoaded, booksSource]);
 
-  // 2c. Persist processed home book covers in local storage for faster reloads
+  // 2d. Persist processed home book covers in local storage for faster reloads
   useEffect(() => {
     if (!pageLoaded) return;
     if (
@@ -191,6 +209,22 @@ const Home = () => {
       console.error("Failed to cache home books:", error);
     }
   }, [pageLoaded, heroBooks, aboutBooks, featuredBooks]);
+
+  // 2e. Once booksSource is available, update the books count in stats
+  useEffect(() => {
+    if (!booksSource) return;
+    try {
+      const arr = Array.isArray(booksSource)
+        ? booksSource
+        : booksSource?.data || [];
+      setStats((prev) => ({
+        ...prev,
+        books: Array.isArray(arr) ? arr.length : prev.books,
+      }));
+    } catch {
+      // ignore count update errors
+    }
+  }, [booksSource]);
 
   // 3. Load feedbacks (non-blocking for loading screen)
   useEffect(() => {
