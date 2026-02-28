@@ -39,7 +39,6 @@ const Home = () => {
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
   const [feedbacks, setFeedbacks] = useState([]);
   const [isFeedbacksLoading, setIsFeedbacksLoading] = useState(false);
-  const [isContentReady, setIsContentReady] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showShadowHeader, setShowShadowHeader] = useState(false);
@@ -47,87 +46,117 @@ const Home = () => {
   const [activeSection, setActiveSection] = useState("");
   const [heroIndex, setHeroIndex] = useState(0);
   const [featuredIndex, setFeaturedIndex] = useState(0);
-  const [testimonialIndex, setTestimonialIndex] = useState(0);
   const heroIntervalRef = useRef(null);
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
 
+  // 1. Stats (numbers) must load before loading screen disappears
   useEffect(() => {
-    console.debug("Home: mount - starting data fetch effects");
-    const fetchBooks = async () => {
-      console.debug("Home: fetchBooks called");
-      try {
-        const data = await apiGet("/Books");
-        console.debug("Home: fetchBooks apiGet returned", data && (Array.isArray(data) ? data.length : (data.data || []).length));
-        const books = Array.isArray(data) ? data : data.data || [];
-        const sorted = [...books].sort(
-          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
-        );
-        const mapped = sorted.map((book) => ({
-          book_id: book.book_id,
-          name: book.name,
-          category_id: book.category_id,
-          quantity: book.quantity,
-          image: getImageUrl(book.image_url) || "",
-        }));
-
-        const withImages = mapped.filter((b) => b.image);
-        const recent10 = withImages.slice(0, 10);
-        setFeaturedBooks(recent10);
-        setHeroBooks(recent10);
-
-        const shuffled = [...withImages].sort(() => 0.5 - Math.random());
-        setAboutBooks(shuffled.slice(0, 2));
-      } catch (error) {
-        console.error("Failed to fetch featured books:", error);
-      }
-    };
-
+    console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
-      console.debug("Home: fetchStats called");
       try {
         const [branchData, bookData, catData] = await Promise.all([
           apiGet("/Branches"),
           apiGet("/Books"),
           apiGet("/Categories"),
         ]);
-        console.debug("Home: fetchStats returned", {
-          branches: branchData && branchData.length,
-          books: bookData && bookData.length,
-          categories: catData && catData.length,
-        });
         setStats({
           branches: Array.isArray(branchData) ? branchData.length : 0,
           books: Array.isArray(bookData) ? bookData.length : 0,
           categories: Array.isArray(catData) ? catData.length : 0,
         });
+        // Numbers loaded — hide loading screen
+        requestAnimationFrame(() => {
+          setTimeout(() => setPageLoaded(true), 50);
+        });
       } catch (error) {
         console.error("Failed to fetch stats:", error);
+        // Still hide loading screen on error to avoid infinite loader
+        requestAnimationFrame(() => {
+          setTimeout(() => setPageLoaded(true), 50);
+        });
+      }
+    };
+    fetchStats();
+  }, []);
+
+  // 2. Book fetches start only after loading screen disappears; each section loads independently
+  useEffect(() => {
+    if (!pageLoaded) return;
+
+    const mapBooks = (books) => {
+      const arr = Array.isArray(books) ? books : books?.data || [];
+      return arr
+        .map((book) => ({
+          book_id: book.book_id,
+          name: book.name,
+          category_id: book.category_id,
+          quantity: book.quantity,
+          image: getImageUrl(book.image_url) || "",
+        }))
+        .filter((b) => b.image);
+    };
+
+    const fetchHeroBooks = async () => {
+      try {
+        const data = await apiGet("/Books");
+        const withImages = mapBooks(data);
+        const sorted = [...withImages].sort(
+          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+        );
+        setHeroBooks(sorted.slice(0, 10));
+      } catch (error) {
+        console.error("Failed to fetch hero books:", error);
       }
     };
 
+    const fetchAboutBooks = async () => {
+      try {
+        const data = await apiGet("/Books");
+        const withImages = mapBooks(data);
+        const shuffled = [...withImages].sort(() => 0.5 - Math.random());
+        setAboutBooks(shuffled.slice(0, 2));
+      } catch (error) {
+        console.error("Failed to fetch about books:", error);
+      }
+    };
+
+    const fetchFeaturedBooks = async () => {
+      try {
+        const data = await apiGet("/Books");
+        const withImages = mapBooks(data);
+        const sorted = [...withImages].sort(
+          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+        );
+        setFeaturedBooks(sorted.slice(0, 10));
+      } catch (error) {
+        console.error("Failed to fetch featured books:", error);
+      }
+    };
+
+    fetchHeroBooks();
+    fetchAboutBooks();
+    fetchFeaturedBooks();
+  }, [pageLoaded]);
+
+  // 3. Load feedbacks (non-blocking for loading screen)
+  useEffect(() => {
     const loadFeedbacks = async () => {
-      console.debug("Home: loadFeedbacks called");
       try {
         setIsFeedbacksLoading(true);
         const approved = await apiGet("/Feedbacks/approved");
-        console.debug("Home: loadFeedbacks returned", approved && (Array.isArray(approved) ? approved.length : (approved.data || []).length));
         const dataArray = Array.isArray(approved)
           ? approved
           : approved.data || [];
         setFeedbacks(dataArray);
-        setIsFeedbacksLoading(false);
       } catch (error) {
         console.error("Failed to fetch feedbacks:", error);
         setFeedbacks([]);
+      } finally {
         setIsFeedbacksLoading(false);
       }
     };
-
-    Promise.all([fetchBooks(), fetchStats()]).then(async () => {
-      await loadFeedbacks();
-      setTimeout(() => setIsContentReady(true), 100);
-    });
+    loadFeedbacks();
 
     const handleFeedbackUpdate = () => loadFeedbacks();
     window.addEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
@@ -137,18 +166,6 @@ const Home = () => {
       window.removeEventListener("userUpdated", handleFeedbackUpdate);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isContentReady) return;
-
-    // When basic HTML/CSS/text is ready, show the page loader immediately
-    // Do NOT wait for all images to load — images will lazy-load individually.
-    const rafId = requestAnimationFrame(() => {
-      setTimeout(() => setPageLoaded(true), 50);
-    });
-
-    return () => cancelAnimationFrame(rafId);
-  }, [isContentReady]);
 
   useEffect(() => {
     const selectedTheme = localStorage.getItem("selected-theme");
@@ -161,11 +178,7 @@ const Home = () => {
       setThemeIcon("ri-sun-line");
     }
 
-    // specific Home page body background color fix
     document.body.classList.add("home-page-active");
-    // mark content ready very early so the loader can hide while images load lazily
-    requestAnimationFrame(() => setIsContentReady(true));
-
     return () => document.body.classList.remove("home-page-active");
   }, []);
 
@@ -229,10 +242,6 @@ const Home = () => {
     typeof window !== "undefined" && window.innerWidth >= 1150 ? 3 : 1;
 
   const featuredMaxIndex = Math.max(0, featuredBooks.length - featuredPerView);
-  const testimonialMaxIndex = Math.max(
-    0,
-    feedbacks.length - testimonialPerView,
-  );
 
   const featuredPrev = useCallback(() => {
     setFeaturedIndex((prev) => (prev <= 0 ? featuredMaxIndex : prev - 1));
@@ -320,7 +329,6 @@ const Home = () => {
 
           <Testimonials
             feedbacks={feedbacks}
-            testimonialIndex={testimonialIndex}
             testimonialPerView={testimonialPerView}
             testimonialImg1={testimonialImg1}
             isLoading={isFeedbacksLoading}

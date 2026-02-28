@@ -62,6 +62,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
                     src={book.image}
                     alt={book.name}
                     className="rounded-xs !h-[563px] !w-[422px] !max-w-none !object-cover"
+                    priority
                   />
                 </article>
               ))}
