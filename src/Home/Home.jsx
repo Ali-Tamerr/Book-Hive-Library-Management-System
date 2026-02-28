@@ -36,6 +36,7 @@ const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [heroBooks, setHeroBooks] = useState([]);
   const [aboutBooks, setAboutBooks] = useState([]);
+  const [booksSource, setBooksSource] = useState(null);
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
   const [feedbacks, setFeedbacks] = useState([]);
   const [isFeedbacksLoading, setIsFeedbacksLoading] = useState(false);
@@ -60,6 +61,7 @@ const Home = () => {
           apiGet("/Books"),
           apiGet("/Categories"),
         ]);
+        setBooksSource(bookData);
         setStats({
           branches: Array.isArray(branchData) ? branchData.length : 0,
           books: Array.isArray(bookData) ? bookData.length : 0,
@@ -103,9 +105,9 @@ const Home = () => {
     }
   }, [pageLoaded]);
 
-  // 2b. Book fetches start only after loading screen disappears; each section loads independently
+  // 2b. Derive hero/about/featured books from a single Books response after loading screen disappears
   useEffect(() => {
-    if (!pageLoaded) return;
+    if (!pageLoaded || !booksSource) return;
 
     const mapBooks = (books) => {
       const arr = Array.isArray(books) ? books : books?.data || [];
@@ -115,52 +117,57 @@ const Home = () => {
           name: book.name,
           category_id: book.category_id,
           quantity: book.quantity,
+          created_at: book.created_at,
           image: getImageUrl(book.image_url) || "",
         }))
         .filter((b) => b.image);
     };
 
-    const fetchHeroBooks = async () => {
-      try {
-        const data = await apiGet("/Books");
-        const withImages = mapBooks(data);
-        const sorted = [...withImages].sort(
-          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
-        );
-        setHeroBooks(sorted.slice(0, 10));
-      } catch (error) {
-        console.error("Failed to fetch hero books:", error);
-      }
+    const withImages = mapBooks(booksSource);
+    if (!withImages.length) {
+      setHeroBooks([]);
+      setAboutBooks([]);
+      setFeaturedBooks([]);
+      return;
+    }
+
+    const sortedByDate = [...withImages].sort(
+      (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+    );
+
+    const heroList = sortedByDate.slice(0, 10);
+    const featuredList = sortedByDate.slice(0, 10);
+
+    // About Us should reuse covers already used in other sections (Hero/Featured),
+    // to avoid picking slow/bad images from the full dataset.
+    const poolMap = new Map();
+    [...heroList, ...featuredList].forEach((b) => {
+      if (!b?.book_id) return;
+      poolMap.set(b.book_id, b);
+    });
+    const pool = poolMap.size ? Array.from(poolMap.values()) : withImages;
+
+    const pickTwo = (list) => {
+      if (!list.length) return [];
+      if (list.length === 1) return [list[0], list[0]];
+      const first = Math.floor(Math.random() * list.length);
+      let second = Math.floor(Math.random() * (list.length - 1));
+      if (second >= first) second += 1;
+      return [list[first], list[second]];
     };
 
-    const fetchAboutBooks = async () => {
-      try {
-        const data = await apiGet("/Books");
-        const withImages = mapBooks(data);
-        const shuffled = [...withImages].sort(() => 0.5 - Math.random());
-        setAboutBooks(shuffled.slice(0, 2));
-      } catch (error) {
-        console.error("Failed to fetch about books:", error);
-      }
-    };
+    const aboutSelected = pickTwo(pool);
 
-    const fetchFeaturedBooks = async () => {
-      try {
-        const data = await apiGet("/Books");
-        const withImages = mapBooks(data);
-        const sorted = [...withImages].sort(
-          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
-        );
-        setFeaturedBooks(sorted.slice(0, 10));
-      } catch (error) {
-        console.error("Failed to fetch featured books:", error);
-      }
-    };
+    // If we didn't randomly pick two distinct books (e.g. only one exists),
+    // pad the list so About Us always has two covers to render.
+    while (aboutSelected.length < 2 && withImages.length) {
+      aboutSelected.push(withImages[aboutSelected.length % withImages.length]);
+    }
 
-    fetchHeroBooks();
-    fetchAboutBooks();
-    fetchFeaturedBooks();
-  }, [pageLoaded]);
+    setHeroBooks(heroList);
+    setFeaturedBooks(featuredList);
+    setAboutBooks(aboutSelected);
+  }, [pageLoaded, booksSource]);
 
   // 2c. Persist processed home book covers in local storage for faster reloads
   useEffect(() => {
@@ -317,6 +324,13 @@ const Home = () => {
     return () => observer.disconnect();
   }, [pageLoaded]);
 
+  const aboutBooksForDisplay = (() => {
+    if (aboutBooks.length >= 2) return aboutBooks;
+    if (heroBooks.length >= 2) return heroBooks.slice(0, 2);
+    if (featuredBooks.length >= 2) return featuredBooks.slice(0, 2);
+    return aboutBooks;
+  })();
+
   return (
     <>
       {!pageLoaded && (
@@ -359,7 +373,7 @@ const Home = () => {
           <AboutUs
             stats={stats}
             setActivePopup={setActivePopup}
-            aboutBooks={aboutBooks}
+            aboutBooks={aboutBooksForDisplay}
           />
 
           <FeaturedSection

@@ -10,6 +10,7 @@ const LazyImage = ({
   priority = false,
 }) => {
   const imgRef = useRef(null);
+  const imgElRef = useRef(null);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -43,6 +44,19 @@ const LazyImage = ({
     setFailed(false);
   }, [src]);
 
+  // Some browsers may not reliably fire onLoad for cached images in all cases.
+  // Ensure we mark it as loaded when the <img> is already complete.
+  useEffect(() => {
+    if (!shouldLoad || !src) return;
+    const rafId = requestAnimationFrame(() => {
+      const img = imgElRef.current;
+      if (img && img.complete && img.naturalWidth > 0) {
+        setLoaded(true);
+      }
+    });
+    return () => cancelAnimationFrame(rafId);
+  }, [shouldLoad, src]);
+
   return (
     <div ref={imgRef} className={`relative ${className}`} style={style}>
       <div className={`lazy-sizer relative h-full w-full overflow-hidden`}>
@@ -57,6 +71,7 @@ const LazyImage = ({
             src={src}
             alt={alt}
             loading={priority ? "eager" : "lazy"}
+            ref={imgElRef}
             referrerPolicy="no-referrer"
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
               loaded ? "opacity-100" : "opacity-0"
