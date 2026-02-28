@@ -60,22 +60,25 @@ const Home = () => {
     console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
       try {
-        // Prefetch books via React Query so the query cache is populated
-        // and we avoid duplicate network requests across components.
-        const [branchData, catData, booksData] = await Promise.all([
-          apiGet("/Branches"),
-          apiGet("/Categories"),
+        // Fetch lightweight stats quickly and prefetch the full books list
+        // into React Query cache in parallel so the counters show fast while
+        // carousels get data from the cached query.
+        const [statsResp, booksData] = await Promise.all([
+          apiGet("/Stats"),
           // fetchQuery will reuse an in-flight query if present
           queryClient.fetchQuery(bookKeys.lists(), getAllBooks),
         ]);
 
-        const booksCount = Array.isArray(booksData)
-          ? booksData.length
-          : booksData?.data?.length || 0;
+        const booksCount =
+          statsResp && typeof statsResp.books === "number"
+            ? statsResp.books
+            : Array.isArray(booksData)
+            ? booksData.length
+            : booksData?.data?.length || 0;
 
         setStats({
-          branches: Array.isArray(branchData) ? branchData.length : 0,
-          categories: Array.isArray(catData) ? catData.length : 0,
+          branches: statsResp?.branches || 0,
+          categories: statsResp?.categories || 0,
           books: Number.isFinite(+booksCount) ? +booksCount : 0,
         });
 
