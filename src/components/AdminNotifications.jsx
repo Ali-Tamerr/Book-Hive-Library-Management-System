@@ -17,6 +17,10 @@ import UserFormPopup from "./UserFormPopup.jsx";
 import ViewRequestsPopup from "./ViewRequestsPopup.jsx";
 import { getCurrentUser } from "../services/auth.api";
 import FeedbackDetailsPopup from "./FeedbackDetailsPopup.jsx";
+import {
+  useFeedbacks,
+  useUpdateFeedbackStatus,
+} from "../hooks/useFeedbacks.js";
 
 const AdminNotifications = () => {
   const currentUser = getCurrentUser();
@@ -59,20 +63,15 @@ const AdminNotifications = () => {
   /* eslint-disable no-unused-vars */
   const EXPIRATION_DAYS = 7;
 
-  const [feedbackRequests, setFeedbackRequests] = useState([]);
+  const { data: feedbackData = [], isLoading: isLoadingFeedback } =
+    useFeedbacks();
+  const updateFeedbackMutation = useUpdateFeedbackStatus();
 
-  React.useEffect(() => {
-    const loadFeedback = () => {
-      const data = JSON.parse(
-        localStorage.getItem("mock_feedback_requests") || "[]",
-      );
-      setFeedbackRequests(data);
-    };
-    loadFeedback();
-    window.addEventListener("mockFeedbackUpdated", loadFeedback);
-    return () =>
-      window.removeEventListener("mockFeedbackUpdated", loadFeedback);
-  }, []);
+  // feedbackData might be exactly an array depending on how getAllFeedbacks formats it
+  // Ensure it's an array for safe mapping:
+  const feedbacksFromApi = Array.isArray(feedbackData)
+    ? feedbackData
+    : feedbackData.data || [];
 
   const isExpired = (createdAt) => {
     if (!createdAt) return false;
@@ -95,7 +94,7 @@ const AdminNotifications = () => {
     (req) => req.status === "Pending" && !isExpired(req.created_at),
   );
 
-  const pendingFeedbackRequests = feedbackRequests.filter(
+  const pendingFeedbackRequests = feedbacksFromApi.filter(
     (req) => req.status === "Pending",
   );
 
@@ -108,22 +107,34 @@ const AdminNotifications = () => {
   const [showFeedbackDetails, setShowFeedbackDetails] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
 
-  const handleApproveFeedback = (request) => {
-    console.log("Approve feedback", request);
-    const updated = feedbackRequests.map((r) =>
-      r.request_id === request.request_id ? { ...r, status: "Approved" } : r,
-    );
-    setFeedbackRequests(updated);
-    localStorage.setItem("mock_feedback_requests", JSON.stringify(updated));
+  const handleApproveFeedback = async (request) => {
+    try {
+      await updateFeedbackMutation.mutateAsync({
+        id: request.request_id,
+        status: "Approved",
+        rate: request.rate || 5,
+        user_id: request.user_id,
+        description:
+          request.description || request.feedback || "Approved via Admin",
+      });
+    } catch (error) {
+      console.error("Failed to approve feedback:", error);
+    }
   };
 
-  const handleRejectFeedback = (request) => {
-    console.log("Reject feedback", request);
-    const updated = feedbackRequests.map((r) =>
-      r.request_id === request.request_id ? { ...r, status: "Rejected" } : r,
-    );
-    setFeedbackRequests(updated);
-    localStorage.setItem("mock_feedback_requests", JSON.stringify(updated));
+  const handleRejectFeedback = async (request) => {
+    try {
+      await updateFeedbackMutation.mutateAsync({
+        id: request.request_id,
+        status: "Rejected",
+        rate: request.rate || 1,
+        user_id: request.user_id,
+        description:
+          request.description || request.feedback || "Rejected via Admin",
+      });
+    } catch (error) {
+      console.error("Failed to reject feedback:", error);
+    }
   };
 
   const handleAddUser = async (e) => {
@@ -302,8 +313,8 @@ const AdminNotifications = () => {
         isLoadingReturns={false}
         onApproveReturn={() => {}}
         onRejectReturn={() => {}}
-        feedbackRequests={feedbackRequests}
-        isLoadingFeedback={false}
+        feedbackRequests={feedbacksFromApi}
+        isLoadingFeedback={isLoadingFeedback}
         onApproveFeedback={handleApproveFeedback}
         onRejectFeedback={handleRejectFeedback}
         onViewFeedback={(request) => {

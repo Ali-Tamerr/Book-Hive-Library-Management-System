@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import { ThumbsUp, Star, StarHalf } from "lucide-react";
+import { MessageSquareText, Star, StarHalf } from "lucide-react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
 import FormInput from "./FormInput.jsx";
 
 import { getCurrentUser } from "../services/auth.api";
-import { useCreateFeedback } from "../hooks/useFeedbacks.js";
+import { useCreateBookReview } from "../hooks/useBookReviews.js";
 
-const FeedbackPopup = ({ show, onClose }) => {
+const RateBookPopup = ({ show, onClose, bookId }) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [feedbackText, setFeedbackText] = useState("");
+  const [reviewText, setReviewText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
 
-  const createFeedbackMutation = useCreateFeedback();
+  const createBookReviewMutation = useCreateBookReview();
 
   const handleSubmit = async () => {
     if (rating === 0) {
@@ -22,24 +22,29 @@ const FeedbackPopup = ({ show, onClose }) => {
       return;
     }
 
+    if (!bookId) {
+      console.error("Missing bookId");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const currentUser = getCurrentUser();
-      const newFeedback = {
+      const newReview = {
+        book_id: bookId,
         user_id: currentUser?.user_id || "Guest",
-        description: feedbackText,
-        feedback: feedbackText,
-        rate: Math.round(rating),
+        review_text: reviewText,
+        rating: Math.round(rating),
       };
 
-      await createFeedbackMutation.mutateAsync(newFeedback);
+      await createBookReviewMutation.mutateAsync(newReview);
 
       setRating(0);
-      setFeedbackText("");
+      setReviewText("");
       onClose();
     } catch (error) {
-      console.error("Feedback submission error:", error);
+      console.error("Review submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -48,7 +53,7 @@ const FeedbackPopup = ({ show, onClose }) => {
   const handleCancel = () => {
     setRating(0);
     setHoverRating(0);
-    setFeedbackText("");
+    setReviewText("");
     onClose();
   };
 
@@ -67,18 +72,18 @@ const FeedbackPopup = ({ show, onClose }) => {
     <Popup
       show={show}
       onClose={handleCancel}
-      title="Rate your experience"
-      icon={<ThumbsUp size={24} />}
-      maxWidthClass="max-w-[600px]"
+      title="RATE BOOK"
+      icon={<MessageSquareText size={24} />}
+      maxWidthClass="max-w-[700px]"
     >
-      <div className="flex w-full flex-col gap-6">
+      <div className="flex w-full flex-col gap-6 px-4 pb-4">
         <div className="flex w-full items-center justify-center">
           <FormInput
             type="textarea"
-            className="h-[150px] w-full max-w-[400px] resize-none"
-            placeholder="Share your experience"
-            value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
+            className="h-[180px] w-full resize-none border-[#A3A3A3] text-[18px] focus:border-[#00004f] dark:border-[#525252] dark:bg-[#1E1E1E]"
+            placeholder="Share your opinion"
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
           />
         </div>
 
@@ -101,27 +106,27 @@ const FeedbackPopup = ({ show, onClose }) => {
               >
                 <div className="relative">
                   <Star
-                    size={34}
-                    className="text-[#0b0b3b] dark:text-[#D7D7D7]"
+                    size={38}
+                    className="text-[#00004f] dark:text-[#D7D7D7]"
                     strokeWidth={1.5}
                   />
                   {isFull && (
                     <Star
-                      size={34}
-                      className="absolute left-0 top-0 fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                      size={38}
+                      className="absolute left-0 top-0 fill-[#00004f] text-[#00004f] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                       strokeWidth={1.5}
                     />
                   )}
                   {isHalf && (
                     <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
                       <Star
-                        size={34}
-                        className="min-w-[34px] fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                        size={38}
+                        className="min-w-[38px] fill-[#00004f] text-[#00004f] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                         strokeWidth={1.5}
                         style={{
-                          width: "34px",
-                          height: "34px",
-                          minWidth: "34px",
+                          width: "38px",
+                          height: "38px",
+                          minWidth: "38px",
                         }}
                       />
                     </div>
@@ -134,15 +139,24 @@ const FeedbackPopup = ({ show, onClose }) => {
 
         {showWarning && (
           <div className="text-center text-sm font-semibold text-red-500">
-            Please select a rating.
+            Please pick a star rating.
           </div>
         )}
 
-        <div className="mt-2 flex gap-4">
-          <FormButton onClick={handleCancel} disabled={isSubmitting}>
-            Cancel
+        <div className="mt-4 flex gap-4">
+          <FormButton
+            type="button"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
+            CANCEL
           </FormButton>
-          <FormButton onClick={handleSubmit} disabled={isSubmitting} isPrimary>
+          <FormButton
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            isPrimary
+          >
             {isSubmitting ? "Sending..." : "Send"}
           </FormButton>
         </div>
@@ -151,4 +165,4 @@ const FeedbackPopup = ({ show, onClose }) => {
   );
 };
 
-export default FeedbackPopup;
+export default RateBookPopup;

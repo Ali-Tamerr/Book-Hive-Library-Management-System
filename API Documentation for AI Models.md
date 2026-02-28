@@ -1,4 +1,4 @@
-﻿# Library Management System — Backend Data Contract (Machine & Frontend Friendly)
+﻿﻿# Library Management System — Backend Data Contract (Machine & Frontend Friendly)
 
 This README is the authoritative, machine- and frontend-consumable contract for API shapes, field names, types, validation rules and endpoints. It is written for frontend engineers and AI models that generate UI, validation logic and API clients. Use the exact property names and rules listed below when generating types or request/response shapes.
 
@@ -41,6 +41,7 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `role` | string(20) | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"` |
 | `status` | string(20) | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
+| `image_url` | bytea | nullable — base64 string in JSON payloads |
 | `subscription_end_date` | timestamp | nullable — subscription expiration (timestamp without time zone) |
 | `branch_id` | int | nullable, FK → `Branches.branch_id`, ON DELETE SET NULL |
 | `created_by` | string(20) | nullable, FK → `Users.user_id` (self-referential), ON DELETE SET NULL |
@@ -55,7 +56,6 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `name` | string(255) | **required** |
 | `category_id` | int | FK → `Categories.category_id` |
 | `quantity` | smallint (int16) | **required**, must be >= 0 |
-| `sale_price` | numeric(10,2) | nullable |
 | `image_url` | bytea | nullable — base64 string in JSON payloads (URLs may be returned if stored as text) |
 | `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 | `created_at` | timestamp | default: `now()` |
@@ -121,6 +121,38 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `created_at` | timestamp | default: `now()` |
 
 > **Note:** UserRequests are standalone registration requests. Admins review these requests and manually create Users separately. The `request_id` is auto-generated and should not be included in POST requests.
+ 
+### Feedback
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `request_id` | bigint | PK, identity |
+| `user_id` | string(20) | **required**, FK → `Users.user_id` |
+| `description` | string(1000) | **required** |
+| `rate` | int | **required**, 1-5 |
+| `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
+| `created_at` | timestamp | default: `now()` |
+
+Endpoints:
+
+- GET `/api/Feedbacks` — Returns `FeedbackDTO[]`; includes `user_name` joined from `Users`.
+- GET `/api/Feedbacks/approved` — Returns approved feedbacks for public display.
+- POST `/api/Feedbacks` — Create feedback; body: `{ user_id, description, rate }` (server sets `status = "Pending"`, `created_at = now()`).
+- PUT `/api/Feedbacks/{request_id}` — Update status; body: `{ status }` (allowed: `Pending`/`Approved`/`Rejected`).
+- DELETE `/api/Feedbacks/{request_id}` — Delete feedback.
+
+FeedbackDTO shape:
+
+```typescript
+interface FeedbackDTO {
+  request_id: number;
+  user_id: string;
+  user_name: string;       // joined from Users.name
+  description: string;
+  rate: number;           // 1-5
+  status: 'Pending' | 'Approved' | 'Rejected';
+  created_at: string;     // ISO-8601
+}
+```
 
 ---
 
@@ -240,6 +272,7 @@ POST /api/Users
   "role": "User",
   "status": "Active",
   "plan": "Professional",
+  "image_url": "BASE64_ENCODED_IMAGE_BYTES",
   "subscription_end_date": "2025-12-31T23:59:59Z",
   "branch_id": 2
 }
@@ -263,7 +296,6 @@ POST /api/Books
   "name": "Clean Code",
   "category_id": 4,
   "quantity": 3,
-  "sale_price": 39.99,
   "image_url": "BASE64_ENCODED_IMAGE_BYTES",
   "BookCopies": [
     { "book_copy_id": "BC-0001", "branch_id": 1 },
@@ -359,6 +391,7 @@ interface UserDTO {
   role: string;
   password_hash: string;
   plan?: string;              // User's subscription plan (nullable)
+  image_url?: string;         // base64-encoded bytes
   subscription_end_date?: string;
   branch_id?: number;
   booksReserved: string[];    // Book names or copy IDs
@@ -434,6 +467,7 @@ interface User {
   role: 'Super Admin' | 'Admin' | 'User';
   status: 'Active' | 'Inactive' | 'Banned';
   plan?: 'Discover' | 'Enterprise' | 'Professional';
+  image_url?: string;        // base64-encoded bytes
   subscription_end_date?: string;
   branch_id?: number;
   created_by?: string;       // max 20 chars, FK to Users.user_id
@@ -460,7 +494,6 @@ interface BookDetail {
   name: string;              // max 255 chars
   category_id: number;
   quantity: number;          // smallint, >= 0
-  sale_price?: number;       // numeric(10,2)
   image_url?: string;        // base64-encoded bytes
   created_by?: string;       // max 20 chars, FK to Users.user_id
   created_at?: string;
@@ -549,9 +582,161 @@ UserRequests (standalone, no FK relationships)
 
 ---
 
+## AI Chat Integration (Groq/LLM-Powered Intent Detection)
+
+A new conversational AI endpoint has been added to handle user queries with natural language processing and intelligent intent detection.
+
+### New Endpoint
+- **POST** `/api/chat` — Process user messages with AI intent detection and context-aware responses
+
+### Chat Request/Response Contract
+
+**ChatRequest:**
+```json
+{
+  "message": "Is 'Clean Code' available?"
+}
+```
+
+**Chat Response:**
+```json
+{
+  "reply": "Yes, 'Clean Code' is available. You can borrow it from the main branch."
+}
+```
+
+### Intent Detection System
+
+The system supports two implementations:
+
+1. **GroqIntentService** (production, uses Groq API):
+   - Integrates with Groq API for serverless LLM inference
+   - Uses `llama3-70b-8192` model by default
+   - Requires `Groq:ApiKey` and `Groq:Model` in configuration
+   - Returns structured `IntentResult` with detected intent and extracted parameters
+
+2. **MockIntentService** (development/fallback):
+   - Simple keyword-based intent classifier
+   - No API calls required
+   - Supports both English and Arabic keywords
+   - Intents: `check_book_availability`, `search_book`, `working_hours`, `unknown`
+
+### Intent Result DTO
+```csharp
+public class IntentResult
+{
+    public string Intent { get; set; }        // e.g., "check_book_availability"
+    public string? Book_Name { get; set; }    // extracted book name (if applicable)
+}
+```
+
+### Configuration (appsettings.json)
+```json
+{
+  "Groq": {
+    "ApiKey": "your-groq-api-key",
+    "Model": "llama3-70b-8192"
+  }
+}
+```
+
+### Service Architecture
+
+- **IIntentService** — Interface for intent detection (implementations: `GroqIntentService`, `MockIntentService`)
+- **IChatService** — Interface for handling intent-based responses and database queries
+- **IDatabaseService** — Interface for database operations (book search)
+
+### Supported Intents
+
+| Intent | Description | Example Input |
+|--------|-------------|---------------|
+| `check_book_availability` | Check if a book is available | "Is Clean Code available?" |
+| `search_book` | Search for a book by name | "Find me a book about algorithms" |
+| `working_hours` | Get library working hours | "What are your working hours?" |
+| `unknown` | Unable to determine intent | "Random text" |
+
+### No Database Schema Changes Required
+- Chat functionality uses existing Book, User, and Branch tables for queries
+- No new tables added
+
+---
+
+## BookReview Feature
+
+A new book review system has been added allowing users to leave and view reviews for books.
+
+### New Model: BookReview
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `review_id` | bigint | PK, identity |
+| `book_id` | int | FK → `BookDetails.book_id` |
+| `user_id` | string(20) | **required**, FK → `Users.user_id` |
+| `review_text` | string(1000) | **required** |
+| `rating` | int | **required**, 1-5 scale |
+| `created_at` | timestamp | default: `now()` |
+| `updated_at` | timestamp | default: `now()` |
+
+### New Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/BookReviews` | Returns all `BookReviewDTO[]` |
+| GET | `/api/BookReviews/{review_id}` | Returns single review |
+| GET | `/api/BookReviews/book/{book_id}` | Get all reviews for a book |
+| GET | `/api/BookReviews/user/{user_id}` | Get all reviews by a user |
+| POST | `/api/BookReviews` | Create review; body: `{ book_id, user_id, review_text, rating }` |
+| PUT | `/api/BookReviews/{review_id}` | Update review |
+| DELETE | `/api/BookReviews/{review_id}` | Delete review |
+
+### BookReviewDTO (Response)
+```typescript
+interface BookReviewDTO {
+  review_id: number;
+  book_id: number;
+  user_id: string;
+  user_name: string;           // joined from Users.name
+  user_image_url?: string;     // joined from Users.image_url
+  review_text: string;
+  rating: number;              // 1-5
+  created_at: string;          // ISO-8601 timestamp
+  updated_at?: string;         // ISO-8601 timestamp
+}
+```
+
+### Create Review Example
+```json
+POST /api/BookReviews
+{
+  "book_id": 42,
+  "user_id": "user-001",
+  "review_text": "Excellent book, highly recommended!",
+  "rating": 5
+}
+```
+
+---
+
 ## Changelog
 
-### Latest Update (User subscription end date)
+### Latest Update (AI Chat Integration & BookReview Feature)
+- **AI Chat Endpoint:** Added `POST /api/chat` with Groq/LLM-powered intent detection
+  - Supports both `GroqIntentService` (production, uses Groq API) and `MockIntentService` (development/fallback)
+  - Detects intents: `check_book_availability`, `search_book`, `working_hours`, `unknown`
+  - Configuration: `Groq:ApiKey` and `Groq:Model` in `appsettings.json`
+  - Services: `IIntentService`, `IChatService`, `IDatabaseService` with dependency injection
+- **BookReview Feature:** Full CRUD API for book reviews
+  - New `BookReview` model with fields: `review_id`, `book_id`, `user_id`, `review_text`, `rating`, `created_at`, `updated_at`
+  - New `BookReviewsController` with endpoints: GET (all, by id, by book, by user), POST, PUT, DELETE
+  - Returns `BookReviewDTO` with joined `user_name` and `user_image_url` from Users table
+  - Rating scale: 1-5
+- **Database:** No schema changes required (uses existing BookDetails and Users tables for relationships)
+- **Frontend changes required:** 
+  - Add chat UI component with message input/output
+  - Add book review display and creation forms
+  - Update BookDetail view to show reviews and average rating
+  - Implement chat intent handling based on returned intent type
+
+### Previous Update (User subscription end date)
 - Added `subscription_end_date` (timestamp) to `Users` for plan expiration tracking.
 
 ### Previous Update (Book return marker)
