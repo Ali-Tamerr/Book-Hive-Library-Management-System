@@ -56,14 +56,23 @@ const Home = () => {
     console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
       try {
-        const [branchData, catData] = await Promise.all([
+        // Include Books in the initial fetch so the books count is ready
+        // before the loading screen is dismissed.
+        const [branchData, catData, booksData] = await Promise.all([
           apiGet("/Branches"),
           apiGet("/Categories"),
+          apiGet("/Books"),
         ]);
+        const booksCount = Array.isArray(booksData)
+          ? booksData.length
+          : booksData?.data?.length || 0;
+
         setStats({
           branches: Array.isArray(branchData) ? branchData.length : 0,
           categories: Array.isArray(catData) ? catData.length : 0,
+          books: Number.isFinite(+booksCount) ? +booksCount : 0,
         });
+
         // Numbers loaded — hide loading screen
         requestAnimationFrame(() => {
           setTimeout(() => setPageLoaded(true), 50);
