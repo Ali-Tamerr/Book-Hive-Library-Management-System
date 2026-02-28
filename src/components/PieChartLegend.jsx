@@ -14,8 +14,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
                 cx="7"
                 cy="7"
                 r="5"
-                fill="#3D3E3E"
-                className="dark:fill-[#121317]"
+                fill="var(--pie-borrowed-color)"
               />
             </svg>
             <p className="text-xs font-medium text-[#000035] max-[340px]:whitespace-nowrap dark:text-black">
@@ -28,8 +27,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
                 cx="7"
                 cy="7"
                 r="5"
-                fill="#000035"
-                className="dark:fill-[#292D32]"
+                fill="var(--pie-returned-color)"
               />
             </svg>
             <p className="text-xs font-medium text-[#000035] max-[340px]:whitespace-nowrap dark:text-black">
@@ -56,8 +54,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
               cx="9"
               cy="9"
               r="9"
-              fill="#3D3E3E"
-              className="dark:fill-[#121317]"
+              fill="var(--pie-borrowed-color)"
             />
           </svg>
           <p className="text-lg font-medium text-[#000035] dark:text-black">
@@ -70,8 +67,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
               cx="9"
               cy="9"
               r="9"
-              fill="#000035"
-              className="dark:fill-[#292D32]"
+              fill="var(--pie-returned-color)"
             />
           </svg>
           <p className="text-lg font-medium text-[#000035] dark:text-black">

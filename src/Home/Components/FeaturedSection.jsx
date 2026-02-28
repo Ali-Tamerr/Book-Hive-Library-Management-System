@@ -51,7 +51,7 @@ const FeaturedSection = ({
                     {book.name}
                   </h2>
                   <button
-                    className="inline-block rounded-lg border border-[#f7f7f7] bg-[#111214] px-[45px] py-[20px] font-[family-name:Montserrat,sans-serif] text-[20px] font-bold text-[#f7f7f7] duration-500 hover:border-[#111214] hover:bg-[#E8E8E8] hover:text-[#111214] dark:border-[#f7f7f7] dark:bg-[#111214] dark:text-[#f7f7f7] dark:hover:border-[#111214] dark:hover:bg-[#f7f7f7] dark:hover:text-[#111214]"
+                    className="inline-block rounded-lg border border-[#000035] bg-[#000035] px-[45px] py-[20px] font-[family-name:Montserrat,sans-serif] text-[20px] font-bold text-[#f7f7f7] duration-500 hover:border-[#000035] hover:bg-[#E8E8E8] hover:text-[#111214] dark:border-[#000035] dark:bg-[#000035] dark:text-[#f7f7f7] dark:hover:border-[#000035] dark:hover:bg-[#f7f7f7] dark:hover:text-[#111214]"
                     onClick={() => setSelectedFeaturedBook(book)}
                   >
                     Book Now
