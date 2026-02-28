@@ -38,6 +38,7 @@ export const useCreateFeedback = () => {
     mutationFn: createFeedback,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all });
+      queryClient.invalidateQueries({ queryKey: feedbackKeys.approved() });
     },
   });
 };
