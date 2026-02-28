@@ -247,7 +247,36 @@ const Home = () => {
         const dataArray = Array.isArray(approved)
           ? approved
           : approved.data || [];
-        setFeedbacks(dataArray);
+        // Keep only the latest feedback per user so multiple approved
+        // entries from the same person don't show up as separate cards.
+        try {
+          if (Array.isArray(dataArray) && dataArray.length) {
+            const byUser = new Map();
+            dataArray.forEach((fb) => {
+              const userKey = fb.user_id || fb.user_name || fb.email || "anonymous";
+              const existing = byUser.get(userKey);
+              if (!existing) {
+                byUser.set(userKey, fb);
+                return;
+              }
+
+              // prefer the feedback with the newest timestamp (created_at or updated_at)
+              const existingDate = new Date(existing.updated_at || existing.created_at || 0).getTime();
+              const incomingDate = new Date(fb.updated_at || fb.created_at || 0).getTime();
+              if (incomingDate >= existingDate) {
+                byUser.set(userKey, fb);
+              }
+            });
+
+            const unique = Array.from(byUser.values());
+            setFeedbacks(unique);
+          } else {
+            setFeedbacks(dataArray);
+          }
+        } catch (err) {
+          console.error("Failed to dedupe feedbacks:", err);
+          setFeedbacks(dataArray);
+        }
       } catch (error) {
         console.error("Failed to fetch feedbacks:", error);
         setFeedbacks([]);
