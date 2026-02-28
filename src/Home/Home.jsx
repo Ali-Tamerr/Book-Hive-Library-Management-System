@@ -80,7 +80,30 @@ const Home = () => {
     fetchStats();
   }, []);
 
-  // 2. Book fetches start only after loading screen disappears; each section loads independently
+  // 2a. Restore cached home book covers (if any) after loading screen disappears
+  useEffect(() => {
+    if (!pageLoaded) return;
+
+    try {
+      const raw = localStorage.getItem("homeBooksCache.v1");
+      if (!raw) return;
+      const cached = JSON.parse(raw);
+
+      if (Array.isArray(cached.heroBooks) && cached.heroBooks.length) {
+        setHeroBooks(cached.heroBooks);
+      }
+      if (Array.isArray(cached.aboutBooks) && cached.aboutBooks.length) {
+        setAboutBooks(cached.aboutBooks);
+      }
+      if (Array.isArray(cached.featuredBooks) && cached.featuredBooks.length) {
+        setFeaturedBooks(cached.featuredBooks);
+      }
+    } catch (error) {
+      console.error("Failed to restore home books cache:", error);
+    }
+  }, [pageLoaded]);
+
+  // 2b. Book fetches start only after loading screen disappears; each section loads independently
   useEffect(() => {
     if (!pageLoaded) return;
 
@@ -138,6 +161,29 @@ const Home = () => {
     fetchAboutBooks();
     fetchFeaturedBooks();
   }, [pageLoaded]);
+
+  // 2c. Persist processed home book covers in local storage for faster reloads
+  useEffect(() => {
+    if (!pageLoaded) return;
+    if (
+      !heroBooks.length &&
+      !aboutBooks.length &&
+      !featuredBooks.length
+    ) {
+      return;
+    }
+
+    try {
+      const payload = {
+        heroBooks,
+        aboutBooks,
+        featuredBooks,
+      };
+      localStorage.setItem("homeBooksCache.v1", JSON.stringify(payload));
+    } catch (error) {
+      console.error("Failed to cache home books:", error);
+    }
+  }, [pageLoaded, heroBooks, aboutBooks, featuredBooks]);
 
   // 3. Load feedbacks (non-blocking for loading screen)
   useEffect(() => {
