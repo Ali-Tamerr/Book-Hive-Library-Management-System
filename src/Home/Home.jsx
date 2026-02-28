@@ -66,7 +66,7 @@ const Home = () => {
         // failure doesn't block the other.
         const statsPromise = apiGet("/Stats").catch(() => null);
         const booksPromise = queryClient
-          .fetchQuery(bookKeys.lists(), getAllBooks)
+          .fetchQuery({ queryKey: bookKeys.lists(), queryFn: getAllBooks })
           .catch(() => null);
 
         const [maybeStats, maybeBooks] = await Promise.all([
