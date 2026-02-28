@@ -329,7 +329,15 @@ const ViewRequestsPopup = ({
 
   const getUserName = (userId) => {
     const user = users.find((u) => u.user_id === userId);
-    return user?.name || userId || "Unknown";
+    if (user?.name) return user.name;
+
+    // If users haven't been loaded yet, avoid briefly showing the raw ID
+    // in the User Name column. Show a neutral loading state instead.
+    if (!users.length && userId) {
+      return "Loading...";
+    }
+
+    return userId || "Unknown";
   };
 
   const getBookName = (bookCopyId) => {
