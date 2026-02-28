@@ -60,27 +60,51 @@ const Home = () => {
     console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
       try {
-        // Fetch lightweight stats quickly and prefetch the full books list
-        // into React Query cache in parallel so the counters show fast while
-        // carousels get data from the cached query.
-        const [statsResp, booksData] = await Promise.all([
-          apiGet("/Stats"),
-          // fetchQuery will reuse an in-flight query if present
-          queryClient.fetchQuery(bookKeys.lists(), getAllBooks),
+        // Try fetching lightweight stats first; if the endpoint fails
+        // fallback to fetching branches/categories and deriving book count
+        // from the prefetched books. Use non-throwing fetches so one
+        // failure doesn't block the other.
+        const statsPromise = apiGet("/Stats").catch(() => null);
+        const booksPromise = queryClient
+          .fetchQuery(bookKeys.lists(), getAllBooks)
+          .catch(() => null);
+
+        const [maybeStats, maybeBooks] = await Promise.all([
+          statsPromise,
+          booksPromise,
         ]);
 
-        const booksCount =
-          statsResp && typeof statsResp.books === "number"
-            ? statsResp.books
-            : Array.isArray(booksData)
-            ? booksData.length
-            : booksData?.data?.length || 0;
+        let branches = 0;
+        let categories = 0;
+        let booksCount = 0;
 
-        setStats({
-          branches: statsResp?.branches || 0,
-          categories: statsResp?.categories || 0,
-          books: Number.isFinite(+booksCount) ? +booksCount : 0,
-        });
+        if (maybeStats && typeof maybeStats === "object") {
+          branches = Number.isFinite(+maybeStats.branches) ? +maybeStats.branches : 0;
+          categories = Number.isFinite(+maybeStats.categories) ? +maybeStats.categories : 0;
+          booksCount = Number.isFinite(+maybeStats.books) ? +maybeStats.books : 0;
+        }
+
+        // If stats endpoint didn't yield useful numbers, fetch branches/categories
+        // individually and derive books from the prefetched books response.
+        if (!branches && !categories) {
+          try {
+            const [branchData, catData] = await Promise.all([
+              apiGet("/Branches").catch(() => null),
+              apiGet("/Categories").catch(() => null),
+            ]);
+            branches = Array.isArray(branchData) ? branchData.length : branchData?.data?.length || 0;
+            categories = Array.isArray(catData) ? catData.length : catData?.data?.length || 0;
+          } catch (e) {
+            // ignore
+          }
+        }
+
+        if (!booksCount) {
+          if (Array.isArray(maybeBooks)) booksCount = maybeBooks.length;
+          else if (maybeBooks && Array.isArray(maybeBooks.data)) booksCount = maybeBooks.data.length;
+        }
+
+        setStats({ branches, categories, books: booksCount });
 
         // Numbers loaded — hide loading screen
         requestAnimationFrame(() => {
