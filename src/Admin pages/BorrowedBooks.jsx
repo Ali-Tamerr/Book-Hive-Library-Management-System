@@ -155,7 +155,7 @@ function BorrowedBooks({
     }
   };
 
-  const handleEdit = (transaction) => {
+  const _handleEdit = (transaction) => {
     setFormData({
       transaction_id: transaction.transaction_id || transaction.id,
       user_id: transaction.user_id || "",
@@ -183,7 +183,7 @@ function BorrowedBooks({
         await deleteBorrowedBookMutation.mutateAsync(transactionToDelete);
         setShowDeleteConfirm(false);
         setTransactionToDelete(null);
-      } catch (error) {
+      } catch {
         alert("Failed to delete transaction. Please try again.");
         setShowDeleteConfirm(false);
         setTransactionToDelete(null);
@@ -191,7 +191,7 @@ function BorrowedBooks({
     }
   };
 
-  const handleView = (transaction) => {
+  const _handleView = (transaction) => {
     setSelectedTransaction(transaction);
     setShowViewDetails(true);
   };
@@ -312,6 +312,12 @@ function BorrowedBooks({
         title={customTitle || "Book Transactions"}
         buttonText={hideButton ? "" : "Add Transaction"}
         columns={columns}
+        emphasizedColumns={[
+          "user_name_display",
+          "book_name",
+          "due_date_formatted",
+          "borrowed_on_formatted",
+        ]}
         formPopup={formPopupComponent}
         customTitle={customTitle}
       />

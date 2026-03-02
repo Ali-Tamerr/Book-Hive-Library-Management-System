@@ -132,7 +132,7 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
         await deleteBorrowedBookMutation.mutateAsync(transactionToDelete);
         setShowDeleteConfirm(false);
         setTransactionToDelete(null);
-      } catch (error) {
+      } catch {
         alert("Failed to delete transaction. Please try again.");
         setShowDeleteConfirm(false);
         setTransactionToDelete(null);
@@ -162,6 +162,12 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
         title="Overdue Borrowers"
         buttonText=""
         columns={columns}
+        emphasizedColumns={[
+          "user_name_display",
+          "book_name",
+          "due_date_formatted",
+          "created_at_formatted",
+        ]}
         formPopup={null}
         customTitle={customTitle}
       />
