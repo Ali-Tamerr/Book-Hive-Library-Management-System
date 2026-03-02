@@ -197,7 +197,7 @@ function Dashboard() {
   const renderTransactionList = (items, emptyText) => {
     if (transactionsLoadingState) {
       return (
-        <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#121317]">
+        <li className="flex items-center gap-3 rounded-lg p-3 text-xs dark:text-[#d3d6de]">
           Loading...
         </li>
       );
@@ -205,7 +205,7 @@ function Dashboard() {
 
     if (items.length === 0) {
       return (
-        <li className="rounded-md text-center p-2.5 text-xs text-gray-500 dark:bg-transparent dark:text-[#121317]">
+        <li className="rounded-md text-center p-2.5 text-xs text-gray-500 dark:bg-transparent dark:text-[#c3c7d1]">
           {emptyText}
         </li>
       );
@@ -214,24 +214,24 @@ function Dashboard() {
     return items.map((item) => (
       <li
         key={item.id}
-        className="flex h-14 items-center gap-2.5 rounded-xl border border-[#0a0f33] bg-transparent px-2.5 py-3 text-xs dark:border-[#0a0f33] "
+        className="flex h-14 items-center gap-2.5 rounded-xl border border-[#000035] bg-transparent px-2.5 py-3 text-xs dark:border-[rgba(185,189,200,0.78)] "
       >
        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full ">
-                     <User className="h-full w-full text-[#0a0f33] dark:text-[#0a0f33]" />
+                     <User className="h-full w-full text-[#000035] dark:text-[#d3d6de]" />
                    </div>
-        <div className="h-full w-[1.8px] rounded-full bg-[#0b0b3b] dark:bg-[#0a0f33]"></div>
+        <div className="h-full w-[1.8px] rounded-full bg-[#000035] dark:bg-[rgba(185,189,200,0.78)]"></div>
         <div className="flex-1 overflow-hidden">
-          <p className="truncate text-sm font-medium text-[#0a0f33] dark:text-[#121317]">
+          <p className="truncate text-sm font-medium text-[#000035] dark:text-[#d3d6de]">
             {item.userName}
           </p>
-          <p className="truncate text-xs font-medium text-[#6f7390] dark:text-[#121317]">
+          <p className="truncate text-xs font-medium text-[#000035] dark:text-[#c3c7d1]">
             Book Name: {item.bookName}
           </p>
         </div>
         <button
           type="button"
           onClick={() => setSelectedTransactionItem(item)}
-          className="inline-flex h-6 w-6 items-center justify-center text-[#0a0f33] cursor-pointer transition-opacity hover:opacity-80 dark:text-[#121317]"
+          className="inline-flex h-6 w-6 items-center justify-center text-[#000035] cursor-pointer transition-opacity hover:opacity-80 dark:text-[#d3d6de]"
           aria-label="View row details"
         >
           <img
