@@ -47,6 +47,7 @@ const FeaturedSection = ({
                     src={book.image}
                     alt={book.name}
                     className="mx-auto mb-8 h-[500px] !w-full !max-w-none rounded-[14px] object-cover"
+                    priority
                   />
                   <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[2rem] font-bold leading-tight text-[#03030f] dark:!text-[#d3d6de]">
                     {book.name}
