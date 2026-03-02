@@ -38,15 +38,15 @@ const plansData = [
 
 const PricingCard = ({ plan, setIsLoginOpen }) => {
   const subscribeButtonClass =
-    "border border-[#000035] bg-white text-[var(--accent)] hover:border-[#000022] hover:bg-[#000022] hover:text-white group-hover:border-[#000035] group-hover:bg-[#000035] group-hover:text-white dark:border-[#E3E3E3] dark:bg-transparent dark:text-[#e3e4e8] dark:hover:border-[#E3E3E3] dark:hover:bg-[#E3E3E3] dark:hover:text-black group-hover:dark:border-[#E3E3E3] group-hover:dark:bg-[#E3E3E3] group-hover:dark:text-black";
+    "border border-[#000035] bg-[#D7D7D7] text-[var(--accent)] hover:border-[#000022] hover:bg-[#000022] hover:text-[#D7D7D7] group-hover:border-[#000035] group-hover:bg-[#000035] group-hover:text-[#D7D7D7] dark:border-[#D7D7D7] dark:bg-transparent dark:text-[#D7D7D7] dark:hover:border-[#D7D7D7] dark:hover:bg-[#D7D7D7] dark:hover:text-black group-hover:dark:border-[#D7D7D7] group-hover:dark:bg-[#D7D7D7] group-hover:dark:text-black";
 
   return (
     <article
-        className={`plan group flex w-full transform-gpu flex-col justify-start rounded-[18px] border-2 px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-all duration-[300ms] ease-in-out hover:-translate-y-3 hover:shadow-[0_16px_34px_rgba(0,0,0,0.2)] max-[680px]:min-h-[380px] dark:hover:shadow-[0_20px_36px_rgba(0,0,0,0.5)] ${
+      className={`plan group flex w-full transform-gpu flex-col justify-start rounded-[18px] border-2 px-10 pb-[20px] pt-[60px] text-[var(--accent)] transition-all duration-[300ms] ease-in-out hover:-translate-y-3 hover:shadow-[0_16px_34px_rgba(0,0,0,0.2)] max-[680px]:min-h-[380px] dark:hover:shadow-[0_20px_36px_rgba(0,0,0,0.5)] ${
         plan.isPopular
           ? "center flex-8 -mt-5 min-h-[520px] bg-[var(--center-bg)] pt-16 max-[1000px]:mt-0 max-[1000px]:min-h-[420px] dark:bg-transparent"
           : "flex-7 min-h-[660px] bg-[var(--card-bg)] dark:bg-transparent"
-      } border-transparent hover:border-[#000035] dark:hover:!border-[#E3E3E3]`}
+      } border-transparent hover:border-[#000035] dark:hover:!border-[#D7D7D7]`}
       role="listitem"
       aria-labelledby={plan.id}
     >
@@ -57,7 +57,7 @@ const PricingCard = ({ plan, setIsLoginOpen }) => {
         {plan.title}
       </div>
       <div
-        className={`price mb-10 font-[family-name:Inter,sans-serif] text-[50px] font-normal text-[var(--accent)] dark:!text-[#e3e4e8]`}
+        className={`price mb-10 font-[family-name:Inter,sans-serif] text-[50px] font-normal text-[var(--accent)] dark:!text-[#D7D7D7]`}
       >
         <span>{plan.price} / Per Month</span>
       </div>
@@ -105,14 +105,12 @@ const Pricing = ({ setIsLoginOpen }) => {
         >
           Choose The best Plan
         </h1>
-        <p className="subheading mb-20 font-[family-name:var(--second-font)] text-[26px] font-medium text-[var(--muted)] max-[680px]:text-sm dark:text-[#b3b6bd]">
+        <p className="subheading mb-20 font-[family-name:var(--second-font)] text-[26px] font-medium text-[var(--muted)] max-[680px]:text-sm dark:text-[#D7D7D7]">
           choose a plan that's right for your growing team. Simple pricing &amp;
           No hidden charges.
         </p>
 
-        <div
-                  className="plans px-13 flex flex-col items-stretch gap-16 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-white py-14 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none"
-        >
+        <div className="plans px-13 flex flex-col items-stretch gap-16 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-[#D7D7D7] py-14 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none">
           {plansData.map((plan) => (
             <PricingCard
               key={plan.id}

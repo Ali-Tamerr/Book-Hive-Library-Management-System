@@ -282,14 +282,14 @@ body {
 }
 
 body.dark-theme {
-  --title-color: #f7f7f7;
+  --title-color: #D7D7D7;
   --text-color: #b9bbc1;
   --border-color: #2a2c31;
   --white-color: #ffffff;
   --body-color: #111214;
   --container-color: #17181b;
   --page-bg: #111214;
-  --accent: #f7f7f7;
+  --accent: #D7D7D7;
   --muted: #a9abb2;
   --card-bg: #15161b;
   --center-bg: #15161b;
