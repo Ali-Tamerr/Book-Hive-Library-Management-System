@@ -47,7 +47,7 @@ const Popup = ({
                 </div>
               )}
               <h2
-                className={`text-xl font-bold text-[#0a0f33] dark:text-white font-['Bebas_Neue',sans-serif] ${titleClassName || ""}`}
+                className={`font-['Bebas_Neue',sans-serif] text-xl font-bold text-[#0a0f33] dark:text-white ${titleClassName || ""}`}
               >
                 {title}
               </h2>
@@ -65,9 +65,7 @@ const Popup = ({
             className={`mx-auto h-[1px] w-[100%] bg-black dark:bg-[#2C2D33] ${dividerClassName || ""}`}
           ></div>
         )}
-        <div
-          className={`overflow-y-auto ${contentClassName || "px-4 py-8"}`}
-        >
+        <div className={`overflow-y-auto ${contentClassName || "px-4 py-8"}`}>
           {children}
         </div>
       </div>

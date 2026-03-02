@@ -23,6 +23,7 @@ import CommonLayout from "../Layouts/CommonLayout.jsx";
 import { FilePenLine, Trash2, ReceiptText, RotateCcw } from "lucide-react";
 
 import { getCurrentUser } from "../services/auth.api";
+import { getImageUrl } from "../services/api.config";
 
 function UserManagement({ searchValue, setSearchValue }) {
   const currentUser = getCurrentUser();
@@ -717,6 +718,7 @@ function UserManagement({ searchValue, setSearchValue }) {
           setSelectedUser(null);
         }}
         title="View User"
+        imageUrl={selectedUser ? getImageUrl(selectedUser.image_url) : null}
         data={
           selectedUser
             ? {
@@ -724,7 +726,7 @@ function UserManagement({ searchValue, setSearchValue }) {
                 Name: selectedUser.name,
                 Branch: getUserBranchName(selectedUser),
                 "Phone Number": selectedUser.phone_number,
-                Plan: selectedUser.plan || "N/A",
+                Plan: selectedUser.plan || "",
               }
             : null
         }

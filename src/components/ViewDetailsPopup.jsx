@@ -68,8 +68,8 @@ const ViewDetailsPopup = ({
   );
 
   const toDisplayValue = (value) => {
-    if (value === null || value === undefined) return "N/A";
-    if (typeof value === "string" && value.trim() === "") return "N/A";
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string" && value.trim() === "") return "";
     return value;
   };
 
@@ -135,34 +135,34 @@ const ViewDetailsPopup = ({
         onClose={onClose}
         title={title}
         icon={null}
-        maxWidthClass="max-w-[1320px]"
+        maxWidthClass="max-w-[860px]"
         panelClassName="!max-h-[96vh] overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] p-0 pb-0 shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#cfcfcf] dark:bg-[#ebebeb]"
         contentClassName="overflow-x-hidden overflow-y-auto p-0"
         hideHeader
         hideDivider
-        heightClass="px-1 py-1 sm:px-3 sm:py-3 !bg-black/85 !backdrop-blur-none"
+        heightClass="px-1 py-1 sm:px-3 sm:py-3"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-[470px_1px_1fr]">
-          <div className="flex items-start justify-center px-6 pb-10 pt-12 sm:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1px_1fr]">
+          <div className="flex items-start justify-center px-4 pb-7 pt-8 sm:px-6">
             {imageUrl ? (
               <img
                 src={imageUrl}
                 alt={imageAlt || String(headingText || "Details")}
-                className="h-[560px] w-[360px] max-w-full border border-[#cecece] object-cover"
+                className="h-[360px] w-[230px] max-w-full border border-[#cecece] object-cover"
               />
             ) : (
-              <div className="flex h-[560px] w-[360px] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#0a0f33] to-[#192261]">
-                <ReceiptText size={74} className="text-white/70" />
+              <div className="flex h-[360px] w-[230px] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#0a0f33] to-[#192261]">
+                <UserRound size={48} className="text-white/70" />
               </div>
             )}
           </div>
 
-          <div className="mx-auto my-10 hidden w-px bg-[#b3b3b3] lg:block" />
+          <div className="mx-auto my-7 hidden w-px bg-[#b3b3b3] lg:block" />
 
-          <div className="flex flex-col px-6 pb-10 pt-12 sm:px-10">
+          <div className="flex flex-col px-4 pb-7 pt-8 sm:px-7">
             <div>
               <h3
-                className="text-6xl font-normal uppercase leading-[0.9] tracking-[0.5px] text-[#050549] sm:text-7xl lg:text-[86px]"
+                className="text-4xl font-normal uppercase leading-[0.9] tracking-[0.5px] text-[#050549] sm:text-5xl lg:text-[56px]"
                 style={{
                   fontFamily:
                     "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
@@ -170,20 +170,22 @@ const ViewDetailsPopup = ({
               >
                 {String(headingText || "N/A")}
               </h3>
-              <p className="mt-3 text-3xl font-medium text-[#050549] sm:text-[44px]">
-                {subtitleText || "N/A"}
-              </p>
+              {subtitleText && (
+                <p className="mt-2 text-xl font-medium text-[#050549] sm:text-[28px]">
+                  {subtitleText}
+                </p>
+              )}
             </div>
 
-            <div className="mt-10 flex flex-col gap-6">
+            <div className="mt-6 flex flex-col gap-4">
               {detailsEntries.map(([key, value]) => (
-                <p key={key} className="text-3xl text-[#050549] sm:text-[46px]">
+                <p key={key} className="text-xl text-[#050549] sm:text-[28px]">
                   {key} : {toDisplayValue(value)}
                 </p>
               ))}
             </div>
 
-            <div className="mt-6 h-px w-full max-w-[420px] bg-[#b1b1b1]" />
+            <div className="mt-4 h-px w-full max-w-[280px] bg-[#b1b1b1]" />
 
             {hasCustomContent ? (
               <div className="mt-8">{children}</div>
