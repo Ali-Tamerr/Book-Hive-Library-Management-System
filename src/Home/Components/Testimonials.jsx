@@ -6,7 +6,6 @@ const Testimonials = ({
   feedbacks,
   testimonialIndex,
   testimonialPerView,
-  testimonialImg1,
   isLoading = false,
 }) => {
   return (
@@ -30,18 +29,18 @@ const Testimonials = ({
                 Array.from({ length: testimonialPerView }).map((_, idx) => (
                   <article
                     key={`skeleton-${idx}`}
-                    className="duration-400 shrink-0 rounded-[24px] bg-white px-16 py-14 pb-16 text-center transition-colors dark:bg-[#D4D4D4]"
-                    style={{
+
+                    className="duration-400 shrink-0 rounded-[24px] bg-white px-16 py-14 pb-16 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"                    style={{
                       width: `calc(${100 / testimonialPerView}% - 60px)`,
                       margin: "0 30px",
                     }}
                   >
-                    <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#e6e7eb] dark:bg-[#1b1b1b]">
+                    <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#e6e7eb] dark:bg-[#171c29]">
                       <div className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent border-white/30" />
                     </div>
-                    <div className="mb-6 h-8 w-48 mx-auto rounded bg-[#e6e7eb] dark:bg-[#1b1b1b]" />
-                    <div className="mx-auto mb-10 h-20 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#1b1b1b]" />
-                    <div className="text-[44px] text-[#000035] dark:text-black">
+                    <div className="mb-6 h-8 w-48 mx-auto rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
+                    <div className="mx-auto mb-10 h-20 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
+                    <div className="text-[44px] text-[#000035] dark:text-[#d3d6de]">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <i key={i} className="ri-star-line"></i>
                       ))}
@@ -55,8 +54,8 @@ const Testimonials = ({
                   return (
                     <article
                       key={fb.request_id}
-                      className="duration-400 shrink-0 rounded-[24px] bg-white px-16 py-14 pb-16 text-center transition-colors dark:bg-[#D4D4D4]"
-                      style={{
+
+                      className="duration-400 shrink-0 rounded-[24px] bg-white px-16 py-14 pb-16 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"                      style={{
                         width: `calc(${100 / testimonialPerView}% - 60px)`,
                         margin: "0 30px",
                       }}
@@ -68,17 +67,17 @@ const Testimonials = ({
                             className="mx-auto mb-10 h-[140px] w-[140px] rounded-full object-cover"
                           />
                         ) : (
-                        <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#000035] text-white dark:bg-black">
+                        <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#000035] text-white dark:bg-[#171c29] dark:text-[#d3d6de]">
                           <i className="ri-user-line text-[70px]"></i>
                         </div>
                       )}
-                      <h2 className="mb-6 font-[family-name:var(--body-font)] text-[52px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-black">
+                      <h2 className="mb-6 font-[family-name:var(--body-font)] text-[52px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-[#d3d6de]">
                         {fb.user_name || fb.user_id || "Guest"}
                       </h2>
-                      <p className="mx-auto mb-10 max-w-[800px] font-[family-name:var(--second-font)] text-[30px] font-bold leading-relaxed text-[#525252] dark:!text-[#1a1a1a]">
+                      <p className="mx-auto mb-10 max-w-[800px] font-[family-name:var(--second-font)] text-[30px] font-bold leading-relaxed text-[#525252] dark:!text-[#c3c7d1]">
                         {fb.feedback || fb.description || "Great experience!"}
                       </p>
-                      <div className="text-[44px] text-[#000035] dark:text-black">
+                      <div className="text-[44px] text-[#000035] dark:text-[#d3d6de]">
                         {Array.from({ length: fullStars }, (_, i) => (
                           <i key={`full-${i}`} className="ri-star-fill"></i>
                         ))}
