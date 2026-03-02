@@ -15,7 +15,7 @@ const Header = ({
   return (
     <>
       <header
-        className={`duration-400 transition-alldark:border-b fixed left-0 right-0 top-0 z-[100] mx-auto w-full max-w-[1920px] bg-[var(--body-color)] dark:border-[rgba(255,255,255,0.06)] ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
+        className={`duration-400 transition-alldark:border-b fixed left-0 right-0 top-0 z-[100] mx-auto w-full  bg-[var(--body-color)] dark:border-[rgba(255,255,255,0.06)] ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
         id="header"
       >
         <nav className="flex h-[130px] items-center justify-between px-10 xl:pr-24">

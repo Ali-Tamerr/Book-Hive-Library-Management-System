@@ -15,6 +15,10 @@ import secureInfoIcon from "../assets/secure information.png";
 import chatbotIcon from "../assets/chatbot.png";
 
 import { apiGet, getImageUrl } from "../services/api.config";
+import { useQueryClient } from '@tanstack/react-query';
+import { useBooks, bookKeys } from "../hooks/useBooks";
+import { useApprovedFeedbacks } from "../hooks/useFeedbacks";
+import { getAllBooks } from "../services/books.api";
 import Header from "./Components/Header";
 import Hero from "./Components/Hero";
 import Services from "./Components/Services";
@@ -36,10 +40,10 @@ const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [heroBooks, setHeroBooks] = useState([]);
   const [aboutBooks, setAboutBooks] = useState([]);
+  const queryClient = useQueryClient();
+  const { data: booksSource, isLoading: booksLoading } = useBooks();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [isFeedbacksLoading, setIsFeedbacksLoading] = useState(false);
-  const [isContentReady, setIsContentReady] = useState(false);
+  const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } = useApprovedFeedbacks();
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showShadowHeader, setShowShadowHeader] = useState(false);
@@ -47,108 +51,183 @@ const Home = () => {
   const [activeSection, setActiveSection] = useState("");
   const [heroIndex, setHeroIndex] = useState(0);
   const [featuredIndex, setFeaturedIndex] = useState(0);
-  const [testimonialIndex, setTestimonialIndex] = useState(0);
   const heroIntervalRef = useRef(null);
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
 
+  // 1. Stats (numbers) must load before loading screen disappears
   useEffect(() => {
-    console.debug("Home: mount - starting data fetch effects");
-    const fetchBooks = async () => {
-      console.debug("Home: fetchBooks called");
-      try {
-        const data = await apiGet("/Books");
-        console.debug("Home: fetchBooks apiGet returned", data && (Array.isArray(data) ? data.length : (data.data || []).length));
-        const books = Array.isArray(data) ? data : data.data || [];
-        const sorted = [...books].sort(
-          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
-        );
-        const mapped = sorted.map((book) => ({
-          book_id: book.book_id,
-          name: book.name,
-          category_id: book.category_id,
-          quantity: book.quantity,
-          image: getImageUrl(book.image_url) || "",
-        }));
-
-        const withImages = mapped.filter((b) => b.image);
-        const recent10 = withImages.slice(0, 10);
-        setFeaturedBooks(recent10);
-        setHeroBooks(recent10);
-
-        const shuffled = [...withImages].sort(() => 0.5 - Math.random());
-        setAboutBooks(shuffled.slice(0, 2));
-      } catch (error) {
-        console.error("Failed to fetch featured books:", error);
-      }
-    };
-
+    console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
-      console.debug("Home: fetchStats called");
       try {
-        const [branchData, bookData, catData] = await Promise.all([
-          apiGet("/Branches"),
-          apiGet("/Books"),
-          apiGet("/Categories"),
+        // Try fetching lightweight stats first; if the endpoint fails
+        // fallback to fetching branches/categories and deriving book count
+        // from the prefetched books. Use non-throwing fetches so one
+        // failure doesn't block the other.
+        const statsPromise = apiGet("/Stats").catch(() => null);
+        const booksPromise = queryClient
+          .fetchQuery({ queryKey: bookKeys.lists(), queryFn: getAllBooks })
+          .catch(() => null);
+
+        const [maybeStats, maybeBooks] = await Promise.all([
+          statsPromise,
+          booksPromise,
         ]);
-        console.debug("Home: fetchStats returned", {
-          branches: branchData && branchData.length,
-          books: bookData && bookData.length,
-          categories: catData && catData.length,
-        });
-        setStats({
-          branches: Array.isArray(branchData) ? branchData.length : 0,
-          books: Array.isArray(bookData) ? bookData.length : 0,
-          categories: Array.isArray(catData) ? catData.length : 0,
+
+        let branches = 0;
+        let categories = 0;
+        let booksCount = 0;
+
+        if (maybeStats && typeof maybeStats === "object") {
+          branches = Number.isFinite(+maybeStats.branches) ? +maybeStats.branches : 0;
+          categories = Number.isFinite(+maybeStats.categories) ? +maybeStats.categories : 0;
+          booksCount = Number.isFinite(+maybeStats.books) ? +maybeStats.books : 0;
+        }
+
+        // If stats endpoint didn't yield useful numbers, fetch branches/categories
+        // individually and derive books from the prefetched books response.
+        if (!branches && !categories) {
+          try {
+            const [branchData, catData] = await Promise.all([
+              apiGet("/Branches").catch(() => null),
+              apiGet("/Categories").catch(() => null),
+            ]);
+            branches = Array.isArray(branchData) ? branchData.length : branchData?.data?.length || 0;
+            categories = Array.isArray(catData) ? catData.length : catData?.data?.length || 0;
+          } catch (e) {
+            // ignore
+          }
+        }
+
+        if (!booksCount) {
+          if (Array.isArray(maybeBooks)) booksCount = maybeBooks.length;
+          else if (maybeBooks && Array.isArray(maybeBooks.data)) booksCount = maybeBooks.data.length;
+        }
+
+        setStats({ branches, categories, books: booksCount });
+
+        // Numbers loaded — hide loading screen
+        requestAnimationFrame(() => {
+          setTimeout(() => setPageLoaded(true), 50);
         });
       } catch (error) {
         console.error("Failed to fetch stats:", error);
+        // Still hide loading screen on error to avoid infinite loader
+        requestAnimationFrame(() => {
+          setTimeout(() => setPageLoaded(true), 50);
+        });
       }
     };
-
-    const loadFeedbacks = async () => {
-      console.debug("Home: loadFeedbacks called");
-      try {
-        setIsFeedbacksLoading(true);
-        const approved = await apiGet("/Feedbacks/approved");
-        console.debug("Home: loadFeedbacks returned", approved && (Array.isArray(approved) ? approved.length : (approved.data || []).length));
-        const dataArray = Array.isArray(approved)
-          ? approved
-          : approved.data || [];
-        setFeedbacks(dataArray);
-        setIsFeedbacksLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch feedbacks:", error);
-        setFeedbacks([]);
-        setIsFeedbacksLoading(false);
-      }
-    };
-
-    Promise.all([fetchBooks(), fetchStats()]).then(async () => {
-      await loadFeedbacks();
-      setTimeout(() => setIsContentReady(true), 100);
-    });
-
-    const handleFeedbackUpdate = () => loadFeedbacks();
-    window.addEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
-    window.addEventListener("userUpdated", handleFeedbackUpdate);
-    return () => {
-      window.removeEventListener("mockFeedbackUpdated", handleFeedbackUpdate);
-      window.removeEventListener("userUpdated", handleFeedbackUpdate);
-    };
+    fetchStats();
   }, []);
 
+  // 2a. Restore cached home book covers (if any) after loading screen disappears
   useEffect(() => {
-    if (!isContentReady) return;
+    if (!pageLoaded) return;
 
-    // When basic HTML/CSS/text is ready, show the page loader immediately
-    // Do NOT wait for all images to load — images will lazy-load individually.
-    const rafId = requestAnimationFrame(() => {
-      setTimeout(() => setPageLoaded(true), 50);
+    try {
+      const raw = localStorage.getItem("homeBooksCache.v1");
+      if (!raw) return;
+      const cached = JSON.parse(raw);
+
+      if (Array.isArray(cached.heroBooks) && cached.heroBooks.length) {
+        setHeroBooks(cached.heroBooks);
+      }
+      if (Array.isArray(cached.aboutBooks) && cached.aboutBooks.length) {
+        setAboutBooks(cached.aboutBooks);
+      }
+      if (Array.isArray(cached.featuredBooks) && cached.featuredBooks.length) {
+        setFeaturedBooks(cached.featuredBooks);
+      }
+    } catch (error) {
+      console.error("Failed to restore home books cache:", error);
+    }
+  }, [pageLoaded]);
+
+  // 2b/2c. Derive hero/about/featured books from React Query's `useBooks`.
+  useEffect(() => {
+    const rawArray = Array.isArray(booksSource)
+      ? booksSource
+      : booksSource?.data || [];
+
+    if (!rawArray.length) {
+      setHeroBooks([]);
+      setAboutBooks([]);
+      setFeaturedBooks([]);
+      return;
+    }
+
+    const sortedRawByDate = [...rawArray].sort(
+      (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+    );
+
+    const heroRaw = sortedRawByDate.slice(0, 12);
+    const featuredRaw = sortedRawByDate.slice(0, 12);
+
+    const toViewModel = (book) => ({
+      book_id: book.book_id,
+      name: book.name,
+      category_id: book.category_id,
+      quantity: book.quantity,
+      created_at: book.created_at,
+      image: getImageUrl(book.image_url) || "",
     });
 
-    return () => cancelAnimationFrame(rafId);
-  }, [isContentReady]);
+    const heroList = heroRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
+
+    const featuredList = featuredRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
+
+    const poolMap = new Map();
+    [...heroList, ...featuredList].forEach((b) => {
+      if (!b?.book_id) return;
+      poolMap.set(b.book_id, b);
+    });
+    const pool = poolMap.size ? Array.from(poolMap.values()) : heroList.length ? heroList : featuredList;
+
+    const pickTwo = (list) => {
+      if (!list.length) return [];
+      if (list.length === 1) return [list[0], list[0]];
+      const first = Math.floor(Math.random() * list.length);
+      let second = Math.floor(Math.random() * (list.length - 1));
+      if (second >= first) second += 1;
+      return [list[first], list[second]];
+    };
+
+    const aboutSelected = pickTwo(pool || []);
+    while (aboutSelected.length < 2 && heroList.length) {
+      aboutSelected.push(heroList[aboutSelected.length % heroList.length]);
+    }
+
+    setHeroBooks(heroList);
+    setFeaturedBooks(featuredList);
+    setAboutBooks(aboutSelected);
+  }, [pageLoaded, booksSource]);
+
+  // 2d. Persist processed home book covers in local storage for faster reloads
+  useEffect(() => {
+    if (
+      !heroBooks.length &&
+      !aboutBooks.length &&
+      !featuredBooks.length
+    ) {
+      return;
+    }
+
+    try {
+      const payload = {
+        heroBooks,
+        aboutBooks,
+        featuredBooks,
+      };
+      localStorage.setItem("homeBooksCache.v1", JSON.stringify(payload));
+    } catch (error) {
+      console.error("Failed to cache home books:", error);
+    }
+  }, [heroBooks, aboutBooks, featuredBooks]);
+
+  // books count is populated during initial `fetchStats` prefetch.
+
+  // Feedbacks are loaded via `useApprovedFeedbacks` (React Query).
 
   useEffect(() => {
     const selectedTheme = localStorage.getItem("selected-theme");
@@ -161,11 +240,7 @@ const Home = () => {
       setThemeIcon("ri-sun-line");
     }
 
-    // specific Home page body background color fix
     document.body.classList.add("home-page-active");
-    // mark content ready very early so the loader can hide while images load lazily
-    requestAnimationFrame(() => setIsContentReady(true));
-
     return () => document.body.classList.remove("home-page-active");
   }, []);
 
@@ -229,10 +304,6 @@ const Home = () => {
     typeof window !== "undefined" && window.innerWidth >= 1150 ? 3 : 1;
 
   const featuredMaxIndex = Math.max(0, featuredBooks.length - featuredPerView);
-  const testimonialMaxIndex = Math.max(
-    0,
-    feedbacks.length - testimonialPerView,
-  );
 
   const featuredPrev = useCallback(() => {
     setFeaturedIndex((prev) => (prev <= 0 ? featuredMaxIndex : prev - 1));
@@ -261,6 +332,13 @@ const Home = () => {
     els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [pageLoaded]);
+
+  const aboutBooksForDisplay = (() => {
+    if (aboutBooks.length >= 2) return aboutBooks;
+    if (heroBooks.length >= 2) return heroBooks.slice(0, 2);
+    if (featuredBooks.length >= 2) return featuredBooks.slice(0, 2);
+    return aboutBooks;
+  })();
 
   return (
     <>
@@ -304,7 +382,7 @@ const Home = () => {
           <AboutUs
             stats={stats}
             setActivePopup={setActivePopup}
-            aboutBooks={aboutBooks}
+            aboutBooks={aboutBooksForDisplay}
           />
 
           <FeaturedSection
@@ -319,8 +397,7 @@ const Home = () => {
           <Pricing setIsLoginOpen={setIsLoginOpen} />
 
           <Testimonials
-            feedbacks={feedbacks}
-            testimonialIndex={testimonialIndex}
+            feedbacks={approvedFeedbacks}
             testimonialPerView={testimonialPerView}
             testimonialImg1={testimonialImg1}
             isLoading={isFeedbacksLoading}
