@@ -152,6 +152,37 @@ interface FeedbackDTO {
   status: 'Pending' | 'Approved' | 'Rejected';
   created_at: string;     // ISO-8601
 }
+
+### BookReviews
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `review_id` | int | PK, identity |
+| `book_id` | int | FK → `BookDetails.book_id` |
+| `user_id` | string(20) | FK → `Users.user_id` |
+| `rating` | int | required, 1-5 |
+| `review_text` | string(1000) | nullable |
+| `created_at` | timestamp | default: `now()` |
+
+Endpoints:
+
+- GET `/api/BookReviews/book/{book_id}` — Returns `BookReviewDTO[]` for the specified book; includes `user_name` and `user_image_url` joined from `Users`.
+- POST `/api/BookReviews` — Create review; body: `{ book_id, user_id, rating, review_text? }` (server sets `created_at = now()`). Clear navigation properties on incoming payloads.
+- DELETE `/api/BookReviews/{review_id}` — Delete review by id.
+
+BookReviewDTO shape:
+
+```typescript
+interface BookReviewDTO {
+  review_id: number;
+  book_id: number;
+  user_id: string;
+  user_name: string;
+  user_image_url?: string; // base64-encoded avatar bytes or null
+  rating: number;         // 1-5
+  review_text?: string;
+  created_at?: string;    // ISO-8601
+}
+```
 ```
 
 ---
@@ -735,6 +766,56 @@ POST /api/BookReviews
   - Add book review display and creation forms
   - Update BookDetail view to show reviews and average rating
   - Implement chat intent handling based on returned intent type
+
+Developer implementation notes (scanned from repository)
+--------------------------------------------------
+
+The following notes summarize the current in-repo chatbot implementation discovered while scanning the codebase. Use these details to finish integration, tests or frontend wiring.
+
+- Endpoint status:
+  - `POST /api/chat` is mapped in `Program.cs` and currently returns a placeholder JSON: `{ message = "API working" }`. Full request handling (intent detection → DB lookup → LLM response → logging) is not wired in the single route handler and must be implemented or replaced with a controller.
+
+- Dependency Injection (registered in `Program.cs`):
+  - `IChatService` → `ChatService`
+  - `IDatabaseService` → `DatabaseService`
+  - `IResponseService` → `GroqResponseService` (registered as an `HttpClient`)
+  - `IAiResponseService` → `GroqResponseService` (registered as an `HttpClient`)
+  - `IChatLogService` → `ChatLogService`
+
+- Intent detection implementations found:
+  - `GroqIntentService` — production LLM-based classifier using Groq API (`/openai/v1/chat/completions`).
+  - `MockIntentService` — simple keyword-based fallback for development.
+  - `IntentService` — older/simple rule-based classifier also present.
+
+- Response/decision implementations found:
+  - `GroqResponseService` — wraps calls to Groq for both action-decisions (`DecideAction`) and free-form responses (`GenerateFinalResponse`). It exposes both `IResponseService` and `IAiResponseService` interfaces.
+  - `ChatService` — light orchestration that translates an `IntentResult` into simple responses (for intents like `check_book_availability`, `search_book`, `working_hours`). It calls `IDatabaseService` to check book availability.
+
+- DTOs and logging:
+  - `ChatRequest` DTO exists (`DTO/ChatRequest.cs`) and expects `message` and optional `userId`.
+  - `IntentResult` DTO exists with `Intent`, `Book_Name`, and `Confidence` fields.
+  - `GroqResponse` DTO models the Groq API response shape.
+  - `ChatLogService` persists chat logs using `Npgsql` and expects a connection string named `DefaultConnection` (it also exposes `GetLastMessages` and a helper `LogChat`).
+
+- Configuration keys used by the chat components:
+  - `Groq:ApiKey` — API key for Groq
+  - `Groq:Model` — model name (default in code: `llama3-70b-8192`)
+  - Connection strings:
+    - `projectContext` — used by EF Core DbContext registration in `Program.cs`
+    - `DefaultConnection` — used by `ChatLogService` for direct Npgsql usage
+
+- Notes and next steps to enable full chat flow:
+  1. Replace or extend the placeholder `POST /api/chat` handler in `Program.cs` with logic that:
+     - Accepts `ChatRequest`, calls an `IIntentService` implementation to detect intent
+     - Uses `IChatService`/`IDatabaseService` to query DB when needed
+     - Calls `IAiResponseService`/`IResponseService` to generate the final reply
+     - Calls `IChatLogService.SaveLog` (or `LogChat`) to persist conversation logs
+     - Returns a consistent Chat Response JSON (e.g. `{ reply: "..." }`).
+  2. Ensure `appsettings.json` contains the `Groq` keys and both connection strings (`projectContext` and `DefaultConnection`).
+  3. Confirm the database has a `ChatLogs` table (columns referenced in `ChatLogService`: `user_message`, `intent`, `bot_response`, `confidence`, optional `user_id`) or update the SQL and schema as needed.
+  4. Add unit/integration tests for intent detection fallbacks (mock Groq responses) and DB availability checks.
+
+These notes are intended to help developers pick up the chatbot work done by your friend and complete or extend the integration.
 
 ### Previous Update (User subscription end date)
 - Added `subscription_end_date` (timestamp) to `Users` for plan expiration tracking.

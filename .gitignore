@@ -27,4 +27,3 @@ public_schema.sql
 .env
 ESP8266_SMART_ID.ino
 .vercel
-.agent/rules/WORKSPACE_AGENT_RULES.md
