@@ -39,7 +39,10 @@ function UserChatbot() {
 
   const chatMutation = useMutation({
     mutationFn: async (messageText) => {
-      return apiPost("/chat", { message: messageText });
+      return apiPost("/chat", {
+        message: messageText,
+        userId: currentUser?.user_id ?? null,
+      });
     },
     onSuccess: (data) => {
       setMessages((prev) => [
