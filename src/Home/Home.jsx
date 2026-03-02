@@ -15,10 +15,8 @@ import secureInfoIcon from "../assets/secure information.png";
 import chatbotIcon from "../assets/chatbot.png";
 
 import { apiGet, getImageUrl } from "../services/api.config";
-import { useQueryClient } from '@tanstack/react-query';
-import { useBooks, bookKeys } from "../hooks/useBooks";
+import { useBooks } from "../hooks/useBooks";
 import { useApprovedFeedbacks } from "../hooks/useFeedbacks";
-import { getAllBooks } from "../services/books.api";
 import Header from "./Components/Header";
 import Hero from "./Components/Hero";
 import Services from "./Components/Services";
@@ -40,10 +38,10 @@ const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [heroBooks, setHeroBooks] = useState([]);
   const [aboutBooks, setAboutBooks] = useState([]);
-  const queryClient = useQueryClient();
-  const { data: booksSource, isLoading: booksLoading } = useBooks();
+  const { data: booksSource } = useBooks();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
-  const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } = useApprovedFeedbacks();
+  const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } =
+    useApprovedFeedbacks();
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showShadowHeader, setShowShadowHeader] = useState(false);
@@ -55,64 +53,49 @@ const Home = () => {
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
 
-  // 1. Stats (numbers) must load before loading screen disappears
+  // 1. Stats (numbers) gate — only waits for the tiny /Stats endpoint.
+  //    Books (with base64 image payloads) are fetched independently via
+  //    useBooks() so that large image data never holds up the loader.
   useEffect(() => {
-    console.debug("Home: mount - fetching stats (numbers) for loading gate");
     const fetchStats = async () => {
       try {
-        // Try fetching lightweight stats first; if the endpoint fails
-        // fallback to fetching branches/categories and deriving book count
-        // from the prefetched books. Use non-throwing fetches so one
-        // failure doesn't block the other.
-        const statsPromise = apiGet("/Stats").catch(() => null);
-        const booksPromise = queryClient
-          .fetchQuery({ queryKey: bookKeys.lists(), queryFn: getAllBooks })
-          .catch(() => null);
-
-        const [maybeStats, maybeBooks] = await Promise.all([
-          statsPromise,
-          booksPromise,
-        ]);
+        const maybeStats = await apiGet("/Stats").catch(() => null);
 
         let branches = 0;
         let categories = 0;
         let booksCount = 0;
 
         if (maybeStats && typeof maybeStats === "object") {
-          branches = Number.isFinite(+maybeStats.branches) ? +maybeStats.branches : 0;
-          categories = Number.isFinite(+maybeStats.categories) ? +maybeStats.categories : 0;
-          booksCount = Number.isFinite(+maybeStats.books) ? +maybeStats.books : 0;
+          branches = Number.isFinite(+maybeStats.branches)
+            ? +maybeStats.branches
+            : 0;
+          categories = Number.isFinite(+maybeStats.categories)
+            ? +maybeStats.categories
+            : 0;
+          booksCount = Number.isFinite(+maybeStats.books)
+            ? +maybeStats.books
+            : 0;
         }
 
-        // If stats endpoint didn't yield useful numbers, fetch branches/categories
-        // individually and derive books from the prefetched books response.
         if (!branches && !categories) {
           try {
             const [branchData, catData] = await Promise.all([
               apiGet("/Branches").catch(() => null),
               apiGet("/Categories").catch(() => null),
             ]);
-            branches = Array.isArray(branchData) ? branchData.length : branchData?.data?.length || 0;
-            categories = Array.isArray(catData) ? catData.length : catData?.data?.length || 0;
-          } catch (e) {
-            // ignore
-          }
-        }
-
-        if (!booksCount) {
-          if (Array.isArray(maybeBooks)) booksCount = maybeBooks.length;
-          else if (maybeBooks && Array.isArray(maybeBooks.data)) booksCount = maybeBooks.data.length;
+            branches = Array.isArray(branchData)
+              ? branchData.length
+              : branchData?.data?.length || 0;
+            categories = Array.isArray(catData)
+              ? catData.length
+              : catData?.data?.length || 0;
+          } catch {}
         }
 
         setStats({ branches, categories, books: booksCount });
-
-        // Numbers loaded — hide loading screen
-        requestAnimationFrame(() => {
-          setTimeout(() => setPageLoaded(true), 50);
-        });
       } catch (error) {
         console.error("Failed to fetch stats:", error);
-        // Still hide loading screen on error to avoid infinite loader
+      } finally {
         requestAnimationFrame(() => {
           setTimeout(() => setPageLoaded(true), 50);
         });
@@ -173,16 +156,26 @@ const Home = () => {
       image: getImageUrl(book.image_url) || "",
     });
 
-    const heroList = heroRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
+    const heroList = heroRaw
+      .map(toViewModel)
+      .filter((b) => b.image)
+      .slice(0, 10);
 
-    const featuredList = featuredRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
+    const featuredList = featuredRaw
+      .map(toViewModel)
+      .filter((b) => b.image)
+      .slice(0, 10);
 
     const poolMap = new Map();
     [...heroList, ...featuredList].forEach((b) => {
       if (!b?.book_id) return;
       poolMap.set(b.book_id, b);
     });
-    const pool = poolMap.size ? Array.from(poolMap.values()) : heroList.length ? heroList : featuredList;
+    const pool = poolMap.size
+      ? Array.from(poolMap.values())
+      : heroList.length
+        ? heroList
+        : featuredList;
 
     const pickTwo = (list) => {
       if (!list.length) return [];
@@ -205,11 +198,7 @@ const Home = () => {
 
   // 2d. Persist processed home book covers in local storage for faster reloads
   useEffect(() => {
-    if (
-      !heroBooks.length &&
-      !aboutBooks.length &&
-      !featuredBooks.length
-    ) {
+    if (!heroBooks.length && !aboutBooks.length && !featuredBooks.length) {
       return;
     }
 
