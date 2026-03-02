@@ -20,12 +20,13 @@ const CommonLayout = ({
   isUserPage = false,
   customTitle,
   secondaryButton,
-  onScroll,
   onLoadMore,
   hasMore,
+  emphasizedColumns = [],
 }) => {
   const FormPopupComponent = formPopup;
   const observerTarget = useRef(null);
+  const emphasizedColumnsSet = new Set(emphasizedColumns);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -38,13 +39,14 @@ const CommonLayout = ({
       { rootMargin: "200px", threshold: 0 },
     );
 
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    const target = observerTarget.current;
+    if (target) {
+      observer.observe(target);
     }
 
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (target) {
+        observer.unobserve(target);
       }
     };
   }, [hasMore, onLoadMore, isLoading]);
@@ -99,7 +101,11 @@ const CommonLayout = ({
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className="p-3 text-[18px] text-center tracking-widest font-medium"
+                    className={`p-3 text-center tracking-widest ${
+                      emphasizedColumnsSet.has(col.accessor)
+                        ? "text-[22px] font-extrabold"
+                        : "text-[18px] font-medium"
+                    }`}
                   >
                     {col.header}
                   </th>
@@ -183,7 +189,11 @@ const CommonLayout = ({
                       return (
                         <td
                           key={col.accessor}
-                          className="p-3 text-center dark:text-white"
+                          className={`p-3 text-center dark:text-white ${
+                            emphasizedColumnsSet.has(col.accessor)
+                              ? "text-[23px] font-extrabold"
+                              : ""
+                          }`}
                         >
                           {cellContent}
                         </td>

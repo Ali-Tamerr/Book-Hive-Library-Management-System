@@ -17,7 +17,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
           </p>
           <a
             href="#featured"
-            className="inline-block rounded-lg border border-[#000035] bg-[#000035] px-9 py-5 font-[family-name:Montserrat,sans-serif] text-[20px] font-bold text-[#f7f7f7] duration-500 hover:border-[#000035] hover:bg-[#E8E8E8] hover:text-[#111214] dark:border-[#000035] dark:bg-[#000035] dark:text-[#f7f7f7] dark:hover:border-[#000035] dark:hover:bg-[#f7f7f7] dark:hover:text-[#111214] dark:hover:shadow-[0_6px_30px_rgba(0,0,0,0.25)]"
+            className="inline-block rounded-lg border border-[#f7f7f7] bg-[#000035] px-9 py-5 font-[family-name:Montserrat,sans-serif] text-[20px] font-bold text-[#f7f7f7] duration-500 hover:border-[#111214] hover:bg-[#f7f7f7] hover:text-[#111214] dark:border-[#f7f7f7] dark:bg-[#111214] dark:text-[#f7f7f7] dark:hover:border-[#111214] dark:hover:bg-[#f7f7f7] dark:hover:text-[#111214] dark:hover:shadow-[0_6px_30px_rgba(0,0,0,0.25)]"
             onClick={(e) => scrollToSection(e, "featured")}
           >
             Explore Now
