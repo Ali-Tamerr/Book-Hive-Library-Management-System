@@ -26,17 +26,19 @@ const CommonLayout = ({
 }) => {
   const FormPopupComponent = formPopup;
   const observerTarget = useRef(null);
+  const scrollContainerRef = useRef(null);
   const emphasizedColumnsSet = new Set(emphasizedColumns);
 
   useEffect(() => {
+    if (!scrollContainerRef.current) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !isLoading && onLoadMore) {
-          console.log("Intersecting bottom sentinel, loading more...");
           onLoadMore();
         }
       },
-      { rootMargin: "200px", threshold: 0 },
+      { root: scrollContainerRef.current, rootMargin: "300px", threshold: 0 },
     );
 
     const target = observerTarget.current;
@@ -93,19 +95,18 @@ const CommonLayout = ({
         </div>
       </div>
 
-      <section className="flex min-h-0 flex-1 gap-6 rounded-lg">
-        <div className="h-full flex-1 gap-4 rounded-lg bg-white pb-4 dark:bg-[#121317]">
+      <section className="flex min-h-0 flex-1 gap-6 overflow-hidden rounded-lg">
+        <div
+          ref={scrollContainerRef}
+          className="min-h-0 flex-1 overflow-y-auto rounded-lg bg-white pb-4 dark:bg-[#121317]"
+        >
           <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
-            <thead>
+            <thead className="sticky top-0 z-10 bg-white dark:bg-[#121317]">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className={`p-3 text-center tracking-widest ${
-                      emphasizedColumnsSet.has(col.accessor)
-                        ? "text-[22px] font-extrabold"
-                        : "text-[18px] font-medium"
-                    }`}
+                    className={`p-3 text-center text-[22px] font-extrabold tracking-widest`}
                   >
                     {col.header}
                   </th>
@@ -189,11 +190,7 @@ const CommonLayout = ({
                       return (
                         <td
                           key={col.accessor}
-                          className={`p-3 text-center dark:text-white ${
-                            emphasizedColumnsSet.has(col.accessor)
-                              ? "text-[23px] font-extrabold"
-                              : ""
-                          }`}
+                          className={`p-3 text-center dark:text-white`}
                         >
                           {cellContent}
                         </td>
