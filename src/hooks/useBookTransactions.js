@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAllTransactions,
+  getDashboardTransactions,
   getTransactionById,
   createTransaction,
   updateTransaction,
@@ -13,6 +14,7 @@ export const bookTransactionKeys = {
   all: ["bookTransactions"],
   lists: () => [...bookTransactionKeys.all, "list"],
   list: (filters) => [...bookTransactionKeys.lists(), { filters }],
+  dashboard: () => [...bookTransactionKeys.all, "dashboard"],
   details: () => [...bookTransactionKeys.all, "detail"],
   detail: (id) => [...bookTransactionKeys.details(), id],
 };
@@ -21,6 +23,14 @@ export const useBookTransactions = () => {
   return useQuery({
     queryKey: bookTransactionKeys.lists(),
     queryFn: getAllTransactions,
+    ...adminQueryOptions,
+  });
+};
+
+export const useDashboardTransactions = () => {
+  return useQuery({
+    queryKey: bookTransactionKeys.dashboard(),
+    queryFn: getDashboardTransactions,
     ...adminQueryOptions,
   });
 };

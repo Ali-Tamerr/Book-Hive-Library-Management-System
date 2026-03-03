@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import {
   getAllUsers,
+  getLibrarians,
   getUserById,
   createUser,
   updateUser,
@@ -19,6 +20,7 @@ export const userKeys = {
   list: (filters) => [...userKeys.lists(), { filters }],
   // Separate key for infinite queries to avoid conflicts
   infinite: () => [...userKeys.all, "infinite"],
+  librarians: () => [...userKeys.all, "librarians"],
   details: () => [...userKeys.all, "detail"],
   detail: (id) => [...userKeys.details(), id],
 };
@@ -38,8 +40,6 @@ export const useUsers = () => {
         0,
       );
 
-     
-
       if (total > 0) {
         if (totalLoaded < total) {
           return currentPage + 1;
@@ -54,6 +54,14 @@ export const useUsers = () => {
       }
       return undefined;
     },
+    ...adminQueryOptions,
+  });
+};
+
+export const useLibrarians = () => {
+  return useQuery({
+    queryKey: userKeys.librarians(),
+    queryFn: getLibrarians,
     ...adminQueryOptions,
   });
 };
