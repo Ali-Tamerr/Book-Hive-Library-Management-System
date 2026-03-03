@@ -15,7 +15,7 @@ import secureInfoIcon from "../assets/secure information.png";
 import chatbotIcon from "../assets/chatbot.png";
 
 import { apiGet, getImageUrl } from "../services/api.config";
-import { useBooks } from "../hooks/useBooks";
+import { useBookCovers } from "../hooks/useBooks";
 import { useApprovedFeedbacks } from "../hooks/useFeedbacks";
 import Header from "./Components/Header";
 import Hero from "./Components/Hero";
@@ -38,7 +38,7 @@ const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [heroBooks, setHeroBooks] = useState([]);
   const [aboutBooks, setAboutBooks] = useState([]);
-  const { data: booksSource } = useBooks();
+  const { data: booksSource } = useBookCovers();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
   const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } =
     useApprovedFeedbacks();

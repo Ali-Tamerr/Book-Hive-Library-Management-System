@@ -7,6 +7,10 @@ export const getAllTransactions = async () => {
   return await apiGet(BASE_ENDPOINT);
 };
 
+export const getDashboardTransactions = async () => {
+  return await apiGet(`${BASE_ENDPOINT}/dashboard`);
+};
+
 // Get transaction by ID
 export const getTransactionById = async (id) => {
   return await apiGet(`${BASE_ENDPOINT}/${id}`);
