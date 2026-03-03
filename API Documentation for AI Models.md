@@ -772,8 +772,10 @@ Developer implementation notes (scanned from repository)
 
 The following notes summarize the current in-repo chatbot implementation discovered while scanning the codebase. Use these details to finish integration, tests or frontend wiring.
 
-- Endpoint status:
-  - `POST /api/chat` is mapped in `Program.cs` and currently returns a placeholder JSON: `{ message = "API working" }`. Full request handling (intent detection → DB lookup → LLM response → logging) is not wired in the single route handler and must be implemented or replaced with a controller.
+- Endpoint status (updated):
+  - `POST /api/chat` is mapped as a minimal API in `Program.cs` and now directly calls Groq LLM with model `llama-3.1-8b-instant`. It requires `Groq:ApiKey` and returns `{ reply: "..." }` from the first choice. No intent detection, DB lookup, or chat logging is wired into this route.
+  - The intent-driven services (`GroqIntentService`, `MockIntentService`, `ChatService`, `DatabaseService`, `ChatLogService`) remain registered but are not used by the current minimal handler.
+  - Two `ChatRequest` types exist (`Models/ChatRequest.cs` and `DTO/ChatRequest.cs` with optional `UserId`); consider consolidating to avoid binding confusion.
 
 - Dependency Injection (registered in `Program.cs`):
   - `IChatService` → `ChatService`
@@ -781,6 +783,7 @@ The following notes summarize the current in-repo chatbot implementation discove
   - `IResponseService` → `GroqResponseService` (registered as an `HttpClient`)
   - `IAiResponseService` → `GroqResponseService` (registered as an `HttpClient`)
   - `IChatLogService` → `ChatLogService`
+  - A default `HttpClient` is also registered for the minimal `/api/chat` handler.
 
 - Intent detection implementations found:
   - `GroqIntentService` — production LLM-based classifier using Groq API (`/openai/v1/chat/completions`).
@@ -793,19 +796,23 @@ The following notes summarize the current in-repo chatbot implementation discove
 
 - DTOs and logging:
   - `ChatRequest` DTO exists (`DTO/ChatRequest.cs`) and expects `message` and optional `userId`.
+  - Another `ChatRequest` exists in `Models/ChatRequest.cs` (only `Message`); unify to one type to prevent binding conflicts.
   - `IntentResult` DTO exists with `Intent`, `Book_Name`, and `Confidence` fields.
   - `GroqResponse` DTO models the Groq API response shape.
   - `ChatLogService` persists chat logs using `Npgsql` and expects a connection string named `DefaultConnection` (it also exposes `GetLastMessages` and a helper `LogChat`).
 
 - Configuration keys used by the chat components:
   - `Groq:ApiKey` — API key for Groq
-  - `Groq:Model` — model name (default in code: `llama3-70b-8192`)
+  - `Groq:Model` — model name (default in `GroqIntentService`/`GroqResponseService`: `llama3-70b-8192`; the minimal `/api/chat` handler hardcodes `llama-3.1-8b-instant` and ignores this setting)
   - Connection strings:
     - `projectContext` — used by EF Core DbContext registration in `Program.cs`
     - `DefaultConnection` — used by `ChatLogService` for direct Npgsql usage
 
+- Database expectations from chat-related helpers:
+  - `DatabaseService.CheckBookAvailability` queries `DefaultConnection` against a `books` table with columns `title` (text) and `available` (bool), using a case-insensitive LIKE on `title`. Ensure this table/columns exist or update the query/schema accordingly.
+
 - Notes and next steps to enable full chat flow:
-  1. Replace or extend the placeholder `POST /api/chat` handler in `Program.cs` with logic that:
+  1. Replace or extend the current minimal `POST /api/chat` handler in `Program.cs` with logic that:
      - Accepts `ChatRequest`, calls an `IIntentService` implementation to detect intent
      - Uses `IChatService`/`IDatabaseService` to query DB when needed
      - Calls `IAiResponseService`/`IResponseService` to generate the final reply

@@ -51,6 +51,12 @@ function UserFormPopup({
       autocomplete: "tel",
     },
     {
+      name: "email",
+      type: "email",
+      placeholder: "Email Address",
+      autocomplete: "email",
+    },
+    {
       name: "password",
       type: "password",
       placeholder: editMode
@@ -133,6 +139,7 @@ function UserFormPopup({
   const editInputs = [
     baseInputs.find((input) => input.name === "name"),
     baseInputs.find((input) => input.name === "phone_number"),
+    baseInputs.find((input) => input.name === "email"),
     baseInputs.find((input) => input.name === "password"),
     branchInput,
     planInput,
@@ -147,28 +154,26 @@ function UserFormPopup({
   const inputs = editMode ? editInputs : addInputs;
 
   const editCustomLayout = [
-    { columns: 2, inputs: ["name", "phone_number"] },
-    { columns: 2, inputs: ["password", "branch_id"] },
-    {
-      type: "flex",
-      justify: "center",
-      inputs: [{ name: "plan", className: "w-[calc(50%-0.5rem)]" }],
-    },
+    { columns: 2, inputs: ["name", "email"] },
+    { columns: 2, inputs: ["phone_number", "branch_id"] },
+    { columns: 2, inputs: ["password", "plan"] },
   ];
 
   const addCustomLayout = isSuperAdmin
     ? [
-        { columns: 2, inputs: ["name", "phone_number"] },
+        { columns: 2, inputs: ["name", "email"] },
+        { columns: 2, inputs: ["phone_number", "password"] },
         isRoleAdmin
-          ? { columns: 1, inputs: ["password"] }
-          : { columns: 2, inputs: ["password", "plan"] },
-        { columns: 2, inputs: ["role", "branch_id"] },
-        ...(isRoleAdmin ? [] : [{ columns: 1, inputs: ["user_id"] }]),
+          ? { columns: 2, inputs: ["role", "branch_id"] }
+          : { columns: 2, inputs: ["role", "plan"] },
+        ...(isRoleAdmin
+          ? []
+          : [{ columns: 2, inputs: ["branch_id", "user_id"] }]),
       ]
     : [
-        { columns: 2, inputs: ["name", "phone_number"] },
-        { columns: 2, inputs: ["password", "plan"] },
-        { columns: 1, inputs: ["user_id"] },
+        { columns: 2, inputs: ["name", "email"] },
+        { columns: 2, inputs: ["phone_number", "password"] },
+        { columns: 2, inputs: ["plan", "user_id"] },
       ];
 
   const customLayout = editMode ? editCustomLayout : addCustomLayout;
