@@ -11,7 +11,7 @@ import BranchesPopup from "../components/BranchesPopup";
 function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
   const navigate = useNavigate();
   const [isAnimating, setIsAnimating] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
     setLoading(true);
 
     try {
-      const user = await login(phoneNumber, password);
+      const user = await login(email, password);
       if (
         user.role === "Super Admin" ||
         user.role === "Admin" ||
@@ -91,7 +91,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
         >
           <WhiteBgSection
             title="Welcome Back !!"
-            subtitle="Please enter your phone number and password to log in"
+            subtitle="Please enter your email and password to log in"
             loginLayout={true}
             isDarkMode={isDarkMode}
             backButton={{
@@ -105,10 +105,10 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
               className="flex w-full flex-col items-center gap-6 px-[100px] max-[856px]:px-[120px]"
             >
               <AuthInput
-                type="text"
-                placeholder="Phone Number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 isDarkMode={isDarkMode}
               />
