@@ -141,7 +141,8 @@ const SettingsPopup = ({ show, onClose }) => {
     try {
       const userData = {
         user_id: currentUser.user_id,
-        name: currentUser.name,
+        first_name: currentUser.first_name,
+        last_name: currentUser.last_name,
         role: currentUser.role,
         status: currentUser.status || "Active",
         plan: currentUser.plan || null,

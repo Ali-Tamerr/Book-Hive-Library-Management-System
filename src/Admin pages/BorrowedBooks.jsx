@@ -91,7 +91,9 @@ function BorrowedBooks({
 
   const getUserName = (userId) => {
     const user = users.find((u) => u.user_id === userId || u.id === userId);
-    return user?.full_name || user?.name || user?.username || "-";
+    return user
+      ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+      : "-";
   };
 
   const currentUser = getCurrentUser();

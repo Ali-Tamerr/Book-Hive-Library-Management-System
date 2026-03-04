@@ -159,7 +159,9 @@ const ViewRequestsPopup = ({
       const searchLower = searchValue.toLowerCase();
       filtered = filtered.filter(
         (request) =>
-          request.name?.toLowerCase().includes(searchLower) ||
+          `${request.first_name || ""} ${request.last_name || ""}`
+            .toLowerCase()
+            .includes(searchLower) ||
           request.email?.toLowerCase().includes(searchLower),
       );
     }
@@ -203,7 +205,11 @@ const ViewRequestsPopup = ({
         const book = bookCopy
           ? books.find((b) => b.book_id === bookCopy.book_id)
           : null;
-        const userName = user?.name?.toLowerCase() || "";
+        const userName = user
+          ? `${user.first_name || ""} ${user.last_name || ""}`
+              .trim()
+              .toLowerCase()
+          : "";
         const bookName = book?.name?.toLowerCase() || "";
         return userName.includes(searchLower) || bookName.includes(searchLower);
       });
@@ -245,7 +251,11 @@ const ViewRequestsPopup = ({
       const searchLower = searchValue.toLowerCase();
       filtered = filtered.filter((request) => {
         const user = users.find((u) => u.user_id === request.user_id);
-        const requestUserName = user?.name?.toLowerCase() || "";
+        const requestUserName = user
+          ? `${user.first_name || ""} ${user.last_name || ""}`
+              .trim()
+              .toLowerCase()
+          : "";
         const userIdStr = request.user_id?.toString() || "";
         return (
           requestUserName.includes(searchLower) ||
@@ -329,7 +339,8 @@ const ViewRequestsPopup = ({
 
   const getUserName = (userId) => {
     const user = users.find((u) => u.user_id === userId);
-    if (user?.name) return user.name;
+    if (user?.first_name || user?.last_name)
+      return `${user.first_name || ""} ${user.last_name || ""}`.trim();
 
     // If users haven't been loaded yet, avoid briefly showing the raw ID
     // in the User Name column. Show a neutral loading state instead.
@@ -398,7 +409,7 @@ const ViewRequestsPopup = ({
 
   const getSearchPlaceholder = () => {
     if (activeTab === "feedback") return "Search by Name or ID...";
-    return "Search by Phone or Name...";
+    return "Search by Name or Email...";
   };
 
   const currentData = getCurrentData();
@@ -506,7 +517,7 @@ const ViewRequestsPopup = ({
                   {filteredUserRequests.map((request, index) => (
                     <tr key={request.request_id || index}>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
-                        {request.name}
+                        {request.first_name} {request.last_name}
                       </td>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
                         {request.email}

@@ -188,7 +188,8 @@ export const signup = async (userData) => {
 
     console.log("Creating user with data:", {
       user_id: userData.user_id,
-      name: userData.name,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
 
       email: userData.email,
       password_hash: userData.password,
@@ -198,7 +199,8 @@ export const signup = async (userData) => {
 
     const createdUser = await createUser({
       user_id: userData.user_id,
-      name: userData.name,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
 
       email: userData.email,
       password_hash: userData.password,

@@ -38,11 +38,18 @@ function UserFormPopup({
 
   const baseInputs = [
     {
-      name: "name",
+      name: "first_name",
       type: "text",
-      placeholder: "Name",
+      placeholder: "First Name",
       required: true,
-      autocomplete: "name",
+      autocomplete: "given-name",
+    },
+    {
+      name: "last_name",
+      type: "text",
+      placeholder: "Last Name",
+      required: true,
+      autocomplete: "family-name",
     },
     {
       name: "email",
@@ -131,7 +138,8 @@ function UserFormPopup({
   const isRoleAdmin = formData.role === "Admin";
 
   const editInputs = [
-    baseInputs.find((input) => input.name === "name"),
+    baseInputs.find((input) => input.name === "first_name"),
+    baseInputs.find((input) => input.name === "last_name"),
     baseInputs.find((input) => input.name === "email"),
     baseInputs.find((input) => input.name === "password"),
     branchInput,
@@ -147,24 +155,26 @@ function UserFormPopup({
   const inputs = editMode ? editInputs : addInputs;
 
   const editCustomLayout = [
-    { columns: 2, inputs: ["name", "email"] },
-    { columns: 2, inputs: ["branch_id", "password"] },
-    { columns: 2, inputs: ["plan"] },
+    { columns: 2, inputs: ["first_name", "last_name"] },
+    { columns: 2, inputs: ["email", "password"] },
+    { columns: 2, inputs: ["branch_id", "plan"] },
   ];
 
   const addCustomLayout = isSuperAdmin
     ? [
-        { columns: 2, inputs: ["name", "email"] },
-        { columns: 2, inputs: ["password", "role"] },
+        { columns: 2, inputs: ["first_name", "last_name"] },
+        { columns: 2, inputs: ["email", "password"] },
         isRoleAdmin
-          ? { columns: 2, inputs: ["branch_id"] }
-          : { columns: 2, inputs: ["plan", "branch_id"] },
-        ...(isRoleAdmin ? [] : [{ columns: 2, inputs: ["user_id"] }]),
+          ? { columns: 2, inputs: ["role", "branch_id"] }
+          : { columns: 2, inputs: ["role", "plan"] },
+        ...(isRoleAdmin
+          ? []
+          : [{ columns: 2, inputs: ["branch_id", "user_id"] }]),
       ]
     : [
-        { columns: 2, inputs: ["name", "email"] },
-        { columns: 2, inputs: ["password", "plan"] },
-        { columns: 2, inputs: ["user_id"] },
+        { columns: 2, inputs: ["first_name", "last_name"] },
+        { columns: 2, inputs: ["email", "password"] },
+        { columns: 2, inputs: ["plan", "user_id"] },
       ];
 
   const customLayout = editMode ? editCustomLayout : addCustomLayout;
