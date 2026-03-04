@@ -43,7 +43,6 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [formData, setFormData] = useState({
     id: "",
     name: "",
-    phone_number: "",
     email: "",
     plan: "",
     role: "User",
@@ -168,17 +167,12 @@ function UserManagement({ searchValue, setSearchValue }) {
         alert("Password is required for new users.");
         return;
       }
-      if (!formData.phone_number || formData.phone_number.trim() === "") {
-        alert("Phone number is required.");
-        return;
-      }
 
       const selectedRole =
         isSuperAdmin && formData.role ? formData.role : "User";
       const apiData = {
         user_id: formData.user_id.trim(),
         name: formData.name,
-        phone_number: formData.phone_number,
         email: formData.email,
         role: selectedRole,
         plan: formData.plan || null,
@@ -218,7 +212,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         id: "",
         user_id: "",
         name: "",
-        phone_number: "",
         email: "",
         plan: "",
         role: "User",
@@ -236,11 +229,10 @@ function UserManagement({ searchValue, setSearchValue }) {
         error.response?.data?.message || error.message || JSON.stringify(error);
       const responseData = JSON.stringify(error.response?.data || {});
       if (
-        errorMsg.includes("UQ_Users_PhoneNumber") ||
-        responseData.includes("UQ_Users_PhoneNumber") ||
+        errorMsg.includes("duplicate") ||
         responseData.includes("duplicate")
       ) {
-        setFormError("This phone number is already registered.");
+        setFormError("This email is already registered.");
       } else {
         setFormError("Failed to save user. Please try again.");
       }
@@ -268,7 +260,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       id: user.user_id,
       user_id: user.user_id,
       name: user.name || "",
-      phone_number: user.phone_number || "",
       email: user.email || "",
       plan: user.plan || "",
       role: user.role || "User",
@@ -433,7 +424,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       id: "",
       user_id: "",
       name: "",
-      phone_number: "",
       email: "",
       plan: "",
       role: "User",
@@ -560,7 +550,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const columns = [
     { header: "User ID", accessor: "user_id" },
     { header: "Name", accessor: "name" },
-    { header: "Contact No", accessor: "phone_number" },
+
     { header: "Email", accessor: "email" },
     ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display" }] : []),
     { header: "Plan", accessor: "plan" },
@@ -731,7 +721,7 @@ function UserManagement({ searchValue, setSearchValue }) {
                 "User ID": selectedUser.user_id,
                 Name: selectedUser.name,
                 Branch: getUserBranchName(selectedUser),
-                "Phone Number": selectedUser.phone_number,
+
                 Email: selectedUser.email || "",
                 Plan: selectedUser.plan || "",
               }

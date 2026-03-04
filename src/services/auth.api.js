@@ -179,20 +179,17 @@ export const signup = async (userData) => {
     }
     const existingUser = users.find(
       (u) =>
-        String(u.phone_number || "").trim() ===
-        String(userData.contact || "").trim(),
+        String(u.email || "").trim() === String(userData.email || "").trim(),
     );
 
     if (existingUser) {
-      throw new Error(
-        "This phone number is already linked to another account.",
-      );
+      throw new Error("This email is already linked to another account.");
     }
 
     console.log("Creating user with data:", {
       user_id: userData.user_id,
       name: userData.name,
-      phone_number: userData.contact,
+
       email: userData.email,
       password_hash: userData.password,
       role: "User",
@@ -202,7 +199,7 @@ export const signup = async (userData) => {
     const createdUser = await createUser({
       user_id: userData.user_id,
       name: userData.name,
-      phone_number: userData.contact,
+
       email: userData.email,
       password_hash: userData.password,
       role: "User",
@@ -215,14 +212,14 @@ export const signup = async (userData) => {
 
     if (!createdUser || createdUser === "" || typeof createdUser === "string") {
       console.log(
-        "API returned empty/invalid response, fetching user by phone number...",
+        "API returned empty/invalid response, fetching user by email...",
       );
       const allUsers = await getAllUsersForAuth();
       user = Array.isArray(allUsers)
         ? allUsers.find(
             (u) =>
-              String(u.phone_number || "").trim() ===
-              String(userData.contact || "").trim(),
+              String(u.email || "").trim() ===
+              String(userData.email || "").trim(),
           )
         : null;
       console.log("Found user after fetch:", user);

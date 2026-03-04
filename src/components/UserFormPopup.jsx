@@ -45,12 +45,6 @@ function UserFormPopup({
       autocomplete: "name",
     },
     {
-      name: "phone_number",
-      type: "text",
-      placeholder: "Contact No",
-      autocomplete: "tel",
-    },
-    {
       name: "email",
       type: "email",
       placeholder: "Email Address",
@@ -138,7 +132,6 @@ function UserFormPopup({
 
   const editInputs = [
     baseInputs.find((input) => input.name === "name"),
-    baseInputs.find((input) => input.name === "phone_number"),
     baseInputs.find((input) => input.name === "email"),
     baseInputs.find((input) => input.name === "password"),
     branchInput,
@@ -155,25 +148,23 @@ function UserFormPopup({
 
   const editCustomLayout = [
     { columns: 2, inputs: ["name", "email"] },
-    { columns: 2, inputs: ["phone_number", "branch_id"] },
-    { columns: 2, inputs: ["password", "plan"] },
+    { columns: 2, inputs: ["branch_id", "password"] },
+    { columns: 2, inputs: ["plan"] },
   ];
 
   const addCustomLayout = isSuperAdmin
     ? [
         { columns: 2, inputs: ["name", "email"] },
-        { columns: 2, inputs: ["phone_number", "password"] },
+        { columns: 2, inputs: ["password", "role"] },
         isRoleAdmin
-          ? { columns: 2, inputs: ["role", "branch_id"] }
-          : { columns: 2, inputs: ["role", "plan"] },
-        ...(isRoleAdmin
-          ? []
-          : [{ columns: 2, inputs: ["branch_id", "user_id"] }]),
+          ? { columns: 2, inputs: ["branch_id"] }
+          : { columns: 2, inputs: ["plan", "branch_id"] },
+        ...(isRoleAdmin ? [] : [{ columns: 2, inputs: ["user_id"] }]),
       ]
     : [
         { columns: 2, inputs: ["name", "email"] },
-        { columns: 2, inputs: ["phone_number", "password"] },
-        { columns: 2, inputs: ["plan", "user_id"] },
+        { columns: 2, inputs: ["password", "plan"] },
+        { columns: 2, inputs: ["user_id"] },
       ];
 
   const customLayout = editMode ? editCustomLayout : addCustomLayout;
