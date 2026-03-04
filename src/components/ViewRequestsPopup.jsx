@@ -485,9 +485,7 @@ const ViewRequestsPopup = ({
                     <th className="p-4 text-center text-sm font-semibold text-[#333]">
                       Email
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
-                      Contact No
-                    </th>
+
                     <th className="p-4 text-center text-sm font-semibold text-[#333]">
                       Plan
                     </th>
@@ -513,9 +511,7 @@ const ViewRequestsPopup = ({
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
                         {request.email}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
-                        {request.phone_number}
-                      </td>
+
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
                         {request.plan || "N/A"}
                       </td>
