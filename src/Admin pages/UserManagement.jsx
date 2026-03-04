@@ -42,7 +42,8 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [formError, setFormError] = useState(null);
   const [formData, setFormData] = useState({
     id: "",
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     plan: "",
     role: "User",
@@ -172,7 +173,8 @@ function UserManagement({ searchValue, setSearchValue }) {
         isSuperAdmin && formData.role ? formData.role : "User";
       const apiData = {
         user_id: formData.user_id.trim(),
-        name: formData.name,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         email: formData.email,
         role: selectedRole,
         plan: formData.plan || null,
@@ -211,7 +213,8 @@ function UserManagement({ searchValue, setSearchValue }) {
       setFormData({
         id: "",
         user_id: "",
-        name: "",
+        first_name: "",
+        last_name: "",
         email: "",
         plan: "",
         role: "User",
@@ -259,7 +262,8 @@ function UserManagement({ searchValue, setSearchValue }) {
     setFormData({
       id: user.user_id,
       user_id: user.user_id,
-      name: user.name || "",
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
       email: user.email || "",
       plan: user.plan || "",
       role: user.role || "User",
@@ -423,7 +427,8 @@ function UserManagement({ searchValue, setSearchValue }) {
     setFormData({
       id: "",
       user_id: "",
-      name: "",
+      first_name: "",
+      last_name: "",
       email: "",
       plan: "",
       role: "User",
@@ -532,7 +537,9 @@ function UserManagement({ searchValue, setSearchValue }) {
     searchValue
       ? visibleUsers.filter(
           (user) =>
-            user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            `${user.first_name || ""} ${user.last_name || ""}`
+              .toLowerCase()
+              .includes(searchValue.toLowerCase()) ||
             user.user_id?.toString().includes(searchValue) ||
             getUserBranchName(user)
               .toLowerCase()
@@ -541,6 +548,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       : visibleUsers
   ).map((user) => ({
     ...user,
+    name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),
     formatted_exp_date: formatDate(user.subscription_end_date),
     branch_display: getUserBranchName(user),
   }));
@@ -648,7 +656,10 @@ function UserManagement({ searchValue, setSearchValue }) {
     if (!createdById) return { name: "N/A", role: "Not recorded" };
     const creator = users.find((u) => u.user_id === createdById);
     return creator
-      ? { name: creator.name, role: creator.role }
+      ? {
+          name: `${creator.first_name || ""} ${creator.last_name || ""}`.trim(),
+          role: creator.role,
+        }
       : { name: createdById, role: "Unknown" };
   };
 
@@ -719,7 +730,7 @@ function UserManagement({ searchValue, setSearchValue }) {
           selectedUser
             ? {
                 "User ID": selectedUser.user_id,
-                Name: selectedUser.name,
+                Name: `${selectedUser.first_name || ""} ${selectedUser.last_name || ""}`.trim(),
                 Branch: getUserBranchName(selectedUser),
 
                 Email: selectedUser.email || "",

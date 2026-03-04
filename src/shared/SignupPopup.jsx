@@ -12,12 +12,13 @@ import WhiteBgSection from "../components/WhiteBgSection";
 import FormSelect from "../components/FormSelect";
 
 function SignupPopup({ isOpen, onClose, onLogin }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    plan: "",
-  });
+ const [formData, setFormData] = useState({
+   first_name: "",
+   last_name: "",
+   email: "",
+   password: "",
+   plan: "",
+ });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -104,7 +105,8 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
       await createUserRequest(formData);
       setSuccess(true);
       setFormData({
-        name: "",
+        first_name: "",
+        last_name: "",
         email: "",
         password: "",
         plan: "",
@@ -179,15 +181,25 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                 onSubmit={handleSubmit}
                 className="flex w-full flex-col items-center gap-6"
               >
-                <div className="w-full">
+                <div className="flex w-full gap-4">
                   <AuthInput
                     type="text"
-                    name="name"
-                    placeholder="Full Name"
-                    value={formData.name}
+                    name="first_name"
+                    placeholder="First Name"
+                    value={formData.first_name}
                     onChange={handleChange}
                     required
-                    autoComplete="name"
+                    autoComplete="given-name"
+                    isDarkMode={isDarkMode}
+                  />
+                  <AuthInput
+                    type="text"
+                    name="last_name"
+                    placeholder="Last Name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    required
+                    autoComplete="family-name"
                     isDarkMode={isDarkMode}
                   />
                 </div>

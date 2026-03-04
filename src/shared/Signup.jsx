@@ -10,7 +10,8 @@ import FormSelect from "../components/FormSelect";
 function Signup() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     plan: "",
@@ -35,7 +36,8 @@ function Signup() {
       await createUserRequest(formData);
       setSuccess(true);
       setFormData({
-        name: "",
+        first_name: "",
+        last_name: "",
         email: "",
         password: "",
         plan: "",
@@ -84,12 +86,21 @@ function Signup() {
               <div className="flex w-full gap-4">
                 <AuthInput
                   type="text"
-                  name="name"
-                  placeholder="Full Name"
-                  value={formData.name}
+                  name="first_name"
+                  placeholder="First Name"
+                  value={formData.first_name}
                   onChange={handleChange}
                   required
-                  autoComplete="name"
+                  autoComplete="given-name"
+                />
+                <AuthInput
+                  type="text"
+                  name="last_name"
+                  placeholder="Last Name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  required
+                  autoComplete="family-name"
                 />
               </div>
               <div className="flex w-full gap-4">
@@ -182,12 +193,21 @@ function Signup() {
               <div className="w-full">
                 <AuthInput
                   type="text"
-                  name="name"
-                  placeholder="Full Name"
-                  value={formData.name}
+                  name="first_name"
+                  placeholder="First Name"
+                  value={formData.first_name}
                   onChange={handleChange}
                   required
-                  autoComplete="name"
+                  autoComplete="given-name"
+                />
+                <AuthInput
+                  type="text"
+                  name="last_name"
+                  placeholder="Last Name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  required
+                  autoComplete="family-name"
                 />
               </div>
               <div className="flex w-full gap-4">
