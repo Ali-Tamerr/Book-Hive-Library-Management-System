@@ -5,6 +5,7 @@ import {
   Search,
   SendHorizontal,
   UserRound,
+  Trash2,
 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiPost, getImageUrl } from "../services/api.config";
@@ -146,6 +147,17 @@ function UserChatbot() {
     }
   };
 
+  const deleteSession = (e, id) => {
+    e.stopPropagation();
+    const newSessions = sessions.filter((s) => s.id !== id);
+    setSessions(newSessions);
+
+    if (sessionId === id) {
+      setMessages([STARTING_MESSAGE]);
+      setSessionId(Date.now());
+    }
+  };
+
   return (
     <div className="flex h-full w-full items-center justify-center bg-[#e7e7e7] px-6 py-8 text-[#050549] transition-colors duration-300 lg:px-10 dark:bg-[#0b0d14] dark:text-[#ebebf0]">
       <div className="h-[800px] w-full">
@@ -185,7 +197,7 @@ function UserChatbot() {
                 </div>
               </div>
 
-              <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
+              <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-4">
                 {sessions.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center text-center">
                     <MessageSquareText
@@ -205,17 +217,25 @@ function UserChatbot() {
                           .includes(searchQuery.toLowerCase()),
                       )
                       .map((session) => (
-                        <button
+                        <div
                           key={session.id}
                           onClick={() => loadSession(session.id)}
-                          className={`w-full truncate rounded-[10px] px-4 py-3 text-left transition-colors ${
+                          className={`group flex cursor-pointer items-center justify-between rounded-[10px] px-4 py-3 transition-colors ${
                             session.id === sessionId && messages.length > 1
                               ? "bg-[#d9d9d9] font-bold text-[#050549] dark:bg-[#555d80] dark:text-[#ebebf0]"
                               : "text-[#52558a] hover:bg-[#e4e4e4] dark:text-[#8f93a4] dark:hover:bg-[#4a4f6d]"
                           }`}
                         >
-                          {session.title}
-                        </button>
+                          <span className="truncate pr-2">{session.title}</span>
+                          <button
+                            type="button"
+                            onClick={(e) => deleteSession(e, session.id)}
+                            className={`shrink-0 transition-colors hover:text-red-500`}
+                            aria-label="Delete chat"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       ))}
                   </div>
                 )}
