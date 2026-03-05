@@ -116,7 +116,9 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           </div>
           <div>
             <h3 className="text-lg font-semibold max-[480px]:text-sm max-[350px]:text-xs">
-              {currentUser ? currentUser.name || "User" : "Loading..."}
+              {currentUser
+                ? currentUser.first_name + " " + currentUser.last_name || "User"
+                : "Loading..."}
             </h3>
             <p className="text-sm font-semibold max-[350px]:text-[10px]">
               {roleLabel}
