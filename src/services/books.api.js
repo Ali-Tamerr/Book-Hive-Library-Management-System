@@ -7,6 +7,10 @@ export const getAllBooks = async () => {
   return await apiGet(BASE_ENDPOINT);
 };
 
+export const getBookManagement = async () => {
+  return await apiGet(`${BASE_ENDPOINT}/management`);
+};
+
 export const getBookCovers = async () => {
   return await apiGet(`${BASE_ENDPOINT}/covers`);
 };
