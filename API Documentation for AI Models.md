@@ -5,7 +5,6 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 ---
 
 ## Principles (must-follow)
-
 - Use property names exactly as shown (including casing).
 - Send only scalar fields and foreign-key IDs in POST/PUT payloads. Do NOT send navigation objects or collections (no nested User/Category objects) except where the contract explicitly allows an array of FK-bearing objects (e.g. `BookCopies`).
 - Timestamps are ISO-8601 strings. If omitted and a default exists, the server will set the default value.
@@ -17,135 +16,126 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 ## Type Definitions (canonical, exact names and types)
 
 ### Branch
-
-| Field            | Type        | Constraints                                        |
-| ---------------- | ----------- | -------------------------------------------------- |
-| `branch_id`      | int         | PK, identity                                       |
-| `name`           | string(50)  | **required**                                       |
-| `location`       | string(100) | **required**                                       |
-| `contact_number` | string(20)  | nullable                                           |
-| `created_by`     | string(20)  | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `branch_id` | int | PK, identity |
+| `name` | string(50) | **required** |
+| `location` | string(100) | **required** |
+| `contact_number` | string(20) | nullable |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 
 ### Category
-
-| Field           | Type        | Constraints                                        |
-| --------------- | ----------- | -------------------------------------------------- |
-| `category_id`   | int         | PK, identity                                       |
-| `category_name` | string(100) | **required**, unique                               |
-| `created_by`    | string(20)  | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `category_id` | int | PK, identity |
+| `category_name` | string(100) | **required**, unique |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
 
 ### User
-
-| Field                   | Type        | Constraints                                                                       |
-| ----------------------- | ----------- | --------------------------------------------------------------------------------- |
-| `user_id`               | string(20)  | PK                                                                                |
-| `name`                  | string(50)  | **required**                                                                      |
-| `password_hash`         | string(255) | **required**                                                                      |
-| `email`                 | string(100) | **required**, unique                                                              |
-| `role`                  | string(20)  | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"`                      |
-| `status`                | string(20)  | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
-| `plan`                  | string(50)  | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"`                |
-| `image_url`             | bytea       | nullable — base64 string in JSON payloads                                         |
-| `subscription_end_date` | timestamp   | nullable — subscription expiration (timestamp without time zone)                  |
-| `branch_id`             | int         | nullable, FK → `Branches.branch_id`, ON DELETE SET NULL                           |
-| `created_by`            | string(20)  | nullable, FK → `Users.user_id` (self-referential), ON DELETE SET NULL             |
-| `created_at`            | timestamp   | default: `now()`                                                                  |
-| `updated_at`            | timestamp   | default: `now()`                                                                  |
-| `last_activity_at`      | timestamp   | nullable                                                                          |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `user_id` | string(20) | PK |
+| `first_name` | string(50) | **required** |
+| `last_name` | string(50) | **required** |
+| `password_hash` | string(255) | **required** |
+| `email` | string(255) | nullable |
+| `role` | string(20) | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"` |
+| `status` | string(20) | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
+| `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
+| `image_url` | bytea | nullable — base64 string in JSON payloads |
+| `subscription_end_date` | timestamp | nullable — subscription expiration (timestamp without time zone) |
+| `branch_id` | int | nullable, FK → `Branches.branch_id`, ON DELETE SET NULL |
+| `created_by` | string(20) | nullable, FK → `Users.user_id` (self-referential), ON DELETE SET NULL |
+| `created_at` | timestamp | default: `now()` |
+| `updated_at` | timestamp | default: `now()` |
+| `last_activity_at` | timestamp | nullable |
 
 ### BookDetail (represents the book meta)
-
-| Field         | Type             | Constraints                                                                        |
-| ------------- | ---------------- | ---------------------------------------------------------------------------------- |
-| `book_id`     | int              | PK, identity                                                                       |
-| `name`        | string(255)      | **required**                                                                       |
-| `category_id` | int              | FK → `Categories.category_id`                                                      |
-| `quantity`    | smallint (int16) | **required**, must be >= 0                                                         |
-| `image_url`   | bytea            | nullable — base64 string in JSON payloads (URLs may be returned if stored as text) |
-| `created_by`  | string(20)       | nullable, FK → `Users.user_id`, ON DELETE SET NULL                                 |
-| `created_at`  | timestamp        | default: `now()`                                                                   |
-| `updated_at`  | timestamp        | default: `now()`                                                                   |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `book_id` | int | PK, identity |
+| `name` | string(255) | **required** |
+| `category_id` | int | FK → `Categories.category_id` |
+| `quantity` | smallint (int16) | **required**, must be >= 0 |
+| `image_url` | bytea | nullable — base64 string in JSON payloads (URLs may be returned if stored as text) |
+| `created_by` | string(20) | nullable, FK → `Users.user_id`, ON DELETE SET NULL |
+| `created_at` | timestamp | default: `now()` |
+| `updated_at` | timestamp | default: `now()` |
 
 ### BookCopy (physical copy)
-
-| Field          | Type       | Constraints                |
-| -------------- | ---------- | -------------------------- |
-| `book_copy_id` | string(50) | PK                         |
-| `book_id`      | int        | FK → `BookDetails.book_id` |
-| `branch_id`    | int        | FK → `Branches.branch_id`  |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `book_copy_id` | string(50) | PK |
+| `book_id` | int | FK → `BookDetails.book_id` |
+| `branch_id` | int | FK → `Branches.branch_id` |
 
 > **Note:** Row-Level Security (RLS) is enabled on this table in the DB. API enforces access rules as implemented in backend.
 
 ### BookReservation
-
-| Field               | Type             | Constraints                                                             |
-| ------------------- | ---------------- | ----------------------------------------------------------------------- |
-| `reservation_id`    | smallint (int16) | PK, identity                                                            |
-| `user_id`           | string(20)       | FK → `Users.user_id`                                                    |
-| `book_id`           | string(50)       | FK → `BookCopies.book_copy_id`                                          |
-| `reservation_date`  | timestamp        | default: `now()`                                                        |
-| `expiration_date`   | timestamp        | **required**                                                            |
-| `status`            | string(20)       | default: `"Active"` — allowed: `"Fulfilled"`, `"Cancelled"`, `"Active"` |
-| `reserved_quantity` | int              | nullable                                                                |
-| `is_confirmed`      | boolean          | nullable                                                                |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `reservation_id` | smallint (int16) | PK, identity |
+| `user_id` | string(20) | FK → `Users.user_id` |
+| `book_id` | string(50) | FK → `BookCopies.book_copy_id` |
+| `reservation_date` | timestamp | default: `now()` |
+| `expiration_date` | timestamp | **required** |
+| `status` | string(20) | default: `"Active"` — allowed: `"Fulfilled"`, `"Cancelled"`, `"Active"` |
+| `reserved_quantity` | int | nullable |
+| `is_confirmed` | boolean | nullable |
 
 > **Important:** The `book_id` column in BookReservations references `BookCopies.book_copy_id` (not BookDetails).
 
 ### BookTransaction
-
-| Field              | Type             | Constraints                                                                           |
-| ------------------ | ---------------- | ------------------------------------------------------------------------------------- |
-| `transaction_id`   | smallint (int16) | PK, identity                                                                          |
-| `user_id`          | string(20)       | FK → `Users.user_id`                                                                  |
-| `book_id`          | string(50)       | FK → `BookCopies.book_copy_id`                                                        |
-| `transaction_type` | string(20)       | **required** — allowed: `"Check-In"`, `"Check-Out"`                                   |
-| `borrow_type`      | string(20)       | default: `"Borrow"` — allowed: `"Purchase"`, `"Borrow"`                               |
-| `status`           | string(20)       | default: `"Pending"` — allowed: `"Overdue"`, `"Pending"`, `"Completed"`, `"Returned"` |
-| `due_date`         | timestamp        | nullable                                                                              |
-| `return_date`      | timestamp        | nullable                                                                              |
-| `fine_amount`      | numeric(10,2)    | default: `0.00`                                                                       |
-| `created_at`       | timestamp        | default: `now()`                                                                      |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `transaction_id` | smallint (int16) | PK, identity |
+| `user_id` | string(20) | FK → `Users.user_id` |
+| `book_id` | string(50) | FK → `BookCopies.book_copy_id` |
+| `transaction_type` | string(20) | **required** — allowed: `"Check-In"`, `"Check-Out"` |
+| `borrow_type` | string(20) | default: `"Borrow"` — allowed: `"Purchase"`, `"Borrow"` |
+| `status` | string(20) | default: `"Pending"` — allowed: `"Overdue"`, `"Pending"`, `"Completed"`, `"Returned"` |
+| `due_date` | timestamp | nullable |
+| `return_date` | timestamp | nullable |
+| `fine_amount` | numeric(10,2) | default: `0.00` |
+| `created_at` | timestamp | default: `now()` |
 
 > **Important:** The `book_id` column in BookTransactions references `BookCopies.book_copy_id` (not BookDetails).
 
 ### UserRequest (registration requests pending admin approval)
-
-| Field        | Type        | Constraints                                                             |
-| ------------ | ----------- | ----------------------------------------------------------------------- |
-| `request_id` | int         | PK, identity (auto-generated)                                           |
-| `name`       | string(50)  | **required**                                                            |
-| `email`      | string(100) | **required**, unique                                                    |
-| `password`   | string(200) | **required**                                                            |
-| `email`      | string(100) | **required**                                                            |
-| `plan`       | string(50)  | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"`      |
-| `status`     | string(20)  | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
-| `created_at` | timestamp   | default: `now()`                                                        |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `request_id` | int | PK, identity (auto-generated) |
+| `first_name` | string(50) | **required** |
+| `last_name` | string(50) | **required** |
+| `email` | string(100) | **required**, unique |
+| `password` | string(200) | **required** |
+| `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
+| `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
+| `created_at` | timestamp | default: `now()` |
 
 ### NfcScan (temporary NFC reads from ESP8266 → React)
-
-| Field        | Type      | Constraints          |
-| ------------ | --------- | -------------------- |
-| `scan_id`    | bigint    | PK, identity         |
-| `tag_id`     | string    | **required**         |
-| `device_id`  | string    | default: `"esp8266"` |
-| `created_at` | timestamp | default: `now()`     |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `scan_id` | bigint | PK, identity |
+| `tag_id` | string | **required** |
+| `device_id` | string | default: `"esp8266"` |
+| `created_at` | timestamp | default: `now()` |
 
 > **Note:** UserRequests are standalone registration requests. Admins review these requests and manually create Users separately. The `request_id` is auto-generated and should not be included in POST requests.
-
+ 
 ### Feedback
-
-| Field         | Type         | Constraints                                                             |
-| ------------- | ------------ | ----------------------------------------------------------------------- |
-| `request_id`  | bigint       | PK, identity                                                            |
-| `user_id`     | string(20)   | **required**, FK → `Users.user_id`                                      |
-| `description` | string(1000) | **required**                                                            |
-| `rate`        | int          | **required**, 1-5                                                       |
-| `status`      | string(20)   | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
-| `created_at`  | timestamp    | default: `now()`                                                        |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `request_id` | bigint | PK, identity |
+| `user_id` | string(20) | **required**, FK → `Users.user_id` |
+| `description` | string(1000) | **required** |
+| `rate` | int | **required**, 1-5 |
+| `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
+| `created_at` | timestamp | default: `now()` |
 
 Endpoints:
 
-- GET `/api/Feedbacks` — Returns `FeedbackDTO[]`; includes `user_name` joined from `Users`.
+- GET `/api/Feedbacks` — Returns `FeedbackDTO[]`; includes `user_name` joined from `Users.first_name`/`Users.last_name`.
 - GET `/api/Feedbacks/approved` — Returns approved feedbacks for public display.
 - POST `/api/Feedbacks` — Create feedback; body: `{ user_id, description, rate }` (server sets `status = "Pending"`, `created_at = now()`).
 - PUT `/api/Feedbacks/{request_id}` — Update status; body: `{ status }` (allowed: `Pending`/`Approved`/`Rejected`).
@@ -153,11 +143,11 @@ Endpoints:
 
 FeedbackDTO shape:
 
-````typescript
+```typescript
 interface FeedbackDTO {
   request_id: number;
   user_id: string;
-  user_name: string;       // joined from Users.name
+  user_name: string;       // joined from Users.first_name + Users.last_name
   description: string;
   rate: number;           // 1-5
   status: 'Pending' | 'Approved' | 'Rejected';
@@ -176,7 +166,7 @@ interface FeedbackDTO {
 
 Endpoints:
 
-- GET `/api/BookReviews/book/{book_id}` — Returns `BookReviewDTO[]` for the specified book; includes `user_name` and `user_image_url` joined from `Users`.
+- GET `/api/BookReviews/book/{book_id}` — Returns `BookReviewDTO[]` for the specified book; includes `user_name` and `user_image_url` joined from `Users.first_name`/`Users.last_name`.
 - POST `/api/BookReviews` — Create review; body: `{ book_id, user_id, rating, review_text? }` (server sets `created_at = now()`). Clear navigation properties on incoming payloads.
 - DELETE `/api/BookReviews/{review_id}` — Delete review by id.
 
@@ -187,15 +177,14 @@ interface BookReviewDTO {
   review_id: number;
   book_id: number;
   user_id: string;
-  user_name: string;
+  user_name: string;        // joined from Users.first_name + Users.last_name
   user_image_url?: string; // base64-encoded avatar bytes or null
   rating: number;         // 1-5
   review_text?: string;
   created_at?: string;    // ISO-8601
 }
-````
-
-````
+```
+```
 
 ---
 
@@ -209,7 +198,7 @@ interface BookReviewDTO {
 - BookCopy operations (create/delete) update `BookDetail.quantity` atomically and are performed in transactions.
 - Deleting a BookCopy is blocked if the copy is referenced by reservations or transactions.
 - Deleting a BookDetail is blocked if any of its copies are referenced by reservations or transactions.
-- **User fields:** `password_hash` is now a **required** field.
+- **User fields:** `password_hash`, `first_name`, and `last_name` are required fields.
 - **BookReservation:** `expiration_date` is now **required**.
 
 ---
@@ -240,7 +229,8 @@ interface BookReviewDTO {
 | GET | `/api/Users` | Returns paged `UserDTO[]`; query: `page` (default 1), `limit` (default 12) |
 | GET | `/api/Users/byid/{user_id}` | Returns single `UserDTO` |
 | GET | `/api/Users/{name}` | Search users by name |
-| POST | `/api/Users` | Create User; body: `{ user_id, name, email, password_hash, role?, status?, plan?, created_by? }` |
+| GET | `/api/Users/librarians` | Returns `LibrarianDTO[]` for users with role `Admin` |
+| POST | `/api/Users` | Create User; body: `{ user_id, first_name, last_name, password_hash, email?, role?, status?, plan?, created_by? }` |
 | PUT | `/api/Users/{user_id}` | Update User |
 | PUT | `/api/Users/{user_id}/activity` | Update user's `last_activity_at` timestamp |
 | PUT | `/api/Users/activity` | Update activity by body: `{ user_id, LastActivityAt? }` |
@@ -289,8 +279,8 @@ interface BookReviewDTO {
 |--------|----------|-------------|
 | GET | `/api/UserRequests` | Returns `UserRequest[]` ordered by `created_at` descending |
 | GET | `/api/UserRequests/{request_id}` | Returns single `UserRequest` |
-| POST | `/api/UserRequests` | Create request; body: `{ name, email, password, plan? }` |
-| PUT | `/api/UserRequests/{request_id}` | Update request (approve/reject); body: `{ status?, name?, email?, plan? }` |
+| POST | `/api/UserRequests` | Create request; body: `{ first_name, last_name, email, password, plan? }` |
+| PUT | `/api/UserRequests/{request_id}` | Update request (approve/reject); body: `{ status?, first_name?, last_name?, email?, plan? }` |
 | DELETE | `/api/UserRequests/{request_id}` | Delete request |
 
 ### NfcScans (temporary NFC reads)
@@ -309,7 +299,8 @@ interface BookReviewDTO {
 POST /api/Users
 {
   "user_id": "user-001",
-  "name": "John Doe",
+  "first_name": "John",
+  "last_name": "Doe",
   "password_hash": "hashed_password_here",
   "email": "john.doe@example.com",
   "role": "User",
@@ -319,10 +310,9 @@ POST /api/Users
   "subscription_end_date": "2025-12-31T23:59:59Z",
   "branch_id": 2
 }
-````
+```
 
 ### List Users (paged)
-
 ```json
 GET /api/Users?page=1&limit=12
 {
@@ -334,7 +324,6 @@ GET /api/Users?page=1&limit=12
 ```
 
 ### Create BookDetail with copies
-
 ```json
 POST /api/Books
 {
@@ -351,7 +340,6 @@ POST /api/Books
 ```
 
 ### Create single BookCopy (increments parent quantity)
-
 ```json
 POST /api/BookCopies
 {
@@ -362,7 +350,6 @@ POST /api/BookCopies
 ```
 
 ### Create BookReservation
-
 ```json
 POST /api/BookReservations
 {
@@ -375,7 +362,6 @@ POST /api/BookReservations
 ```
 
 ### Create BookTransaction (checkout)
-
 ```json
 POST /api/BookTransactions
 {
@@ -388,7 +374,6 @@ POST /api/BookTransactions
 ```
 
 ### Update User Activity
-
 ```json
 PUT /api/Users/user-001/activity
 {
@@ -397,20 +382,18 @@ PUT /api/Users/user-001/activity
 ```
 
 ### Create UserRequest (registration request)
-
 ```json
 POST /api/UserRequests
 {
-  "name": "Jane Smith",
+  "first_name": "Jane",
+  "last_name": "Smith",
   "email": "jane@example.com",
   "password": "user_password_here",
-  "email": "jane.doe@example.com",
   "plan": "Discover"
 }
 ```
 
 ### Approve/Reject UserRequest
-
 ```json
 PUT /api/UserRequests/1
 {
@@ -419,7 +402,6 @@ PUT /api/UserRequests/1
 ```
 
 ### Return Book (set return_date, status → Returned)
-
 ```json
 POST /api/BookTransactions/return
 {
@@ -428,7 +410,6 @@ POST /api/BookTransactions/return
   "return_date": "2025-01-15T10:00:00Z"
 }
 ```
-
 > If `return_date` is omitted, the backend sets it to current UTC. Status is set to `"Returned"`.
 
 ---
@@ -436,12 +417,12 @@ POST /api/BookTransactions/return
 ## DTO Shapes (Response Objects)
 
 ### UserDTO
-
 ```typescript
 interface UserDTO {
   user_id: string;
-  name: string;
-  email: string;
+  first_name: string;
+  last_name: string;
+  email?: string;
   role: string;
   password_hash: string;
   plan?: string;              // User's subscription plan (nullable)
@@ -455,7 +436,6 @@ interface UserDTO {
 ```
 
 ### BookDTO
-
 ```typescript
 interface BookDTO {
   book_id: number;
@@ -516,9 +496,10 @@ interface Category {
 
 interface User {
   user_id: string;           // max 20 chars
-  name: string;              // max 50 chars
+  first_name: string;        // max 50 chars
+  last_name: string;         // max 50 chars
   password_hash: string;     // max 255 chars
-  email: string;      // max 100 chars
+  email?: string;            // max 255 chars
   role: 'Super Admin' | 'Admin' | 'User';
   status: 'Active' | 'Inactive' | 'Banned';
   plan?: 'Discover' | 'Enterprise' | 'Professional';
@@ -533,12 +514,15 @@ interface User {
 
 interface UserDTO {
   user_id: string;
-  name: string;
-  email: string;
-  email: string;
+  first_name: string;
+  last_name: string;
+  email?: string;
   role: string;
   password_hash: string;
   plan?: string;              // User's subscription plan (nullable)
+  image_url?: string;         // base64-encoded bytes
+  subscription_end_date?: string;
+  branch_id?: number;
   booksReserved: string[];    // Book names or copy IDs
   booksBought: string[];      // Book names from Purchase transactions
   LastActivityAt: string | null;
@@ -596,10 +580,10 @@ interface BookTransaction {
 
 interface UserRequest {
   request_id: number;        // auto-generated, do not send in POST
-  name: string;              // max 50 chars
+  first_name: string;        // max 50 chars
+  last_name: string;         // max 50 chars
   email: string;             // max 100 chars, unique
   password: string;          // max 200 chars, required
-  email: string;      // max 100 chars
   plan?: 'Discover' | 'Enterprise' | 'Professional';
   status?: 'Pending' | 'Approved' | 'Rejected';  // default: 'Pending'
   created_at?: string;       // auto-set by database
@@ -642,21 +626,21 @@ UserRequests (standalone, no FK relationships)
 A new conversational AI endpoint has been added to handle user queries with natural language processing and intelligent intent detection.
 
 ### New Endpoint
-
 - **POST** `/api/chat` — Process user messages with AI intent detection and context-aware responses
 
 ### Chat Request/Response Contract
 
 **ChatRequest:**
-
 ```json
 {
   "message": "Is 'Clean Code' available?"
 }
 ```
 
-**Chat Response:**
+**Headers:**
+- `X-User-Id`: required (current authenticated user id used to personalize responses)
 
+**Chat Response:**
 ```json
 {
   "reply": "Yes, 'Clean Code' is available. You can borrow it from the main branch."
@@ -680,7 +664,6 @@ The system supports two implementations:
    - Intents: `check_book_availability`, `search_book`, `working_hours`, `unknown`
 
 ### Intent Result DTO
-
 ```csharp
 public class IntentResult
 {
@@ -690,7 +673,6 @@ public class IntentResult
 ```
 
 ### Configuration (appsettings.json)
-
 ```json
 {
   "Groq": {
@@ -706,17 +688,22 @@ public class IntentResult
 - **IChatService** — Interface for handling intent-based responses and database queries
 - **IDatabaseService** — Interface for database operations (book search)
 
+### Current Chat Behavior (in `Program.cs`)
+- Requires `X-User-Id` header, validates the user, and enriches prompts with:
+  - Active borrowed books (due dates and remaining days)
+  - Suggested books (latest available titles not currently borrowed)
+- Logs each chat interaction to `ChatLogs` using `IChatLogService`.
+
 ### Supported Intents
 
-| Intent                    | Description                  | Example Input                     |
-| ------------------------- | ---------------------------- | --------------------------------- |
-| `check_book_availability` | Check if a book is available | "Is Clean Code available?"        |
-| `search_book`             | Search for a book by name    | "Find me a book about algorithms" |
-| `working_hours`           | Get library working hours    | "What are your working hours?"    |
-| `unknown`                 | Unable to determine intent   | "Random text"                     |
+| Intent | Description | Example Input |
+|--------|-------------|---------------|
+| `check_book_availability` | Check if a book is available | "Is Clean Code available?" |
+| `search_book` | Search for a book by name | "Find me a book about algorithms" |
+| `working_hours` | Get library working hours | "What are your working hours?" |
+| `unknown` | Unable to determine intent | "Random text" |
 
 ### No Database Schema Changes Required
-
 - Chat functionality uses existing Book, User, and Branch tables for queries
 - No new tables added
 
@@ -727,37 +714,35 @@ public class IntentResult
 A new book review system has been added allowing users to leave and view reviews for books.
 
 ### New Model: BookReview
-
-| Field         | Type         | Constraints                        |
-| ------------- | ------------ | ---------------------------------- |
-| `review_id`   | bigint       | PK, identity                       |
-| `book_id`     | int          | FK → `BookDetails.book_id`         |
-| `user_id`     | string(20)   | **required**, FK → `Users.user_id` |
-| `review_text` | string(1000) | **required**                       |
-| `rating`      | int          | **required**, 1-5 scale            |
-| `created_at`  | timestamp    | default: `now()`                   |
-| `updated_at`  | timestamp    | default: `now()`                   |
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `review_id` | bigint | PK, identity |
+| `book_id` | int | FK → `BookDetails.book_id` |
+| `user_id` | string(20) | **required**, FK → `Users.user_id` |
+| `review_text` | string(1000) | **required** |
+| `rating` | int | **required**, 1-5 scale |
+| `created_at` | timestamp | default: `now()` |
+| `updated_at` | timestamp | default: `now()` |
 
 ### New Endpoints
 
-| Method | Endpoint                          | Description                                                      |
-| ------ | --------------------------------- | ---------------------------------------------------------------- |
-| GET    | `/api/BookReviews`                | Returns all `BookReviewDTO[]`                                    |
-| GET    | `/api/BookReviews/{review_id}`    | Returns single review                                            |
-| GET    | `/api/BookReviews/book/{book_id}` | Get all reviews for a book                                       |
-| GET    | `/api/BookReviews/user/{user_id}` | Get all reviews by a user                                        |
-| POST   | `/api/BookReviews`                | Create review; body: `{ book_id, user_id, review_text, rating }` |
-| PUT    | `/api/BookReviews/{review_id}`    | Update review                                                    |
-| DELETE | `/api/BookReviews/{review_id}`    | Delete review                                                    |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/BookReviews` | Returns all `BookReviewDTO[]` |
+| GET | `/api/BookReviews/{review_id}` | Returns single review |
+| GET | `/api/BookReviews/book/{book_id}` | Get all reviews for a book |
+| GET | `/api/BookReviews/user/{user_id}` | Get all reviews by a user |
+| POST | `/api/BookReviews` | Create review; body: `{ book_id, user_id, review_text, rating }` |
+| PUT | `/api/BookReviews/{review_id}` | Update review |
+| DELETE | `/api/BookReviews/{review_id}` | Delete review |
 
 ### BookReviewDTO (Response)
-
 ```typescript
 interface BookReviewDTO {
   review_id: number;
   book_id: number;
   user_id: string;
-  user_name: string;           // joined from Users.name
+  user_name: string;           // joined from Users.first_name + Users.last_name
   user_image_url?: string;     // joined from Users.image_url
   review_text: string;
   rating: number;              // 1-5
@@ -766,8 +751,18 @@ interface BookReviewDTO {
 }
 ```
 
-### Create Review Example
+### LibrarianDTO
+```typescript
+interface LibrarianDTO {
+  user_id: string;
+  name: string;
+  branch_name: string;
+  status: string;
+  last_activity_at?: string;
+}
+```
 
+### Create Review Example
 ```json
 POST /api/BookReviews
 {
@@ -782,8 +777,13 @@ POST /api/BookReviews
 
 ## Changelog
 
-### Latest Update (AI Chat Integration & BookReview Feature)
+### Latest Update (User & Chat Enhancements)
+- **Users:** Switched to `first_name`/`last_name` user profile fields and updated request/response shapes accordingly.
+- **User requests:** Registration requests now accept `first_name` and `last_name` (no `phone_number`).
+- **Librarian listing:** Added `GET /api/Users/librarians`, returning `LibrarianDTO` (name, branch, status, last activity).
+- **Chat endpoint:** `/api/chat` now requires `X-User-Id`, enriches prompts with borrowed books and suggestions, and logs chats to `ChatLogs`.
 
+### Previous Update (AI Chat Integration & BookReview Feature)
 - **AI Chat Endpoint:** Added `POST /api/chat` with Groq/LLM-powered intent detection
   - Supports both `GroqIntentService` (production, uses Groq API) and `MockIntentService` (development/fallback)
   - Detects intents: `check_book_availability`, `search_book`, `working_hours`, `unknown`
@@ -795,20 +795,21 @@ POST /api/BookReviews
   - Returns `BookReviewDTO` with joined `user_name` and `user_image_url` from Users table
   - Rating scale: 1-5
 - **Database:** No schema changes required (uses existing BookDetails and Users tables for relationships)
-- **Frontend changes required:**
+- **Frontend changes required:** 
   - Add chat UI component with message input/output
   - Add book review display and creation forms
   - Update BookDetail view to show reviews and average rating
   - Implement chat intent handling based on returned intent type
 
-## Developer implementation notes (scanned from repository)
+Developer implementation notes (scanned from repository)
+--------------------------------------------------
 
 The following notes summarize the current in-repo chatbot implementation discovered while scanning the codebase. Use these details to finish integration, tests or frontend wiring.
 
 - Endpoint status (updated):
-  - `POST /api/chat` is mapped as a minimal API in `Program.cs` and now directly calls Groq LLM with model `llama-3.1-8b-instant`. It requires `Groq:ApiKey` and returns `{ reply: "..." }` from the first choice. No intent detection, DB lookup, or chat logging is wired into this route.
-  - The intent-driven services (`GroqIntentService`, `MockIntentService`, `ChatService`, `DatabaseService`, `ChatLogService`) remain registered but are not used by the current minimal handler.
-  - Two `ChatRequest` types exist (`Models/ChatRequest.cs` and `DTO/ChatRequest.cs` with optional `UserId`); consider consolidating to avoid binding confusion.
+  - `POST /api/chat` is mapped as a minimal API in `Program.cs`, requires an `X-User-Id` header, enriches prompts with borrowed books and suggestions, and logs chats to `ChatLogs` using `IChatLogService`.
+  - The handler calls Groq LLM with model `llama-3.1-8b-instant` and returns `{ reply: "..." }` from the first choice.
+  - Two `ChatRequest` types exist (`Models/ChatRequest.cs` with `UserId` and `Message`, and `DTO/ChatRequest.cs` with optional `UserId`); consider consolidating to avoid binding confusion.
 
 - Dependency Injection (registered in `Program.cs`):
   - `IChatService` → `ChatService`
@@ -816,7 +817,8 @@ The following notes summarize the current in-repo chatbot implementation discove
   - `IResponseService` → `GroqResponseService` (registered as an `HttpClient`)
   - `IAiResponseService` → `GroqResponseService` (registered as an `HttpClient`)
   - `IChatLogService` → `ChatLogService`
-  - A default `HttpClient` is also registered for the minimal `/api/chat` handler.
+  - A default `HttpClient` is also registered for the `/api/chat` handler.
+  - Configuration is loaded from `.env` via `DotNetEnv.Env.Load()` and the DbContext uses `AddDbContextPool`.
 
 - Intent detection implementations found:
   - `GroqIntentService` — production LLM-based classifier using Groq API (`/openai/v1/chat/completions`).
@@ -845,35 +847,26 @@ The following notes summarize the current in-repo chatbot implementation discove
   - `DatabaseService.CheckBookAvailability` queries `DefaultConnection` against a `books` table with columns `title` (text) and `available` (bool), using a case-insensitive LIKE on `title`. Ensure this table/columns exist or update the query/schema accordingly.
 
 - Notes and next steps to enable full chat flow:
-  1. Replace or extend the current minimal `POST /api/chat` handler in `Program.cs` with logic that:
-     - Accepts `ChatRequest`, calls an `IIntentService` implementation to detect intent
-     - Uses `IChatService`/`IDatabaseService` to query DB when needed
-     - Calls `IAiResponseService`/`IResponseService` to generate the final reply
-     - Calls `IChatLogService.SaveLog` (or `LogChat`) to persist conversation logs
-     - Returns a consistent Chat Response JSON (e.g. `{ reply: "..." }`).
-  2. Ensure `appsettings.json` contains the `Groq` keys and both connection strings (`projectContext` and `DefaultConnection`).
-  3. Confirm the database has a `ChatLogs` table (columns referenced in `ChatLogService`: `user_message`, `intent`, `bot_response`, `confidence`, optional `user_id`) or update the SQL and schema as needed.
-  4. Add unit/integration tests for intent detection fallbacks (mock Groq responses) and DB availability checks.
+  1. Consolidate the two `ChatRequest` types and decide whether to keep the minimal handler or move to a controller.
+  2. If you want intent-driven behavior, wire `IIntentService` and `IChatService` into the route and integrate `IAiResponseService` for final replies.
+  3. Ensure `appsettings.json` contains the `Groq` keys and both connection strings (`projectContext` and `DefaultConnection`).
+  4. Confirm the database has a `ChatLogs` table (columns referenced in `ChatLogService`: `user_message`, `intent`, `bot_response`, `confidence`, optional `user_id`).
 
 These notes are intended to help developers pick up the chatbot work done by your friend and complete or extend the integration.
 
 ### Previous Update (User subscription end date)
-
 - Added `subscription_end_date` (timestamp) to `Users` for plan expiration tracking.
 
 ### Previous Update (Book return marker)
-
 - Removed `returned_at` (dropped from DB). Return flow now uses `return_date`.
 - `POST /api/BookTransactions/return` sets `return_date` (defaults to current UTC) and status to `Returned`.
 
 ### Previous Update (NFC Scans table + API)
-
 - Added `nfc_scans` table mapping and REST API to ingest temporary NFC reads from ESP8266 and expose them to the frontend.
 - Schema: `scan_id` (bigint identity), `tag_id` (required), `device_id` (default `"esp8266"`), `created_at` (default `now()`).
 - Endpoints: `GET /api/NfcScans`, `GET /api/NfcScans/{scan_id}`, `POST /api/NfcScans`.
 
 ### Latest Update (Database Identity Column Fix - ROOT CAUSE FOUND)
-
 - **Bug fix:** Fixed `null value in column "book_id" violates not-null constraint` error when creating books.
 - **ROOT CAUSE:** The PostgreSQL database column `BookDetails.book_id` was **NOT configured as an identity column** in the database schema itself. The EF Core configuration was correct, but the actual database didn't have the identity property.
 - **Database fix applied:**
@@ -885,7 +878,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **Lesson learned:** When EF Core identity columns aren't working, check the actual database schema - the column itself might not be configured as an identity column.
 
 ### Previous Update (Complete Identity Column Fix)
-
 - **Bug fix:** Fixed persistent `null value in column "book_id" violates not-null constraint` error when creating books and other entities.
 - **Root cause:** EF Core wasn't properly recognizing identity columns due to missing configuration in both the model classes and Fluent API.
 - **Complete fix applied:** Added BOTH data annotations AND Fluent API configuration:
@@ -903,7 +895,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **IMPORTANT:** After deploying, ensure the application is fully restarted to pick up the new model configuration.
 
 ### Previous Update (Identity Column ValueGeneratedOnAdd Fix)
-
 - **Bug fix:** Fixed persistent `null value in column "book_id" violates not-null constraint` error when creating books and other entities with identity columns.
 - **Root cause:** The EF Core configuration was missing `.ValueGeneratedOnAdd()` before `.UseIdentityByDefaultColumn()`. Without both, EF Core wasn't properly recognizing the column as database-generated.
 - **Fix applied:** Updated all identity column configurations in `LibraryManagementSystemContext.cs` to include both `.ValueGeneratedOnAdd()` and `.UseIdentityByDefaultColumn()`:
@@ -919,7 +910,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **No frontend changes required.**
 
 ### Previous Update (Clear Navigation Properties in All Controllers)
-
 - **Bug fix:** Fixed `null value in column "book_id" violates not-null constraint` error when creating Books, BookCopies, BookReservations, and BookTransactions.
 - **Root cause:** Navigation properties were not being cleared in all controller POST methods, causing EF Core tracking issues that prevented proper identity column generation.
 - **Fix applied:** Added explicit clearing of all navigation properties before adding entities to the database:
@@ -932,7 +922,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **No frontend changes required.**
 
 ### Previous Update (PostgreSQL Timestamp Fix)
-
 - **Bug fix:** Fixed `Cannot write DateTime with Kind=UTC to PostgreSQL type 'timestamp without time zone'` error when updating users and other entities with timestamp fields.
 - **Root cause:** Npgsql 6.0+ enforces strict timestamp handling. When code uses `DateTime.UtcNow` (which has `Kind=UTC`), it cannot be written to PostgreSQL `timestamp without time zone` columns directly.
 - **Fix applied:** Added `AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true)` at the start of `Program.cs` to enable legacy timestamp behavior, allowing UTC DateTimes to be written to `timestamp without time zone` columns.
@@ -940,7 +929,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **No frontend changes required.**
 
 ### Previous Update (PUT/Update Methods Fix)
-
 - **Bug fix:** Fixed `500 Internal Server Error` when updating Users, Branches, and Categories.
 - **Root cause:** The PUT methods were using `EntityState.Modified` on a detached entity, which caused EF Core tracking issues. Navigation properties were also not being cleared.
 - **Fix applied:** Rewrote PUT methods in controllers to:
@@ -956,7 +944,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **No frontend changes required.**
 
 ### Previous Update (ValidateNever Attribute Fix)
-
 - **Bug fix:** Fixed `400 Bad Request` error `"The created_byNavigation field is required"` when creating Branches, Categories, Users, Books, BookCopies, BookReservations, and BookTransactions.
 - **Root cause:** ASP.NET's model validation was requiring navigation properties before the request even reached the controller. The previous fix using `.IsRequired(false)` in EF Core only affected database operations, not API model validation.
 - **Fix applied:** Added `[ValidateNever]` attribute from `Microsoft.AspNetCore.Mvc.ModelBinding.Validation` to all navigation properties in model classes:
@@ -972,7 +959,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **No frontend changes required** - the frontend should NOT send navigation properties.
 
 ### Previous Update (Navigation Property Fix)
-
 - **Bug fix:** Fixed `400 Bad Request` error when creating Branches, Categories, and Users where the API was incorrectly requiring navigation properties (e.g., `created_byNavigation`).
 - **Root cause:** With nullable reference types enabled in .NET 9, EF Core and ASP.NET model validation treated non-nullable navigation properties as required, even though they should be optional.
 - **Fix applied:**
@@ -983,7 +969,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **No frontend changes required** - the frontend should NOT send navigation properties.
 
 ### Previous Update (EF Core Identity Column Fix)
-
 - **Bug fix:** Fixed `null value in column "book_id" violates not-null constraint` error when creating books, reservations, transactions, categories, branches, and reports.
 - **Root cause:** Entity Framework Core configuration was missing `.UseIdentityByDefaultColumn()` for PostgreSQL identity columns, causing EF Core to send NULL instead of letting the database auto-generate the primary key.
 - **Affected tables:** `BookDetails`, `BookReservations`, `BookTransactions`, `Categories`, `Branches`, `Reports`
@@ -991,7 +976,6 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **No frontend changes required:** API contract remains unchanged.
 
 ### Previous Update (created_by Tracking)
-
 - **created_by column:** Added `created_by` field to `Users`, `BookDetails`, `Categories`, and `Branches` tables.
   - Type: `VARCHAR(20)`, nullable
   - FK: References `Users.user_id` with `ON DELETE SET NULL`
@@ -1001,9 +985,8 @@ These notes are intended to help developers pick up the chatbot work done by you
 - **Backend behavior:** When the referenced admin user is deleted, `created_by` values are automatically set to NULL.
 
 ### Previous Update (UserRequests Feature)
-
 - **UserRequest:** Added new `UserRequests` table and API for handling user registration requests pending admin approval.
-  - Fields: `request_id` (auto-generated), `name`, `email` (unique), `password`, `plan`, `status`, `created_at`
+  - Fields: `request_id` (auto-generated), `first_name`, `last_name`, `email` (unique), `password`, `plan`, `status`, `created_at`
   - Status workflow: `Pending` → `Approved` or `Rejected`
   - Admins manually create Users after approving requests
 - **New endpoints:** Full CRUD for `/api/UserRequests`
