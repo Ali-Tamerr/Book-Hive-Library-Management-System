@@ -1,10 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Bot, MessageSquareText, Search, SendHorizontal } from "lucide-react";
+import {
+  Bot,
+  MessageSquareText,
+  Search,
+  SendHorizontal,
+  UserRound,
+} from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiPost, getImageUrl } from "../services/api.config";
 import { useUser } from "../hooks/useUsers";
 import { getCurrentUser } from "../services/auth.api";
-import userAvatar from "../assets/img/testimonial-perfil-1.png";
 
 const quickActions = [
   "Renew Subscription",
@@ -20,7 +25,13 @@ const STARTING_MESSAGE = {
 };
 
 function UserChatbot() {
+  const [sessionId, setSessionId] = useState(() => Date.now());
   const [messages, setMessages] = useState([STARTING_MESSAGE]);
+  const [sessions, setSessions] = useState(() => {
+    const saved = localStorage.getItem("chatSessions");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef(null);
 
@@ -36,6 +47,32 @@ function UserChatbot() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (messages.length > 1) {
+      setSessions((prev) => {
+        const title =
+          messages.find((m) => m.sender === "user")?.text || "New Conversation";
+        const existingIndex = prev.findIndex((s) => s.id === sessionId);
+
+        let newSessions = [...prev];
+        if (existingIndex >= 0) {
+          newSessions[existingIndex] = {
+            ...newSessions[existingIndex],
+            messages,
+            title,
+          };
+        } else {
+          newSessions.unshift({ id: sessionId, title, messages });
+        }
+        return newSessions;
+      });
+    }
+  }, [messages, sessionId]);
+
+  useEffect(() => {
+    localStorage.setItem("chatSessions", JSON.stringify(sessions));
+  }, [sessions]);
 
   const chatMutation = useMutation({
     mutationFn: async (messageText) => {
@@ -98,6 +135,15 @@ function UserChatbot() {
   const handleNewChat = () => {
     setMessages([STARTING_MESSAGE]);
     setInputValue("");
+    setSessionId(Date.now());
+  };
+
+  const loadSession = (id) => {
+    const session = sessions.find((s) => s.id === id);
+    if (session) {
+      setMessages(session.messages);
+      setSessionId(session.id);
+    }
   };
 
   return (
@@ -132,19 +178,47 @@ function UserChatbot() {
                   <input
                     type="text"
                     placeholder="Search Conversations"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-11 w-full rounded-[10px] border border-[#52558a] bg-transparent py-2 pl-10 pr-3 text-sm text-[#050549] outline-none placeholder:text-[#52558a] dark:border-[#555d80] dark:text-[#121747] dark:placeholder:text-[#555d80]"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-6 py-10 text-center">
-                <MessageSquareText
-                  size={48}
-                  className="mb-3 text-[#8f8fb1] opacity-50"
-                />
-                <p className="text-lg font-medium text-[#8f8fb1]">
-                  Your previous chat sessions will appear here soon.
-                </p>
+              <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4">
+                {sessions.length === 0 ? (
+                  <div className="flex h-full flex-col items-center justify-center text-center">
+                    <MessageSquareText
+                      size={48}
+                      className="mb-3 text-[#8f8fb1] opacity-50"
+                    />
+                    <p className="text-lg font-medium text-[#8f8fb1]">
+                      Your previous chat sessions will appear here soon.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {sessions
+                      .filter((s) =>
+                        s.title
+                          .toLowerCase()
+                          .includes(searchQuery.toLowerCase()),
+                      )
+                      .map((session) => (
+                        <button
+                          key={session.id}
+                          onClick={() => loadSession(session.id)}
+                          className={`w-full truncate rounded-[10px] px-4 py-3 text-left transition-colors ${
+                            session.id === sessionId && messages.length > 1
+                              ? "bg-[#d9d9d9] font-bold text-[#050549] dark:bg-[#555d80] dark:text-[#ebebf0]"
+                              : "text-[#52558a] hover:bg-[#e4e4e4] dark:text-[#8f93a4] dark:hover:bg-[#4a4f6d]"
+                          }`}
+                        >
+                          {session.title}
+                        </button>
+                      ))}
+                  </div>
+                )}
               </div>
 
               <div className="border-t border-[#8f8fb1] px-4 py-4 dark:border-[#8f93a4]">
@@ -202,7 +276,10 @@ function UserChatbot() {
                           className="text-[#050549] dark:text-[#121747]"
                         />
                       </span>
-                      <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#050549] dark:bg-[#e2e4e8] dark:text-[#121747]">
+                      <div
+                        dir="rtl"
+                        className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#050549] dark:bg-[#e2e4e8] dark:text-[#121747]"
+                      >
                         {message.text}
                       </div>
                     </div>
@@ -212,15 +289,17 @@ function UserChatbot() {
                         <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tl-[12px] bg-[#00004f] px-4 py-3 text-[15px] font-semibold text-white dark:bg-[#1d2142] dark:text-white">
                           {message.text}
                         </div>
-                        <img
-                          src={
-                            currentUser?.image_url
-                              ? getImageUrl(currentUser.image_url)
-                              : userAvatar
-                          }
-                          alt="User avatar"
-                          className="h-9 w-9 shrink-0 rounded-full object-cover"
-                        />
+                        {currentUser?.image_url ? (
+                          <img
+                            src={getImageUrl(currentUser.image_url)}
+                            alt="User avatar"
+                            className="h-9 w-9 shrink-0 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+                            <UserRound className="h-6 w-6 text-[#050549]" />
+                          </div>
+                        )}
                       </div>
                     </div>
                   ),
