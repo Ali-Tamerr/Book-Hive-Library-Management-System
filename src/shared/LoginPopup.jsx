@@ -102,7 +102,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
           >
             <form
               onSubmit={handleSubmit}
-              className="flex w-full flex-col items-center gap-6 px-[100px] max-[856px]:px-[120px]"
+              className="flex w-full flex-col items-center gap-6 px-[100px] max-[856px]:px-[5%]"
             >
               <AuthInput
                 type="email"
