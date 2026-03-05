@@ -1,9 +1,10 @@
 import { useState } from "react";
 import {
-  useBooks,
+  useBookManagement,
   useCreateBook,
   useUpdateBook,
   useDeleteBook,
+  bookKeys,
 } from "../hooks/useBooks.js";
 import { useCategories } from "../hooks/useCategories.js";
 import { useUsers } from "../hooks/useUsers.js";
@@ -16,8 +17,11 @@ import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
 import CommonLayout from "../Layouts/CommonLayout.jsx";
 import { getCurrentUser } from "../services/auth.api";
 import { getImageUrl } from "../services/api.config";
+import { getBookById } from "../services/books.api";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Books({ searchValue, setSearchValue }) {
+  const queryClient = useQueryClient();
   const currentUser = getCurrentUser();
   const isSuperAdmin = currentUser?.role === "Super Admin";
   const [showPopup, setShowPopup] = useState(false);
@@ -36,7 +40,10 @@ function Books({ searchValue, setSearchValue }) {
     BookCopies: [],
   });
 
-  const { data: books = [], isLoading } = useBooks();
+  const [isPopupLoading, setIsPopupLoading] = useState(false);
+  const [isViewLoading, setIsViewLoading] = useState(false);
+
+  const { data: books = [], isLoading } = useBookManagement();
   const { data: categories = [], isLoading: isLoadingCategories } =
     useCategories();
   const { data: usersData, isLoading: isLoadingUsers } = useUsers();
@@ -108,19 +115,37 @@ function Books({ searchValue, setSearchValue }) {
     }
   };
 
-  const handleEdit = (book) => {
-    const existingCopies =
-      book.BookCopies?.map((c) => ({ book_copy_id: c.book_copy_id })) || [];
-    setFormData({
-      book_id: book.book_id,
-      name: book.name || "",
-      category_id: book.category_id || "",
-      quantity: book.quantity || 1,
-      sale_price: book.sale_price || "",
-      BookCopies: existingCopies,
-    });
+  const handleEdit = async (book) => {
+    // Open the popup immediately with a loading spinner
     setEditMode(true);
     setShowPopup(true);
+    setIsPopupLoading(true);
+
+    try {
+      const fullBook = await queryClient.fetchQuery({
+        queryKey: bookKeys.detail(book.book_id),
+        queryFn: () => getBookById(book.book_id),
+      });
+
+      const existingCopies =
+        fullBook.BookCopies?.map((c) => ({ book_copy_id: c.book_copy_id })) ||
+        [];
+
+      setFormData({
+        book_id: fullBook.book_id,
+        name: fullBook.name || "",
+        category_id: fullBook.category_id || "",
+        quantity: fullBook.quantity || 1,
+        sale_price: fullBook.sale_price || "",
+        BookCopies: existingCopies,
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to load full book details.");
+      setShowPopup(false);
+    } finally {
+      setIsPopupLoading(false);
+    }
   };
 
   const handleDelete = (book_id) => {
@@ -154,9 +179,24 @@ function Books({ searchValue, setSearchValue }) {
     }
   };
 
-  const handleView = (book) => {
-    setSelectedBook(book);
+  const handleView = async (book) => {
     setShowViewDetails(true);
+    setIsViewLoading(true);
+    setSelectedBook(null); // Clear previous selection
+
+    try {
+      const fullBook = await queryClient.fetchQuery({
+        queryKey: bookKeys.detail(book.book_id),
+        queryFn: () => getBookById(book.book_id),
+      });
+      setSelectedBook(fullBook);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to load full book data.");
+      setShowViewDetails(false);
+    } finally {
+      setIsViewLoading(false);
+    }
   };
 
   const buttonBehaviour = () => {
@@ -331,6 +371,7 @@ function Books({ searchValue, setSearchValue }) {
       setShowPopup={setShowPopup}
       setEditMode={setEditMode}
       categories={categories}
+      isLoading={isPopupLoading}
     />
   );
 
@@ -370,28 +411,32 @@ function Books({ searchValue, setSearchValue }) {
         imageUrl={selectedBook ? getImageUrl(selectedBook.image_url) : null}
         imageAlt={selectedBook?.name || "Book cover"}
         data={
-          selectedBook
-            ? {
-                "Book ID": selectedBook.book_id,
-                Name: selectedBook.name,
-                ...(selectedBook.author ? { Author: selectedBook.author } : {}),
-                Branch: getBookBranchLabel(selectedBook.book_id),
-                Category:
-                  categories.find(
-                    (cat) => cat.category_id === selectedBook.category_id,
-                  )?.category_name || "N/A",
-                Quantity: selectedBook.quantity,
-                Availability: (() => {
-                  const availableCount = getAvailableCopiesCount(
-                    selectedBook.book_id,
-                  );
-                  if (availableCount <= 1) {
-                    return "Not Available";
-                  }
-                  return "Available";
-                })(),
-              }
-            : null
+          isViewLoading
+            ? { Loading: "Fetching book info..." }
+            : selectedBook
+              ? {
+                  "Book ID": selectedBook.book_id,
+                  Name: selectedBook.name,
+                  ...(selectedBook.author
+                    ? { Author: selectedBook.author }
+                    : {}),
+                  Branch: getBookBranchLabel(selectedBook.book_id),
+                  Category:
+                    categories.find(
+                      (cat) => cat.category_id === selectedBook.category_id,
+                    )?.category_name || "N/A",
+                  Quantity: selectedBook.quantity,
+                  Availability: (() => {
+                    const availableCount = getAvailableCopiesCount(
+                      selectedBook.book_id,
+                    );
+                    if (availableCount <= 1) {
+                      return "Not Available";
+                    }
+                    return "Available";
+                  })(),
+                }
+              : null
         }
         savedBy={selectedBook ? getCreatorName(selectedBook.created_by) : null}
       ></ViewDetailsPopup>

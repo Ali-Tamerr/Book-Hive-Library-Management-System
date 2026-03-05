@@ -136,7 +136,7 @@ const ViewDetailsPopup = ({
         title={title}
         icon={null}
         maxWidthClass="max-w-[860px]"
-        panelClassName="!max-h-[96vh] overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] p-0 pb-0 shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#cfcfcf] dark:bg-[#ebebeb]"
+        panelClassName="!max-h-[96vh] overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#cfcfcf] dark:bg-[#ebebeb]"
         contentClassName="overflow-x-hidden overflow-y-auto p-0"
         hideHeader
         hideDivider

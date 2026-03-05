@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAllBooks,
+  getBookManagement,
   getBookCovers,
   getBookById,
   searchBooksByTitle,
@@ -14,6 +15,7 @@ export const bookKeys = {
   all: ["books"],
   lists: () => [...bookKeys.all, "list"],
   list: (filters) => [...bookKeys.lists(), { filters }],
+  management: () => [...bookKeys.all, "management"],
   covers: () => [...bookKeys.all, "covers"],
   details: () => [...bookKeys.all, "detail"],
   detail: (id) => [...bookKeys.details(), id],
@@ -23,6 +25,14 @@ export const useBooks = () => {
   return useQuery({
     queryKey: bookKeys.lists(),
     queryFn: getAllBooks,
+    ...adminQueryOptions,
+  });
+};
+
+export const useBookManagement = () => {
+  return useQuery({
+    queryKey: bookKeys.management(),
+    queryFn: getBookManagement,
     ...adminQueryOptions,
   });
 };
@@ -61,6 +71,7 @@ export const useCreateBook = () => {
     mutationFn: createBook,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: bookKeys.management() });
     },
   });
 };
@@ -76,6 +87,7 @@ export const useUpdateBook = () => {
         queryKey: bookKeys.detail(variables.id),
       });
       queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: bookKeys.management() });
     },
   });
 };
@@ -88,6 +100,7 @@ export const useDeleteBook = () => {
     mutationFn: deleteBook,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: bookKeys.management() });
     },
   });
 };
