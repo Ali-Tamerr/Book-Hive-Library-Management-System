@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Search, ChevronDown, ArrowLeft, ArrowRight } from "lucide-react";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
@@ -11,8 +11,9 @@ import { useReservations } from "../hooks/useReservations";
 import { useBranches } from "../hooks/useBranches";
 import { useOverdueBooks } from "../hooks/useOverdueBooks";
 import { useBookTransactions } from "../hooks/useBookTransactions";
+import { useBookCopies } from "../hooks/useBookCopies";
 import { getCurrentUser } from "../services/auth.api";
-import { getImageUrl } from "../services/api.config";
+import { apiGet, getImageUrl } from "../services/api.config";
 
 function Dashboard() {
   const currentUser = getCurrentUser();
@@ -20,6 +21,12 @@ function Dashboard() {
   const users = usersData
     ? usersData.pages.flatMap((page) => page.data || [])
     : [];
+  const [displayBooks, setDisplayBooks] = useState([]);
+  const [generalStats, setGeneralStats] = useState({
+    branches: 0,
+    books: 0,
+    users: 0,
+  });
   const { data: booksSource, isLoading: booksLoading } = useBookCovers();
   const books = useMemo(() => {
     if (Array.isArray(booksSource)) return booksSource;
@@ -43,6 +50,7 @@ function Dashboard() {
     useOverdueBooks();
   const { data: bookTransactions = [], isLoading: transactionsLoading } =
     useBookTransactions();
+  const { data: bookCopies = [] } = useBookCopies();
 
   const [searchValue, setSearchValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -55,6 +63,55 @@ function Dashboard() {
     isLoading: selectedBookLoading,
     isFetching: selectedBookFetching,
   } = useBook(selectedBookId);
+
+  // 1. Fetch Stats from backend (just like Home.jsx)
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const maybeStats = await apiGet("/Stats").catch(() => null);
+        if (maybeStats && typeof maybeStats === "object") {
+          setGeneralStats({
+            branches: +maybeStats.branches || 0,
+            books: +maybeStats.books || 0,
+            users: +maybeStats.users || users.length || 0,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats:", error);
+      }
+    };
+    fetchStats();
+  }, [users.length]);
+
+  // 2. Load cached books on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("dashboardBooksCache.v1");
+      if (raw) {
+        setDisplayBooks(JSON.parse(raw));
+      }
+    } catch {}
+  }, []);
+
+  // 3. Sync and map books from API to local state and localStorage
+  useEffect(() => {
+    const rawArray = Array.isArray(booksSource)
+      ? booksSource
+      : booksSource?.data || [];
+
+    if (rawArray.length > 0) {
+      const mapped = rawArray.map((book) => ({
+        book_id: book.book_id,
+        name: book.name,
+        category_id: book.category_id,
+        quantity: book.quantity,
+        created_at: book.created_at,
+        image: getImageUrl(book.image_url) || "",
+      }));
+      setDisplayBooks(mapped);
+      localStorage.setItem("dashboardBooksCache.v1", JSON.stringify(mapped));
+    }
+  }, [booksSource]);
 
   // Sync isViewLoading with React Query's fetching state
   React.useEffect(() => {
@@ -109,9 +166,9 @@ function Dashboard() {
   const userTotalBorrowed = userBorrowedTransactions.length;
 
   const stats = {
-    totalUsers: users?.length || 0,
-    totalBooks: books?.length || 0,
-    branchCount: branches?.length || 0,
+    totalUsers: generalStats.users || users?.length || 0,
+    totalBooks: generalStats.books || displayBooks?.length || 0,
+    branchCount: generalStats.branches || branches?.length || 0,
     totalBorrowed: userTotalBorrowed,
     currentlyBorrowed: userCurrentlyBorrowed,
     returnedBooks: userReturnedBooks,
@@ -150,8 +207,24 @@ function Dashboard() {
     });
   }, [subscriptionExpirationRaw]);
 
+  const bookPopularity = useMemo(() => {
+    const counts = {};
+    const copyToBook = {};
+    bookCopies.forEach((copy) => {
+      const copyId = String(copy.book_copy_id || copy.id);
+      copyToBook[copyId] = copy.book_id;
+    });
+    bookTransactions.forEach((tx) => {
+      const bookId = copyToBook[String(tx.book_id)];
+      if (bookId) {
+        counts[bookId] = (counts[bookId] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [bookTransactions, bookCopies]);
+
   const filteredBooks = useMemo(() => {
-    let result = [...books];
+    let result = [...displayBooks];
 
     if (searchValue) {
       result = result.filter((book) =>
@@ -173,10 +246,17 @@ function Dashboard() {
         const dateB = new Date(b.created_at || 0);
         return dateB - dateA || b.book_id - a.book_id;
       });
+    } else if (activeTab === "recommended") {
+      result = result.sort((a, b) => {
+        const popA = bookPopularity[a.book_id] || 0;
+        const popB = bookPopularity[b.book_id] || 0;
+        if (popA !== popB) return popB - popA;
+        return (b.name || "").localeCompare(a.name || "");
+      });
     }
 
     return result;
-  }, [books, searchValue, selectedCategory, activeTab]);
+  }, [displayBooks, searchValue, selectedCategory, activeTab, bookPopularity]);
 
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage) || 1;
   const paginatedBooks = filteredBooks.slice(
@@ -209,7 +289,7 @@ function Dashboard() {
                 setSearchValue(e.target.value);
                 setCurrentPage(0);
               }}
-              className="w-full rounded-md border border-zinc-400 bg-white py-1.5 pl-10 pr-3.5 text-sm transition-colors focus:outline-none dark:border-[#292D32] dark:bg-[#121317] dark:text-[#D7D7D7]"
+              className="w-full rounded-md border border-zinc-400 py-1.5 pl-10 pr-3.5 text-sm transition-colors focus:outline-none dark:border-[#292D32] dark:text-[#D7D7D7]"
             />
           </div>
           <div className="mr-22 relative w-full min-w-[162px] max-w-[531px] flex-1">
@@ -219,7 +299,7 @@ function Dashboard() {
                 setSelectedCategory(e.target.value);
                 setCurrentPage(0);
               }}
-              className="w-full cursor-pointer appearance-none rounded-md border border-zinc-400 bg-white px-3.5 py-1.5 pr-9 text-sm transition-colors focus:outline-none dark:border-[#292D32] dark:bg-[#121317] dark:text-[#D7D7D7]"
+              className="w-full cursor-pointer appearance-none rounded-md border border-zinc-400  px-3.5 py-1.5 pr-9 text-sm transition-colors focus:outline-none dark:border-[#292D32]  dark:text-[#D7D7D7]"
             >
               <option value="">Category</option>
               {categories.map((cat) => (
@@ -272,7 +352,7 @@ function Dashboard() {
                   className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
                     activeTab === "recommended"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
-                      : "text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
+                      : "cursor-pointer text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recommended
@@ -285,7 +365,7 @@ function Dashboard() {
                   className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
                     activeTab === "recently"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
-                      : "text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
+                      : "cursor-pointer text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recently added
@@ -298,7 +378,7 @@ function Dashboard() {
                   className={`rounded transition-colors ${
                     currentPage === 0
                       ? "cursor-not-allowed text-[#525252] dark:text-gray-600"
-                      : "text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
+                      : "cursor-pointer text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
                   <ArrowLeft size={20} strokeWidth={1.5} />
@@ -321,7 +401,7 @@ function Dashboard() {
                   className={`rounded transition-colors ${
                     currentPage >= totalPages - 1
                       ? "cursor-not-allowed text-[#525252] dark:text-gray-600"
-                      : "text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
+                      : "cursor-pointer text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
                   <ArrowRight size={20} strokeWidth={1.5} />
@@ -330,11 +410,11 @@ function Dashboard() {
             </div>
 
             <div className="grid w-full grid-cols-4 place-items-center gap-y-5 max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2">
-              {loading ? (
+              {booksLoading && displayBooks.length === 0 ? (
                 <div className="col-span-full py-9 text-center text-gray-500">
                   Loading books...
                 </div>
-              ) : paginatedBooks.length === 0 ? (
+              ) : displayBooks.length === 0 ? (
                 <div className="col-span-full py-9 text-center text-gray-500">
                   No books found
                 </div>
@@ -342,12 +422,12 @@ function Dashboard() {
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="flex h-65 w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
+                    className="h-65 flex w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
                   >
                     <div className="flex h-40 w-full items-center justify-center overflow-hidden rounded-md">
-                      {getImageUrl(book.image_url) ? (
+                      {book.image ? (
                         <LazyImage
-                          src={getImageUrl(book.image_url)}
+                          src={book.image}
                           alt={book.name}
                           className="h-full w-full object-contain text-black dark:text-[#D7D7D7]"
                         />
