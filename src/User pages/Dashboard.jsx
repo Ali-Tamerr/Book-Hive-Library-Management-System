@@ -49,8 +49,20 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("recommended");
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedBookId, setSelectedBookId] = useState(null);
-  const { data: selectedBookDetail, isLoading: selectedBookLoading } =
-    useBook(selectedBookId);
+  const [isViewLoading, setIsViewLoading] = useState(false);
+  const {
+    data: selectedBookDetail,
+    isLoading: selectedBookLoading,
+    isFetching: selectedBookFetching,
+  } = useBook(selectedBookId);
+
+  // Sync isViewLoading with React Query's fetching state
+  React.useEffect(() => {
+    if (!selectedBookFetching && !selectedBookLoading) {
+      setIsViewLoading(false);
+    }
+  }, [selectedBookFetching, selectedBookLoading]);
+
   const [booksPerPage, setBooksPerPage] = useState(8);
 
   React.useEffect(() => {
@@ -330,9 +342,9 @@ function Dashboard() {
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="flex h-60 w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
+                    className="flex h-65 w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
                   >
-                    <div className="flex h-36 w-full items-center justify-center overflow-hidden rounded-md">
+                    <div className="flex h-40 w-full items-center justify-center overflow-hidden rounded-md">
                       {getImageUrl(book.image_url) ? (
                         <LazyImage
                           src={getImageUrl(book.image_url)}
@@ -340,15 +352,10 @@ function Dashboard() {
                           className="h-full w-full object-contain text-black dark:text-[#D7D7D7]"
                         />
                       ) : (
-                        <div className="p-2 text-center text-black dark:text-[#D7D7D7]">
+                        <div className="flex h-full w-full items-center justify-center p-2 text-center text-black dark:text-[#D7D7D7]">
                           <div className="line-clamp-2 text-xs font-bold uppercase tracking-wider text-black opacity-80 dark:text-[#D7D7D7]">
                             {book.name}
                           </div>
-                          {book.author && (
-                            <div className="mt-1 text-[10px] text-black opacity-60 dark:text-[#D7D7D7]">
-                              {book.author}
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
@@ -358,7 +365,10 @@ function Dashboard() {
                       </h3>
                       <button
                         className="w-full cursor-pointer whitespace-nowrap rounded-xl bg-[#0b0c28] py-1.5 text-[17px] font-bold text-white transition-colors dark:bg-[#D7D7D7] dark:text-black"
-                        onClick={() => setSelectedBookId(book.book_id)}
+                        onClick={() => {
+                          setSelectedBookId(book.book_id);
+                          setIsViewLoading(true);
+                        }}
                       >
                         Explore Now
                       </button>
@@ -386,13 +396,21 @@ function Dashboard() {
         {selectedBookId && (
           <ViewDetailsPopup
             show={!!selectedBookId}
-            onClose={() => setSelectedBookId(null)}
-            title="Book Details"
+            onClose={() => {
+              setSelectedBookId(null);
+              setIsViewLoading(false);
+            }}
+            title={
+              selectedBookLoading || isViewLoading
+                ? "LOADING INFO..."
+                : "Book Details"
+            }
             imageUrl={getImageUrl(selectedBookDetail?.image_url)}
             imageAlt={selectedBookDetail?.name || "Book cover"}
             data={
-              selectedBookDetail
-                ? {
+              selectedBookLoading || isViewLoading || !selectedBookDetail
+                ? null
+                : {
                     "Book ID": selectedBookDetail.book_id,
                     "Book Name": selectedBookDetail.name,
                     ...(selectedBookDetail.author
@@ -418,9 +436,14 @@ function Dashboard() {
                       selectedBookDetail.description ||
                       "No description available.",
                   }
-                : null
             }
-          />
+          >
+            {(selectedBookLoading || isViewLoading) && (
+              <div className="flex h-40 w-full items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0b0c28] border-t-transparent dark:border-white"></div>
+              </div>
+            )}
+          </ViewDetailsPopup>
         )}
       </main>
     </div>

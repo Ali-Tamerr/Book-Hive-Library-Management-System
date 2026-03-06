@@ -407,39 +407,41 @@ function Books({ searchValue, setSearchValue }) {
           setShowViewDetails(false);
           setSelectedBook(null);
         }}
-        title="View Book"
+        title={isViewLoading ? "LOADING INFO..." : "View Book"}
         imageUrl={selectedBook ? getImageUrl(selectedBook.image_url) : null}
         imageAlt={selectedBook?.name || "Book cover"}
         data={
-          isViewLoading
-            ? { Loading: "Fetching book info..." }
-            : selectedBook
-              ? {
-                  "Book ID": selectedBook.book_id,
-                  Name: selectedBook.name,
-                  ...(selectedBook.author
-                    ? { Author: selectedBook.author }
-                    : {}),
-                  Branch: getBookBranchLabel(selectedBook.book_id),
-                  Category:
-                    categories.find(
-                      (cat) => cat.category_id === selectedBook.category_id,
-                    )?.category_name || "N/A",
-                  Quantity: selectedBook.quantity,
-                  Availability: (() => {
-                    const availableCount = getAvailableCopiesCount(
-                      selectedBook.book_id,
-                    );
-                    if (availableCount <= 1) {
-                      return "Not Available";
-                    }
-                    return "Available";
-                  })(),
-                }
-              : null
+          isViewLoading || !selectedBook
+            ? null
+            : {
+                "Book ID": selectedBook.book_id,
+                Name: selectedBook.name,
+                ...(selectedBook.author ? { Author: selectedBook.author } : {}),
+                Branch: getBookBranchLabel(selectedBook.book_id),
+                Category:
+                  categories.find(
+                    (cat) => cat.category_id === selectedBook.category_id,
+                  )?.category_name || "N/A",
+                Quantity: selectedBook.quantity,
+                Availability: (() => {
+                  const availableCount = getAvailableCopiesCount(
+                    selectedBook.book_id,
+                  );
+                  if (availableCount <= 1) {
+                    return "Not Available";
+                  }
+                  return "Available";
+                })(),
+              }
         }
         savedBy={selectedBook ? getCreatorName(selectedBook.created_by) : null}
-      ></ViewDetailsPopup>
+      >
+        {isViewLoading && (
+          <div className="flex h-40 w-full items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0b0c28] border-t-transparent dark:border-white"></div>
+          </div>
+        )}
+      </ViewDetailsPopup>
     </>
   );
 }
