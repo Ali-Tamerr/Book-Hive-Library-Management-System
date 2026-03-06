@@ -5,7 +5,7 @@ import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
 import { useUsers } from "../hooks/useUsers";
-import { useBooks } from "../hooks/useBooks";
+import { useBooks, useBookCovers, useBook } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
 import { useReservations } from "../hooks/useReservations";
 import { useBranches } from "../hooks/useBranches";
@@ -20,9 +20,22 @@ function Dashboard() {
   const users = usersData
     ? usersData.pages.flatMap((page) => page.data || [])
     : [];
-  const { data: books = [], isLoading: booksLoading } = useBooks();
-  const { data: categories = [], isLoading: categoriesLoading } =
+  const { data: booksSource, isLoading: booksLoading } = useBookCovers();
+  const books = useMemo(() => {
+    if (Array.isArray(booksSource)) return booksSource;
+    if (booksSource?.data && Array.isArray(booksSource.data))
+      return booksSource.data;
+    return [];
+  }, [booksSource]);
+
+  const { data: categoriesData, isLoading: categoriesLoading } =
     useCategories();
+  const categories = useMemo(() => {
+    if (Array.isArray(categoriesData)) return categoriesData;
+    if (categoriesData?.data && Array.isArray(categoriesData.data))
+      return categoriesData.data;
+    return [];
+  }, [categoriesData]);
   const { data: reservations = [], isLoading: reservationsLoading } =
     useReservations();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
@@ -35,7 +48,9 @@ function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeTab, setActiveTab] = useState("recommended");
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedBook, setSelectedBook] = useState(null);
+  const [selectedBookId, setSelectedBookId] = useState(null);
+  const { data: selectedBookDetail, isLoading: selectedBookLoading } =
+    useBook(selectedBookId);
   const [booksPerPage, setBooksPerPage] = useState(8);
 
   React.useEffect(() => {
@@ -343,7 +358,7 @@ function Dashboard() {
                       </h3>
                       <button
                         className="w-full cursor-pointer whitespace-nowrap rounded-xl bg-[#0b0c28] py-1.5 text-[17px] font-bold text-white transition-colors dark:bg-[#D7D7D7] dark:text-black"
-                        onClick={() => setSelectedBook(book)}
+                        onClick={() => setSelectedBookId(book.book_id)}
                       >
                         Explore Now
                       </button>
@@ -368,35 +383,43 @@ function Dashboard() {
             </div>
           </div>
         </section>
-        {selectedBook && (
+        {selectedBookId && (
           <ViewDetailsPopup
-            show={!!selectedBook}
-            onClose={() => setSelectedBook(null)}
+            show={!!selectedBookId}
+            onClose={() => setSelectedBookId(null)}
             title="Book Details"
-            imageUrl={getImageUrl(selectedBook.image_url)}
-            imageAlt={selectedBook.name || "Book cover"}
-            data={{
-              "Book ID": selectedBook.book_id,
-              "Book Name": selectedBook.name,
-              ...(selectedBook.author ? { Author: selectedBook.author } : {}),
-              Branch:
-                selectedBook.branch ||
-                branches.find(
-                  (branch) =>
-                    String(branch.branch_id) === String(selectedBook.branch_id),
-                )?.name ||
-                "N/A",
-              Category:
-                categories.find(
-                  (c) => c.category_id === selectedBook.category_id,
-                )?.category_name ||
-                selectedBook.category ||
-                "N/A",
-              Language: selectedBook.language || "N/A",
-              Status: selectedBook.status || "N/A",
-              Description:
-                selectedBook.description || "No description available.",
-            }}
+            imageUrl={getImageUrl(selectedBookDetail?.image_url)}
+            imageAlt={selectedBookDetail?.name || "Book cover"}
+            data={
+              selectedBookDetail
+                ? {
+                    "Book ID": selectedBookDetail.book_id,
+                    "Book Name": selectedBookDetail.name,
+                    ...(selectedBookDetail.author
+                      ? { Author: selectedBookDetail.author }
+                      : {}),
+                    Branch:
+                      selectedBookDetail.branch ||
+                      branches.find(
+                        (branch) =>
+                          String(branch.branch_id) ===
+                          String(selectedBookDetail.branch_id),
+                      )?.name ||
+                      "N/A",
+                    Category:
+                      categories.find(
+                        (c) => c.category_id === selectedBookDetail.category_id,
+                      )?.category_name ||
+                      selectedBookDetail.category ||
+                      "N/A",
+                    Language: selectedBookDetail.language || "N/A",
+                    Status: selectedBookDetail.status || "N/A",
+                    Description:
+                      selectedBookDetail.description ||
+                      "No description available.",
+                  }
+                : null
+            }
           />
         )}
       </main>
