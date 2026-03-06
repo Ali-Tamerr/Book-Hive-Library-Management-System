@@ -22,14 +22,20 @@ import { logout, getCurrentUser } from "../services/auth.api";
 
 import NavLink from "./NavLink";
 
-const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
+const Sidebar = ({
+  activeTab,
+  setActiveTab,
+  isSidebarOpen,
+  toggleSidebar,
+  setSidebarOpen,
+}) => {
   const currentUser = getCurrentUser();
   const isAdmin =
     currentUser &&
     (currentUser.role === "Admin" || currentUser.role === "Super Admin");
   const isSuperAdmin = currentUser?.role === "Super Admin";
-  // Sidebar behavior: Always expanded for Admins, Always collapsed for Users (no hover)
-  const isExpanded = isAdmin;
+  // Sidebar behavior: Expand/collapse on hover using isSidebarOpen variable
+  const isExpanded = isSidebarOpen;
 
   const [, setForceUpdate] = useState(0);
   const navigate = useNavigate();
@@ -69,6 +75,8 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, toggleSidebar }) => {
         onClick={toggleSidebar}
       ></div>
       <aside
+        onMouseEnter={() => setSidebarOpen(true)}
+        onMouseLeave={() => window.innerWidth > 1080 && setSidebarOpen(false)}
         className={`flex flex-col items-stretch justify-start overflow-hidden bg-[#0a0f33] pb-3 pt-6 text-white transition-all duration-300 dark:bg-[#D7D7D7] dark:text-black ${isExpanded ? "w-55" : "w-24"} max-[1080px]:fixed max-[1080px]:z-50 max-[1080px]:h-full max-[1080px]:w-64 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? "max-[1080px]:translate-x-0" : "max-[1080px]:translate-x-full"} relative shadow-lg max-[1080px]:right-0`}
       >
         <div className="pointer-events-none absolute right-0 top-0 z-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200" />
