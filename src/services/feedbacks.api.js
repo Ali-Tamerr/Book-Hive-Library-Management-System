@@ -1,13 +1,13 @@
 import { apiGet, apiPost, apiPut, apiDelete } from "./api.config";
 
-const BASE_ENDPOINT = "/Feedbacks";
+const BASE_ENDPOINT = "/FeedbackRequests";
 
 export const getAllFeedbacks = async () => {
   return await apiGet(BASE_ENDPOINT);
 };
 
 export const getApprovedFeedbacks = async () => {
-  return await apiGet(`${BASE_ENDPOINT}/approved`);
+  return await apiGet(`${BASE_ENDPOINT}?status=Approved`);
 };
 
 export const createFeedback = async (feedbackData) => {

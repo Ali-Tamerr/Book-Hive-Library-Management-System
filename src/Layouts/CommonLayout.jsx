@@ -98,10 +98,10 @@ const CommonLayout = ({
       <section className="flex min-h-0 flex-1 gap-6 overflow-hidden rounded-lg">
         <div
           ref={scrollContainerRef}
-          className="min-h-0 flex-1 overflow-y-auto rounded-lg bg-white pb-4 dark:bg-[#121317]"
+          className="min-h-0 flex-1 overflow-y-auto rounded-lg  pb-4 "
         >
           <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
-            <thead className="sticky top-0 z-10 bg-white dark:bg-[#121317]">
+            <thead className="sticky top-0 z-10">
               <tr>
                 {columns.map((col) => (
                   <th

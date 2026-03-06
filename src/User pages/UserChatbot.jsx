@@ -77,8 +77,12 @@ function UserChatbot() {
 
   const chatMutation = useMutation({
     mutationFn: async (messageText) => {
+      const endpoint = messageText.toLowerCase().includes("recommendation")
+        ? "/librarian/ask"
+        : "/chat";
+
       return apiPost(
-        "/chat",
+        endpoint,
         {
           message: messageText,
         },

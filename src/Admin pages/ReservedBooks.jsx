@@ -5,6 +5,8 @@ import {
   useUpdateReservation,
   useDeleteReservation,
 } from "../hooks/useReservations.js";
+import { useBooks } from "../hooks/useBooks.js";
+import { useBookCopies } from "../hooks/useBookCopies.js";
 import ReservedBookFormPopup from "../components/ReservedBookFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
@@ -33,9 +35,44 @@ function ReservedBooks({
   });
 
   const { data: reservations = [], isLoading } = useReservations();
+  const { data: books = [] } = useBooks();
+  const { data: bookCopies = [] } = useBookCopies();
   const createReservationMutation = useCreateReservation();
   const updateReservationMutation = useUpdateReservation();
   const deleteReservationMutation = useDeleteReservation();
+
+  const getBookName = (bookCopyId) => {
+    // 1. Try to find the physical copy
+    const copy = bookCopies.find(
+      (c) =>
+        String(c.book_copy_id) === String(bookCopyId) ||
+        String(c.id) === String(bookCopyId),
+    );
+
+    // 2. If copy has embedded book detail (as populated by BookCopiesController)
+    if (copy && copy.book) {
+      return copy.book.name || copy.book.title || "-";
+    }
+
+    // 3. Fallback: Manual lookup in books list via cross-reference ID
+    const actualBookId = copy?.book_id;
+    if (actualBookId) {
+      const book = books.find(
+        (b) =>
+          String(b.book_id) === String(actualBookId) ||
+          String(b.id) === String(actualBookId),
+      );
+      return book?.name || book?.title || "-";
+    }
+
+    // 4. Last resort: Direct book lookup (if bookCopyId was actually a book_id)
+    const directBook = books.find(
+      (b) =>
+        String(b.book_id) === String(bookCopyId) ||
+        String(b.id) === String(bookCopyId),
+    );
+    return directBook?.name || directBook?.title || "-";
+  };
 
   const handleAddReservation = async (e) => {
     e.preventDefault();
@@ -127,10 +164,7 @@ function ReservedBooks({
     user_name: reservation.user
       ? `${reservation.user.first_name || ""} ${reservation.user.last_name || ""}`.trim()
       : "Unknown",
-    book_title:
-      reservation.book_copy?.book?.title ||
-      reservation.book_copy?.book?.name ||
-      "Unknown",
+    book_title: getBookName(reservation.book_id),
   }));
 
   const filteredReservations = searchValue
