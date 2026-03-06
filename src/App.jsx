@@ -43,6 +43,7 @@ function Layout({
   setActiveTab,
   isSidebarOpen,
   toggleSidebar,
+  setSidebarOpen,
   searchValue,
   setSearchValue,
 }) {
@@ -129,6 +130,7 @@ function Layout({
         setActiveTab={setActiveTab}
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
+        setSidebarOpen={setSidebarOpen}
       />
       <main className="flex h-full flex-1 flex-col overflow-hidden">
         <Navbar
@@ -161,6 +163,7 @@ function App() {
           setActiveTab={setActiveTab}
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
+          setSidebarOpen={setSidebarOpen}
           searchValue={searchValue}
           setSearchValue={setSearchValue}
         >
