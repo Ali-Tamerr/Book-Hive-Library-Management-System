@@ -14,6 +14,36 @@ export const checkUser = async (userId) => {
 };
 
 export const startRegisterMode = async (deviceId, bookId) => {
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseUrl = "https://guoanmhasnpjmlewqzrs.supabase.co";
+
+  if (supabaseKey) {
+    try {
+      const response = await fetch(
+        `${supabaseUrl}/functions/v1/start_register_mode`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+          },
+          body: JSON.stringify({
+            device_id: deviceId,
+            book_id: bookId,
+          }),
+        },
+      );
+      if (response.ok) return await response.json();
+    } catch (err) {
+      console.warn(
+        "Direct Supabase call failed, falling back to backend:",
+        err,
+      );
+    }
+  }
+
+  // Fallback to local backend API
   return await apiPost("/supabase/start_register_mode", {
     device_id: deviceId,
     book_id: bookId,
