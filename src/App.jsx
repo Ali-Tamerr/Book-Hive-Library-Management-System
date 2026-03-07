@@ -116,14 +116,14 @@ function Layout({
 
   if (isAuthRoute) {
     return (
-      <div className="h-screen bg-[#E8E8E8] text-[#0a0f33]">
+      <div className="h-screen bg-[#E8E8E8] text-[#000035]">
         <Suspense fallback={<PageLoader />}>{children}</Suspense>
       </div>
     );
   }
 
   return (
-    <div className="role-pages-typography flex h-screen bg-[#F2F2F2] text-[#0a0f33] transition-colors duration-300 dark:bg-[#121317] dark:text-[#E8E8E8]">
+    <div className="role-pages-typography flex h-screen bg-[#F2F2F2] text-[#000035] transition-colors duration-300 dark:bg-[#121317] dark:text-[#E8E8E8]">
       <Sidebar
         key={`sidebar-${location.pathname}`}
         activeTab={activeTab}

@@ -1,8 +1,8 @@
-import React from 'react'
-import { getCurrentUser } from '../services/auth.api';
-import { useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import React from "react";
+import { getCurrentUser } from "../services/auth.api";
+import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Search } from "lucide-react";
 
 const SearchBar = ({ searchValue, setSearchValue }) => {
   const location = useLocation();
@@ -14,7 +14,13 @@ const SearchBar = ({ searchValue, setSearchValue }) => {
   useEffect(() => {
     setCurrentUser(getCurrentUser());
 
-    const authRoutes = ['/login', '/signup', '/forgot-password', '/otp', '/reset-password'];
+    const authRoutes = [
+      "/login",
+      "/signup",
+      "/forgot-password",
+      "/otp",
+      "/reset-password",
+    ];
     if (authRoutes.includes(location.pathname)) {
       setNavVisibilty(false);
     } else {
@@ -22,20 +28,22 @@ const SearchBar = ({ searchValue, setSearchValue }) => {
     }
   }, [location.pathname]);
 
-  const isDashboard = location.pathname === '/dashboard';
+  const isDashboard = location.pathname === "/dashboard";
   const showSearchInput = !isDashboard;
   return (
-    <div className='flex w-full border h-full border-zinc-400 dark:border-[#292D32] rounded-xl'>
-      <button className="h-full text-gray-500 dark:text-[#121317] pl-3 py-1 cursor-pointer"><Search size={15} /></button>
+    <div className="flex h-10 w-full rounded-xl border border-[#000035] dark:border-[#D7D7D7]">
+      <button className="h-full cursor-pointer pl-3 py-2 font-[Noto_Sans_Georgian,sans-serif] text-[#000035] dark:text-[#D7D7D7]">
+        <Search className="h-full w-full" />
+      </button>
       <input
         type="text"
         placeholder="Search by Name"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
-        className="pl-3 pr-15 py-1 w-full h-full bg-transparent outline-none text-[] dark:text-[#121317] dark:placeholder-[#121317]"
+        className="pr-15 h-full w-full bg-transparent pl-3 text-[15px] text-[#000035] outline-none dark:text-[#D7D7D7] placeholder:text-[#000035] dark:placeholder:text-[#D7D7D7]"
       />
     </div>
-  )
-}
+  );
+};
 
-export default SearchBar
+export default SearchBar;

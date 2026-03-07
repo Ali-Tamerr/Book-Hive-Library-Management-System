@@ -116,7 +116,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       <div className="p-10 text-center text-red-500">
         <h2 className="text-xl font-bold">Error Loading Users</h2>
         <p>{error?.message || "Unknown error occurred"}</p>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-[#000035]">
           Check if the backend is running and the API endpoint "/api/Users" is
           accessible.
         </p>

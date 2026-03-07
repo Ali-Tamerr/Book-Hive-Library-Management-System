@@ -278,7 +278,7 @@ function Dashboard() {
         <div className="flex w-full items-center gap-3.5">
           <div className="relative flex-1">
             <Search
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
               size={16}
             />
             <input
@@ -289,7 +289,7 @@ function Dashboard() {
                 setSearchValue(e.target.value);
                 setCurrentPage(0);
               }}
-              className="w-full rounded-md border border-zinc-400 py-1.5 pl-10 pr-3.5 text-sm transition-colors focus:outline-none dark:border-[#292D32] dark:text-[#D7D7D7]"
+              className="w-full rounded-lg border border-[#000035] py-1.5 pl-10 pr-3.5 text-sm transition-colors placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
           <div className="mr-22 relative w-full min-w-[162px] max-w-[531px] flex-1">
@@ -299,17 +299,21 @@ function Dashboard() {
                 setSelectedCategory(e.target.value);
                 setCurrentPage(0);
               }}
-              className="w-full cursor-pointer appearance-none rounded-md border border-zinc-400  px-3.5 py-1.5 pr-9 text-sm transition-colors focus:outline-none dark:border-[#292D32]  dark:text-[#D7D7D7]"
+              className="w-full cursor-pointer appearance-none rounded-lg border border-[#000035] px-3.5 py-1.5 pr-9 text-sm transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7]"
             >
               <option value="">Category</option>
               {categories.map((cat) => (
-                <option key={cat.category_id} value={cat.category_id}>
+                <option
+                  key={cat.category_id}
+                  value={cat.category_id}
+                  className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
+                >
                   {cat.category_name || cat.name}
                 </option>
               ))}
             </select>
             <ChevronDown
-              className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400"
+              className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
               size={16}
             />
           </div>
@@ -342,7 +346,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="min-[640px]:flex-4 flex w-full flex-col gap-[18px] min-[640px]:h-full">
-            <div className="flex items-center justify-between border-b border-[#525252] dark:border-[#2C2D33]">
+            <div className="flex items-center justify-between border-b border-[#000035] dark:border-[#D7D7D7]">
               <div className="flex gap-16">
                 <button
                   onClick={() => {
@@ -352,7 +356,7 @@ function Dashboard() {
                   className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
                     activeTab === "recommended"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
-                      : "cursor-pointer text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
+                      : "cursor-pointer text-[#000035] hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recommended
@@ -365,7 +369,7 @@ function Dashboard() {
                   className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
                     activeTab === "recently"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
-                      : "cursor-pointer text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
+                      : "cursor-pointer text-[#000035] hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recently added
@@ -377,7 +381,7 @@ function Dashboard() {
                   disabled={currentPage === 0}
                   className={`rounded transition-colors ${
                     currentPage === 0
-                      ? "cursor-not-allowed text-[#525252] dark:text-gray-600"
+                      ? "cursor-not-allowed text-[#000035] dark:text-gray-600"
                       : "cursor-pointer text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
@@ -390,7 +394,7 @@ function Dashboard() {
                       className={`h-[1.5px] w-[10px] rounded-full transition-colors ${
                         i === Math.min(currentPage, 2)
                           ? "bg-[#000035] dark:bg-[#585858]"
-                          : "bg-[#525252] dark:bg-white"
+                          : "bg-[#000035] dark:bg-white"
                       }`}
                     />
                   ))}
@@ -400,7 +404,7 @@ function Dashboard() {
                   disabled={currentPage >= totalPages - 1}
                   className={`rounded transition-colors ${
                     currentPage >= totalPages - 1
-                      ? "cursor-not-allowed text-[#525252] dark:text-gray-600"
+                      ? "cursor-not-allowed text-[#000035] dark:text-gray-600"
                       : "cursor-pointer text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
@@ -411,11 +415,11 @@ function Dashboard() {
 
             <div className="grid w-full grid-cols-4 place-items-center gap-y-5 max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2">
               {booksLoading && displayBooks.length === 0 ? (
-                <div className="col-span-full py-9 text-center text-gray-500">
+                <div className="col-span-full py-9 text-center text-[#000035]">
                   Loading books...
                 </div>
               ) : displayBooks.length === 0 ? (
-                <div className="col-span-full py-9 text-center text-gray-500">
+                <div className="col-span-full py-9 text-center text-[#000035]">
                   No books found
                 </div>
               ) : (

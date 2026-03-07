@@ -77,13 +77,13 @@ const Sidebar = ({
       <aside
         onMouseEnter={() => setSidebarOpen(true)}
         onMouseLeave={() => window.innerWidth > 1080 && setSidebarOpen(false)}
-        className={`flex flex-col items-stretch justify-start overflow-hidden bg-[#0a0f33] pb-3 pt-6 text-white transition-all duration-300 dark:bg-[#D7D7D7] dark:text-black ${isExpanded ? "w-55" : "w-24"} max-[1080px]:fixed max-[1080px]:z-50 max-[1080px]:h-full max-[1080px]:w-64 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? "max-[1080px]:translate-x-0" : "max-[1080px]:translate-x-full"} relative shadow-lg max-[1080px]:right-0`}
+        className={`flex flex-col items-stretch justify-start overflow-hidden bg-[#000035] pb-3 pt-6 text-white transition-all duration-300 dark:bg-[#D7D7D7] dark:text-black ${isExpanded ? "w-64" : "w-18"} max-[1080px]:fixed max-[1080px]:z-50 max-[1080px]:h-full max-[1080px]:w-64 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? "max-[1080px]:translate-x-0" : "max-[1080px]:translate-x-full"} relative shadow-lg max-[1080px]:right-0`}
       >
         <div className="pointer-events-none absolute right-0 top-0 z-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200" />
 
-        <div className="relative z-10 h-40 self-center px-4 text-center">
+        <div className="relative z-10 flex h-40 flex-col items-center justify-start text-center">
           <ColorableLogo
-            className={`mx-auto text-white transition-all duration-300 dark:text-black ${isExpanded ? "h-13 w-13" : "h-14 w-12"} max-[1080px]:h-22 max-[1080px]:w-20`}
+            className={`mx-auto text-white transition-all duration-300 dark:text-black ${isExpanded ? "h-16 w-16" : "h-12 w-12"} max-[1080px]:h-20 max-[1080px]:w-20`}
           />
 
           <h2
@@ -131,7 +131,7 @@ const Sidebar = ({
                 toggleSidebar={toggleSidebar}
               />
             </nav>
-            <div className="pointer-events-none absolute bottom-0 left-0 -ml-[0.6px] h-20 w-full bg-gradient-to-t from-[#0a0f33] to-transparent dark:from-[#D7D7D7]" />
+            <div className="pointer-events-none absolute bottom-0 left-0 -ml-[0.6px] h-20 w-full bg-gradient-to-t from-[#000035] to-transparent dark:from-[#D7D7D7]" />
           </div>
         )}
         {isAdmin && (
@@ -202,7 +202,7 @@ const Sidebar = ({
                 </>
               )}
             </nav>
-            <div className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-[#0a0f33] to-transparent dark:from-[#D7D7D7]" />
+            <div className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-[#000035] to-transparent dark:from-[#D7D7D7]" />
           </div>
         )}
         <div

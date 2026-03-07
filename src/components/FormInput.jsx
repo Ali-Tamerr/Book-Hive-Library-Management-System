@@ -22,7 +22,7 @@ const FormInput = ({
     placeholder,
     required,
     autoComplete: autocomplete || "off",
-    className: `w-full h-[50px] px-4 py-4 rounded-xl border border-[#3D3E3E] dark:border-[#3D3E3E] bg-white dark:bg-[#121317] text-black dark:text-[#D7D7D7] placeholder-[#727374] dark:placeholder-[#5A5B60] outline-none focus:border-[#1e255e] dark:focus:border-[#D7D7D7] text-[13px] ${className || ""}`,
+    className: `w-full h-[50px] px-4 py-4 rounded-xl border border-[#000035] dark:border-[#D7D7D7]   text-black dark:text-[#D7D7D7] placeholder-[#000035] dark:placeholder-[#D7D7D7] outline-none text-[13px] ${className || ""}`,
   };
 
   if (step) {

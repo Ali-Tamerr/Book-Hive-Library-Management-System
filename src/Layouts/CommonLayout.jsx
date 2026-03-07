@@ -60,7 +60,7 @@ const CommonLayout = ({
           {customTitle ? (
             customTitle
           ) : (
-            <h2 className="whitespace-nowrap text-xl font-semibold max-[856px]:text-sm dark:text-[#E8E8E8]">
+            <h2 className="whitespace-nowrap text-4xl font-semibold tracking-widest max-[856px]:text-sm dark:text-[#E8E8E8]">
               {title}
             </h2>
           )}
@@ -98,15 +98,15 @@ const CommonLayout = ({
       <section className="flex min-h-0 flex-1 gap-6 overflow-hidden rounded-lg">
         <div
           ref={scrollContainerRef}
-          className="min-h-0 flex-1 overflow-y-auto rounded-lg  pb-4 "
+          className="min-h-0 flex-1 overflow-y-auto rounded-lg pb-4"
         >
           <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
-            <thead className="sticky top-0 z-10">
+            <thead className="sticky top-0 z-10 bg-[#f0f0f1] transition-colors duration-300 dark:bg-[#121317]">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className={`p-3 text-center text-[22px] font-extrabold tracking-widest`}
+                    className={`py-3 text-center text-[22px] font-extrabold tracking-widest`}
                   >
                     {col.header}
                   </th>
@@ -114,7 +114,7 @@ const CommonLayout = ({
               </tr>
               <tr>
                 <th colSpan={columns.length} className="p-0">
-                  <div className="mx-auto w-[97%] border-b border-gray-600 dark:border-[#292D32]"></div>
+                  <div className="mx-auto w-full border-b border-gray-600 dark:border-[#D7D7D7]"></div>
                 </th>
               </tr>
             </thead>
@@ -123,7 +123,7 @@ const CommonLayout = ({
                 <tr>
                   <td
                     colSpan={columns.length}
-                    className="p-3 text-center text-gray-500"
+                    className="p-3 text-center text-[#000035] dark:text-[#D7D7D7]"
                   >
                     Loading...
                   </td>
@@ -132,7 +132,7 @@ const CommonLayout = ({
                 <tr>
                   <td
                     colSpan={columns.length}
-                    className="p-3 text-center text-gray-500"
+                    className="p-3 text-center text-[#000035] dark:text-[#D7D7D7]"
                   >
                     No items found
                   </td>
@@ -190,7 +190,7 @@ const CommonLayout = ({
                       return (
                         <td
                           key={col.accessor}
-                          className={`p-3 text-center dark:text-white`}
+                          className={`py-3 text-center dark:text-white`}
                         >
                           {cellContent}
                         </td>
@@ -205,7 +205,7 @@ const CommonLayout = ({
             <div
               ref={observerTarget}
               onClick={onLoadMore}
-              className="h-10 w-full cursor-pointer p-2 text-center text-gray-500 transition-colors hover:text-gray-800"
+              className="h-10 w-full cursor-pointer p-2 text-center text-[#000035] transition-colors hover:text-gray-800"
             >
               Load More (Scroll or Click)
             </div>

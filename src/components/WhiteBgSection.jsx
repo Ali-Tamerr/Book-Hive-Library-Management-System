@@ -20,9 +20,9 @@ const WhiteBgSection = ({
       : "flex flex-1";
 
   const bgClass = isDarkMode ? "bg-[#121317]" : "bg-white";
-  const textClass = isDarkMode ? "text-white" : "text-[#0a0f33]";
-    const headingFontClass = "font-['Bebas_Neue',sans-serif]";
-    const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
+  const textClass = isDarkMode ? "text-white" : "text-[#000035]";
+  const headingFontClass = "font-['Bebas_Neue',sans-serif]";
+  const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
   const logoSrc = isDarkMode ? logoLight : logoDark;
   const logoAlt = "BookHive Logo";
 
@@ -46,7 +46,7 @@ const WhiteBgSection = ({
           className={`absolute ${backButton.position === "left" ? "left-0 top-4 rounded-l border-l-0" : "right-0 top-4 rounded-r border-r-0"} ${
             isDarkMode
               ? "border border-white text-white hover:bg-white hover:text-[#121317]"
-              : "border border-[#0a0f33] text-[#0a0f33] hover:bg-[#0a0f33] hover:text-white"
+              : "border border-[#000035] text-[#000035] hover:bg-[#000035] hover:text-white"
           } ${contentFontClass} cursor-pointer rounded-full px-4 py-1 text-xs font-medium transition-colors`}
         >
           {backButton.text}

@@ -459,7 +459,7 @@ const ViewRequestsPopup = ({
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#000035]"
               size={18}
             />
             <input
@@ -467,7 +467,7 @@ const ViewRequestsPopup = ({
               placeholder={getSearchPlaceholder()}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="h-[50px] w-[70%] rounded-xl border border-[#3D3E3E] py-3 pl-12 pr-4 text-[13px] outline-none focus:border-[#1e255e]"
+              className="h-[50px] w-[70%] rounded-xl border border-[#D7D7D7] py-3 pl-12 pr-4 text-[13px] outline-none"
             />
           </div>
         </div>
@@ -475,11 +475,11 @@ const ViewRequestsPopup = ({
         <div className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-[#8787A3]">
           <div className="min-w-[100px] flex-1 overflow-auto">
             {currentLoading ? (
-              <div className="p-8 text-center text-gray-500 dark:text-[#D7D7D7]">
+              <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">
                 Loading requests...
               </div>
             ) : currentData.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 dark:text-[#D7D7D7]">
+              <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">
                 {searchValue
                   ? "No requests match your search."
                   : showRejected
@@ -513,7 +513,7 @@ const ViewRequestsPopup = ({
                     )}
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#0a0f33]">
+                <tbody className="border-t border-[#000035]">
                   {filteredUserRequests.map((request, index) => (
                     <tr key={request.request_id || index}>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
@@ -556,7 +556,7 @@ const ViewRequestsPopup = ({
                               </>
                             )}
                             {request.status !== "Pending" && (
-                              <span className="text-sm italic text-gray-400">
+                              <span className="text-sm italic text-[#000035]">
                                 Processed
                               </span>
                             )}
@@ -593,7 +593,7 @@ const ViewRequestsPopup = ({
                     )}
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#0a0f33]">
+                <tbody className="border-t border-[#000035]">
                   {filteredBookRequests.map((request, index) => (
                     <tr key={request.transaction_id || index}>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
@@ -661,7 +661,7 @@ const ViewRequestsPopup = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#0a0f33]">
+                <tbody className="border-t border-[#000035]">
                   {filteredFeedbackRequests.map((request, index) => (
                     <tr key={request.request_id || index}>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
@@ -712,7 +712,7 @@ const ViewRequestsPopup = ({
           </div>
         </div>
 
-        {/* <div className="text-center text-sm text-gray-500">
+        {/* <div className="text-center text-sm text-[#000035]">
           <div>
             Showing {currentData.length} of {totalData.length} requests
           </div>
