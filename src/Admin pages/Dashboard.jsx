@@ -106,7 +106,7 @@ function Dashboard() {
           ...user,
           adminId: user.user_id,
           id: user.user_id,
-          subtitle: `Librarian Branch: ${user.branch_name || "N/A"} \u2022 ${user.status || "Active"}`,
+          subtitle: `Librarian Branch: ${user.branch_name || "N/A"}`,
           isOnline: isUserOnline(user),
         }))
         .sort((a, b) => {
