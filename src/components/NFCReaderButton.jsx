@@ -51,7 +51,7 @@ const NFCReaderButton = ({ onDataReceived, inputRef, isFlexOne = "false" }) => {
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ device_id: "esp8266", book_id: bookId }),
+                body: JSON.stringify({ device_id: "esp32", book_id: bookId }),
               },
             );
           } catch (err) {
