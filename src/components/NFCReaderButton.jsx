@@ -48,7 +48,7 @@ const NFCReaderButton = ({
     try {
       setIsActivating(true);
 
-      if (context === "book_copy" && bookId) {
+      if (bookId) {
         try {
           const base =
             import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
@@ -88,7 +88,7 @@ const NFCReaderButton = ({
         className={`${flexClass} flex min-w-[100px] cursor-pointer items-center justify-center gap-2 rounded-[12px] px-4 text-[13px] font-medium transition-colors ${
           isActive
             ? "border border-red-200 bg-red-100 text-red-700 hover:bg-red-200"
-            : "border border-transparent bg-[#F2F2F2] text-[#000035] hover:bg-gray-200 dark:bg-[#D7D7D7] dark:text-[#000035] dark:hover:bg-gray-300"
+            : "border border-[#000035] hover:bg-[#000035] hover:text-[#F2F2F2]  text-[#000035] dark:hover:bg-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:text-[#121317] dark:hover:bg-gray-300"
         } ${isActivating ? "cursor-not-allowed opacity-50" : ""}`}
         title={
           isActive ? "Disconnect / Stop Scanning" : "Scan via USB or Wireless"
