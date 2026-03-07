@@ -125,7 +125,6 @@ function Layout({
   return (
     <div className="role-pages-typography flex h-screen bg-[#F2F2F2] text-[#000035] transition-colors duration-300 dark:bg-[#121317] dark:text-[#E8E8E8]">
       <Sidebar
-        key={`sidebar-${location.pathname}`}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isSidebarOpen={isSidebarOpen}
