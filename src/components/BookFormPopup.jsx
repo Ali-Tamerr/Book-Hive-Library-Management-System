@@ -127,6 +127,7 @@ function BookFormPopup({
         quantity={formData.quantity}
         bookCopies={formData.BookCopies}
         onSave={handleSaveBookCopies}
+        bookId={formData.book_id}
       />
     </>
   );

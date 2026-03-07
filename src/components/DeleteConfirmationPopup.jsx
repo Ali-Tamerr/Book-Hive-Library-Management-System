@@ -12,6 +12,8 @@ const DeleteConfirmationPopup = ({
   warningMessage,
   isDeleteDisabled,
   showNFCInput = false,
+  bookId,
+  context = "book_copy",
 }) => {
   const [nfcId, setNfcId] = useState("");
   const [deleteAll, setDeleteAll] = useState(false);
@@ -56,6 +58,8 @@ const DeleteConfirmationPopup = ({
             <div className="flex w-full flex-col items-center gap-3">
               <div className="flex w-full gap-2">
                 <NFCReaderButton
+                  bookId={bookId}
+                  context={context}
                   onDataReceived={handleNFCData}
                   inputRef={inputRef}
                   isFlexOne="true"

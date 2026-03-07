@@ -1,8 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNFCReader } from "../contexts/NFCReaderContext";
 import { Wifi, Usb, Loader2 } from "lucide-react";
 
-const NFCReaderButton = ({ onDataReceived, inputRef, isFlexOne = "false" }) => {
+const NFCReaderButton = ({
+  onDataReceived,
+  bookId,
+  context = "book_copy",
+  inputRef,
+  isFlexOne = "false",
+}) => {
   const {
     isConnected,
     isWireless,
@@ -11,63 +17,57 @@ const NFCReaderButton = ({ onDataReceived, inputRef, isFlexOne = "false" }) => {
     registerCallback,
   } = useNFCReader();
 
+  const [isActivating, setIsActivating] = useState(false);
+
   useEffect(() => {
-    if (onDataReceived) {
-      const unregister = registerCallback(onDataReceived);
-      return unregister;
-    }
+    if (!onDataReceived) return;
+
+    const unregister = registerCallback(onDataReceived);
+    return unregister;
   }, [onDataReceived, registerCallback]);
 
   useEffect(() => {
-    // Keep focus logic if inputRef is provided (legacy support or if re-added)
     if ((isConnected || isWireless) && inputRef?.current) {
       setTimeout(() => {
-        inputRef.current.focus();
+        inputRef.current?.focus();
       }, 100);
     }
   }, [isConnected, isWireless, inputRef]);
 
-  const [isActivating, setIsActivating] = React.useState(false);
-
   const handleScanClick = async () => {
-    // If already connected or wireless, we disconnect/disable everything
     if (isConnected || isWireless) {
-      if (isConnected) await handleConnectClick();
-      if (isWireless) toggleWireless();
+      try {
+        if (isConnected) await handleConnectClick(); // disconnect USB
+        if (isWireless) toggleWireless(); // stop polling
+      } catch (err) {
+        console.error("Failed to stop scanning:", err);
+      }
       return;
     }
 
-    // Otherwise, we ACTIVATE
     try {
       setIsActivating(true);
 
-      // 1. Try to start Wireless registration mode if in book context
-      if (onDataReceived?.context === "book_copy") {
-        const bookId = onDataReceived?.book_id;
-        if (bookId) {
-          try {
-            await fetch(
-              `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"}/supabase/start_register_mode`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ device_id: "esp32", book_id: bookId }),
-              },
-            );
-          } catch (err) {
-            console.warn(
-              "Supabase register mode failed (Wireless might not register tags with IDs):",
-              err,
-            );
-          }
+      if (context === "book_copy" && bookId) {
+        try {
+          const base =
+            import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
+          await fetch(`${base}/supabase/start_register_mode`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              device_id: "kiosk1",
+              book_id: bookId,
+            }),
+          });
+        } catch (err) {
+          console.warn("Failed to start register mode on Supabase:", err);
         }
       }
 
-      // 2. Enable Wireless Polling
       toggleWireless();
 
-      // 3. Attempt USB Serial Connection (Async)
-      // This will open the browser's port selection window
       await handleConnectClick();
     } catch (err) {
       console.error("Failed to activate scanning:", err);
@@ -77,14 +77,15 @@ const NFCReaderButton = ({ onDataReceived, inputRef, isFlexOne = "false" }) => {
   };
 
   const isActive = isConnected || isWireless;
+  const flexClass = isFlexOne === true || isFlexOne === "true" ? "flex-1" : "";
 
   return (
-    <div className={`flex h-[50px] gap-2`}>
+    <div className="flex h-[50px] gap-2">
       <button
         type="button"
         onClick={handleScanClick}
         disabled={isActivating}
-        className={` ${isFlexOne === "true" ? "flex-1" : ""} flex min-w-[100px] cursor-pointer items-center justify-center gap-2 rounded-[12px] px-4 text-[13px] font-medium transition-colors ${
+        className={`${flexClass} flex min-w-[100px] cursor-pointer items-center justify-center gap-2 rounded-[12px] px-4 text-[13px] font-medium transition-colors ${
           isActive
             ? "border border-red-200 bg-red-100 text-red-700 hover:bg-red-200"
             : "border border-transparent bg-[#F2F2F2] text-[#000035] hover:bg-gray-200 dark:bg-[#D7D7D7] dark:text-[#000035] dark:hover:bg-gray-300"
