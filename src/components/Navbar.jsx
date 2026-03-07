@@ -115,7 +115,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             )}
           </div>
           <div>
-            <h3 className="text-2xl tracking-wide font-semibold max-[480px]:text-sm max-[350px]:text-xs">
+            <h3 className="text-xl tracking-wide font-semibold max-[480px]:text-sm max-[350px]:text-xs">
               {currentUser
                 ? currentUser.first_name + " " + currentUser.last_name || "User"
                 : "Loading..."}
