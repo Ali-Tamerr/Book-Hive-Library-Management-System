@@ -459,7 +459,7 @@ const ViewRequestsPopup = ({
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#000035]"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
               size={18}
             />
             <input
@@ -467,12 +467,12 @@ const ViewRequestsPopup = ({
               placeholder={getSearchPlaceholder()}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="h-[50px] w-[70%] rounded-xl border border-[#D7D7D7] py-3 pl-12 pr-4 text-[13px] outline-none"
+              className="h-[50px] w-[70%] rounded-xl border border-[#000035] py-3 pl-12 pr-4 text-[13px] placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-[#8787A3]">
+        <div className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-[#000035] dark:border-[#D7D7D7]">
           <div className="min-w-[100px] flex-1 overflow-auto">
             {currentLoading ? (
               <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">
@@ -488,48 +488,48 @@ const ViewRequestsPopup = ({
               </div>
             ) : activeTab === "users" ? (
               <table className="w-full">
-                <thead className="sticky top-0 bg-white">
+                <thead className="sticky top-0 bg-white dark:bg-[#000035]">
                   <tr>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Name
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Email
                     </th>
 
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Plan
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Sent At
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Status
                     </th>
                     {!showRejected && (
-                      <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                      <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                         Actions
                       </th>
                     )}
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#000035]">
+                <tbody className="border-t border-[#000035] dark:border-[#D7D7D7]">
                   {filteredUserRequests.map((request, index) => (
                     <tr key={request.request_id || index}>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7] text-[#000035]">
                         {request.first_name} {request.last_name}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7] text-[#000035]">
                         {request.email}
                       </td>
 
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7] text-[#000035]">
                         {request.plan || "N/A"}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7] text-[#000035]">
                         {formatDate(request.created_at)}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center dark:text-[#D7D7D7] text-[#000035]">
                         {getUserStatusBadge(request)}
                       </td>
                       {!showRejected && (
@@ -541,14 +541,14 @@ const ViewRequestsPopup = ({
                                   onClick={() =>
                                     onApprove && onApprove(request)
                                   }
-                                  className="cursor-pointer rounded-lg border border-[#1e255e] bg-white p-2 text-[#1e255e]"
+                                  className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
                                   title="Approve"
                                 >
                                   <Check size={16} />
                                 </button>
                                 <button
                                   onClick={() => onReject && onReject(request)}
-                                  className="cursor-pointer rounded-lg border border-[#1e255e] bg-white p-2 text-[#1e255e]"
+                                  className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
                                   title="Reject"
                                 >
                                   <X size={16} />
@@ -556,7 +556,7 @@ const ViewRequestsPopup = ({
                               </>
                             )}
                             {request.status !== "Pending" && (
-                              <span className="text-sm italic text-[#000035]">
+                              <span className="text-sm italic text-[#000035] dark:text-[#D7D7D7]">
                                 Processed
                               </span>
                             )}
@@ -571,44 +571,44 @@ const ViewRequestsPopup = ({
               <table className="w-full">
                 <thead className="sticky top-0 bg-white">
                   <tr>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       User Name
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Book Name
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Due Date
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Requested At
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Status
                     </th>
                     {!showRejected && (
-                      <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                      <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                         Actions
                       </th>
                     )}
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#000035]">
+                <tbody className="border-t border-[#000035] dark:border-[#D7D7D7]">
                   {filteredBookRequests.map((request, index) => (
                     <tr key={request.transaction_id || index}>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
                         {getUserName(request.user_id)}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
                         {getBookName(request.book_id)}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
                         {formatDateShort(request.due_date)}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
                         {formatDate(request.created_at)}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-[#000035] dark:text-[#D7D7D7]">
                         {getBookStatusBadge(request)}
                       </td>
                       {!showRejected && (
@@ -647,16 +647,16 @@ const ViewRequestsPopup = ({
               <table className="w-full">
                 <thead className="sticky top-0 bg-white">
                   <tr>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       User Name
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       ID User
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Requested At
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
+                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Actions
                     </th>
                   </tr>
@@ -664,13 +664,13 @@ const ViewRequestsPopup = ({
                 <tbody className="border-t border-[#000035]">
                   {filteredFeedbackRequests.map((request, index) => (
                     <tr key={request.request_id || index}>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
                         {getUserName(request.user_id)}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
                         {request.user_id}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
+                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
                         {formatDate(request.created_at)}
                       </td>
                       <td className="p-4">
@@ -679,7 +679,7 @@ const ViewRequestsPopup = ({
                             onClick={() =>
                               onApproveFeedback && onApproveFeedback(request)
                             }
-                            className="cursor-pointer rounded-lg border border-[#1e255e] bg-white p-2 text-[#1e255e]"
+                            className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
                             title="Approve"
                           >
                             <Check size={16} />
@@ -688,7 +688,7 @@ const ViewRequestsPopup = ({
                             onClick={() =>
                               onRejectFeedback && onRejectFeedback(request)
                             }
-                            className="cursor-pointer rounded-lg border border-[#1e255e] bg-white p-2 text-[#1e255e]"
+                            className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
                             title="Reject"
                           >
                             <X size={16} />
@@ -697,7 +697,7 @@ const ViewRequestsPopup = ({
                             onClick={() =>
                               onViewFeedback && onViewFeedback(request)
                             }
-                            className="cursor-pointer rounded-lg border border-[#1e255e] bg-white p-2 text-[#1e255e]"
+                            className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
                             title="View Details"
                           >
                             <ReceiptText size={16} />
