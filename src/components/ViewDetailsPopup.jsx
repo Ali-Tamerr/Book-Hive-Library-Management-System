@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import Popup from "./Popup.jsx";
-import { ReceiptText, Star, StarHalf, UserRound, Loader2 } from "lucide-react";
+import {
+  ReceiptText,
+  Star,
+  StarHalf,
+  UserRound,
+  Loader2,
+  Book,
+} from "lucide-react";
 import reviewerAvatar from "../assets/img/testimonial-perfil-1.png";
 import { useBookReviews } from "../hooks/useBookReviews.js";
 import RateBookPopup from "./RateBookPopup.jsx";
@@ -16,6 +23,7 @@ const ViewDetailsPopup = ({
   savedBy,
   imageUrl,
   imageAlt,
+  variant = "book",
 }) => {
   const [showRatePopup, setShowRatePopup] = useState(false);
   const bookId = data?.["Book ID"];
@@ -173,71 +181,118 @@ const ViewDetailsPopup = ({
         onClose={onClose}
         title={title}
         icon={null}
-        maxWidthClass="max-w-[1150px]"
-        panelClassName=" h-full max-h-[700px] overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#D7D7D7] dark:bg-[#121317] pb-4 !p-4"
-        contentClassName="h-full overflow-y-auto overflow-x-hidden"
+        maxWidthClass={variant === "book" ? "max-w-[1200px]" : "max-w-[700px]"}
+        panelClassName={`!p-0 ${variant === "book" ? "h-full max-h-[700px]" : "h-auto"} overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#D7D7D7] dark:bg-[#121317]`}
+        contentClassName={`${variant === "book" ? "h-full overflow-y-auto" : "h-auto overflow-hidden"} p-0 overflow-x-hidden`}
         hideHeader
         hideDivider
-        heightClass="px-1 py-1 sm:px-3 sm:py-3"
+        heightClass={variant === "book" ? "px-1 py-1 sm:px-4 sm:py-4" : "p-0"}
       >
-        <div className="grid h-full grid-cols-1 lg:grid-cols-[300px_1px_1fr]">
-          <div className="flex items-start justify-center px-4 pb-7 pt-8 sm:px-6">
-            {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt={imageAlt || String(headingText || "Details")}
-                className="h-[360px] w-[230px] max-w-full border border-[#cecece] object-cover"
-              />
-            ) : (
-              <div className="flex h-[360px] w-[230px] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#000035] to-[#192261]">
-                <UserRound size={48} className="text-white/70" />
+        <div
+          className={`grid ${variant === "book" ? "h-full grid-cols-1 lg:grid-cols-[440px_1px_1fr]" : "h-auto grid-cols-1 lg:grid-cols-[auto_1px_auto]"}`}
+        >
+          <div
+            className={`flex flex-col items-center justify-center ${variant === "book" ? "px-10 pb-10 pt-10" : "py-3 pl-4 pr-1"}`}
+          >
+            <div className="flex items-center justify-center">
+              {variant === "book" ? (
+                imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={imageAlt || String(headingText || "Details")}
+                    className="h-[600px] w-[470px] max-w-full border border-[#cecece] object-cover"
+                  />
+                ) : (
+                  <div className="flex h-[600px] w-[400px] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#000035] to-[#192261]">
+                    <Book size={48} className="text-[#F2F2F2]" />
+                  </div>
+                )
+              ) : (
+                <div className="relative flex aspect-square h-[200px] w-[200px] items-center justify-center">
+                  {imageUrl ? (
+                    <div className="h-full w-full overflow-hidden rounded-full">
+                      <img
+                        src={imageUrl}
+                        alt={imageAlt || String(headingText || "Details")}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center rounded-full bg-[#000020]">
+                      <UserRound size={64} className="text-[#F2F2F2]" />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {variant === "details" && savedBy && (
+              <div className="mt-4 self-start">
+                <p className="text-[10px] text-[#000035]/50 dark:text-[#D7D7D7]/50">
+                  Added by: {savedBy.name}
+                </p>
               </div>
             )}
           </div>
 
-          <div className="mx-auto my-7 hidden w-px bg-[#000035] lg:block dark:bg-[#D7D7D7]" />
+          <div
+            className={`${variant === "book" ? "my-6" : "my-3 h-auto min-h-[140px]"} mx-auto hidden w-px bg-[#000035]/20 lg:block dark:bg-[#D7D7D7]/20`}
+          />
 
-          <div className="flex min-h-0 flex-1 flex-col px-4 pb-7 pt-8 sm:px-7">
+          <div
+            className={`flex min-h-0 flex-1 flex-col justify-center ${variant === "book" ? "px-12 py-12" : "py-3 pl-4 pr-6"}`}
+          >
             {/* Header and Details - Fixed */}
             <div className="shrink-0">
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col items-start">
                 <h3
-                  className="truncate text-4xl font-normal uppercase leading-[0.9] tracking-[0.5px] text-[#000035] sm:text-5xl lg:text-[56px] dark:text-[#D7D7D7]"
+                  className={`truncate font-bold uppercase leading-[1.1] tracking-[0.5px] text-[#000035] dark:text-[#D7D7D7] ${variant === "book" ? "text-4xl font-bold sm:text-5xl lg:text-[56px]" : "text-4xl font-bold sm:text-5xl lg:text-[56px]"}`}
                   style={{
                     fontFamily:
-                      "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
+                      variant === "book"
+                        ? "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif"
+                        : "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
                   }}
                   title={String(headingText || "N/A")}
                 >
                   {String(headingText || "N/A")}
                 </h3>
-                {bookReviews.length > 0 && (
-                  <div className="mt-2 flex items-center gap-2">
+                {variant === "book" && bookReviews.length > 0 && (
+                  <div className="flex items-center gap-2">
                     {renderStars(averageRating, 24)}
-                    <span className="text-xl font-medium text-[#000035] dark:text-[#D7D7D7]">
+                    {/* <span className="text-xl font-medium text-[#000035] dark:text-[#D7D7D7]">
                       ({averageRating.toFixed(1)})
-                    </span>
+                    </span> */}
                   </div>
                 )}
               </div>
               {subtitleText && (
-                <p className="text-xl font-medium text-[#000035] sm:text-[28px] dark:text-[#D7D7D7]">
+                <p
+                  className={`font-medium text-[#000035] dark:text-[#D7D7D7] ${variant === "book" ? "text-xl sm:text-[28px]" : "mb-6 text-2xl sm:text-[32px]"}`}
+                >
                   {subtitleText}
                 </p>
               )}
 
-              <div className="mt-6 flex flex-col gap-4">
+              <div
+                className={`flex flex-col ${variant === "book" ? "mt-6 gap-4" : "mt-1 gap-2"}`}
+                style={{
+                  fontFamily: "'Noto Sans Georgian', sans-serif",
+                }}
+              >
                 {detailsEntries.map(([key, value]) => (
                   <p
                     key={key}
-                    className="text-xl text-[#000035] sm:text-[28px] dark:text-[#D7D7D7]"
+                    className={`whitespace-nowrap text-[#000035] dark:text-[#D7D7D7] ${variant === "book" ? "text-xl sm:text-[28px]" : "text-base font-medium sm:text-[20px]"}`}
                   >
-                    {key} : {toDisplayValue(value)}
+                    {key} :{" "}
+                    <span className="font-normal">{toDisplayValue(value)}</span>
                   </p>
                 ))}
               </div>
 
-              <div className="my-6 h-px w-full max-w-[280px] bg-[#000035] dark:bg-[#D7D7D7]" />
+              {variant === "book" && (
+                <div className="my-6 h-px w-full max-w-[280px] bg-[#000035] dark:bg-[#D7D7D7]" />
+              )}
             </div>
 
             {/* Custom Content or Reviews - Scrolling */}

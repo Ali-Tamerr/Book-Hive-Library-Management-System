@@ -186,6 +186,7 @@ function Branches({ searchValue, setSearchValue }) {
           setShowViewDetails(false);
           setSelectedBranch(null);
         }}
+        variant="details"
         title="View Branch"
         data={
           selectedBranch
