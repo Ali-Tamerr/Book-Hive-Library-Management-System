@@ -14,20 +14,17 @@ function Catalog({ searchValue, setSearchValue }) {
         isActive={localActiveTab === "borrowed"}
         onClick={() => setLocalActiveTab("borrowed")}
         position="first"
-        className="font-[family-name:var(--body-font)]"
       />
       <TabButton
         label="Overdue Borrowers"
         isActive={localActiveTab === "overdue"}
         onClick={() => setLocalActiveTab("overdue")}
-        className="font-[family-name:var(--body-font)]"
       />
       <TabButton
         label="Returned Books"
         isActive={localActiveTab === "returned"}
         onClick={() => setLocalActiveTab("returned")}
         position="last"
-        className="font-[family-name:var(--body-font)]"
       />
         </div>
   );
