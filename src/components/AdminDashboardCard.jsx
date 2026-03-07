@@ -44,7 +44,7 @@ const AdminDashboardCard = ({
                 {admin.name}
               </p>
               <p className="truncate text-[13px] font-medium leading-tight text-[#000035] dark:text-[#D7D7D7]">
-                {admin.subtitle || `Librarian Branch : Cairo`}
+                {admin.subtitle || `Unknown Branch`}
               </p>
             </div>
 
