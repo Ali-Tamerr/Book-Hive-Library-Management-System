@@ -262,6 +262,7 @@ function ReservedBooks({
           setShowViewDetails(false);
           setSelectedReservation(null);
         }}
+        variant="details"
         title="View Reservation"
         data={
           selectedReservation

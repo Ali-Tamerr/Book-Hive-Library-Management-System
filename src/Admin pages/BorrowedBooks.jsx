@@ -332,8 +332,7 @@ function BorrowedBooks({
     borrowed_on_formatted: formatDate(book.created_at),
     branch_name: getBookBranchName(book.book_id),
   }));
-        
-  
+
   const columns = [
     { header: "User Name", accessor: "user_name_display" },
     { header: "Book Name", accessor: "book_name" },
@@ -391,6 +390,7 @@ function BorrowedBooks({
           setShowViewDetails(false);
           setSelectedTransaction(null);
         }}
+        variant="details"
         title="View Transaction"
         data={
           selectedTransaction

@@ -206,6 +206,7 @@ function Categories({ searchValue, setSearchValue }) {
           setShowViewDetails(false);
           setSelectedCategory(null);
         }}
+        variant="details"
         title="View Category"
         data={
           selectedCategory

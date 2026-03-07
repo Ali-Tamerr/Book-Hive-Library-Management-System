@@ -726,6 +726,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         }}
         title="View User"
         imageUrl={selectedUser ? getImageUrl(selectedUser.image_url) : null}
+        variant="details"
         data={
           selectedUser
             ? {
