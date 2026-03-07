@@ -6,7 +6,14 @@ import NFCReaderButton from "./NFCReaderButton.jsx";
 import { useBranches } from "../hooks/useBranches";
 import { useNFCReader } from "../contexts/NFCReaderContext";
 
-function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
+function BookCopiesPopup({
+  show,
+  onClose,
+  quantity,
+  bookCopies,
+  onSave,
+  bookId,
+}) {
   const [copies, setCopies] = useState([]);
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
   const [selectedBranch, setSelectedBranch] = useState("");
@@ -118,7 +125,11 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex gap-3 px-10">
           <div className="w-auto">
-            <NFCReaderButton onDataReceived={handleNFCData} />
+            <NFCReaderButton
+              bookId={bookId || quantity}
+              context="book_copy"
+              onDataReceived={handleNFCData}
+            />
           </div>
           <div className="relative flex-1">
             <select

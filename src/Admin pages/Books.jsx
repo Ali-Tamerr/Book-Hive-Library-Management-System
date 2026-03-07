@@ -148,8 +148,8 @@ function Books({ searchValue, setSearchValue }) {
     }
   };
 
-  const handleDelete = (book_id) => {
-    setBookToDelete(book_id);
+  const handleDelete = (book) => {
+    setBookToDelete(book.book_id);
     setShowDeleteConfirm(true);
   };
 
@@ -400,6 +400,7 @@ function Books({ searchValue, setSearchValue }) {
         onConfirm={confirmDelete}
         title="Delete Book"
         showNFCInput={true}
+        bookId={bookToDelete}
       />
       <ViewDetailsPopup
         show={showViewDetails}

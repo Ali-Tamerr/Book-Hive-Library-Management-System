@@ -113,6 +113,7 @@ function UserFormPopup({
         <div className="flex items-center gap-2">
           <div className="w-auto">
             <NFCReaderButton
+              context="user"
               onDataReceived={handleNFCData}
               inputRef={userIdInputRef}
             />
