@@ -28,7 +28,7 @@ const TabButton = ({
   return (
     <button
       onClick={onClick}
-      className={`h-10 cursor-pointer whitespace-nowrap px-16 text-xl font-semibold uppercase tracking-widest ${borderClasses} ${isActive ? activeClasses : inactiveClasses} ${className}`}
+      className={`h-10  cursor-pointer whitespace-nowrap px-16 font-[family-name:var(--body-font)] text-xl font-semibold uppercase tracking-widest ${borderClasses} ${isActive ? activeClasses : inactiveClasses} ${className}`}
     >
       {label}
     </button>
