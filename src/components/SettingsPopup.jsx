@@ -8,6 +8,8 @@ import { getCurrentUser } from "../services/auth.api";
 import { updateUser } from "../services/users.api";
 import { getImageUrl } from "../services/api.config";
 
+import FormInput from "./FormInput.jsx";
+
 const SettingsPopup = ({ show, onClose }) => {
   const localUser = getCurrentUser();
   const { data: userProfile } = useUser(localUser?.user_id);
@@ -207,11 +209,6 @@ const SettingsPopup = ({ show, onClose }) => {
     onClose();
   };
 
-  const cancelHoverClass =
-    "hover:bg-[#000035] hover:text-white dark:hover:bg-[#000035] dark:hover:text-white";
-  const confirmHoverClass =
-    "border border-transparent hover:bg-white hover:text-[#000035] hover:border-[#000035] dark:hover:bg-white dark:hover:text-[#000035] dark:hover:border-[#000035]";
-
   return (
     <Popup
       show={show}
@@ -238,7 +235,7 @@ const SettingsPopup = ({ show, onClose }) => {
               )}
             </div>
 
-            <label className="flex h-[42px] w-[320px] cursor-pointer items-center justify-between rounded-lg bg-[#D7D7D7] px-4 text-[30px] text-[#000035] dark:bg-[#D7D7D7] dark:text-[#E8E8E8]">
+            <label className="flex h-[42px] w-[320px] cursor-pointer items-center justify-between rounded-lg border dark:border-[#D7D7D7] px-4 text-[30px] text-[#000035] border-[#000035] dark:text-[#E8E8E8]">
               <span className="font-regular flex h-full items-center text-[19px]">
                 Add your photo
               </span>
@@ -256,13 +253,13 @@ const SettingsPopup = ({ show, onClose }) => {
             <label className="font-regular w-[180px] whitespace-nowrap text-left text-sm">
               Enter Current Password
             </label>
-            <input
+            <FormInput
               type="password"
               name="currentPassword"
               placeholder="Enter Current Password"
               value={formData.currentPassword}
               onChange={handleChange}
-              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#D7D7D7] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097]"
+              className="flex-1"
             />
           </div>
 
@@ -270,13 +267,13 @@ const SettingsPopup = ({ show, onClose }) => {
             <label className="font-regular w-[180px] whitespace-nowrap text-left text-sm">
               Enter New Password
             </label>
-            <input
+            <FormInput
               type="password"
               name="newPassword"
               placeholder="Enter New Password"
               value={formData.newPassword}
               onChange={handleChange}
-              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#D7D7D7] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097]"
+              className="flex-1"
             />
           </div>
 
@@ -284,13 +281,13 @@ const SettingsPopup = ({ show, onClose }) => {
             <label className="font-regular w-[180px] whitespace-nowrap text-left text-sm">
               Confirm New Password
             </label>
-            <input
+            <FormInput
               type="password"
               name="confirmPassword"
               placeholder="Confirm New Password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#D7D7D7] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097]"
+              className="flex-1"
             />
           </div>
 
@@ -312,19 +309,10 @@ const SettingsPopup = ({ show, onClose }) => {
             </div>
           )}
           <div className="flex justify-between gap-3">
-            <FormButton
-              type="button"
-              onClick={handleCancel}
-              className={cancelHoverClass}
-            >
+            <FormButton type="button" onClick={handleCancel}>
               CANCEL
             </FormButton>
-            <FormButton
-              type="submit"
-              isPrimary
-              disabled={loading}
-              className={confirmHoverClass}
-            >
+            <FormButton type="submit" disabled={loading}>
               {loading ? "CONFIRMING..." : "CONFIRM"}
             </FormButton>
           </div>
