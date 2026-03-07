@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNFCReader } from "../contexts/NFCReaderContext";
 import { Wifi, Usb, Loader2 } from "lucide-react";
+import { startRegisterMode } from "../services/supabaseEdge.api";
 
 const NFCReaderButton = ({
   onDataReceived,
@@ -50,17 +51,7 @@ const NFCReaderButton = ({
 
       if (bookId) {
         try {
-          const base =
-            import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
-
-          await fetch(`${base}/supabase/start_register_mode`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              device_id: "kiosk1",
-              book_id: bookId,
-            }),
-          });
+          await startRegisterMode("kiosk1", bookId);
         } catch (err) {
           console.warn("Failed to start register mode on Supabase:", err);
         }
@@ -88,7 +79,7 @@ const NFCReaderButton = ({
         className={`${flexClass} flex min-w-[100px] cursor-pointer items-center justify-center gap-2 rounded-[12px] px-4 text-[13px] font-medium transition-colors ${
           isActive
             ? "border border-red-200 bg-red-100 text-red-700 hover:bg-red-200"
-            : "border border-[#000035] hover:bg-[#000035] hover:text-[#F2F2F2]  text-[#000035] dark:hover:bg-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:text-[#121317] dark:hover:bg-gray-300"
+            : "border border-[#000035] text-[#000035] hover:bg-[#000035] hover:text-[#F2F2F2] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7] dark:hover:bg-gray-300 dark:hover:text-[#121317]"
         } ${isActivating ? "cursor-not-allowed opacity-50" : ""}`}
         title={
           isActive ? "Disconnect / Stop Scanning" : "Scan via USB or Wireless"
