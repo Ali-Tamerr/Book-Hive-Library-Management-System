@@ -10,8 +10,8 @@ const AuthInput = ({
   isDarkMode = false,
 }) => {
   const baseClasses = isDarkMode
-    ? "w-full p-5 rounded-xl border border-solid border-[#000035] bg-transparent text-white placeholder-[#000035] outline-none text-lg max-[1080px]:text-sm max-[1080px]:p-4 font-['Noto_Sans_Georgian',sans-serif]"
-    : "w-full p-5 rounded-xl border border-solid border-[#D7D7D7] bg-white text-[#D7D7D7] outline-none text-lg max-[1080px]:text-sm max-[1080px]:p-4 font-['Noto_Sans_Georgian',sans-serif]";
+    ? "w-full p-5 rounded-xl border border-solid border-[#D7D7D7] text-[#D7D7D7] placeholder-[#D7D7D7] bg-transparent outline-none text-lg max-[1080px]:text-sm max-[1080px]:p-4 font-['Noto_Sans_Georgian',sans-serif]"
+    : "w-full p-5 rounded-xl border border-solid border-[#000035]  text-[#000035] bg-transparent outline-none text-lg max-[1080px]:text-sm max-[1080px]:p-4 font-['Noto_Sans_Georgian',sans-serif]";
 
   return (
     <input
@@ -23,6 +23,10 @@ const AuthInput = ({
       required={required}
       autoComplete={autoComplete || "off"}
       className={`${baseClasses} ${className}`}
+      style={{
+        transition: "background-color 5000s ease-in-out 0s",
+        WebkitTextFillColor: isDarkMode ? "#D7D7D7" : "#000035",
+      }}
     />
   );
 };

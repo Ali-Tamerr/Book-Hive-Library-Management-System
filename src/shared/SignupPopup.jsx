@@ -146,7 +146,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
           className={`flex h-full w-full max-[1080px]:flex-col ${isDarkMode ? "bg-[#121317]" : "bg-white"} overflow-hidden`}
         >
           <DarkBgSection
-            message="Already have account ? Sign in now !"
+            message={"Already have account ?\nSign in now !"}
             buttonText="SIGN IN"
             onButtonClick={handleLogin}
             position="left"
@@ -252,17 +252,16 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                 </PrimaryButton>
               </form>
             )}
-            <p
-              className={`hidden text-lg max-[1080px]:block ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
-            >
-              Already have Account?{" "}
-              <button
-                onClick={handleLogin}
-                className={`underline ${isDarkMode ? "text-white" : "text-gray-900"} cursor-pointer`}
+            <div className="hidden w-full flex-col items-center gap-3 max-[1080px]:flex">
+              <p
+                className={`text-center text-lg ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
               >
+                Already have Account?
+              </p>
+              <PrimaryButton onClick={handleLogin} isDarkMode={isDarkMode}>
                 Sign In now.
-              </button>
-            </p>
+              </PrimaryButton>
+            </div>
           </WhiteBgSection>
         </div>
       </div>

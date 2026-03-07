@@ -25,8 +25,8 @@ const DarkBgSection = ({
   const hoverBg = isDarkMode
     ? "hover:bg-[#121317] hover:text-white"
     : "hover:bg-white hover:text-[#000035]";
-    const headingFontClass = "font-['Bebas_Neue',sans-serif]";
-    const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
+  const headingFontClass = "font-['Bebas_Neue',sans-serif]";
+  const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
   const logoSrc = isDarkMode ? logoDark : logoLight;
   const logoAlt = "BookHive Logo";
 
@@ -64,7 +64,7 @@ const DarkBgSection = ({
         </span>
       </h1>
       <p
-        className={`text-xl ${contentFontClass} ${textColor} max-w-100 cursor-default text-center`}
+        className={`text-2xl ${contentFontClass} ${textColor} max-w-100 cursor-default whitespace-pre-line text-center leading-tight`}
       >
         {message}
       </p>
