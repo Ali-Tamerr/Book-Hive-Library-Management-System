@@ -8,8 +8,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { Bot, MessageSquareText, Search, SendHorizontal } from "lucide-react";
-
 import userAvatar from "../assets/img/testimonial-perfil-1.png";
 import { getCurrentUser } from "../services/auth.api";
 import { apiPost, getImageUrl } from "../services/api.config";
