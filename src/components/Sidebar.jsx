@@ -208,19 +208,6 @@ const Sidebar = ({
         <div
           className={`mt-auto flex w-full flex-col gap-2 transition-all duration-300 dark:bg-[#D7D7D7] ${isExpanded ? "" : "flex justify-center"}`}
         >
-          <div className="hidden max-[1080px]:block">
-            <NavLink
-              isExpanded={isExpanded}
-              active={location.pathname === "/admin/settings"}
-              onClick={() => {
-                navigate("/settings");
-              }}
-              icon={<Settings size={18} strokeWidth={2.3} />}
-              text="Settings"
-              toggleSidebar={toggleSidebar}
-            />
-          </div>
-
           <NavLink
             isExpanded={isExpanded}
             active={false}

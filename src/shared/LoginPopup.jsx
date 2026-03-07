@@ -47,7 +47,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
       } else if (user.role === "User" || user.role === "Member") {
         navigate("/user/dashboard");
       } else {
-        navigate("/login");
+        onClose?.();
       }
       onClose?.();
     } catch (err) {
@@ -138,17 +138,16 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
                 {loading ? "SIGNING IN..." : "SIGN IN"}
               </PrimaryButton>
             </form>
-            <p
-              className={`hidden text-lg max-[1080px]:block ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
-            >
-              New to our platform?{" "}
-              <button
-                onClick={handleSignup}
-                className={`underline ${isDarkMode ? "text-white" : "text-gray-900"} cursor-pointer`}
+            <div className="mb-8 hidden flex-col items-center gap-3 max-[1080px]:flex">
+              <p
+                className={`text-center text-lg ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
               >
+                New to our platform?
+              </p>
+              <PrimaryButton onClick={handleSignup} isDarkMode={isDarkMode}>
                 Sign Up now.
-              </button>
-            </p>
+              </PrimaryButton>
+            </div>
           </WhiteBgSection>
 
           <DarkBgSection

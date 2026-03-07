@@ -9,11 +9,6 @@ import React, { Suspense, lazy, useEffect } from "react";
 import PageLoader from "./components/PageLoader";
 
 const Home = lazy(() => import("./Home/Home"));
-import Login from "./shared/Login";
-const Signup = lazy(() => import("./shared/Signup"));
-const ForgotPassword = lazy(() => import("./shared/ForgotPassword"));
-const OTP = lazy(() => import("./shared/OTP"));
-const ResetPassword = lazy(() => import("./shared/ResetPassword"));
 
 const AdminDashboard = lazy(() => import("./Admin pages/Dashboard"));
 const Overdue = lazy(() => import("./Admin pages/Overdue"));
@@ -21,7 +16,6 @@ const UserManagement = lazy(() => import("./Admin pages/UserManagement"));
 const Catalog = lazy(() => import("./Admin pages/Catalog"));
 const Books = lazy(() => import("./Admin pages/Books"));
 const Categories = lazy(() => import("./Admin pages/Categories"));
-const Settings = lazy(() => import("./shared/Settings"));
 const Branches = lazy(() => import("./Admin pages/Branches"));
 
 const UserDashboard = lazy(() => import("./User pages/Dashboard"));
@@ -168,11 +162,6 @@ function App() {
         >
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/otp" element={<OTP />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="admin/dashboard" element={<AdminDashboard />} />
             <Route
@@ -220,7 +209,6 @@ function App() {
                 />
               }
             />
-            <Route path="admin/settings" element={<Settings />} />
             <Route
               path="admin/branches"
               element={
