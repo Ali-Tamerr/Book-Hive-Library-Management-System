@@ -53,7 +53,7 @@ const DeleteConfirmationPopup = ({
           </p>
 
           {showNFCInput && (
-            <div className="flex w-full items-center flex-col gap-3">
+            <div className="flex w-full flex-col items-center gap-3">
               <div className="flex w-full gap-2">
                 <NFCReaderButton
                   onDataReceived={handleNFCData}
@@ -66,7 +66,7 @@ const DeleteConfirmationPopup = ({
                   value={nfcId}
                   onChange={(e) => setNfcId(e.target.value)}
                   placeholder="ID"
-                  className="h-[50px] w-full rounded-xl border border-[#3D3E3E] bg-transparent px-4 py-3 text-[13px] text-[#727374] outline-none focus:border-[#1e255e] dark:border-[#2C2D33] dark:text-gray-300 dark:focus:border-white"
+                  className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[13px] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ const DeleteConfirmationPopup = ({
                   id="deleteAll"
                   checked={deleteAll}
                   onChange={(e) => setDeleteAll(e.target.checked)}
-                  className="h-5 w-5 cursor-pointer rounded border-[#3D3E3E]"
+                  className="h-5 w-5 cursor-pointer rounded border-[#D7D7D7]"
                 />
                 <label
                   htmlFor="deleteAll"

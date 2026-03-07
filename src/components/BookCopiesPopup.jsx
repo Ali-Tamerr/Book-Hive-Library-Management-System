@@ -121,7 +121,7 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
               onClick={() => setIsBranchSelectOpen(!isBranchSelectOpen)}
               onBlur={() => setIsBranchSelectOpen(false)}
               required
-              className="h-[50px] w-full appearance-none rounded-xl border border-[#3D3E3E] bg-white px-4 py-4 text-[13px] text-black placeholder-[#727374] outline-none focus:border-[#1e255e] dark:border-[#3D3E3E] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#5A5B60] dark:focus:border-[#D7D7D7]"
+              className="h-[50px] w-full appearance-none rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             >
               <option value="" disabled hidden>
                 Select Branch
@@ -130,20 +130,20 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
                 <option
                   key={branch.branch_id}
                   value={branch.branch_id}
-                  className="bg-white text-black dark:bg-[#121317] dark:text-[#D7D7D7]"
+                  className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
                 >
                   {branch.name}
                 </option>
               ))}
             </select>
             <ChevronUp
-              className={`pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#727374] transition-transform duration-200 ${isBranchSelectOpen ? "rotate-180" : "rotate-0"}`}
+              className={`pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7] transition-transform duration-200 ${isBranchSelectOpen ? "rotate-180" : "rotate-0"}`}
             />
           </div>
         </div>
 
         <div
-          className={`grid max-h-[400px] overflow-y-auto px-10 text-[#727374] ${copies.length === 1 ? "grid-cols-1" : "grid-cols-2"} gap-3`}
+          className={`grid max-h-[400px] overflow-y-auto px-10 text-[#000035] ${copies.length === 1 ? "grid-cols-1" : "grid-cols-2"} gap-3`}
         >
           {copies.map((copy, index) => (
             <input
@@ -155,7 +155,7 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
               onFocus={() => handleInputFocus(index)}
               placeholder={`ID`}
               required
-              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] bg-white px-4 py-4 text-[13px] text-black placeholder-[#727374] outline-none focus:border-[#1e255e] dark:border-[#3D3E3E] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#5A5B60] dark:focus:border-[#D7D7D7]"
+              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7] "
             />
           ))}
         </div>

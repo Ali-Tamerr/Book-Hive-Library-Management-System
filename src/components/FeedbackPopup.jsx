@@ -95,7 +95,7 @@ const FeedbackPopup = ({ show, onClose }) => {
               <button
                 key={star}
                 type="button"
-                className="cursor-pointer transition-transform hover:scale-110 focus:outline-none"
+                className="cursor-pointer transition-transform hover:scale-110 "
                 onMouseMove={(e) => handleMouseMove(e, star)}
                 onClick={handleStarClick}
               >

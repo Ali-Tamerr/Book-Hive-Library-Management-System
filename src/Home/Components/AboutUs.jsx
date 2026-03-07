@@ -18,7 +18,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
         </h2>
         <div className="about-grid grid grid-cols-[1fr_minmax(600px,800px)] items-center gap-20 max-[980px]:grid-cols-1 max-[980px]:text-center">
           <div className="about-left mx-auto max-w-[1200px]">
-            <p className="about-text mb-20 text-center font-[family-name:var(--second-font)] text-[32px] font-bold leading-relaxed text-[#525252] dark:!text-[var(--muted)]">
+            <p className="about-text mb-20 text-center font-[family-name:var(--second-font)] text-[32px] font-bold leading-relaxed text-[#000035] dark:!text-[var(--muted)]">
               We are a smart, technology-driven library system that uses RFID to
               make book management faster and easier. Our platform helps
               students and staff search, borrow, and track books efficiently
@@ -33,7 +33,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
                 <div className="num mb-4 font-[family-name:var(--body-font)] text-[48px] font-bold text-[var(--accent)] dark:!text-[var(--title-color)]">
                   {stats.branches}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#525252] dark:!text-[#9ea1a8]">
+                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#000035] dark:!text-[#9ea1a8]">
                   Branches
                 </div>
               </div>
@@ -41,7 +41,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
                 <div className="num mb-4 font-[family-name:var(--body-font)] text-[48px] font-bold text-[var(--accent)] dark:!text-[var(--title-color)]">
                   {stats.books}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#525252] dark:!text-[#9ea1a8]">
+                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#000035] dark:!text-[#9ea1a8]">
                   Books
                 </div>
               </div>
@@ -49,7 +49,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
                 <div className="num mb-4 font-[family-name:var(--body-font)] text-[48px] font-bold text-[var(--accent)] dark:!text-[var(--title-color)]">
                   {stats.categories}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#525252] dark:!text-[#9ea1a8]">
+                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#000035] dark:!text-[#9ea1a8]">
                   Category
                 </div>
               </div>

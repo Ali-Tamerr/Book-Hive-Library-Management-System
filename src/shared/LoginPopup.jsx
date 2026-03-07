@@ -126,7 +126,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
               <a
                 href="#"
                 onClick={handleForgotPassword}
-                className={`block self-start text-lg font-medium ${isDarkMode ? "text-white" : "text-[#0a0f33]"} mb-6 hover:underline`}
+                className={`block self-start text-lg font-medium ${isDarkMode ? "text-white" : "text-[#000035]"} mb-6 hover:underline`}
               >
                 Forgot password?
               </a>
@@ -139,7 +139,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
               </PrimaryButton>
             </form>
             <p
-              className={`hidden text-lg max-[1080px]:block ${isDarkMode ? "text-gray-400" : "text-gray-400"}`}
+              className={`hidden text-lg max-[1080px]:block ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
             >
               New to our platform?{" "}
               <button

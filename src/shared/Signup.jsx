@@ -73,7 +73,7 @@ function Signup() {
               </p>
               <button
                 onClick={() => navigate("/login")}
-                className="cursor-pointer font-semibold text-[#0a0f33] underline"
+                className="cursor-pointer font-semibold text-[#000035] underline"
               >
                 Go to Login
               </button>
@@ -143,10 +143,10 @@ function Signup() {
                   {loading ? "SUBMITTING..." : "SUBMIT REQUEST"}
                 </PrimaryButton>
               </div>
-              <p className="mb-8 hidden text-center text-lg text-[#0a0f33] max-[1080px]:block">
+              <p className="mb-8 hidden text-center text-lg text-[#000035] max-[1080px]:block">
                 Already have Account?{" "}
                 <button
-                  className="cursor-pointer text-[#0a0f33] underline"
+                  className="cursor-pointer text-[#000035] underline"
                   onClick={() => navigate("/login")}
                 >
                   Sign In now.
@@ -180,7 +180,7 @@ function Signup() {
               </p>
               <button
                 onClick={() => navigate("/login")}
-                className="cursor-pointer font-semibold text-[#0a0f33] underline"
+                className="cursor-pointer font-semibold text-[#000035] underline"
               >
                 Go to Login
               </button>
@@ -250,10 +250,10 @@ function Signup() {
                   {loading ? "SUBMITTING..." : "SUBMIT REQUEST"}
                 </PrimaryButton>
               </div>
-              <p className="mb-8 hidden text-center text-lg text-[#0a0f33] max-[1080px]:block">
+              <p className="mb-8 hidden text-center text-lg text-[#000035] max-[1080px]:block">
                 Already have Account?{" "}
                 <button
-                  className="cursor-pointer text-[#0a0f33] underline"
+                  className="cursor-pointer text-[#000035] underline"
                   onClick={() => navigate("/login")}
                 >
                   Sign In now.

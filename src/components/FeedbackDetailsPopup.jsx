@@ -20,7 +20,7 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
   const renderStars = (rating) => {
     return [1, 2, 3, 4, 5].map((star) => {
       const isFull = rating >= star;
-      const isHalf = !isFull && rating >= star - 0.5;
+      const isHalf = !isFull && rating > star - 1;
 
       return (
         <div key={star} className="relative">
@@ -61,29 +61,29 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035]">
             From User
           </label>
           <div className="text-lg font-medium text-[#1e255e] dark:text-white">
             {user?.name || "Unknown User"}
           </div>
-          <div className="text-sm text-gray-400">
+          <div className="text-sm text-[#000035]">
             ID: {feedback.user_id} • {formatDate(feedback.created_at)}
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035]">
             Rating
           </label>
           <div className="flex gap-1">{renderStars(feedback.rate)}</div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035]">
             Message
           </label>
-          <div className="rounded-xl border border-[#3D3E3E] bg-white p-4 text-sm text-[#1e255e] dark:bg-[#121317] dark:text-[#D7D7D7]">
+          <div className="rounded-xl border border-[#D7D7D7] bg-white p-4 text-sm text-[#1e255e] dark:bg-[#121317] dark:text-[#D7D7D7]">
             {feedback.feedback ||
               feedback.description ||
               "No content provided."}

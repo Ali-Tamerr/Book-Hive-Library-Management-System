@@ -12,13 +12,13 @@ import WhiteBgSection from "../components/WhiteBgSection";
 import FormSelect from "../components/FormSelect";
 
 function SignupPopup({ isOpen, onClose, onLogin }) {
- const [formData, setFormData] = useState({
-   first_name: "",
-   last_name: "",
-   email: "",
-   password: "",
-   plan: "",
- });
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    plan: "",
+  });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -170,7 +170,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                   ✓ Request Submitted Successfully!
                 </div>
                 <p
-                  className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  className={`${isDarkMode ? "text-[#000035]" : "text-gray-600"}`}
                 >
                   Your registration request has been sent to the admin for
                   approval. You will be notified once your account is approved.
@@ -253,7 +253,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
               </form>
             )}
             <p
-              className={`hidden text-lg max-[1080px]:block ${isDarkMode ? "text-gray-400" : "text-gray-400"}`}
+              className={`hidden text-lg max-[1080px]:block ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
             >
               Already have Account?{" "}
               <button

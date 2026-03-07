@@ -13,13 +13,13 @@
 }
 
 .icon {
-  color: #0a0f33;
+  color: #000035;
 }
 
 .title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0a0f33;
+  color: #000035;
   margin: 0;
 }
 
@@ -49,7 +49,7 @@
 }
 
 .searchInput:focus {
-  border-color: #0a0f33;
+  border-color: #000035;
   box-shadow: 0 0 0 3px rgba(10, 15, 51, 0.1);
 }
 
@@ -70,13 +70,15 @@
   width: 40px;
   height: 40px;
   border: 4px solid #f3f4f6;
-  border-top-color: #0a0f33;
+  border-top-color: #000035;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .errorState {
@@ -124,7 +126,7 @@
 .bookTitle {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #0a0f33;
+  color: #000035;
   margin: 0;
   line-height: 1.4;
   flex: 1;
@@ -181,7 +183,7 @@
 }
 
 .price {
-  color: #0a0f33;
+  color: #000035;
   font-size: 1rem;
   font-weight: 700;
 }
@@ -189,7 +191,7 @@
 .borrowBtn {
   width: 100%;
   padding: 0.75rem;
-  background: #0a0f33;
+  background: #000035;
   color: white;
   border: none;
   border-radius: 8px;

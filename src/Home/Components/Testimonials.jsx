@@ -95,7 +95,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                 processedFeedbacks.map((fb) => {
                   const rate = Number(fb.rate || 0);
                   const fullStars = Math.floor(rate);
-                  const hasHalf = rate % 1 >= 0.5;
+                  const hasHalf = rate % 1 > 0;
 
                   return (
                     <article
@@ -120,7 +120,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                       <h2 className="mb-6 font-[family-name:var(--body-font)] text-[52px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-[#d3d6de]">
                         {fb.user_name || fb.user_id || "Guest"}
                       </h2>
-                      <p className="mx-auto mb-10 max-w-[800px] font-[family-name:var(--second-font)] text-[30px] font-bold leading-relaxed text-[#525252] dark:!text-[#c3c7d1]">
+                      <p className="mx-auto mb-10 max-w-[800px] font-[family-name:var(--second-font)] text-[30px] font-bold leading-relaxed text-[#000035] dark:!text-[#c3c7d1]">
                         {fb.feedback || fb.description || "Great experience!"}
                       </p>
                       <div className="text-[44px] text-[#000035] dark:text-[#d3d6de]">

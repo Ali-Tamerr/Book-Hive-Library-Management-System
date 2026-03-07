@@ -36,40 +36,62 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
       show={show}
       onClose={onClose}
       title={
-        <span className="text-[#0a0f33] dark:text-[#D7D7D7]">
+        <span className="text-[#000035] dark:text-[#D7D7D7]">
           Renew Confirmation
         </span>
       }
       icon={<RotateCcw size={26} />}
       maxWidthClass="max-w-[900px]"
-      closeButtonClassName="border-[#0a0f33] text-[#0a0f33] dark:border-[#d7d7d7] dark:text-[#d7d7d7]"
-      dividerClassName="bg-[#d1d5db] dark:bg-[#2C2D33]"
+      closeButtonClassName="border-[#000035] text-[#000035] dark:border-[#d7d7d7] dark:text-[#d7d7d7]"
+      dividerClassName="bg-[#d1d5db] dark:bg-[#D7D7D7]"
     >
-      <div className="flex flex-col items-center   gap-6 text-[#0a0f33]">
+      <div className="flex flex-col items-center gap-6 text-[#000035]">
         <div className="flex w-full gap-8 max-[650px]:flex-col">
           <input
             type="text"
             readOnly
             value={user?.name || ""}
             placeholder="Name"
-            className="h-[50px] w-full rounded-xl border border-[#3D3E3E] bg-transparent px-4 py-3 text-[13px] text-[#727374] outline-none focus:border-[#1e255e] dark:border-[#2C2D33] dark:text-gray-300 dark:focus:border-white"
+            className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[13px] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
           />
           <select
             value={selectedPlan}
             onChange={(e) => setSelectedPlan(e.target.value)}
-            className="h-[50px] w-full rounded-xl border border-[#3D3E3E] bg-transparent px-4 py-3 text-[13px] text-[#727374] outline-none focus:border-[#1e255e] dark:border-[#2C2D33] dark:text-gray-300 dark:focus:border-white"
+            className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[13px] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
           >
             {user?.plan &&
-              !["Discover", "Enterprise", "Professional"].includes(user.plan) && (
-                <option value={user.plan}>{user.plan}</option>
+              !["Discover", "Enterprise", "Professional"].includes(
+                user.plan,
+              ) && (
+                <option
+                  value={user.plan}
+                  className="font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:text-[#D7D7D7]"
+                >
+                  {user.plan}
+                </option>
               )}
-            <option value="Discover">Discover</option>
-            <option value="Enterprise">Enterprise</option>
-            <option value="Professional">Professional</option>
+            <option
+              value="Discover"
+              className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
+            >
+              Discover
+            </option>
+            <option
+              value="Enterprise"
+              className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
+            >
+              Enterprise
+            </option>
+            <option
+              value="Professional"
+              className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
+            >
+              Professional
+            </option>
           </select>
         </div>
 
-        <p className="max-w-[420px] text-lg leading-relaxed text-[#0a0f33] dark:text-gray-300">
+        <p className="max-w-[420px] text-lg leading-relaxed text-[#000035] dark:text-gray-300">
           Are you certain you wish to proceed with the renew of the selected
           entry?
         </p>

@@ -222,7 +222,7 @@ const SettingsPopup = ({ show, onClose }) => {
     >
       <form
         onSubmit={handleSubmit}
-        className="settings-credentials-form flex flex-col gap-12 text-[#525252] dark:text-[#d6d6d6]"
+        className="settings-credentials-form flex flex-col gap-12 text-[#000035] dark:text-[#d6d6d6]"
       >
         <div className="space-y-6 px-10">
           <div className="flex flex-col items-center gap-4">
@@ -234,11 +234,11 @@ const SettingsPopup = ({ show, onClose }) => {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <UserRound className="w-22 h-22 text-[#0a0f33]" />
+                <UserRound className="w-22 h-22 text-[#000035]" />
               )}
             </div>
 
-            <label className="flex h-[42px] w-[320px] cursor-pointer items-center justify-between rounded-lg bg-[#D7D7D7] px-4 text-[30px] text-[#0a0f33] dark:bg-[#2C2D33] dark:text-[#E8E8E8]">
+            <label className="flex h-[42px] w-[320px] cursor-pointer items-center justify-between rounded-lg bg-[#D7D7D7] px-4 text-[30px] text-[#000035] dark:bg-[#D7D7D7] dark:text-[#E8E8E8]">
               <span className="font-regular flex h-full items-center text-[19px]">
                 Add your photo
               </span>
@@ -262,7 +262,7 @@ const SettingsPopup = ({ show, onClose }) => {
               placeholder="Enter Current Password"
               value={formData.currentPassword}
               onChange={handleChange}
-              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#3D3E3E] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none focus:border-[#1e255e] dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097] dark:focus:border-[#9aa3ff]"
+              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#D7D7D7] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097]"
             />
           </div>
 
@@ -276,7 +276,7 @@ const SettingsPopup = ({ show, onClose }) => {
               placeholder="Enter New Password"
               value={formData.newPassword}
               onChange={handleChange}
-              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#3D3E3E] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none focus:border-[#1e255e] dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097] dark:focus:border-[#9aa3ff]"
+              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#D7D7D7] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097]"
             />
           </div>
 
@@ -290,7 +290,7 @@ const SettingsPopup = ({ show, onClose }) => {
               placeholder="Confirm New Password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#3D3E3E] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none focus:border-[#1e255e] dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097] dark:focus:border-[#9aa3ff]"
+              className="settings-credentials-input h-[50px] flex-1 rounded-xl border border-[#D7D7D7] bg-white px-4 py-3 text-[13px] text-[#121317] placeholder-[#6f7377] outline-none dark:border-[#4b4f56] dark:bg-[#1f2228] dark:text-[#E8E8E8] dark:placeholder-[#8b9097]"
             />
           </div>
 

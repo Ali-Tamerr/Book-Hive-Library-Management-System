@@ -101,7 +101,7 @@ function Dashboard() {
 
     if (items.length === 0) {
       return (
-        <li className="rounded-md p-2.5 text-center text-xs text-gray-500 dark:bg-transparent dark:text-[#c3c7d1]">
+        <li className="rounded-md p-2.5 text-center text-xs text-[#000035] dark:bg-transparent dark:text-[#c3c7d1]">
           {emptyText}
         </li>
       );

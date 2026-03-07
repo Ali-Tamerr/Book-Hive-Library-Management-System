@@ -1,84 +1,109 @@
-import { createPortal } from 'react-dom';
-import { useBranches } from '../hooks/useBranches';
-import ColorableLogo from './ColorableLogo';
+import { createPortal } from "react-dom";
+import { useBranches } from "../hooks/useBranches";
+import ColorableLogo from "./ColorableLogo";
 
 function BranchesPopup({ isOpen, onClose }) {
-    const { data: branches = [], isLoading } = useBranches();
+  const { data: branches = [], isLoading } = useBranches();
 
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    const popupContent = (
-        <div
-            className="fixed inset-0 z-[1001] flex items-center justify-center bg-black/50 backdrop-blur-sm"
-            onClick={onClose}
-        >
-            <div
-                className="popup-typography relative w-[95%] max-w-[900px] max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl bg-white"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="p-8">
-                    <div className="flex justify-between items-start mb-8">
-                        <h2 className="text-3xl font-bold text-[#0a0f33] font-['Bebas_Neue',sans-serif]">Our Branches</h2>
-                        <div className="flex items-center gap-2">
-                            <ColorableLogo className="w-16 h-16 text-[#0a0f33]" />
-                            <div className="flex flex-col">
-                                <span className="text-xl text-[#0a0f33] font-['Bebas_Neue',sans-serif]">BookHive</span>
-                                <span className="text-lg text-center text-[#0a0f33] font-['Bebas_Neue',sans-serif]">Library</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b-2 border-[#0a0f33]">
-                                    <th className="text-left py-4 px-4 font-semibold text-[#0a0f33]">Name</th>
-                                    <th className="text-left py-4 px-4 font-semibold text-[#0a0f33]">Contact No</th>
-                                    <th className="text-center py-4 px-4 font-semibold text-[#0a0f33]">Location</th>
-                                    <th className="text-center py-4 px-4 font-semibold text-[#0a0f33]">Book Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {isLoading ? (
-                                    <tr>
-                                        <td colSpan={4} className="text-center py-8 text-gray-500">
-                                            Loading branches...
-                                        </td>
-                                    </tr>
-                                ) : branches.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={4} className="text-center py-8 text-gray-500">
-                                            No branches found.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    branches.map((branch, index) => (
-                                        <tr key={branch.branch_id || index} className="border-b border-gray-200">
-                                            <td className="py-6 px-4 text-[#0a0f33]">{branch.name || 'N/A'}</td>
-                                            <td className="py-6 px-4 text-[#0a0f33]">{branch.phone_number || branch.contact_no || 'N/A'}</td>
-                                            <td className="py-6 px-4 text-center text-[#0a0f33]">{branch.location || branch.address || 'N/A'}</td>
-                                            <td className="py-6 px-4 text-center text-[#0a0f33]">{branch.book_quantity || branch.total_books || 0}</td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="flex justify-center mt-8">
-                        <button
-                            onClick={onClose}
-                            className="px-8 py-3 bg-[#0a0f33] text-white font-semibold rounded-[20px] hover:bg-[#192261] transition-colors cursor-pointer"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
+  const popupContent = (
+    <div
+      className="fixed inset-0 z-[1001] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="popup-typography relative max-h-[90vh] w-[95%] max-w-[900px] overflow-hidden rounded-2xl bg-white shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-8">
+          <div className="mb-8 flex items-start justify-between">
+            <h2 className="font-['Bebas_Neue',sans-serif] text-3xl font-bold text-[#000035]">
+              Our Branches
+            </h2>
+            <div className="flex items-center gap-2">
+              <ColorableLogo className="h-16 w-16 text-[#000035]" />
+              <div className="flex flex-col">
+                <span className="font-['Bebas_Neue',sans-serif] text-xl text-[#000035]">
+                  BookHive
+                </span>
+                <span className="text-center font-['Bebas_Neue',sans-serif] text-lg text-[#000035]">
+                  Library
+                </span>
+              </div>
             </div>
-        </div>
-    );
+          </div>
 
-    return createPortal(popupContent, document.body);
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b-2 border-[#000035]">
+                  <th className="px-4 py-4 text-left font-semibold text-[#000035]">
+                    Name
+                  </th>
+                  <th className="px-4 py-4 text-left font-semibold text-[#000035]">
+                    Contact No
+                  </th>
+                  <th className="px-4 py-4 text-center font-semibold text-[#000035]">
+                    Location
+                  </th>
+                  <th className="px-4 py-4 text-center font-semibold text-[#000035]">
+                    Book Quantity
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-[#000035]">
+                      Loading branches...
+                    </td>
+                  </tr>
+                ) : branches.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-8 text-center text-[#000035]">
+                      No branches found.
+                    </td>
+                  </tr>
+                ) : (
+                  branches.map((branch, index) => (
+                    <tr
+                      key={branch.branch_id || index}
+                      className="border-b border-gray-200"
+                    >
+                      <td className="px-4 py-6 text-[#000035]">
+                        {branch.name || "N/A"}
+                      </td>
+                      <td className="px-4 py-6 text-[#000035]">
+                        {branch.phone_number || branch.contact_no || "N/A"}
+                      </td>
+                      <td className="px-4 py-6 text-center text-[#000035]">
+                        {branch.location || branch.address || "N/A"}
+                      </td>
+                      <td className="px-4 py-6 text-center text-[#000035]">
+                        {branch.book_quantity || branch.total_books || 0}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={onClose}
+              className="cursor-pointer rounded-[20px] bg-[#000035] px-8 py-3 font-semibold text-white transition-colors hover:bg-[#192261]"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return createPortal(popupContent, document.body);
 }
 
 export default BranchesPopup;

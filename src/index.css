@@ -41,7 +41,7 @@
   --card-shadow-hover: 0 16px 26px rgba(10, 10, 35, 0.16);
   --center-bg: #ffffff;
   --center-border: #0a0b2b;
-  --pie-borrowed-color: #3d3e3e;
+  --pie-borrowed-color: #d7d7d7;
   --pie-returned-color: #000035;
   --max-w: 1500px;
   --gap: 32px;
@@ -282,18 +282,18 @@ body {
 }
 
 body.dark-theme {
-  --title-color: #D7D7D7;
+  --title-color: #d7d7d7;
   --text-color: #b9bbc1;
   --border-color: #2a2c31;
   --white-color: #ffffff;
   --body-color: #111214;
   --container-color: #17181b;
   --page-bg: #111214;
-  --accent: #D7D7D7;
+  --accent: #d7d7d7;
   --muted: #a9abb2;
   --card-bg: #15161b;
   --center-bg: #15161b;
-  --pie-borrowed-color: #3d3e3e;
+  --pie-borrowed-color: #d7d7d7;
   --pie-returned-color: #d7d7d7;
   --white: #151515;
   background: #121317;
@@ -305,12 +305,12 @@ body.home-page-active {
 
 body.dark-theme .app-popup {
   background-color: #121317;
-  border: 1px solid #292d32;
+  border: 1px solid #d7d7d7;
   color: #e8e8e8;
 }
 
 body.dark-theme .app-popup__icon {
-  background-color: #292d32;
+  background-color: #d7d7d7;
   color: #e8e8e8;
 }
 
@@ -385,16 +385,16 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
 ::-webkit-scrollbar {
   border-radius: 4px;
   width: 0.6rem;
-  background-color: hsl(24, 32%, 75%);
+  background-color: #191926;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  background-color: hsl(24, 32%, 65%);
+  background-color: #31314b;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(24, 32%, 55%);
+  background-color: #2b2b41;
 }
 
 .dark-theme::-webkit-scrollbar {

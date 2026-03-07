@@ -163,7 +163,7 @@ function UserChatbot() {
   };
 
   return (
-    <div className="flex h-full w-full items-center justify-center bg-[#e7e7e7] px-6 py-8 text-[#050549] transition-colors duration-300 lg:px-10 dark:bg-[#0b0d14] dark:text-[#ebebf0]">
+    <div className="flex h-full w-full items-center justify-center bg-[#e7e7e7] px-6 py-8 text-[#000035] transition-colors duration-300 lg:px-10 dark:bg-[#0b0d14] dark:text-[#ebebf0]">
       <div className="h-[800px] w-full">
         <div className="flex items-center gap-3">
           <MessageSquareText
@@ -171,7 +171,7 @@ function UserChatbot() {
             strokeWidth={2.4}
             className="text-[#00004f] dark:text-[#ebebf0]"
           />
-          <h1 className="bebas-neue-regular text-[52px] leading-none tracking-[0.4px] text-[#050549] dark:text-[#ebebf0]">
+          <h1 className="bebas-neue-regular text-[52px] leading-none tracking-[0.4px] text-[#000035] dark:text-[#ebebf0]">
             CHATBOT
           </h1>
         </div>
@@ -180,7 +180,7 @@ function UserChatbot() {
           <div className="flex flex-1 flex-col gap-5">
             <section className="flex h-[450px] shrink-0 flex-col overflow-hidden rounded-[16px] border border-[#dedede] bg-[#f4f4f4] dark:border-[#babec6] dark:bg-[#dbdde1]">
               <div className="border-b border-[#8f8fb1] px-7 pb-4 pt-6 dark:border-[#8f93a4]">
-                <h2 className="bebas-neue-regular text-[44px] leading-none text-[#050549] dark:text-[#121747]">
+                <h2 className="bebas-neue-regular text-[44px] leading-none text-[#000035] dark:text-[#121747]">
                   CONVERSATION
                 </h2>
               </div>
@@ -188,7 +188,7 @@ function UserChatbot() {
               <div className="px-2 pb-2 pt-5">
                 <div className="relative">
                   <Search
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[#050549] dark:text-[#121747]"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#121747]"
                     size={16}
                   />
                   <input
@@ -196,7 +196,7 @@ function UserChatbot() {
                     placeholder="Search Conversations"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-11 w-full rounded-[10px] border border-[#52558a] bg-transparent py-2 pl-10 pr-3 text-sm text-[#050549] outline-none placeholder:text-[#52558a] dark:border-[#555d80] dark:text-[#121747] dark:placeholder:text-[#555d80]"
+                    className="h-11 w-full rounded-[10px] border border-[#52558a] bg-transparent py-2 pl-10 pr-3 text-sm text-[#000035] outline-none placeholder:text-[#52558a] dark:border-[#555d80] dark:text-[#121747] dark:placeholder:text-[#555d80]"
                   />
                 </div>
               </div>
@@ -226,7 +226,7 @@ function UserChatbot() {
                           onClick={() => loadSession(session.id)}
                           className={`group flex cursor-pointer items-center justify-between rounded-[10px] px-4 py-3 transition-colors ${
                             session.id === sessionId && messages.length > 1
-                              ? "bg-[#d9d9d9] font-bold text-[#050549] dark:bg-[#555d80] dark:text-[#ebebf0]"
+                              ? "bg-[#d9d9d9] font-bold text-[#000035] dark:bg-[#555d80] dark:text-[#ebebf0]"
                               : "text-[#52558a] hover:bg-[#e4e4e4] dark:text-[#8f93a4] dark:hover:bg-[#4a4f6d]"
                           }`}
                         >
@@ -257,7 +257,7 @@ function UserChatbot() {
             </section>
 
             <section className="shrink-0 rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-5 pb-5 pt-6 dark:border-[#babec6] dark:bg-[#dbdde1]">
-              <h2 className="noto-sans-georgian-medium text-[44px] leading-none text-[#050549] dark:text-[#121747]">
+              <h2 className="noto-sans-georgian-medium text-[44px] leading-none text-[#000035] dark:text-[#121747]">
                 QUICK ACTION
               </h2>
               <div className="mt-5 grid grid-cols-2 gap-3">
@@ -278,7 +278,7 @@ function UserChatbot() {
 
           <div className="relative min-w-0 flex-[2]">
             <section className="absolute inset-0 flex flex-col rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-6 pb-4 pt-6 lg:px-8 dark:border-[#babec6] dark:bg-[#dbdde1]">
-              <div className="flex items-center justify-center gap-2 text-[#050549] dark:text-[#121747]">
+              <div className="flex items-center justify-center gap-2 text-[#000035] dark:text-[#121747]">
                 <Bot size={20} strokeWidth={2.1} />
                 <h2 className="bebas-neue-regular text-[46px] leading-none">
                   LIBRARY BOT
@@ -297,12 +297,12 @@ function UserChatbot() {
                         <Bot
                           size={20}
                           strokeWidth={2.1}
-                          className="text-[#050549] dark:text-[#121747]"
+                          className="text-[#000035] dark:text-[#121747]"
                         />
                       </span>
                       <div
                         dir="rtl"
-                        className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#050549] dark:bg-[#e2e4e8] dark:text-[#121747]"
+                        className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#000035] dark:bg-[#e2e4e8] dark:text-[#121747]"
                       >
                         {message.text}
                       </div>
@@ -321,7 +321,7 @@ function UserChatbot() {
                           />
                         ) : (
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
-                            <UserRound className="h-6 w-6 text-[#050549]" />
+                            <UserRound className="h-6 w-6 text-[#000035]" />
                           </div>
                         )}
                       </div>
@@ -335,7 +335,7 @@ function UserChatbot() {
                       <Bot
                         size={20}
                         strokeWidth={2.1}
-                        className="animate-pulse text-[#050549] dark:text-[#121747]"
+                        className="animate-pulse text-[#000035] dark:text-[#121747]"
                       />
                     </span>
                     <div className="rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 dark:bg-[#e2e4e8]">
@@ -369,7 +369,7 @@ function UserChatbot() {
                   onChange={(e) => setInputValue(e.target.value)}
                   disabled={chatMutation.isPending}
                   placeholder="Type your message"
-                  className="flex-1 bg-transparent text-lg text-[#050549] outline-none placeholder:text-[#7b7b8f] disabled:opacity-50 dark:text-[#121747] dark:placeholder:text-[#6c7184]"
+                  className="flex-1 bg-transparent text-lg text-[#000035] outline-none placeholder:text-[#7b7b8f] disabled:opacity-50 dark:text-[#121747] dark:placeholder:text-[#6c7184]"
                 />
                 <button
                   type="submit"

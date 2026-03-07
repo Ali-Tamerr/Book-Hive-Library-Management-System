@@ -1,6 +1,13 @@
-import React from 'react';
+import React from "react";
 
-const NavLink = ({ isExpanded, active, onClick, icon, text, toggleSidebar }) => {
+const NavLink = ({
+  isExpanded,
+  active,
+  onClick,
+  icon,
+  text,
+  toggleSidebar,
+}) => {
   const handleClick = () => {
     onClick();
     if (window.innerWidth <= 1080) {
@@ -10,21 +17,28 @@ const NavLink = ({ isExpanded, active, onClick, icon, text, toggleSidebar }) => 
   return (
     <button
       onClick={handleClick}
-      className={`h-12 min-h-12 w-[110%] -mr-2 overflow-x-hidden my-1 transition-all duration-300 flex justify-start items-center font-bold cursor-pointer ${isExpanded ? 'px-8 gap-2' : 'px-[39px] gap-0'
-        } ${active
-          ? 'bg-white text-[#0a0f33] dark:bg-black dark:text-white'
-          : 'text-[#b5b8d1] dark:bg-[#D7D7D7] dark:text-black hover:bg-white/10 dark:hover:bg-black/5'
-        } max-[1080px]:gap-2 max-[1080px]:px-8`}
+      className={`my-1 flex h-12 min-h-12 w-full cursor-pointer items-center justify-start overflow-x-hidden font-bold transition-all duration-300 ${
+        isExpanded ? "gap-2 px-8" : "gap-0 px-[25px]"
+      } ${
+        active
+          ? "bg-white text-[#000035] dark:bg-black dark:text-white"
+          : "text-[#b5b8d1] hover:bg-white/10 dark:bg-[#D7D7D7] dark:text-black dark:hover:bg-black/5"
+      } max-[1080px]:gap-2 max-[1080px]:px-8`}
     >
       <span className="flex items-center" style={{ width: 20, height: 20 }}>
-        {typeof icon === 'string' ? (
-          <img src={icon} alt="icon" style={{ width: '22px', height: '22px' }} />
+        {typeof icon === "string" ? (
+          <img
+            src={icon}
+            alt="icon"
+            style={{ width: "22px", height: "22px" }}
+          />
         ) : (
           React.cloneElement(icon, { width: 22, height: 22 })
         )}
       </span>
       <span
-        className={`transition-all duration-300 text-sm flex-1 text-start ${isExpanded ? 'max-w-full opacity-100 ml-2' : 'max-w-0 opacity-0 ml-0'} max-[1080px]:max-w-full max-[1080px]:opacity-100 max-[1080px]:ml-2`}>
+        className={`flex-1 text-start text-sm transition-all duration-300 ${isExpanded ? "ml-2 max-w-full opacity-100" : "ml-0 max-w-0 opacity-0"} max-[1080px]:ml-2 max-[1080px]:max-w-full max-[1080px]:opacity-100`}
+      >
         {text}
       </span>
     </button>
