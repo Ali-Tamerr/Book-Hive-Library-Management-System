@@ -51,19 +51,28 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
     setCopies(newCopies);
   };
 
-  const handleNFCData = (data) => {
-    handleCopyChange(currentInputIndex, data);
+  const handleNFCData = React.useCallback(
+    (data) => {
+      handleCopyChange(currentInputIndex, data);
 
-    const nextIndex = currentInputIndex + 1;
-    if (nextIndex < copies.length) {
-      setTimeout(() => {
-        if (inputRefs.current[nextIndex]) {
-          inputRefs.current[nextIndex].focus();
-          setCurrentInputIndex(nextIndex);
-        }
-      }, 100);
-    }
-  };
+      const nextIndex = currentInputIndex + 1;
+      if (nextIndex < copies.length) {
+        setTimeout(() => {
+          if (inputRefs.current[nextIndex]) {
+            inputRefs.current[nextIndex].focus();
+            setCurrentInputIndex(nextIndex);
+          }
+        }, 100);
+      }
+    },
+    [currentInputIndex, copies.length, copies, selectedBranch],
+  );
+
+  // Attach metadata to the function so NFCReaderButton can read it
+  handleNFCData.context = "book_copy";
+  handleNFCData.book_id = quantity; // Using quantity as a proxy for book_id if actual id isn't available yet in New mode
+  // Note: In Add mode, formData in parent has book_id as 0/null often,
+  // but start_register_mode function uses it to link the tag.
 
   const handleInputFocus = (index) => {
     setCurrentInputIndex(index);
@@ -137,7 +146,7 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
               ))}
             </select>
             <ChevronUp
-              className={`pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7] transition-transform duration-200 ${isBranchSelectOpen ? "rotate-180" : "rotate-0"}`}
+              className={`pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#000035] transition-transform duration-200 dark:text-[#D7D7D7] ${isBranchSelectOpen ? "rotate-180" : "rotate-0"}`}
             />
           </div>
         </div>
@@ -155,7 +164,7 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
               onFocus={() => handleInputFocus(index)}
               placeholder={`ID`}
               required
-              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7] "
+              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           ))}
         </div>

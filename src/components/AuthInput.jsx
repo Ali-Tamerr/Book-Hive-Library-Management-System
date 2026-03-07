@@ -11,7 +11,7 @@ const AuthInput = ({
 }) => {
   const baseClasses = isDarkMode
     ? "w-full p-5 rounded-xl border border-solid border-[#000035] bg-transparent text-white placeholder-[#000035] outline-none text-lg max-[1080px]:text-sm max-[1080px]:p-4 font-['Noto_Sans_Georgian',sans-serif]"
-    : "w-full p-5 rounded-xl border border-solid border-[#D7D7D7] bg-white text-[#000035] outline-none text-lg max-[1080px]:text-sm max-[1080px]:p-4 font-['Noto_Sans_Georgian',sans-serif]";
+    : "w-full p-5 rounded-xl border border-solid border-[#D7D7D7] bg-white text-[#D7D7D7] outline-none text-lg max-[1080px]:text-sm max-[1080px]:p-4 font-['Noto_Sans_Georgian',sans-serif]";
 
   return (
     <input
