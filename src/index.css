@@ -408,3 +408,11 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
 .dark-theme::-webkit-scrollbar-thumb:hover {
   background-color: hsl(230, 16%, 35%);
 }
+.sidebar-stable-transition {
+  transition: width 0.35s cubic-bezier(.61,-0.01,.34,.99) !important;
+  will-change: width;
+}
+
+.logo-stable-transition {
+  transition: all 0.35s cubic-bezier(.61,-0.01,.34,.99) !important;
+}
