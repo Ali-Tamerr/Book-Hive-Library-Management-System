@@ -43,8 +43,7 @@ const Home = () => {
   const queryClient = useQueryClient();
   const { data: booksSource, isLoading: booksLoading } = useBooks();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
-  const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } =
-    useApprovedFeedbacks();
+  const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } = useApprovedFeedbacks();
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showShadowHeader, setShowShadowHeader] = useState(false);
@@ -80,15 +79,9 @@ const Home = () => {
         let booksCount = 0;
 
         if (maybeStats && typeof maybeStats === "object") {
-          branches = Number.isFinite(+maybeStats.branches)
-            ? +maybeStats.branches
-            : 0;
-          categories = Number.isFinite(+maybeStats.categories)
-            ? +maybeStats.categories
-            : 0;
-          booksCount = Number.isFinite(+maybeStats.books)
-            ? +maybeStats.books
-            : 0;
+          branches = Number.isFinite(+maybeStats.branches) ? +maybeStats.branches : 0;
+          categories = Number.isFinite(+maybeStats.categories) ? +maybeStats.categories : 0;
+          booksCount = Number.isFinite(+maybeStats.books) ? +maybeStats.books : 0;
         }
 
         // If stats endpoint didn't yield useful numbers, fetch branches/categories
@@ -185,26 +178,16 @@ const Home = () => {
       image: getImageUrl(book.image_url) || "",
     });
 
-    const heroList = heroRaw
-      .map(toViewModel)
-      .filter((b) => b.image)
-      .slice(0, 10);
+    const heroList = heroRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
 
-    const featuredList = featuredRaw
-      .map(toViewModel)
-      .filter((b) => b.image)
-      .slice(0, 10);
+    const featuredList = featuredRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
 
     const poolMap = new Map();
     [...heroList, ...featuredList].forEach((b) => {
       if (!b?.book_id) return;
       poolMap.set(b.book_id, b);
     });
-    const pool = poolMap.size
-      ? Array.from(poolMap.values())
-      : heroList.length
-        ? heroList
-        : featuredList;
+    const pool = poolMap.size ? Array.from(poolMap.values()) : heroList.length ? heroList : featuredList;
 
     const pickTwo = (list) => {
       if (!list.length) return [];
@@ -227,7 +210,11 @@ const Home = () => {
 
   // 2d. Persist processed home book covers in local storage for faster reloads
   useEffect(() => {
-    if (!heroBooks.length && !aboutBooks.length && !featuredBooks.length) {
+    if (
+      !heroBooks.length &&
+      !aboutBooks.length &&
+      !featuredBooks.length
+    ) {
       return;
     }
 
