@@ -62,7 +62,7 @@ function BorrowBookPopup({
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="rounded-lg bg-[#f5f5f5] p-4">
-          <p className="text-lg font-semibold text-[#0a0f33]">{book.name}</p>
+          <p className="text-lg font-semibold text-[#000035]">{book.name}</p>
           <p className="text-sm text-gray-600">
             Available copies:{" "}
             {availableCopies !== undefined ? availableCopies : book.quantity}
@@ -70,7 +70,7 @@ function BorrowBookPopup({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 text-sm font-medium text-[#0a0f33]">
+          <label className="flex items-center gap-2 text-sm font-medium text-[#000035]">
             <Calendar size={16} />
             Return By (Due Date)
           </label>
@@ -82,9 +82,9 @@ function BorrowBookPopup({
             )}
             max={formatDateForInput(maxDate)}
             onChange={(e) => setDueDate(e.target.value)}
-            className="h-12 w-full rounded-lg border border-[#3D3E3E] px-4 text-sm outline-none focus:border-[#1e255e]"
+            className="h-12 w-full rounded-lg border border-[#D7D7D7] px-4 text-sm outline-none"
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[#000035]">
             Maximum borrow duration: 30 days from today
           </p>
         </div>

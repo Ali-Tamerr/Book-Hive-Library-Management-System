@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { User } from "lucide-react";
-import { useUsers } from "../hooks/useUsers";
-import { useBooks } from "../hooks/useBooks";
-import { useOverdueBooks } from "../hooks/useOverdueBooks";
-import { useBookCopies } from "../hooks/useBookCopies";
-import { useBookTransactions } from "../hooks/useBookTransactions";
-import { useBranches } from "../hooks/useBranches";
+import { useLibrarians } from "../hooks/useUsers";
+import { useDashboardTransactions } from "../hooks/useBookTransactions";
 import { getCurrentUser } from "../services/auth.api";
 import DashboardCard from "../components/DashboardCard";
 import { useUserActivity } from "../hooks/useUserActivity";
@@ -17,111 +13,48 @@ import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
 import maximizeCircleIcon from "../assets/icons/maximize-circle.svg";
 
 function Dashboard() {
-  const normalizeListResponse = (payload) => {
-    if (Array.isArray(payload)) return payload;
-    if (Array.isArray(payload?.data)) return payload.data;
-    if (Array.isArray(payload?.items)) return payload.items;
-    return [];
-  };
-
   const currentUser = getCurrentUser();
   const isSuperAdmin = currentUser?.role === "Super Admin";
   const [loadingAdmins, setLoadingAdmins] = useState({});
   const [selectedTransactionItem, setSelectedTransactionItem] = useState(null);
   useUserActivity();
 
-  // Use React Query hooks - much cleaner!
+  // Use React Query hooks - newly optimized tiny footprint
   const {
-    data: usersData,
-    isLoading: usersLoading,
-    refetch: refetchUsers,
-  } = useUsers();
+    data: librariansData,
+    isLoading: librariansLoading,
+    refetch: refetchLibrarians,
+  } = useLibrarians();
 
-  const users = usersData
-    ? usersData.pages.flatMap((page) => page.data || [])
-    : [];
-
-  const { data: booksData, isLoading: booksLoading } = useBooks();
-  const { data: branchesData, isLoading: branchesLoading } = useBranches();
-  const { data: bookCopiesData } = useBookCopies();
-  const { data: overdueBooksRaw, isLoading: overdueLoading } =
-    useOverdueBooks();
-  const { data: bookTransactionsRaw, isLoading: transactionsLoading } =
-    useBookTransactions();
-
-  const books = normalizeListResponse(booksData);
-  const branches = normalizeListResponse(branchesData);
-  const bookCopies = normalizeListResponse(bookCopiesData);
-  const overdueBooksData = normalizeListResponse(overdueBooksRaw);
-  const bookTransactions = normalizeListResponse(bookTransactionsRaw);
+  const { data: dashboardTransactions, isLoading: transactionsLoading } =
+    useDashboardTransactions();
 
   const handleRefreshAdmins = (adminId) => {
     setLoadingAdmins((prev) => ({ ...prev, [adminId]: true }));
-    refetchUsers().finally(() => {
+    refetchLibrarians().finally(() => {
       setLoadingAdmins((prev) => ({ ...prev, [adminId]: false }));
     });
   };
 
-  // Calculate stats from data
-  const transactionsLoadingState =
-    usersLoading || booksLoading || overdueLoading || transactionsLoading;
-  const librariansLoading = usersLoading || branchesLoading;
-
-  const borrowedTransactions = bookTransactions.filter(
-    (t) => t?.transaction_type === "Check-Out",
-  );
-  const returnedTransactions = borrowedTransactions.filter(
-    (t) => t?.status === "Returned" || !!t?.return_date,
-  );
-  const currentlyBorrowedTransactions = borrowedTransactions.filter(
-    (t) => t?.status !== "Returned" && !t?.return_date,
-  );
-  const returnedBooks = returnedTransactions.length;
-  const currentlyBorrowed = currentlyBorrowedTransactions.length;
-  const totalBorrowed = borrowedTransactions.length;
+  const transactionsLoadingState = transactionsLoading;
 
   const stats = {
-    totalBorrowed: totalBorrowed,
-    currentlyBorrowed: currentlyBorrowed,
-    returnedBooks: returnedBooks,
+    totalBorrowed: dashboardTransactions?.total_borrowed || 0,
+    currentlyBorrowed: dashboardTransactions?.currently_borrowed || 0,
+    returnedBooks: dashboardTransactions?.returned_count || 0,
   };
 
-  const getBookName = (bookCopyId) => {
-    const copy = bookCopies.find(
-      (c) => c.book_copy_id === bookCopyId || c.id === bookCopyId,
-    );
-    const actualBookId = copy?.book_id || bookCopyId;
-    const book = books.find(
-      (b) => b.book_id === actualBookId || b.id === actualBookId,
-    );
-    return book?.name || book?.title || "Unknown";
-  };
-
-  const getUserName = (userId) => {
-    const user = users.find((u) => u.user_id === userId || u.id === userId);
-    if (!user) return "Unknown";
-    return user.full_name || user.name || user.username || "User";
-  };
-
-  const buildTransactionItem = (transaction) => ({
-    id:
-      transaction.transaction_id ||
-      transaction.id ||
-      `${transaction.user_id}-${transaction.book_id}-${transaction.created_at || ""}`,
-    userName: transaction.user_name || getUserName(transaction.user_id),
-    bookName:
-      transaction.book_title ||
-      transaction.book_name ||
-      getBookName(transaction.book_id),
+  const buildTransactionItem = (transaction, sourceCard) => ({
+    id: transaction.transaction_id || `tx-${Math.random()}`,
+    userName: transaction.user_name || "Unknown",
+    bookName: transaction.book_name || "Unknown",
     transactionType: transaction.transaction_type || "N/A",
     status: transaction.status || "N/A",
     borrowType: transaction.borrow_type || "N/A",
-    transactionId: transaction.transaction_id || transaction.id || "N/A",
-    userId: transaction.user_id || "N/A",
-    bookCopyId: transaction.book_id || "N/A",
     dueDate: transaction.due_date || "N/A",
     returnDate: transaction.return_date || "N/A",
     createdAt: transaction.created_at || "N/A",
+    sourceCard,
   });
 
   const formatSimpleDate = (value) => {
@@ -131,68 +64,31 @@ function Dashboard() {
     return parsed.toLocaleDateString();
   };
 
-  const borrowedItems = currentlyBorrowedTransactions
-    .slice(0, 5)
-    .map((transaction) => ({
-      ...buildTransactionItem(transaction),
-      sourceCard: "borrowed",
-    }));
-  const overdueItems = overdueBooksData.slice(0, 5).map((transaction) => ({
-    ...buildTransactionItem(transaction),
-    sourceCard: "overdue",
-  }));
-  const returnedItems = returnedTransactions.slice(0, 5).map((transaction) => ({
-    ...buildTransactionItem(transaction),
-    sourceCard: "returned",
-  }));
-
-  const branchesById = new Map(
-    branches.map((branch) => [
-      branch.branch_id ?? branch.id,
-      branch.name || branch.location || branch.address || "Unknown",
-    ]),
+  const borrowedItems = (dashboardTransactions?.borrowed || []).map((t) =>
+    buildTransactionItem(t, "borrowed"),
+  );
+  const overdueItems = (dashboardTransactions?.overdue || []).map((t) =>
+    buildTransactionItem(t, "overdue"),
+  );
+  const returnedItems = (dashboardTransactions?.returned || []).map((t) =>
+    buildTransactionItem(t, "returned"),
   );
 
-  const getBranchName = (user) => {
-    const direct =
-      user.branch ||
-      user.branch_name ||
-      user.branchName ||
-      user.branch_location ||
-      user.location ||
-      user.address;
-    if (direct) return direct;
-    const branchId = user.branch_id ?? user.branchId;
-    if (branchId !== undefined && branchId !== null) {
-      return branchesById.get(branchId) || `Branch ${branchId}`;
-    }
-    return "N/A";
-  };
-
-  const adminUsers = Array.isArray(users)
-    ? users.filter((user) => user.role === "Admin")
+  const displayAdmins = Array.isArray(librariansData)
+    ? librariansData
+        .map((user) => ({
+          ...user,
+          adminId: user.user_id,
+          id: user.user_id,
+          subtitle: `Librarian Branch: ${user.branch_name || "N/A"} \u2022 ${user.status || "Active"}`,
+          isOnline: isUserOnline(user),
+        }))
+        .sort((a, b) => {
+          if (a.isOnline !== b.isOnline) return b.isOnline - a.isOnline;
+          return (a.name || "").localeCompare(b.name || "");
+        })
+        .slice(0, 4)
     : [];
-
-  const displayAdmins = adminUsers
-    .map((user) => ({
-      id: user.user_id ?? user.id,
-      name:
-        user.name ||
-        user.full_name ||
-        user.username ||
-        `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
-        "Unknown",
-      adminId: user.user_id ?? user.id,
-      subtitle: `Librarian Branch: ${getBranchName(user)} \u2022 ${user.status || "Active"}`,
-      isOnline: isUserOnline(user),
-    }))
-    .sort((a, b) => {
-      if (a.isOnline !== b.isOnline) {
-        return b.isOnline - a.isOnline;
-      }
-      return a.name.localeCompare(b.name);
-    })
-    .slice(0, 4);
 
   const renderTransactionList = (items, emptyText) => {
     if (transactionsLoadingState) {
@@ -205,7 +101,7 @@ function Dashboard() {
 
     if (items.length === 0) {
       return (
-        <li className="rounded-md text-center p-2.5 text-xs text-gray-500 dark:bg-transparent dark:text-[#c3c7d1]">
+        <li className="rounded-md p-2.5 text-center text-xs text-[#000035] dark:bg-transparent dark:text-[#c3c7d1]">
           {emptyText}
         </li>
       );
@@ -214,11 +110,11 @@ function Dashboard() {
     return items.map((item) => (
       <li
         key={item.id}
-        className="flex h-14 items-center gap-2.5 rounded-xl border border-[#000035] bg-transparent px-2.5 py-3 text-xs dark:border-[rgba(185,189,200,0.78)] "
+        className="flex h-14 items-center gap-2.5 rounded-xl border border-[#000035] bg-transparent px-2.5 py-3 text-xs dark:border-[rgba(185,189,200,0.78)]"
       >
-       <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full ">
-                     <User className="h-full w-full text-[#000035] dark:text-[#d3d6de]" />
-                   </div>
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full">
+          <User className="h-full w-full text-[#000035] dark:text-[#d3d6de]" />
+        </div>
         <div className="h-full w-[1.8px] rounded-full bg-[#000035] dark:bg-[rgba(185,189,200,0.78)]"></div>
         <div className="flex-1 overflow-hidden">
           <p className="truncate text-sm font-medium text-[#000035] dark:text-[#d3d6de]">
@@ -231,7 +127,7 @@ function Dashboard() {
         <button
           type="button"
           onClick={() => setSelectedTransactionItem(item)}
-          className="inline-flex h-6 w-6 items-center justify-center text-[#000035] cursor-pointer transition-opacity hover:opacity-80 dark:text-[#d3d6de]"
+          className="inline-flex h-6 w-6 cursor-pointer items-center justify-center text-[#000035] transition-opacity hover:opacity-80 dark:text-[#d3d6de]"
           aria-label="View row details"
         >
           <img
@@ -251,7 +147,9 @@ function Dashboard() {
         "Due Date": formatSimpleDate(selectedTransactionItem.dueDate),
         ...(selectedTransactionItem.sourceCard === "returned"
           ? {
-              "Return Date": formatSimpleDate(selectedTransactionItem.returnDate),
+              "Return Date": formatSimpleDate(
+                selectedTransactionItem.returnDate,
+              ),
             }
           : {}),
       }
@@ -303,16 +201,16 @@ function Dashboard() {
           ) : (
             <div className="mx-auto mt-2 flex h-full min-h-0 w-full max-w-[700px] flex-col gap-5">
               <div className="flex min-h-0 flex-1 justify-center max-[900px]:block max-[900px]:w-full max-[900px]:max-w-[420px] max-[900px]:self-center">
-                  <DashboardCard
-                    title="Borrowed Books"
-                    className={compactCardClass}
-                    listClassName="pt-2"
-                  >
-                    {renderTransactionList(borrowedItems, "No borrowed books")}
-                  </DashboardCard>
-                </div>
+                <DashboardCard
+                  title="Borrowed Books"
+                  className={compactCardClass}
+                  listClassName="pt-2"
+                >
+                  {renderTransactionList(borrowedItems, "No borrowed books")}
+                </DashboardCard>
+              </div>
 
-              <div className="grid min-h-0 flex-1 w-full auto-rows-fr grid-cols-2 place-items-stretch gap-6 max-[900px]:grid-cols-1">
+              <div className="grid min-h-0 w-full flex-1 auto-rows-fr grid-cols-2 place-items-stretch gap-6 max-[900px]:grid-cols-1">
                 <DashboardCard
                   title="Overdue Borrowers"
                   className={compactCardClass}

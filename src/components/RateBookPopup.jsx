@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MessageSquareText, Star, StarHalf } from "lucide-react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
@@ -7,17 +7,24 @@ import FormInput from "./FormInput.jsx";
 import { getCurrentUser } from "../services/auth.api";
 import { useCreateBookReview } from "../hooks/useBookReviews.js";
 
-const RateBookPopup = ({ show, onClose, bookId }) => {
+const RateBookPopup = ({ show, onClose, bookId, initialReview }) => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
 
+  useEffect(() => {
+    if (show) {
+      setRating(initialReview?.rating || initialReview?.rate || 0);
+      setReviewText(initialReview?.review_text || initialReview?.review || "");
+    }
+  }, [show, initialReview]);
+
   const createBookReviewMutation = useCreateBookReview();
 
   const handleSubmit = async () => {
-    if (rating === 0) {
+    if (rating < 0.5) {
       setShowWarning(true);
       return;
     }
@@ -35,7 +42,7 @@ const RateBookPopup = ({ show, onClose, bookId }) => {
         book_id: bookId,
         user_id: currentUser?.user_id || "Guest",
         review_text: reviewText,
-        rating: Math.round(rating),
+        rating: rating,
       };
 
       await createBookReviewMutation.mutateAsync(newReview);
@@ -80,7 +87,7 @@ const RateBookPopup = ({ show, onClose, bookId }) => {
         <div className="flex w-full items-center justify-center">
           <FormInput
             type="textarea"
-            className="h-[180px] w-full resize-none border-[#A3A3A3] text-[18px] focus:border-[#00004f] dark:border-[#525252] dark:bg-[#1E1E1E]"
+            className="h-[180px] w-full resize-none border-[#A3A3A3] text-[18px] dark:border-[#000035] dark:bg-[#1E1E1E]"
             placeholder="Share your opinion"
             value={reviewText}
             onChange={(e) => setReviewText(e.target.value)}
@@ -94,13 +101,13 @@ const RateBookPopup = ({ show, onClose, bookId }) => {
           {[1, 2, 3, 4, 5].map((star) => {
             const value = hoverRating || rating;
             const isFull = value >= star;
-            const isHalf = !isFull && value >= star - 0.5;
+            const isHalf = !isFull && value > star - 1;
 
             return (
               <button
                 key={star}
                 type="button"
-                className="cursor-pointer transition-transform hover:scale-110 focus:outline-none"
+                className="cursor-pointer transition-transform hover:scale-110"
                 onMouseMove={(e) => handleMouseMove(e, star)}
                 onClick={handleStarClick}
               >

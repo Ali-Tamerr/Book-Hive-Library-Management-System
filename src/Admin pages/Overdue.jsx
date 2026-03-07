@@ -55,25 +55,43 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
   };
 
   const getBookName = (bookCopyId) => {
+    // 1. Try to find the physical copy
     const copy = bookCopies.find(
-      (c) => c.book_copy_id === bookCopyId || c.id === bookCopyId,
+      (c) =>
+        String(c.book_copy_id) === String(bookCopyId) ||
+        String(c.id) === String(bookCopyId),
     );
+
+    // 2. If copy has embedded book detail (as populated by BookCopiesController)
+    if (copy && copy.book) {
+      return copy.book.name || copy.book.title || "-";
+    }
+
+    // 3. Fallback: Manual lookup in books list via cross-reference ID
     const actualBookId = copy?.book_id;
     if (actualBookId) {
       const book = books.find(
-        (b) => b.book_id === actualBookId || b.id === actualBookId,
+        (b) =>
+          String(b.book_id) === String(actualBookId) ||
+          String(b.id) === String(actualBookId),
       );
       return book?.name || book?.title || "-";
     }
+
+    // 4. Last resort: Direct book lookup (if bookCopyId was actually a book_id)
     const directBook = books.find(
-      (b) => b.book_id === bookCopyId || b.id === bookCopyId,
+      (b) =>
+        String(b.book_id) === String(bookCopyId) ||
+        String(b.id) === String(bookCopyId),
     );
     return directBook?.name || directBook?.title || "-";
   };
 
   const getUserName = (userId) => {
     const user = users.find((u) => u.user_id === userId || u.id === userId);
-    return user?.full_name || user?.name || user?.username || "-";
+    return user
+      ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+      : "-";
   };
 
   const formatDate = (dateString) => {

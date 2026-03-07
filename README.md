@@ -80,7 +80,8 @@ book-hive/
 ## 🎨 Design
 
 The application features a modern, clean design with:
-- Dark blue color scheme (#0a0f33)
+
+- Dark blue color scheme (#000035)
 - Poppins font for body text
 - Caveat font for "Library" branding
 - Responsive layouts
@@ -89,6 +90,7 @@ The application features a modern, clean design with:
 ## 🔄 Migration
 
 This project has been converted from static HTML pages to React components:
+
 - All CSS converted to TailwindCSS utility classes
 - JavaScript functionality implemented with React hooks
 - HTML structure converted to JSX

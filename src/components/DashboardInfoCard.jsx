@@ -6,8 +6,8 @@ const DashboardInfoCard = ({ icon, title, value, loading }) => {
       <div className="bg-[#A7A7A7]/48 flex h-[8vh] max-h-[88px] min-h-[48px] w-[8vh] min-w-[48px] max-w-[88px] shrink-0 items-center justify-center rounded-lg p-[1.8vh] max-[650px]:h-12 max-[650px]:w-12 max-[650px]:p-2.5 dark:bg-[#C0C0C0]">
         {icon}
       </div>
-      <div className="h-full w-0.5 shrink-0 bg-[#0a0f33] dark:bg-[#121317]"></div>
-      <div className="flex-2 [1200px]:ml-5 [1200px]:justify-self-center flex min-w-0 flex-col text-[#0a0f33] max-[1200px]:w-fit max-[650px]:ml-1 max-[650px]:mt-0 dark:text-[#121317]">
+      <div className="h-full w-0.5 shrink-0 bg-[#000035] dark:bg-[#121317]"></div>
+      <div className="flex-2 [1200px]:ml-5 [1200px]:justify-self-center flex min-w-0 flex-col text-[#000035] max-[1200px]:w-fit max-[650px]:ml-1 max-[650px]:mt-0 dark:text-[#121317]">
         <span className="-mb-1 ml-0.5 truncate text-[clamp(22px,4vh+1px,43px)] font-extrabold max-[1200px]:w-fit max-[650px]:text-[22px]">
           {loading ? "..." : String(value).padStart(4, "0")}
         </span>

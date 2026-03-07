@@ -38,17 +38,24 @@ function UserFormPopup({
 
   const baseInputs = [
     {
-      name: "name",
+      name: "first_name",
       type: "text",
-      placeholder: "Name",
+      placeholder: "First Name",
       required: true,
-      autocomplete: "name",
+      autocomplete: "given-name",
     },
     {
-      name: "phone_number",
+      name: "last_name",
       type: "text",
-      placeholder: "Contact No",
-      autocomplete: "tel",
+      placeholder: "Last Name",
+      required: true,
+      autocomplete: "family-name",
+    },
+    {
+      name: "email",
+      type: "email",
+      placeholder: "Email Address",
+      autocomplete: "email",
     },
     {
       name: "password",
@@ -120,7 +127,7 @@ function UserFormPopup({
               placeholder="User ID"
               required
               autoComplete="off"
-              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] bg-white px-4 py-4 text-[13px] text-black placeholder-[#727374] outline-none focus:border-[#1e255e] dark:border-[#3D3E3E] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#5A5B60] dark:focus:border-[#D7D7D7]"
+              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
         </div>
@@ -131,8 +138,9 @@ function UserFormPopup({
   const isRoleAdmin = formData.role === "Admin";
 
   const editInputs = [
-    baseInputs.find((input) => input.name === "name"),
-    baseInputs.find((input) => input.name === "phone_number"),
+    baseInputs.find((input) => input.name === "first_name"),
+    baseInputs.find((input) => input.name === "last_name"),
+    baseInputs.find((input) => input.name === "email"),
     baseInputs.find((input) => input.name === "password"),
     branchInput,
     planInput,
@@ -147,28 +155,26 @@ function UserFormPopup({
   const inputs = editMode ? editInputs : addInputs;
 
   const editCustomLayout = [
-    { columns: 2, inputs: ["name", "phone_number"] },
-    { columns: 2, inputs: ["password", "branch_id"] },
-    {
-      type: "flex",
-      justify: "center",
-      inputs: [{ name: "plan", className: "w-[calc(50%-0.5rem)]" }],
-    },
+    { columns: 2, inputs: ["first_name", "last_name"] },
+    { columns: 2, inputs: ["email", "password"] },
+    { columns: 2, inputs: ["branch_id", "plan"] },
   ];
 
   const addCustomLayout = isSuperAdmin
     ? [
-        { columns: 2, inputs: ["name", "phone_number"] },
+        { columns: 2, inputs: ["first_name", "last_name"] },
+        { columns: 2, inputs: ["email", "password"] },
         isRoleAdmin
-          ? { columns: 1, inputs: ["password"] }
-          : { columns: 2, inputs: ["password", "plan"] },
-        { columns: 2, inputs: ["role", "branch_id"] },
-        ...(isRoleAdmin ? [] : [{ columns: 1, inputs: ["user_id"] }]),
+          ? { columns: 2, inputs: ["role", "branch_id"] }
+          : { columns: 2, inputs: ["role", "plan"] },
+        ...(isRoleAdmin
+          ? []
+          : [{ columns: 2, inputs: ["branch_id", "user_id"] }]),
       ]
     : [
-        { columns: 2, inputs: ["name", "phone_number"] },
-        { columns: 2, inputs: ["password", "plan"] },
-        { columns: 1, inputs: ["user_id"] },
+        { columns: 2, inputs: ["first_name", "last_name"] },
+        { columns: 2, inputs: ["email", "password"] },
+        { columns: 2, inputs: ["plan", "user_id"] },
       ];
 
   const customLayout = editMode ? editCustomLayout : addCustomLayout;

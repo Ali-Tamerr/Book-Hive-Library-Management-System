@@ -159,7 +159,9 @@ const ViewRequestsPopup = ({
       const searchLower = searchValue.toLowerCase();
       filtered = filtered.filter(
         (request) =>
-          request.name?.toLowerCase().includes(searchLower) ||
+          `${request.first_name || ""} ${request.last_name || ""}`
+            .toLowerCase()
+            .includes(searchLower) ||
           request.email?.toLowerCase().includes(searchLower),
       );
     }
@@ -203,7 +205,11 @@ const ViewRequestsPopup = ({
         const book = bookCopy
           ? books.find((b) => b.book_id === bookCopy.book_id)
           : null;
-        const userName = user?.name?.toLowerCase() || "";
+        const userName = user
+          ? `${user.first_name || ""} ${user.last_name || ""}`
+              .trim()
+              .toLowerCase()
+          : "";
         const bookName = book?.name?.toLowerCase() || "";
         return userName.includes(searchLower) || bookName.includes(searchLower);
       });
@@ -245,7 +251,11 @@ const ViewRequestsPopup = ({
       const searchLower = searchValue.toLowerCase();
       filtered = filtered.filter((request) => {
         const user = users.find((u) => u.user_id === request.user_id);
-        const requestUserName = user?.name?.toLowerCase() || "";
+        const requestUserName = user
+          ? `${user.first_name || ""} ${user.last_name || ""}`
+              .trim()
+              .toLowerCase()
+          : "";
         const userIdStr = request.user_id?.toString() || "";
         return (
           requestUserName.includes(searchLower) ||
@@ -329,7 +339,8 @@ const ViewRequestsPopup = ({
 
   const getUserName = (userId) => {
     const user = users.find((u) => u.user_id === userId);
-    if (user?.name) return user.name;
+    if (user?.first_name || user?.last_name)
+      return `${user.first_name || ""} ${user.last_name || ""}`.trim();
 
     // If users haven't been loaded yet, avoid briefly showing the raw ID
     // in the User Name column. Show a neutral loading state instead.
@@ -398,7 +409,7 @@ const ViewRequestsPopup = ({
 
   const getSearchPlaceholder = () => {
     if (activeTab === "feedback") return "Search by Name or ID...";
-    return "Search by Phone or Name...";
+    return "Search by Name or Email...";
   };
 
   const currentData = getCurrentData();
@@ -448,7 +459,7 @@ const ViewRequestsPopup = ({
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#000035]"
               size={18}
             />
             <input
@@ -456,7 +467,7 @@ const ViewRequestsPopup = ({
               placeholder={getSearchPlaceholder()}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="h-[50px] w-[70%] rounded-xl border border-[#3D3E3E] py-3 pl-12 pr-4 text-[13px] outline-none focus:border-[#1e255e]"
+              className="h-[50px] w-[70%] rounded-xl border border-[#D7D7D7] py-3 pl-12 pr-4 text-[13px] outline-none"
             />
           </div>
         </div>
@@ -464,11 +475,11 @@ const ViewRequestsPopup = ({
         <div className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-[#8787A3]">
           <div className="min-w-[100px] flex-1 overflow-auto">
             {currentLoading ? (
-              <div className="p-8 text-center text-gray-500 dark:text-[#D7D7D7]">
+              <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">
                 Loading requests...
               </div>
             ) : currentData.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 dark:text-[#D7D7D7]">
+              <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">
                 {searchValue
                   ? "No requests match your search."
                   : showRejected
@@ -485,9 +496,7 @@ const ViewRequestsPopup = ({
                     <th className="p-4 text-center text-sm font-semibold text-[#333]">
                       Email
                     </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#333]">
-                      Contact No
-                    </th>
+
                     <th className="p-4 text-center text-sm font-semibold text-[#333]">
                       Plan
                     </th>
@@ -504,18 +513,16 @@ const ViewRequestsPopup = ({
                     )}
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#0a0f33]">
+                <tbody className="border-t border-[#000035]">
                   {filteredUserRequests.map((request, index) => (
                     <tr key={request.request_id || index}>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
-                        {request.name}
+                        {request.first_name} {request.last_name}
                       </td>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
                         {request.email}
                       </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
-                        {request.phone_number}
-                      </td>
+
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
                         {request.plan || "N/A"}
                       </td>
@@ -549,7 +556,7 @@ const ViewRequestsPopup = ({
                               </>
                             )}
                             {request.status !== "Pending" && (
-                              <span className="text-sm italic text-gray-400">
+                              <span className="text-sm italic text-[#000035]">
                                 Processed
                               </span>
                             )}
@@ -586,7 +593,7 @@ const ViewRequestsPopup = ({
                     )}
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#0a0f33]">
+                <tbody className="border-t border-[#000035]">
                   {filteredBookRequests.map((request, index) => (
                     <tr key={request.transaction_id || index}>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
@@ -654,7 +661,7 @@ const ViewRequestsPopup = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#0a0f33]">
+                <tbody className="border-t border-[#000035]">
                   {filteredFeedbackRequests.map((request, index) => (
                     <tr key={request.request_id || index}>
                       <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7]">
@@ -705,7 +712,7 @@ const ViewRequestsPopup = ({
           </div>
         </div>
 
-        {/* <div className="text-center text-sm text-gray-500">
+        {/* <div className="text-center text-sm text-[#000035]">
           <div>
             Showing {currentData.length} of {totalData.length} requests
           </div>

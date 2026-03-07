@@ -1,18 +1,24 @@
 import React from "react";
 
-const FormButton = ({ type = "button", onClick, children, isPrimary, className }) => {
+const FormButton = ({
+  type = "button",
+  onClick,
+  children,
+  isPrimary,
+  className,
+  fullWidth = true,
+}) => {
   const baseClasses =
-    "px-4 py-4 rounded-lg whitespace-nowrap transition-colors min-w-[100px] w-full max-w-[500px] font-semibold cursor-pointer";
+    "px-4 py-4 rounded-lg whitespace-nowrap border transition-colors min-w-[100px] font-semibold cursor-pointer";
   const primaryClasses =
-    "bg-[#000035] dark:bg-transparent dark:border dark:border-white text-white hover:bg-[#1a1a6a] dark:hover:bg-[#1A1B20]";
-  const secondaryClasses =
-    "bg-gray-300 dark:bg-[#D7D7D7] text-[#000035] dark:text-black hover:bg-gray-400 dark:hover:text-[#D7D7D7] dark:hover:bg-transparent dark:hover:border-[#D7D7D7] border border-transparent";
+    "border-[#000035] dark:border-[#D7D7D7] text-[#000035] dark:text-[#D7D7D7] hover:bg-[#000035] hover:text-[#F2F2F2] dark:hover:bg-[#D7D7D7] dark:hover:text-[#121317]";
+  const secondaryClasses = primaryClasses;
 
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`${baseClasses} ${isPrimary ? primaryClasses : secondaryClasses} ${className || ""}`}
+      className={`${baseClasses} ${fullWidth ? "w-full max-w-[500px]" : ""} ${isPrimary ? primaryClasses : secondaryClasses} ${className || ""}`}
     >
       {children}
     </button>

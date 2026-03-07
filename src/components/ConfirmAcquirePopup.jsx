@@ -72,10 +72,10 @@ function ConfirmAcquirePopup({
           <table className="w-full border-collapse text-left text-sm">
             <thead className="sticky top-0 bg-white">
               <tr className="border-b border-gray-300">
-                <th className="p-3 font-semibold text-[#0a0f33]">Name</th>
-                <th className="p-3 font-semibold text-[#0a0f33]">Category</th>
-                <th className="p-3 font-semibold text-[#0a0f33]">Due Date</th>
-                <th className="p-3 text-center font-semibold text-[#0a0f33]">
+                <th className="p-3 font-semibold text-[#000035]">Name</th>
+                <th className="p-3 font-semibold text-[#000035]">Category</th>
+                <th className="p-3 font-semibold text-[#000035]">Due Date</th>
+                <th className="p-3 text-center font-semibold text-[#000035]">
                   Action
                 </th>
               </tr>
@@ -86,7 +86,7 @@ function ConfirmAcquirePopup({
                   key={book.book_id}
                   className="border-b border-gray-100 hover:bg-gray-50"
                 >
-                  <td className="p-3 text-[#0a0f33]">{book.name}</td>
+                  <td className="p-3 text-[#000035]">{book.name}</td>
                   <td className="p-3 text-gray-600">
                     {getCategoryName(book.category_id)}
                   </td>
@@ -99,7 +99,7 @@ function ConfirmAcquirePopup({
                     <button
                       type="button"
                       onClick={() => onRemoveBook(book.book_id)}
-                      className="cursor-pointer p-2 text-[#0a0f33] transition-colors hover:text-red-600"
+                      className="cursor-pointer p-2 text-[#000035] transition-colors hover:text-red-600"
                       title="Remove from selection"
                     >
                       <Trash2 size={18} />
@@ -112,13 +112,13 @@ function ConfirmAcquirePopup({
         </div>
 
         {selectedBooks.length === 0 && (
-          <div className="py-8 text-center text-gray-500">
+          <div className="py-8 text-center text-[#000035]">
             No books selected. Please go back and select books to borrow.
           </div>
         )}
 
         <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2 text-sm font-medium text-[#0a0f33]">
+          <label className="flex items-center gap-2 text-sm font-medium text-[#000035]">
             <Calendar size={16} />
             Global Due Date (Max 30 days)
           </label>
@@ -130,23 +130,23 @@ function ConfirmAcquirePopup({
             )}
             max={formatDateForInput(maxDate)}
             onChange={(e) => setGlobalDueDate(e.target.value)}
-            className="h-12 w-full rounded-lg border border-[#3D3E3E] px-4 text-sm text-[#0a0f33] outline-none focus:border-[#1e255e]"
+            className="h-12 w-full rounded-lg border border-[#D7D7D7] px-4 text-sm text-[#000035] outline-none"
           />
         </div>
 
         <div className="flex items-center justify-between border-t border-gray-200 pt-4">
           <div className="flex items-center gap-4 rounded-lg bg-[#f5f5f5] px-4 py-3">
             <div className="flex flex-col">
-              <span className="text-xs text-gray-500">Total Books</span>
-              <span className="text-lg font-bold text-[#0a0f33]">
+              <span className="text-xs text-[#000035]">Total Books</span>
+              <span className="text-lg font-bold text-[#000035]">
                 {totalBooks.toString().padStart(2, "0")}{" "}
                 {totalBooks === 1 ? "Book" : "Books"}
               </span>
             </div>
             <div className="h-10 w-px bg-gray-300"></div>
             <div className="flex flex-col">
-              <span className="text-xs text-gray-500">Latest Due Date</span>
-              <span className="text-lg font-bold text-[#0a0f33]">
+              <span className="text-xs text-[#000035]">Latest Due Date</span>
+              <span className="text-lg font-bold text-[#000035]">
                 {formatDate(latestDueDate.toISOString())}
               </span>
             </div>

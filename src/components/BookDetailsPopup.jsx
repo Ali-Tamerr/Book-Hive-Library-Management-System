@@ -32,7 +32,7 @@ function BookDetailsPopup({
             className="h-56 w-40 rounded-lg object-cover shadow-lg"
           />
         ) : (
-          <div className="flex h-56 w-40 items-center justify-center rounded-lg bg-gradient-to-br from-[#0a0f33] to-[#192261] shadow-lg">
+          <div className="flex h-56 w-40 items-center justify-center rounded-lg bg-gradient-to-br from-[#000035] to-[#192261] shadow-lg">
             <BookOpen size={48} className="text-white opacity-50" />
           </div>
         )}
@@ -40,7 +40,7 @@ function BookDetailsPopup({
         <div className="flex w-full gap-8">
           <div className="flex flex-1 flex-col gap-6">
             <div className="flex flex-col gap-1">
-              <span className="text-[#0a0f33]">
+              <span className="text-[#000035]">
                 <span className="font-medium">Name : </span>
                 {book.name}
               </span>
@@ -48,7 +48,7 @@ function BookDetailsPopup({
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-[#0a0f33]">
+              <span className="text-[#000035]">
                 <span className="font-medium">Category : </span>
                 {category || "N/A"}
               </span>
@@ -56,7 +56,7 @@ function BookDetailsPopup({
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-[#0a0f33]">
+              <span className="text-[#000035]">
                 <span className="font-medium">Available Copies : </span>
                 {availableCopies !== undefined
                   ? availableCopies
@@ -71,7 +71,7 @@ function BookDetailsPopup({
 
           <div className="flex flex-1 flex-col">
             <div className="flex flex-col gap-1">
-              <span className="text-[#0a0f33]">
+              <span className="text-[#000035]">
                 <span className="font-medium">Availability : </span>
                 {book.quantity <= 1
                   ? "Reference Only"
@@ -83,7 +83,7 @@ function BookDetailsPopup({
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-[#0a0f33]">
+              <span className="text-[#000035]">
                 <span className="font-medium">Sale Price : </span>
                 {book.sale_price ? `$${book.sale_price}` : "N/A"}
               </span>
@@ -96,8 +96,8 @@ function BookDetailsPopup({
                 disabled={!isAvailable}
                 className={`rounded-lg px-8 py-3 font-semibold transition-colors ${
                   isAvailable
-                    ? "cursor-pointer bg-[#0a0f33] text-white hover:bg-[#192261]"
-                    : "cursor-not-allowed bg-gray-300 text-gray-500"
+                    ? "cursor-pointer bg-[#000035] text-white hover:bg-[#192261]"
+                    : "cursor-not-allowed bg-gray-300 text-[#000035]"
                 }`}
               >
                 {book.quantity <= 1 ? "Reference Only" : "Book Now"}

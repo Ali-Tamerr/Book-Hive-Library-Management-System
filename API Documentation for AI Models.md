@@ -35,9 +35,10 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | Field | Type | Constraints |
 |-------|------|-------------|
 | `user_id` | string(20) | PK |
-| `name` | string(50) | **required** |
+| `first_name` | string(50) | **required** |
+| `last_name` | string(50) | **required** |
 | `password_hash` | string(255) | **required** |
-| `phone_number` | string(20) | **required**, unique |
+| `email` | string(255) | nullable |
 | `role` | string(20) | **required** — allowed: `"Super Admin"`, `"Admin"`, `"User"` |
 | `status` | string(20) | **required**, default: `"Active"` — allowed: `"Banned"`, `"Inactive"`, `"Active"` |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
@@ -104,10 +105,10 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | Field | Type | Constraints |
 |-------|------|-------------|
 | `request_id` | int | PK, identity (auto-generated) |
-| `name` | string(50) | **required** |
+| `first_name` | string(50) | **required** |
+| `last_name` | string(50) | **required** |
 | `email` | string(100) | **required**, unique |
 | `password` | string(200) | **required** |
-| `phone_number` | string(20) | **required** |
 | `plan` | string(50) | nullable — allowed: `"Discover"`, `"Enterprise"`, `"Professional"` |
 | `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
 | `created_at` | timestamp | default: `now()` |
@@ -132,9 +133,19 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
 | `created_at` | timestamp | default: `now()` |
 
+### FeedbackRequest (pending feedback moderation)
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `feedback_id` | int | PK, identity |
+| `user_id` | string(20) | **required**, FK → `Users.user_id` |
+| `description` | string | nullable |
+| `rate` | numeric(3,1) | nullable |
+| `status` | string(20) | default: `"Pending"` — allowed: `"Pending"`, `"Approved"`, `"Rejected"` |
+| `created_at` | timestamp | default: `now()` |
+
 Endpoints:
 
-- GET `/api/Feedbacks` — Returns `FeedbackDTO[]`; includes `user_name` joined from `Users`.
+- GET `/api/Feedbacks` — Returns `FeedbackDTO[]`; includes `user_name` joined from `Users.first_name`/`Users.last_name`.
 - GET `/api/Feedbacks/approved` — Returns approved feedbacks for public display.
 - POST `/api/Feedbacks` — Create feedback; body: `{ user_id, description, rate }` (server sets `status = "Pending"`, `created_at = now()`).
 - PUT `/api/Feedbacks/{request_id}` — Update status; body: `{ status }` (allowed: `Pending`/`Approved`/`Rejected`).
@@ -146,12 +157,43 @@ FeedbackDTO shape:
 interface FeedbackDTO {
   request_id: number;
   user_id: string;
-  user_name: string;       // joined from Users.name
+  user_name: string;       // joined from Users.first_name + Users.last_name
   description: string;
   rate: number;           // 1-5
   status: 'Pending' | 'Approved' | 'Rejected';
   created_at: string;     // ISO-8601
 }
+
+### BookReviews
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `review_id` | int | PK, identity |
+| `book_id` | int | FK → `BookDetails.book_id` |
+| `user_id` | string(20) | FK → `Users.user_id` |
+| `rating` | int | required, 1-5 |
+| `review_text` | string(1000) | nullable |
+| `created_at` | timestamp | default: `now()` |
+
+Endpoints:
+
+- GET `/api/BookReviews/book/{book_id}` — Returns `BookReviewDTO[]` for the specified book; includes `user_name` and `user_image_url` joined from `Users.first_name`/`Users.last_name`.
+- POST `/api/BookReviews` — Create review; body: `{ book_id, user_id, rating, review_text? }` (server sets `created_at = now()`). Clear navigation properties on incoming payloads.
+- DELETE `/api/BookReviews/{review_id}` — Delete review by id.
+
+BookReviewDTO shape:
+
+```typescript
+interface BookReviewDTO {
+  review_id: number;
+  book_id: number;
+  user_id: string;
+  user_name: string;        // joined from Users.first_name + Users.last_name
+  user_image_url?: string; // base64-encoded avatar bytes or null
+  rating: number;         // 1-5
+  review_text?: string;
+  created_at?: string;    // ISO-8601
+}
+```
 ```
 
 ---
@@ -166,7 +208,7 @@ interface FeedbackDTO {
 - BookCopy operations (create/delete) update `BookDetail.quantity` atomically and are performed in transactions.
 - Deleting a BookCopy is blocked if the copy is referenced by reservations or transactions.
 - Deleting a BookDetail is blocked if any of its copies are referenced by reservations or transactions.
-- **User fields:** `password_hash` and `phone_number` are now **required** fields.
+- **User fields:** `password_hash`, `first_name`, and `last_name` are required fields.
 - **BookReservation:** `expiration_date` is now **required**.
 
 ---
@@ -197,7 +239,9 @@ interface FeedbackDTO {
 | GET | `/api/Users` | Returns paged `UserDTO[]`; query: `page` (default 1), `limit` (default 12) |
 | GET | `/api/Users/byid/{user_id}` | Returns single `UserDTO` |
 | GET | `/api/Users/{name}` | Search users by name |
-| POST | `/api/Users` | Create User; body: `{ user_id, name, password_hash, phone_number, role?, status?, plan?, created_by? }` |
+| GET | `/api/Users/{id}/borrowed` | Returns user's active borrowed books with due dates |
+| GET | `/api/Users/librarians` | Returns `LibrarianDTO[]` for users with role `Admin` |
+| POST | `/api/Users` | Create User; body: `{ user_id, first_name, last_name, password_hash, email?, role?, status?, plan?, created_by? }` |
 | PUT | `/api/Users/{user_id}` | Update User |
 | PUT | `/api/Users/{user_id}/activity` | Update user's `last_activity_at` timestamp |
 | PUT | `/api/Users/activity` | Update activity by body: `{ user_id, LastActivityAt? }` |
@@ -206,10 +250,17 @@ interface FeedbackDTO {
 ### Books (BookDetail)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| GET | `/api/Books/version` | Returns deployment version metadata |
 | GET | `/api/Books` | Returns `BookDTO[]` (summary + user names) |
 | GET | `/api/Books/{book_id}` | Returns single `BookDTO` |
+| GET | `/api/Books/{book_id}/duedate` | Returns due dates for active borrows of a book |
 | GET | `/api/Books/title/{title}` | Search by title (partial match) |
+| GET | `/api/Books/search` | Search by query; returns `{ title, available }[]` |
+| GET | `/api/Books/recommend` | Recommend books by title (same category) |
+| GET | `/api/Books/covers` | Returns `BookCoverDTO[]` (cached) |
+| GET | `/api/Books/management` | Returns `BookManagementDTO[]` (cached) |
 | POST | `/api/Books` | Create BookDetail; body: scalar fields + optional `BookCopies[]` |
+| POST | `/api/Books/embeddings/backfill` | Backfill OpenAI embeddings for all books |
 | PUT | `/api/Books/{book_id}` | Update BookDetail; optional `BookCopies[]` replaces existing (must match `quantity`) |
 | DELETE | `/api/Books/{book_id}` | Delete BookDetail and its copies (blocked if referenced) |
 
@@ -234,6 +285,7 @@ interface FeedbackDTO {
 ### BookTransactions
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| GET | `/api/BookTransactions/dashboard` | Returns `DashboardTransactionsResponse` (borrowed/overdue/returned) |
 | GET | `/api/BookTransactions` | Returns `BookTransaction[]` with user and copy info |
 | GET | `/api/BookTransactions/{transaction_id}` | Returns single `BookTransaction` |
 | POST | `/api/BookTransactions` | Create transaction; body: `{ user_id, book_id, transaction_type, borrow_type?, due_date? }` |
@@ -246,16 +298,34 @@ interface FeedbackDTO {
 |--------|----------|-------------|
 | GET | `/api/UserRequests` | Returns `UserRequest[]` ordered by `created_at` descending |
 | GET | `/api/UserRequests/{request_id}` | Returns single `UserRequest` |
-| POST | `/api/UserRequests` | Create request; body: `{ name, email, password, phone_number, plan? }` |
-| PUT | `/api/UserRequests/{request_id}` | Update request (approve/reject); body: `{ status?, name?, email?, phone_number?, plan? }` |
+| POST | `/api/UserRequests` | Create request; body: `{ first_name, last_name, email, password, plan? }` |
+| PUT | `/api/UserRequests/{request_id}` | Update request (approve/reject); body: `{ status?, first_name?, last_name?, email?, plan? }` |
 | DELETE | `/api/UserRequests/{request_id}` | Delete request |
+
+### FeedbackRequests
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/FeedbackRequests` | Returns `FeedbackRequest[]`; optional `status` query param |
+| GET | `/api/FeedbackRequests/{id}` | Returns single `FeedbackRequest` with user info |
+| POST | `/api/FeedbackRequests` | Create feedback request; body: `{ user_id, description?, rate? }` |
+| PUT | `/api/FeedbackRequests/{id}` | Update status; body: `{ feedback_id, status }` |
 
 ### NfcScans (temporary NFC reads)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/NfcScans` | Returns `NfcScan[]` ordered by `created_at` descending |
 | GET | `/api/NfcScans/{scan_id}` | Returns single `NfcScan` |
-| POST | `/api/NfcScans` | Create scan; body: `{ tag_id, device_id?, created_at? }` |
+| POST | `/api/NfcScans` | Create scan; body: `{ tag_id, device_id?, created_at? }` (requires `tag_id`, sets `created_at` to UTC now if omitted) |
+
+### Stats
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/Stats` | Returns counts for branches, books, categories (cached) |
+
+### Librarian (AI)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/librarian/ask` | Ask the AI librarian for recommendations; body: `{ message }` |
 
 ---
 
@@ -266,9 +336,10 @@ interface FeedbackDTO {
 POST /api/Users
 {
   "user_id": "user-001",
-  "name": "John Doe",
+  "first_name": "John",
+  "last_name": "Doe",
   "password_hash": "hashed_password_here",
-  "phone_number": "+1234567890",
+  "email": "john.doe@example.com",
   "role": "User",
   "status": "Active",
   "plan": "Professional",
@@ -351,10 +422,10 @@ PUT /api/Users/user-001/activity
 ```json
 POST /api/UserRequests
 {
-  "name": "Jane Smith",
+  "first_name": "Jane",
+  "last_name": "Smith",
   "email": "jane@example.com",
   "password": "user_password_here",
-  "phone_number": "+1987654321",
   "plan": "Discover"
 }
 ```
@@ -386,8 +457,9 @@ POST /api/BookTransactions/return
 ```typescript
 interface UserDTO {
   user_id: string;
-  name: string;
-  phone_number: string;
+  first_name: string;
+  last_name: string;
+  email?: string;
   role: string;
   password_hash: string;
   plan?: string;              // User's subscription plan (nullable)
@@ -413,6 +485,51 @@ interface BookDTO {
   created_at?: string;        // ISO-8601 timestamp
   updated_at?: string;        // ISO-8601 timestamp
   user_names: string[];       // Users who have reservations/transactions
+}
+```
+
+### BookCoverDTO
+```typescript
+interface BookCoverDTO {
+  book_id: number;
+  name: string;
+  image_url?: string;
+  created_at?: string;
+}
+```
+
+### BookManagementDTO
+```typescript
+interface BookManagementDTO {
+  book_id: number;
+  name: string;
+  category_id: number;
+  quantity: number;
+  availability: string; // "Available" | "Not Available"
+}
+```
+
+### DashboardTransactionsResponse
+```typescript
+interface DashboardTransactionDTO {
+  transaction_id: number;
+  user_name: string;
+  book_name: string;
+  transaction_type: string;
+  borrow_type: string;
+  status: string;
+  due_date?: string;
+  return_date?: string;
+  created_at?: string;
+}
+
+interface DashboardTransactionsResponse {
+  borrowed: DashboardTransactionDTO[];
+  overdue: DashboardTransactionDTO[];
+  returned: DashboardTransactionDTO[];
+  total_borrowed: number;
+  currently_borrowed: number;
+  returned_count: number;
 }
 ```
 
@@ -461,9 +578,10 @@ interface Category {
 
 interface User {
   user_id: string;           // max 20 chars
-  name: string;              // max 50 chars
+  first_name: string;        // max 50 chars
+  last_name: string;         // max 50 chars
   password_hash: string;     // max 255 chars
-  phone_number: string;      // max 20 chars
+  email?: string;            // max 255 chars
   role: 'Super Admin' | 'Admin' | 'User';
   status: 'Active' | 'Inactive' | 'Banned';
   plan?: 'Discover' | 'Enterprise' | 'Professional';
@@ -478,12 +596,15 @@ interface User {
 
 interface UserDTO {
   user_id: string;
-  name: string;
-  email: string;
-  phone_number: string;
+  first_name: string;
+  last_name: string;
+  email?: string;
   role: string;
   password_hash: string;
   plan?: string;              // User's subscription plan (nullable)
+  image_url?: string;         // base64-encoded bytes
+  subscription_end_date?: string;
+  branch_id?: number;
   booksReserved: string[];    // Book names or copy IDs
   booksBought: string[];      // Book names from Purchase transactions
   LastActivityAt: string | null;
@@ -541,13 +662,22 @@ interface BookTransaction {
 
 interface UserRequest {
   request_id: number;        // auto-generated, do not send in POST
-  name: string;              // max 50 chars
+  first_name: string;        // max 50 chars
+  last_name: string;         // max 50 chars
   email: string;             // max 100 chars, unique
   password: string;          // max 200 chars, required
-  phone_number: string;      // max 20 chars
   plan?: 'Discover' | 'Enterprise' | 'Professional';
   status?: 'Pending' | 'Approved' | 'Rejected';  // default: 'Pending'
   created_at?: string;       // auto-set by database
+}
+
+interface FeedbackRequest {
+  feedback_id: number;
+  user_id: string;
+  description?: string;
+  rate?: number;             // numeric(3,1)
+  status?: 'Pending' | 'Approved' | 'Rejected';
+  created_at?: string;
 }
 
 interface NfcScan {
@@ -588,6 +718,7 @@ A new conversational AI endpoint has been added to handle user queries with natu
 
 ### New Endpoint
 - **POST** `/api/chat` — Process user messages with AI intent detection and context-aware responses
+- **POST** `/api/librarian/ask` — Returns an AI-generated recommendation using embeddings (body: `{ message }`)
 
 ### Chat Request/Response Contract
 
@@ -597,6 +728,9 @@ A new conversational AI endpoint has been added to handle user queries with natu
   "message": "Is 'Clean Code' available?"
 }
 ```
+
+**Headers:**
+- `X-User-Id`: required (current authenticated user id used to personalize responses)
 
 **Chat Response:**
 ```json
@@ -646,6 +780,13 @@ public class IntentResult
 - **IChatService** — Interface for handling intent-based responses and database queries
 - **IDatabaseService** — Interface for database operations (book search)
 
+### Current Chat Behavior (in `Program.cs`)
+- Requires `X-User-Id` header, validates the user, and enriches prompts with:
+  - Active borrowed books (due dates and remaining days)
+  - Suggested books (latest available titles not currently borrowed)
+- Uses a function-routing step (search books, user borrowed, book due dates, or recommendations) and RAG-based context when answering.
+- Logs each chat interaction to `ChatLogs` using `IChatLogService`.
+
 ### Supported Intents
 
 | Intent | Description | Example Input |
@@ -694,12 +835,23 @@ interface BookReviewDTO {
   review_id: number;
   book_id: number;
   user_id: string;
-  user_name: string;           // joined from Users.name
+  user_name: string;           // joined from Users.first_name + Users.last_name
   user_image_url?: string;     // joined from Users.image_url
   review_text: string;
   rating: number;              // 1-5
   created_at: string;          // ISO-8601 timestamp
   updated_at?: string;         // ISO-8601 timestamp
+}
+```
+
+### LibrarianDTO
+```typescript
+interface LibrarianDTO {
+  user_id: string;
+  name: string;
+  branch_name: string;
+  status: string;
+  last_activity_at?: string;
 }
 ```
 
@@ -716,9 +868,114 @@ POST /api/BookReviews
 
 ---
 
+## Supabase Edge Functions (Frontend Helpers)
+
+These functions are hosted on Supabase and are designed for lightweight validation and device flows. All requests/response bodies are JSON.
+
+### Base URL
+`https://guoanmhasnpjmlewqzrs.supabase.co/functions/v1`
+
+### Backend proxy (preferred for frontend)
+If you do not want direct Supabase configuration in the frontend, call these backend proxy endpoints instead. They forward the JSON payload to Supabase:
+
+- `POST /api/supabase/check_book`
+- `POST /api/supabase/check_user`
+- `POST /api/supabase/start_register_mode`
+
+Backend configuration key:
+- `Supabase:FunctionsBaseUrl`
+
+### `POST /check_book`
+Validates whether a user and a book copy are compatible and returns availability flags.
+
+**Request**
+```json
+{
+  "user_id": "user-001",
+  "book_copy_id": "BC-0001"
+}
+```
+
+**Response (success)**
+```json
+{
+  "ok": true,
+  "same_branch": true,
+  "pending": false,
+  "pending_other": false,
+  "borrowed": false,
+  "last_borrower": "user-123",
+  "available": true
+}
+```
+
+**Response (failure)**
+```json
+{ "ok": false, "reason": "user_not_found|copy_not_found|bad_request" }
+```
+
+**Notes**
+- Reads `Users.branch_id`, `BookCopies.branch_id/book_id`, `BookDetails.quantity`, and `BookTransactions` (status `Pending`/`Completed`).
+- `available` is computed as `quantity > 1`.
+
+### `POST /check_user`
+Looks up whether a user exists and returns their plan.
+
+**Request**
+```json
+{ "user_id": "user-001" }
+```
+
+**Response (found)**
+```json
+{ "ok": true, "exists": true, "name": "User", "plan": "Discover" }
+```
+
+**Response (not found)**
+```json
+{ "ok": true, "exists": false }
+```
+
+**Notes**
+- Queries `Users` for `name` and `plan` (function currently expects `Users.name`, update if your schema uses `first_name/last_name`).
+
+### `POST /start_register_mode`
+Sets a short-lived device registration state for NFC devices.
+
+**Request**
+```json
+{ "device_id": "esp8266", "book_id": 42 }
+```
+
+**Response**
+```json
+{ "ok": true }
+```
+
+**Notes**
+- Upserts into `DeviceRegisterState` with `expires_at = now + 60s`.
+- TODO in function: validate caller role (super admin) before allowing.
+
+### Environment variables required on Supabase
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+---
+
 ## Changelog
 
-### Latest Update (AI Chat Integration & BookReview Feature)
+### Latest Update (User & Chat Enhancements)
+- **Users:** Switched to `first_name`/`last_name` user profile fields and updated request/response shapes accordingly.
+- **User requests:** Registration requests now accept `first_name` and `last_name` (no `phone_number`).
+- **Librarian listing:** Added `GET /api/Users/librarians`, returning `LibrarianDTO` (name, branch, status, last activity).
+- **Chat endpoint:** `/api/chat` now requires `X-User-Id`, enriches prompts with borrowed books and suggestions, uses RAG/function routing, and logs chats to `ChatLogs`.
+- **Librarian assistant:** Added `POST /api/librarian/ask` for AI recommendations using embeddings.
+- **Books:** Added `covers`, `management`, `search`, `recommend`, `duedate`, and `embeddings/backfill` endpoints.
+- **Transactions:** Added `GET /api/BookTransactions/dashboard` for dashboard summaries.
+- **FeedbackRequests:** Added moderation workflow via `GET/POST/PUT /api/FeedbackRequests`.
+- **Stats:** Added `GET /api/Stats` for cached counts.
+
+### Previous Update (AI Chat Integration & BookReview Feature)
 - **AI Chat Endpoint:** Added `POST /api/chat` with Groq/LLM-powered intent detection
   - Supports both `GroqIntentService` (production, uses Groq API) and `MockIntentService` (development/fallback)
   - Detects intents: `check_book_availability`, `search_book`, `working_hours`, `unknown`
@@ -735,6 +992,66 @@ POST /api/BookReviews
   - Add book review display and creation forms
   - Update BookDetail view to show reviews and average rating
   - Implement chat intent handling based on returned intent type
+
+Developer implementation notes (scanned from repository)
+--------------------------------------------------
+
+The following notes summarize the current in-repo chatbot implementation discovered while scanning the codebase. Use these details to finish integration, tests or frontend wiring.
+
+- Endpoint status (updated):
+  - `POST /api/chat` is mapped as a minimal API in `Program.cs`, requires an `X-User-Id` header, enriches prompts with borrowed books and suggestions, and logs chats to `ChatLogs` using `IChatLogService`.
+  - The handler calls Groq LLM with model `llama-3.1-8b-instant` and returns `{ reply: "..." }` from the first choice.
+  - `POST /api/Chat` exists in `ChatController` but currently returns a placeholder `"Working"` response.
+  - Two `ChatRequest` types exist (`Models/ChatRequest.cs` with `UserId` and `Message`, and `DTO/ChatRequest.cs` with optional `UserId`); consider consolidating to avoid binding confusion.
+
+- Dependency Injection (registered in `Program.cs`):
+  - `IChatService` → `ChatService`
+  - `IDatabaseService` → `DatabaseService`
+  - `IResponseService` → `GroqResponseService` (registered as an `HttpClient`)
+  - `IAiResponseService` → `GroqResponseService` (registered as an `HttpClient`)
+  - `IChatLogService` → `ChatLogService`
+  - A default `HttpClient` is also registered for the `/api/chat` handler.
+  - Configuration is loaded from `.env` via `DotNetEnv.Env.Load()` and the DbContext uses `AddDbContextPool`.
+
+- Intent detection implementations found:
+  - `GroqIntentService` — production LLM-based classifier using Groq API (`/openai/v1/chat/completions`).
+  - `MockIntentService` — simple keyword-based fallback for development.
+  - `IntentService` — older/simple rule-based classifier also present.
+
+- Response/decision implementations found:
+  - `GroqResponseService` — wraps calls to Groq for both action-decisions (`DecideAction`) and free-form responses (`GenerateFinalResponse`). It exposes both `IResponseService` and `IAiResponseService` interfaces.
+  - `ChatService` — light orchestration that translates an `IntentResult` into simple responses (for intents like `check_book_availability`, `search_book`, `working_hours`). It calls `IDatabaseService` to check book availability.
+  - `RagService` — extracts book-search intent, fetches context via embeddings or fallback keyword search.
+  - `OpenAiBookEmbeddingService` — manages OpenAI embeddings, creates/updates `public.book_embeddings`, and performs vector similarity search (pgvector extension).
+
+- DTOs and logging:
+  - `ChatRequest` DTO exists (`DTO/ChatRequest.cs`) and expects `message` and optional `userId`.
+  - Another `ChatRequest` exists in `Models/ChatRequest.cs` (only `Message`); unify to one type to prevent binding conflicts.
+  - `IntentResult` DTO exists with `Intent`, `Book_Name`, and `Confidence` fields.
+  - `GroqResponse` DTO models the Groq API response shape.
+  - `ChatLogService` persists chat logs using `Npgsql` and expects a connection string named `DefaultConnection` (it also exposes `GetLastMessages` and a helper `LogChat`).
+
+- Configuration keys used by the chat components:
+  - `Groq:ApiKey` — API key for Groq
+  - `Groq:Model` — model name (default in `GroqIntentService`/`GroqResponseService`: `llama3-70b-8192`; the minimal `/api/chat` handler hardcodes `llama-3.1-8b-instant` and ignores this setting)
+  - `OpenAI:ApiKey` (or `OpenAI__ApiKey`) — API key for OpenAI embeddings
+  - Connection strings:
+    - `projectContext` — used by EF Core DbContext registration in `Program.cs`
+    - `DefaultConnection` — used by `ChatLogService` for direct Npgsql usage
+
+- Embeddings storage:
+  - `OpenAiBookEmbeddingService` creates `public.book_embeddings` with `vector(1536)` and uses `CREATE EXTENSION IF NOT EXISTS vector;` (pgvector required).
+
+- Database expectations from chat-related helpers:
+  - `DatabaseService.CheckBookAvailability` queries `DefaultConnection` against a `books` table with columns `title` (text) and `available` (bool), using a case-insensitive LIKE on `title`. Ensure this table/columns exist or update the query/schema accordingly.
+
+- Notes and next steps to enable full chat flow:
+  1. Consolidate the two `ChatRequest` types and decide whether to keep the minimal handler or move to a controller.
+  2. If you want intent-driven behavior, wire `IIntentService` and `IChatService` into the route and integrate `IAiResponseService` for final replies.
+  3. Ensure `appsettings.json` contains the `Groq` keys and both connection strings (`projectContext` and `DefaultConnection`).
+  4. Confirm the database has a `ChatLogs` table (columns referenced in `ChatLogService`: `user_message`, `intent`, `bot_response`, `confidence`, optional `user_id`).
+
+These notes are intended to help developers pick up the chatbot work done by your friend and complete or extend the integration.
 
 ### Previous Update (User subscription end date)
 - Added `subscription_end_date` (timestamp) to `Users` for plan expiration tracking.
@@ -868,7 +1185,7 @@ POST /api/BookReviews
 
 ### Previous Update (UserRequests Feature)
 - **UserRequest:** Added new `UserRequests` table and API for handling user registration requests pending admin approval.
-  - Fields: `request_id` (auto-generated), `name`, `email` (unique), `password`, `phone_number`, `plan`, `status`, `created_at`
+  - Fields: `request_id` (auto-generated), `first_name`, `last_name`, `email` (unique), `password`, `plan`, `status`, `created_at`
   - Status workflow: `Pending` → `Approved` or `Rejected`
   - Admins manually create Users after approving requests
 - **New endpoints:** Full CRUD for `/api/UserRequests`

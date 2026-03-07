@@ -61,7 +61,7 @@ const LazyImage = ({
     <div ref={imgRef} className={`relative ${className}`} style={style}>
       <div className={`lazy-sizer relative h-full w-full overflow-hidden`}>
         {!loaded && !failed && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#e0e0e0] dark:bg-[#1a1b1e]">
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#D7D7D7] dark:bg-[#1a1b1e]">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--first-color)] border-t-transparent dark:border-[#a9abb2]" />
           </div>
         )}
@@ -89,7 +89,7 @@ const LazyImage = ({
         )}
 
         {failed && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center rounded-md bg-[#e0e0e0] p-4 text-center text-sm text-[#6b7280] dark:bg-[#1a1b1e]">
+          <div className="absolute inset-0 z-30 flex items-center justify-center rounded-md bg-[#D7D7D7] p-4 text-center text-sm text-[#6b7280] dark:bg-[#1a1b1e]">
             Image unavailable
           </div>
         )}

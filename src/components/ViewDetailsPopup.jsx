@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import Popup from "./Popup.jsx";
-import { ReceiptText, Star, StarHalf, UserRound } from "lucide-react";
+import { ReceiptText, Star, StarHalf, UserRound, Loader2 } from "lucide-react";
 import reviewerAvatar from "../assets/img/testimonial-perfil-1.png";
 import { useBookReviews } from "../hooks/useBookReviews.js";
 import RateBookPopup from "./RateBookPopup.jsx";
+import FormButton from "./FormButton.jsx";
+import { getCurrentUser } from "../services/auth.api";
 
 const ViewDetailsPopup = ({
   show,
@@ -19,6 +21,18 @@ const ViewDetailsPopup = ({
   const bookId = data?.["Book ID"];
   const { data: bookReviews = [], isLoading: isLoadingReviews } =
     useBookReviews(bookId);
+  const averageRating =
+    bookReviews.length > 0
+      ? bookReviews.reduce(
+          (sum, rev) => sum + Number(rev.rating || rev.rate || 0),
+          0,
+        ) / bookReviews.length
+      : 0;
+
+  const currentUser = getCurrentUser();
+  const existingReview = bookReviews.find(
+    (rev) => String(rev.user_id) === String(currentUser?.user_id || "Guest"),
+  );
 
   const normalizedEntries =
     data && typeof data === "object" ? Object.entries(data) : [];
@@ -68,8 +82,8 @@ const ViewDetailsPopup = ({
   );
 
   const toDisplayValue = (value) => {
-    if (value === null || value === undefined) return "N/A";
-    if (typeof value === "string" && value.trim() === "") return "N/A";
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string" && value.trim() === "") return "";
     return value;
   };
 
@@ -110,20 +124,44 @@ const ViewDetailsPopup = ({
     return Math.floor(seconds) + " seconds ago";
   };
 
-  const renderStars = (rating) => {
+  const renderStars = (rating, size = 14) => {
     return (
       <div className="mt-1 flex gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            size={14}
-            className={
-              star <= rating
-                ? "fill-[#facc15] text-[#facc15]"
-                : "text-[#d1d5db]"
-            }
-          />
-        ))}
+        {[1, 2, 3, 4, 5].map((star) => {
+          const isFull = rating >= star;
+          const isHalf = !isFull && rating > star - 1;
+
+          return (
+            <div key={star} className="relative">
+              <Star
+                size={size}
+                className="text-[#000035] dark:text-[#D7D7D7]"
+                strokeWidth={1.5}
+              />
+              {isFull && (
+                <Star
+                  size={size}
+                  className="absolute left-0 top-0 fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                  strokeWidth={1.5}
+                />
+              )}
+              {isHalf && (
+                <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
+                  <Star
+                    size={size}
+                    className={`fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]`}
+                    strokeWidth={1.5}
+                    style={{
+                      width: `${size}px`,
+                      height: `${size}px`,
+                      minWidth: `${size}px`,
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -135,82 +173,109 @@ const ViewDetailsPopup = ({
         onClose={onClose}
         title={title}
         icon={null}
-        maxWidthClass="max-w-[1320px]"
-        panelClassName="!max-h-[96vh] overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] p-0 pb-0 shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#cfcfcf] dark:bg-[#ebebeb]"
-        contentClassName="overflow-x-hidden overflow-y-auto p-0"
+        maxWidthClass="max-w-[1150px]"
+        panelClassName=" h-full max-h-[700px] overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#D7D7D7] dark:bg-[#121317] pb-4 !p-4"
+        contentClassName="h-full overflow-y-auto overflow-x-hidden"
         hideHeader
         hideDivider
-        heightClass="px-1 py-1 sm:px-3 sm:py-3 !bg-black/85 !backdrop-blur-none"
+        heightClass="px-1 py-1 sm:px-3 sm:py-3"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-[470px_1px_1fr]">
-          <div className="flex items-start justify-center px-6 pb-10 pt-12 sm:px-10">
+        <div className="grid h-full grid-cols-1 lg:grid-cols-[300px_1px_1fr]">
+          <div className="flex items-start justify-center px-4 pb-7 pt-8 sm:px-6">
             {imageUrl ? (
               <img
                 src={imageUrl}
                 alt={imageAlt || String(headingText || "Details")}
-                className="h-[560px] w-[360px] max-w-full border border-[#cecece] object-cover"
+                className="h-[360px] w-[230px] max-w-full border border-[#cecece] object-cover"
               />
             ) : (
-              <div className="flex h-[560px] w-[360px] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#0a0f33] to-[#192261]">
-                <ReceiptText size={74} className="text-white/70" />
+              <div className="flex h-[360px] w-[230px] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#000035] to-[#192261]">
+                <UserRound size={48} className="text-white/70" />
               </div>
             )}
           </div>
 
-          <div className="mx-auto my-10 hidden w-px bg-[#b3b3b3] lg:block" />
+          <div className="mx-auto my-7 hidden w-px bg-[#000035] lg:block dark:bg-[#D7D7D7]" />
 
-          <div className="flex flex-col px-6 pb-10 pt-12 sm:px-10">
-            <div>
-              <h3
-                className="text-6xl font-normal uppercase leading-[0.9] tracking-[0.5px] text-[#050549] sm:text-7xl lg:text-[86px]"
-                style={{
-                  fontFamily:
-                    "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
-                }}
-              >
-                {String(headingText || "N/A")}
-              </h3>
-              <p className="mt-3 text-3xl font-medium text-[#050549] sm:text-[44px]">
-                {subtitleText || "N/A"}
-              </p>
-            </div>
-
-            <div className="mt-10 flex flex-col gap-6">
-              {detailsEntries.map(([key, value]) => (
-                <p key={key} className="text-3xl text-[#050549] sm:text-[46px]">
-                  {key} : {toDisplayValue(value)}
-                </p>
-              ))}
-            </div>
-
-            <div className="mt-6 h-px w-full max-w-[420px] bg-[#b1b1b1]" />
-
-            {hasCustomContent ? (
-              <div className="mt-8">{children}</div>
-            ) : bookId ? (
-              <div className="mt-8 flex flex-col gap-5">
-                <h4
-                  className="text-4xl text-[#050549] sm:text-[48px]"
+          <div className="flex min-h-0 flex-1 flex-col px-4 pb-7 pt-8 sm:px-7">
+            {/* Header and Details - Fixed */}
+            <div className="shrink-0">
+              <div className="flex items-center gap-6">
+                <h3
+                  className="truncate text-4xl font-normal uppercase leading-[0.9] tracking-[0.5px] text-[#000035] sm:text-5xl lg:text-[56px] dark:text-[#D7D7D7]"
                   style={{
                     fontFamily:
                       "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
                   }}
+                  title={String(headingText || "N/A")}
                 >
-                  RATING & REVIEWS
-                </h4>
+                  {String(headingText || "N/A")}
+                </h3>
+                {bookReviews.length > 0 && (
+                  <div className="mt-2 flex items-center gap-2">
+                    {renderStars(averageRating, 24)}
+                    <span className="text-xl font-medium text-[#000035] dark:text-[#D7D7D7]">
+                      ({averageRating.toFixed(1)})
+                    </span>
+                  </div>
+                )}
+              </div>
+              {subtitleText && (
+                <p className="text-xl font-medium text-[#000035] sm:text-[28px] dark:text-[#D7D7D7]">
+                  {subtitleText}
+                </p>
+              )}
 
-                <div className="mt-2 flex max-h-[400px] flex-col gap-4 overflow-y-auto pr-2">
+              <div className="mt-6 flex flex-col gap-4">
+                {detailsEntries.map(([key, value]) => (
+                  <p
+                    key={key}
+                    className="text-xl text-[#000035] sm:text-[28px] dark:text-[#D7D7D7]"
+                  >
+                    {key} : {toDisplayValue(value)}
+                  </p>
+                ))}
+              </div>
+
+              <div className="my-6 h-px w-full max-w-[280px] bg-[#000035] dark:bg-[#D7D7D7]" />
+            </div>
+
+            {/* Custom Content or Reviews - Scrolling */}
+            {hasCustomContent ? (
+              <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+            ) : bookId ? (
+              <div className="flex min-h-0 flex-1 flex-col gap-5">
+                <div className="shrink-0">
+                  <h4
+                    className="mb-2 text-4xl text-[#000035] sm:text-[48px] dark:text-[#D7D7D7]"
+                    style={{
+                      fontFamily:
+                        "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
+                    }}
+                  >
+                    RATING & REVIEWS
+                  </h4>
+                </div>
+
+                <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto scroll-smooth pr-3">
                   {isLoadingReviews ? (
-                    <p className="text-[#050549]">Loading reviews...</p>
+                    <div className="flex flex-1 items-center justify-center p-8">
+                      <div className="flex flex-col items-center gap-3">
+                        <Loader2 className="h-10 w-10 animate-spin text-[#000035] dark:text-[#D7D7D7]" />
+                        <p className="text-lg font-medium text-[#000035] dark:text-[#D7D7D7]">
+                          Loading reviews...
+                        </p>
+                      </div>
+                    </div>
                   ) : bookReviews.length === 0 ? (
-                    <p className="text-[#050549]">
+                    <p className="text-[#000035] dark:text-[#D7D7D7]">
                       No reviews yet. Be the first!
                     </p>
                   ) : (
                     bookReviews.map((review) => (
                       <div
                         key={review.review_id}
-                        className="flex min-h-[96px] items-center justify-between gap-4 rounded-[12px] border border-[#d8d8d8] bg-[#efefef] px-3 py-2 shadow-[0_2px_0_rgba(0,0,0,0.15)]"
+                        className="flex min-h-[96px] items-center justify-between gap-4 rounded-[12px] border border-[#000035] bg-transparent px-3 py-2 pr-10 dark:border-[#D7D7D7]"
                       >
                         <div className="flex min-w-0 items-center gap-3">
                           <div className="flex h-16 w-16 min-w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
@@ -221,53 +286,50 @@ const ViewDetailsPopup = ({
                                 className="h-full w-full object-cover"
                               />
                             ) : (
-                              <UserRound className="h-16 w-16 text-[#0b0c28]" />
+                              <UserRound className="h-16 w-16 text-[#0b0c28] dark:text-[#121317]" />
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p
-                              className="truncate text-[18px] leading-tight text-[#050549]"
-                              style={{
-                                fontFamily: "'Noto Sans Georgian', sans-serif",
-                              }}
-                            >
-                              {review.user_name?.toUpperCase() || "GUEST"}
-                            </p>
-                            {renderStars(review.rating)}
-                            {review.review_text && (
-                              <p className="mt-1 truncate text-[14px] text-[#050549]">
-                                {review.review_text}
+                            <div className="flex items-center gap-2">
+                              <span className="truncate text-[18px] leading-tight text-[#000035] dark:text-[#D7D7D7]">
+                                {review.user_name?.toUpperCase() || "GUEST"}
+                              </span>
+                              <div className="flex gap-0.5">
+                                {renderStars(review.rating || review.rate, 12)}
+                              </div>
+                            </div>
+                            {(review.review || review.review_text) && (
+                              <p className="truncate text-[14px] text-[#000035] dark:text-[#D7D7D7]">
+                                {review.review || review.review_text}
                               </p>
                             )}
-                            <p className="mt-1 text-xs text-[#8c8c8c]">
+                            <p className="text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">
                               {timeSince(review.created_at)}
                             </p>
                           </div>
                         </div>
 
-                        <button
-                          type="button"
-                          className="h-[54px] min-w-[150px] cursor-pointer rounded-[10px] bg-[#00004f] px-6 text-[28px] text-white transition-colors hover:bg-[#161669]"
-                          style={{
-                            fontFamily: "'Noto Sans Georgian', sans-serif",
-                          }}
+                        <FormButton
+                          isPrimary
+                          fullWidth={false}
+                          className="h-12 w-[140px] !p-0 text-lg"
                         >
                           Replay
-                        </button>
+                        </FormButton>
                       </div>
                     ))
                   )}
                 </div>
 
-                <div className="pt-2">
-                  <button
-                    type="button"
+                <div className="shrink-0 pt-2">
+                  <FormButton
+                    isPrimary
+                    fullWidth={false}
                     onClick={() => setShowRatePopup(true)}
-                    className="h-[54px] min-w-[150px] cursor-pointer rounded-[10px] bg-[#00004f] px-6 text-[28px] text-white transition-colors hover:bg-[#161669]"
-                    style={{ fontFamily: "'Noto Sans Georgian', sans-serif" }}
+                    className={`h-[54px] w-[190px] cursor-pointer rounded-[10px] !p-0 text-[18px] transition-colors`}
                   >
                     Comment
-                  </button>
+                  </FormButton>
                 </div>
               </div>
             ) : null}
@@ -278,6 +340,7 @@ const ViewDetailsPopup = ({
         show={showRatePopup}
         onClose={() => setShowRatePopup(false)}
         bookId={bookId}
+        initialReview={existingReview}
       />
     </>
   );

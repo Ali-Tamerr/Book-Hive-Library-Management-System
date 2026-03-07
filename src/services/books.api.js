@@ -1,10 +1,18 @@
-import { apiGet, apiPost, apiPut, apiDelete } from './api.config';
+import { apiGet, apiPost, apiPut, apiDelete } from "./api.config";
 
-const BASE_ENDPOINT = '/Books';
+const BASE_ENDPOINT = "/Books";
 
 // Get all books
 export const getAllBooks = async () => {
   return await apiGet(BASE_ENDPOINT);
+};
+
+export const getBookManagement = async () => {
+  return await apiGet(`${BASE_ENDPOINT}/management`);
+};
+
+export const getBookCovers = async () => {
+  return await apiGet(`${BASE_ENDPOINT}/covers`);
 };
 
 // Get book by ID
@@ -31,4 +39,3 @@ export const updateBook = async (id, bookData) => {
 export const deleteBook = async (id) => {
   return await apiDelete(`${BASE_ENDPOINT}/${id}`);
 };
-
