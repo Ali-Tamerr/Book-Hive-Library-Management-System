@@ -36,7 +36,7 @@ const FeaturedSection = ({
               ).map((book) => (
                 <article
                   key={book.book_id}
-                  className="duration-400 relative flex h-[760px] min-w-[400px] shrink-0 flex-col items-center overflow-hidden rounded-[24px] border-none bg-[#D7D7D7] p-[30px_35px] text-center shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-[box-shadow,background-color,border-color] dark:border dark:border-[#b9bdc8] dark:bg-[#121317] dark:shadow-[0_12px_28px_rgba(0,0,0,0.52)]"
+                  className="duration-400 relative flex h-[760px] min-w-[400px] shrink-0 flex-col items-center overflow-hidden rounded-[24px] p-[30px_35px] text-center border border-[#000035] dark:border-[#D7D7D7] transition-[box-shadow,background-color,border-color]"
                   style={{
                     width: `calc(${80 / featuredPerView}% - 60px)`,
                     margin: "0 30px",

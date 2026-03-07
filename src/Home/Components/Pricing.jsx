@@ -38,7 +38,7 @@ const plansData = [
 
 const PricingCard = ({ plan, setIsLoginOpen }) => {
   const subscribeButtonClass =
-    "border border-[#000035] bg-[#D7D7D7] text-[var(--accent)] hover:border-[#000022] hover:bg-[#000022] hover:text-[#D7D7D7] group-hover:border-[#000035] group-hover:bg-[#000035] group-hover:text-[#D7D7D7] dark:border-[#D7D7D7] dark:bg-transparent dark:text-[#D7D7D7] dark:hover:border-[#D7D7D7] dark:hover:bg-[#D7D7D7] dark:hover:text-black group-hover:dark:border-[#D7D7D7] group-hover:dark:bg-[#D7D7D7] group-hover:dark:text-black";
+    "border border-[#000035] text-[var(--accent)] hover:border-[#000022] hover:bg-[#000022] hover:text-[var(--card-bg)] group-hover:border-[#000035] group-hover:bg-[#000035] group-hover:text-[var(--card-bg)] dark:border-[#D7D7D7] dark:bg-transparent dark:text-[#D7D7D7] dark:hover:border-[#D7D7D7] dark:hover:bg-[#D7D7D7] dark:hover:text-black group-hover:dark:border-[#D7D7D7] group-hover:dark:bg-[#D7D7D7] group-hover:dark:text-black";
 
   return (
     <article
@@ -110,7 +110,7 @@ const Pricing = ({ setIsLoginOpen }) => {
           No hidden charges.
         </p>
 
-        <div className="plans px-13 flex flex-col items-stretch gap-16 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-[#D7D7D7] py-14 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none">
+        <div className="plans px-13 flex flex-col items-stretch gap-16 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-[var(--card-bg)] py-14 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none">
           {plansData.map((plan) => (
             <PricingCard
               key={plan.id}
