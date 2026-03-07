@@ -15,7 +15,7 @@ import secureInfoIcon from "../assets/secure information.png";
 import chatbotIcon from "../assets/chatbot.png";
 
 import { apiGet, getImageUrl } from "../services/api.config";
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
 import { useBooks, bookKeys } from "../hooks/useBooks";
 import { useApprovedFeedbacks } from "../hooks/useFeedbacks";
 import { getAllBooks } from "../services/books.api";
@@ -92,8 +92,12 @@ const Home = () => {
               apiGet("/Branches").catch(() => null),
               apiGet("/Categories").catch(() => null),
             ]);
-            branches = Array.isArray(branchData) ? branchData.length : branchData?.data?.length || 0;
-            categories = Array.isArray(catData) ? catData.length : catData?.data?.length || 0;
+            branches = Array.isArray(branchData)
+              ? branchData.length
+              : branchData?.data?.length || 0;
+            categories = Array.isArray(catData)
+              ? catData.length
+              : catData?.data?.length || 0;
           } catch (e) {
             // ignore
           }
@@ -101,7 +105,8 @@ const Home = () => {
 
         if (!booksCount) {
           if (Array.isArray(maybeBooks)) booksCount = maybeBooks.length;
-          else if (maybeBooks && Array.isArray(maybeBooks.data)) booksCount = maybeBooks.data.length;
+          else if (maybeBooks && Array.isArray(maybeBooks.data))
+            booksCount = maybeBooks.data.length;
         }
 
         setStats({ branches, categories, books: booksCount });
