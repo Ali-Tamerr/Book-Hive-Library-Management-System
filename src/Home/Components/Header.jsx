@@ -15,7 +15,7 @@ const Header = ({
   return (
     <>
       <header
-        className={`duration-400 transition-alldark:border-b fixed left-0 right-0 top-0 z-[100] mx-auto w-full  bg-[var(--body-color)] dark:border-[rgba(255,255,255,0.06)] ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
+        className={`duration-400 transition-alldark:border-b fixed left-0 right-0 top-0 z-[100] mx-auto w-full bg-[var(--body-color)] dark:border-[rgba(255,255,255,0.06)] ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
         id="header"
       >
         <nav className="flex h-[130px] items-center justify-between px-10 xl:pr-24">
@@ -27,7 +27,7 @@ const Header = ({
               src={logoIcon}
               alt="Book Hive Logo"
               style={{ width: "90px", height: "auto" }}
-              className="dark:brightness-[1.2] dark:invert"
+              className="dark:brightness-[1.2] dark:invert-[84%]"
             />
           </a>
 
@@ -78,17 +78,17 @@ const Header = ({
 
           <div className="nav__actions flex items-center gap-x-8">
             <i
-              className="ri-search-line duration-400 cursor-pointer text-[32px] font-bold text-[#000035] transition-colors dark:text-white dark:hover:!text-[#c7c9cf]"
+              className="ri-search-line duration-400 cursor-pointer text-[32px] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]"
               onClick={() => setIsSearchOpen(true)}
             ></i>
             <i
-              className="ri-user-line login-button duration-400 cursor-pointer text-[32px] font-bold text-[#000035] transition-colors dark:text-white dark:hover:!text-[#c7c9cf]"
+              className="ri-user-line login-button duration-400 cursor-pointer text-[32px] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]"
               id="login-button"
               onClick={() => setIsLoginOpen(true)}
               style={{ cursor: "pointer" }}
             ></i>
             <i
-              className={`${themeIcon} change-theme duration-400 cursor-pointer text-[32px] font-bold text-[#000035] transition-colors dark:text-white dark:hover:!text-[#c7c9cf]`}
+              className={`${themeIcon} change-theme duration-400 cursor-pointer text-[32px] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]`}
               onClick={toggleTheme}
               style={{ cursor: "pointer" }}
             ></i>

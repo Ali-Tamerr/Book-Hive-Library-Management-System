@@ -21,6 +21,7 @@ const FormLayout = ({
   icon,
   customLayout,
   error,
+  isLoading = false,
 }) => {
   const renderInput = (input) => {
     const { name, type } = input;
@@ -64,9 +65,7 @@ const FormLayout = ({
                         ? inputConfig
                         : inputConfig.name;
                     const flexValue =
-                      typeof inputConfig === "object"
-                        ? inputConfig.flex
-                        : 1;
+                      typeof inputConfig === "object" ? inputConfig.flex : 1;
                     const wrapperClassName =
                       typeof inputConfig === "object"
                         ? inputConfig.className || ""
@@ -77,7 +76,9 @@ const FormLayout = ({
                         key={inputName}
                         className={wrapperClassName}
                         style={
-                          flexValue !== undefined ? { flex: flexValue } : undefined
+                          flexValue !== undefined
+                            ? { flex: flexValue }
+                            : undefined
                         }
                       >
                         {renderInput(input)}
@@ -116,6 +117,11 @@ const FormLayout = ({
 
   return (
     <Popup show={show} onClose={onClose} title={title} icon={icon}>
+      {isLoading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center rounded-xl bg-white/50 backdrop-blur-sm dark:bg-[#131418]/50">
+          <div className="border-t-primary dark:border-t-primary h-10 w-10 animate-spin rounded-full border-4 border-gray-300 dark:border-gray-600"></div>
+        </div>
+      )}
       <form onSubmit={onSubmit} className="flex flex-col gap-14">
         <div className="px-10">
           {renderFormContent()}
@@ -129,10 +135,19 @@ const FormLayout = ({
         <div
           className={`flex justify-between gap-3 ${inputs.length > 6 && !customLayout ? "col-span-2" : ""}`}
         >
-          <FormButton onClick={onCancel} className={cancelButtonClassName}>
+          <FormButton
+            onClick={onCancel}
+            className={cancelButtonClassName}
+            disabled={isLoading}
+          >
             {cancelButtonText}
           </FormButton>
-          <FormButton type="submit" isPrimary className={submitButtonClassName}>
+          <FormButton
+            type="submit"
+            isPrimary
+            className={submitButtonClassName}
+            disabled={isLoading}
+          >
             {submitButtonText}
           </FormButton>
         </div>

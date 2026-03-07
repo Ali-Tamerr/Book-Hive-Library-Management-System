@@ -1,7 +1,7 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import UserSidebar from './user/components/Sidebar';
-import UserNavbar from './user/components/Navbar';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import UserSidebar from "./user/components/Sidebar";
+import UserNavbar from "./user/components/Navbar";
 
 function UserLayout() {
   const [isSidebarOpen, setSidebarOpen] = React.useState(false);
@@ -11,12 +11,12 @@ function UserLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-[#f5f7fb] text-[#0a0f33]">
+    <div className="flex h-screen bg-[#f5f7fb] text-[#000035]">
       <UserSidebar
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
       />
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex flex-1 flex-col overflow-hidden">
         <UserNavbar toggleSidebar={toggleSidebar} />
         <div className="flex-1 overflow-y-auto p-6">
           <Outlet />

@@ -56,16 +56,16 @@ const BranchesModal = ({ isOpen, onClose }) => {
         <table className="w-full table-fixed border-collapse">
           <thead>
             <tr>
-              <th className="w-[20%] border-b border-[#12161f] px-2.5 py-3 text-left text-base text-[#0a0f5c] dark:border-[#292D32] dark:text-[#E8E8E8]">
+              <th className="w-[20%] border-b border-[#12161f] px-2.5 py-3 text-left text-base text-[#0a0f5c] dark:border-[#D7D7D7] dark:text-[#E8E8E8]">
                 Name
               </th>
-              <th className="w-[25%] border-b border-[#12161f] px-2.5 py-3 text-left text-base text-[#0a0f5c] dark:border-[#292D32] dark:text-[#E8E8E8]">
+              <th className="w-[25%] border-b border-[#12161f] px-2.5 py-3 text-left text-base text-[#0a0f5c] dark:border-[#D7D7D7] dark:text-[#E8E8E8]">
                 Contact
               </th>
-              <th className="w-[25%] border-b border-[#12161f] px-2.5 py-3 text-left text-base text-[#0a0f5c] dark:border-[#292D32] dark:text-[#E8E8E8]">
+              <th className="w-[25%] border-b border-[#12161f] px-2.5 py-3 text-left text-base text-[#0a0f5c] dark:border-[#D7D7D7] dark:text-[#E8E8E8]">
                 Location
               </th>
-              <th className="w-[10%] border-b border-[#12161f] px-2.5 py-3 text-center text-base text-[#0a0f5c] dark:border-[#292D32] dark:text-[#E8E8E8]">
+              <th className="w-[10%] border-b border-[#12161f] px-2.5 py-3 text-center text-base text-[#0a0f5c] dark:border-[#D7D7D7] dark:text-[#E8E8E8]">
                 Bo Quantity
               </th>
             </tr>

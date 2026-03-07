@@ -11,7 +11,7 @@ import BranchesPopup from "../components/BranchesPopup";
 function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
   const navigate = useNavigate();
   const [isAnimating, setIsAnimating] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
     setLoading(true);
 
     try {
-      const user = await login(phoneNumber, password);
+      const user = await login(email, password);
       if (
         user.role === "Super Admin" ||
         user.role === "Admin" ||
@@ -91,7 +91,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
         >
           <WhiteBgSection
             title="Welcome Back !!"
-            subtitle="Please enter your phone number and password to log in"
+            subtitle="Please enter your email and password to log in"
             loginLayout={true}
             isDarkMode={isDarkMode}
             backButton={{
@@ -102,13 +102,13 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
           >
             <form
               onSubmit={handleSubmit}
-              className="flex w-full flex-col items-center gap-6 px-[100px] max-[856px]:px-[120px]"
+              className="flex w-full flex-col items-center gap-6 px-[100px] max-[856px]:px-[5%]"
             >
               <AuthInput
-                type="text"
-                placeholder="Phone Number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 isDarkMode={isDarkMode}
               />
@@ -126,7 +126,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
               <a
                 href="#"
                 onClick={handleForgotPassword}
-                className={`block self-start text-lg font-medium ${isDarkMode ? "text-white" : "text-[#0a0f33]"} mb-6 hover:underline`}
+                className={`block self-start text-lg font-medium ${isDarkMode ? "text-white" : "text-[#000035]"} mb-6 hover:underline`}
               >
                 Forgot password?
               </a>
@@ -139,7 +139,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
               </PrimaryButton>
             </form>
             <p
-              className={`hidden text-lg max-[1080px]:block ${isDarkMode ? "text-gray-400" : "text-gray-400"}`}
+              className={`hidden text-lg max-[1080px]:block ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
             >
               New to our platform?{" "}
               <button

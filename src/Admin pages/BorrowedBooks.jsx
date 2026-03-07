@@ -9,6 +9,7 @@ import { useBooks } from "../hooks/useBooks.js";
 import { useUsers } from "../hooks/useUsers.js";
 import { useBookCopies } from "../hooks/useBookCopies.js";
 import { useBranches } from "../hooks/useBranches.js";
+import { useCheckBook } from "../hooks/useSupabaseEdge.js";
 import BorrowedBookFormPopup from "../components/BorrowedBookFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
@@ -55,18 +56,34 @@ function BorrowedBooks({
   const deleteBorrowedBookMutation = useDeleteBorrowedBook();
 
   const getBookName = (bookCopyId) => {
+    // 1. Try to find the physical copy
     const copy = bookCopies.find(
-      (c) => c.book_copy_id === bookCopyId || c.id === bookCopyId,
+      (c) =>
+        String(c.book_copy_id) === String(bookCopyId) ||
+        String(c.id) === String(bookCopyId),
     );
+
+    // 2. If copy has embedded book detail (as populated by BookCopiesController)
+    if (copy && copy.book) {
+      return copy.book.name || copy.book.title || "-";
+    }
+
+    // 3. Fallback: Manual lookup in books list via cross-reference ID
     const actualBookId = copy?.book_id;
     if (actualBookId) {
       const book = books.find(
-        (b) => b.book_id === actualBookId || b.id === actualBookId,
+        (b) =>
+          String(b.book_id) === String(actualBookId) ||
+          String(b.id) === String(actualBookId),
       );
       return book?.name || book?.title || "-";
     }
+
+    // 4. Last resort: Direct book lookup (if bookCopyId was actually a book_id)
     const directBook = books.find(
-      (b) => b.book_id === bookCopyId || b.id === bookCopyId,
+      (b) =>
+        String(b.book_id) === String(bookCopyId) ||
+        String(b.id) === String(bookCopyId),
     );
     return directBook?.name || directBook?.title || "-";
   };
@@ -91,7 +108,9 @@ function BorrowedBooks({
 
   const getUserName = (userId) => {
     const user = users.find((u) => u.user_id === userId || u.id === userId);
-    return user?.full_name || user?.name || user?.username || "-";
+    return user
+      ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+      : "-";
   };
 
   const currentUser = getCurrentUser();
@@ -108,9 +127,40 @@ function BorrowedBooks({
   };
   const currentUserBranchId = getBranchIdFromUser(currentUser);
 
+  const checkBookMutation = useCheckBook();
+
   const handleAddBorrowedBook = async (e) => {
     e.preventDefault();
     try {
+      const isBorrowing = formData.transaction_type === "Borrow";
+
+      // Hardware proxy / Edge validation flow (if applicable)
+      if (!editMode && isBorrowing && formData.user_id && formData.book_id) {
+        try {
+          const res = await checkBookMutation.mutateAsync({
+            userId: formData.user_id,
+            bookCopyId: formData.book_id,
+          });
+          if (!res.ok) {
+            alert(
+              `Validation failed: ${res.reason || "Unable to borrow this copy"}`,
+            );
+            return;
+          }
+          if (!res.available) {
+            alert("This book copy is currently not available for borrowing.");
+            return;
+          }
+        } catch (err) {
+          console.error(
+            "Hardware proxy validation failed, continuing normally:",
+            err,
+          );
+          // If the proxy fails/is offline, we can decide to block or allow
+          // For now, allow continuing if the backend proxy isn't setup
+        }
+      }
+
       const apiData = {
         user_id: formData.user_id,
         book_id: formData.book_id,
@@ -259,8 +309,12 @@ function BorrowedBooks({
   const filteredBorrowedBooks = searchValue
     ? filteredPending.filter(
         (book) =>
-          book.book_title?.toLowerCase().includes(searchValue.toLowerCase()) ||
-          book.user_name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          getBookName(book.book_id)
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          getUserName(book.user_id)
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
           book.transaction_id?.toString().includes(searchValue) ||
           (isSuperAdmin &&
             getBookBranchName(book.book_id)

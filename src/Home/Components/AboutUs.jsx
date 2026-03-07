@@ -18,7 +18,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
         </h2>
         <div className="about-grid grid grid-cols-[1fr_minmax(600px,800px)] items-center gap-20 max-[980px]:grid-cols-1 max-[980px]:text-center">
           <div className="about-left mx-auto max-w-[1200px]">
-            <p className="about-text mb-20 text-center font-[family-name:var(--second-font)] text-[32px] font-bold leading-relaxed text-[#525252] dark:!text-[var(--muted)]">
+            <p className="about-text mb-20 text-center font-[family-name:var(--second-font)] text-[32px] font-bold leading-relaxed text-[#000035] dark:!text-[var(--muted)]">
               We are a smart, technology-driven library system that uses RFID to
               make book management faster and easier. Our platform helps
               students and staff search, borrow, and track books efficiently
@@ -33,7 +33,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
                 <div className="num mb-4 font-[family-name:var(--body-font)] text-[48px] font-bold text-[var(--accent)] dark:!text-[var(--title-color)]">
                   {stats.branches}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#525252] dark:!text-[#9ea1a8]">
+                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#000035] dark:!text-[#9ea1a8]">
                   Branches
                 </div>
               </div>
@@ -41,7 +41,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
                 <div className="num mb-4 font-[family-name:var(--body-font)] text-[48px] font-bold text-[var(--accent)] dark:!text-[var(--title-color)]">
                   {stats.books}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#525252] dark:!text-[#9ea1a8]">
+                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#000035] dark:!text-[#9ea1a8]">
                   Books
                 </div>
               </div>
@@ -49,7 +49,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
                 <div className="num mb-4 font-[family-name:var(--body-font)] text-[48px] font-bold text-[var(--accent)] dark:!text-[var(--title-color)]">
                   {stats.categories}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#525252] dark:!text-[#9ea1a8]">
+                <div className="label font-[family-name:var(--second-font)] text-[24px] font-bold text-[#000035] dark:!text-[#9ea1a8]">
                   Category
                 </div>
               </div>
@@ -74,14 +74,14 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
             {aboutBooks.length >= 2 ? (
               <>
                 <LazyImage
-                  className="book back absolute left-0 z-[1] h-[700px] w-[450px] origin-center -translate-y-4 -rotate-12 rounded-lg bg-white object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
+                  className="book back absolute left-0 z-[1] h-[700px] w-[450px] origin-center -translate-y-4 -rotate-12 rounded-lg bg-[#D7D7D7] object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
                   src={aboutBooks[0].image}
                   alt={aboutBooks[0].name}
                   priority
                   onError={(e) => (e.currentTarget.style.display = "none")}
                 />
                 <LazyImage
-                  className="book front absolute right-0 z-[2] h-[700px] w-[450px] origin-center translate-y-6 rotate-12 rounded-lg bg-white object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
+                  className="book front absolute right-0 z-[2] h-[700px] w-[450px] origin-center translate-y-6 rotate-12 rounded-lg bg-[#D7D7D7] object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
                   src={aboutBooks[1].image}
                   alt={aboutBooks[1].name}
                   priority
@@ -91,12 +91,12 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
             ) : (
               <>
                 <LazyImage
-                  className="book back absolute left-0 z-[1] h-[700px] w-[450px] origin-center -translate-y-4 -rotate-12 rounded-lg bg-white object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
+                  className="book back absolute left-0 z-[1] h-[700px] w-[450px] origin-center -translate-y-4 -rotate-12 rounded-lg bg-[#D7D7D7] object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
                   src={null}
                   priority
                 />
                 <LazyImage
-                  className="book front absolute right-0 z-[2] h-[700px] w-[450px] origin-center translate-y-6 rotate-12 rounded-lg bg-white object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
+                  className="book front absolute right-0 z-[2] h-[700px] w-[450px] origin-center translate-y-6 rotate-12 rounded-lg bg-[#D7D7D7] object-cover shadow-[0_18px_30px_rgba(10,10,35,0.12)] transition-transform duration-[220ms] ease-in-out max-[520px]:h-[450px] max-[520px]:w-[320px] dark:shadow-[0_18px_32px_rgba(0,0,0,0.55)]"
                   src={null}
                   priority
                 />

@@ -29,8 +29,7 @@ function Catalog({ searchValue, setSearchValue }) {
         position="last"
         className="font-[family-name:var(--body-font)]"
       />
-     
-    </div>
+        </div>
   );
 
   return (

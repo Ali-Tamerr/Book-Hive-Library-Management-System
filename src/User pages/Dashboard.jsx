@@ -1,18 +1,19 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Search, ChevronDown, ArrowLeft, ArrowRight } from "lucide-react";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
 import { useUsers } from "../hooks/useUsers";
-import { useBooks } from "../hooks/useBooks";
+import { useBooks, useBookCovers, useBook } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
 import { useReservations } from "../hooks/useReservations";
 import { useBranches } from "../hooks/useBranches";
 import { useOverdueBooks } from "../hooks/useOverdueBooks";
 import { useBookTransactions } from "../hooks/useBookTransactions";
+import { useBookCopies } from "../hooks/useBookCopies";
 import { getCurrentUser } from "../services/auth.api";
-import { getImageUrl } from "../services/api.config";
+import { apiGet, getImageUrl } from "../services/api.config";
 
 function Dashboard() {
   const currentUser = getCurrentUser();
@@ -20,9 +21,28 @@ function Dashboard() {
   const users = usersData
     ? usersData.pages.flatMap((page) => page.data || [])
     : [];
-  const { data: books = [], isLoading: booksLoading } = useBooks();
-  const { data: categories = [], isLoading: categoriesLoading } =
+  const [displayBooks, setDisplayBooks] = useState([]);
+  const [generalStats, setGeneralStats] = useState({
+    branches: 0,
+    books: 0,
+    users: 0,
+  });
+  const { data: booksSource, isLoading: booksLoading } = useBookCovers();
+  const books = useMemo(() => {
+    if (Array.isArray(booksSource)) return booksSource;
+    if (booksSource?.data && Array.isArray(booksSource.data))
+      return booksSource.data;
+    return [];
+  }, [booksSource]);
+
+  const { data: categoriesData, isLoading: categoriesLoading } =
     useCategories();
+  const categories = useMemo(() => {
+    if (Array.isArray(categoriesData)) return categoriesData;
+    if (categoriesData?.data && Array.isArray(categoriesData.data))
+      return categoriesData.data;
+    return [];
+  }, [categoriesData]);
   const { data: reservations = [], isLoading: reservationsLoading } =
     useReservations();
   const { data: branches = [], isLoading: branchesLoading } = useBranches();
@@ -30,12 +50,76 @@ function Dashboard() {
     useOverdueBooks();
   const { data: bookTransactions = [], isLoading: transactionsLoading } =
     useBookTransactions();
+  const { data: bookCopies = [] } = useBookCopies();
 
   const [searchValue, setSearchValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [activeTab, setActiveTab] = useState("recommended");
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedBook, setSelectedBook] = useState(null);
+  const [selectedBookId, setSelectedBookId] = useState(null);
+  const [isViewLoading, setIsViewLoading] = useState(false);
+  const {
+    data: selectedBookDetail,
+    isLoading: selectedBookLoading,
+    isFetching: selectedBookFetching,
+  } = useBook(selectedBookId);
+
+  // 1. Fetch Stats from backend (just like Home.jsx)
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const maybeStats = await apiGet("/Stats").catch(() => null);
+        if (maybeStats && typeof maybeStats === "object") {
+          setGeneralStats({
+            branches: +maybeStats.branches || 0,
+            books: +maybeStats.books || 0,
+            users: +maybeStats.users || users.length || 0,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats:", error);
+      }
+    };
+    fetchStats();
+  }, [users.length]);
+
+  // 2. Load cached books on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("dashboardBooksCache.v1");
+      if (raw) {
+        setDisplayBooks(JSON.parse(raw));
+      }
+    } catch {}
+  }, []);
+
+  // 3. Sync and map books from API to local state and localStorage
+  useEffect(() => {
+    const rawArray = Array.isArray(booksSource)
+      ? booksSource
+      : booksSource?.data || [];
+
+    if (rawArray.length > 0) {
+      const mapped = rawArray.map((book) => ({
+        book_id: book.book_id,
+        name: book.name,
+        category_id: book.category_id,
+        quantity: book.quantity,
+        created_at: book.created_at,
+        image: getImageUrl(book.image_url) || "",
+      }));
+      setDisplayBooks(mapped);
+      localStorage.setItem("dashboardBooksCache.v1", JSON.stringify(mapped));
+    }
+  }, [booksSource]);
+
+  // Sync isViewLoading with React Query's fetching state
+  React.useEffect(() => {
+    if (!selectedBookFetching && !selectedBookLoading) {
+      setIsViewLoading(false);
+    }
+  }, [selectedBookFetching, selectedBookLoading]);
+
   const [booksPerPage, setBooksPerPage] = useState(8);
 
   React.useEffect(() => {
@@ -82,9 +166,9 @@ function Dashboard() {
   const userTotalBorrowed = userBorrowedTransactions.length;
 
   const stats = {
-    totalUsers: users?.length || 0,
-    totalBooks: books?.length || 0,
-    branchCount: branches?.length || 0,
+    totalUsers: generalStats.users || users?.length || 0,
+    totalBooks: generalStats.books || displayBooks?.length || 0,
+    branchCount: generalStats.branches || branches?.length || 0,
     totalBorrowed: userTotalBorrowed,
     currentlyBorrowed: userCurrentlyBorrowed,
     returnedBooks: userReturnedBooks,
@@ -123,8 +207,24 @@ function Dashboard() {
     });
   }, [subscriptionExpirationRaw]);
 
+  const bookPopularity = useMemo(() => {
+    const counts = {};
+    const copyToBook = {};
+    bookCopies.forEach((copy) => {
+      const copyId = String(copy.book_copy_id || copy.id);
+      copyToBook[copyId] = copy.book_id;
+    });
+    bookTransactions.forEach((tx) => {
+      const bookId = copyToBook[String(tx.book_id)];
+      if (bookId) {
+        counts[bookId] = (counts[bookId] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [bookTransactions, bookCopies]);
+
   const filteredBooks = useMemo(() => {
-    let result = [...books];
+    let result = [...displayBooks];
 
     if (searchValue) {
       result = result.filter((book) =>
@@ -146,10 +246,17 @@ function Dashboard() {
         const dateB = new Date(b.created_at || 0);
         return dateB - dateA || b.book_id - a.book_id;
       });
+    } else if (activeTab === "recommended") {
+      result = result.sort((a, b) => {
+        const popA = bookPopularity[a.book_id] || 0;
+        const popB = bookPopularity[b.book_id] || 0;
+        if (popA !== popB) return popB - popA;
+        return (b.name || "").localeCompare(a.name || "");
+      });
     }
 
     return result;
-  }, [books, searchValue, selectedCategory, activeTab]);
+  }, [displayBooks, searchValue, selectedCategory, activeTab, bookPopularity]);
 
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage) || 1;
   const paginatedBooks = filteredBooks.slice(
@@ -171,7 +278,7 @@ function Dashboard() {
         <div className="flex w-full items-center gap-3.5">
           <div className="relative flex-1">
             <Search
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
               size={16}
             />
             <input
@@ -182,7 +289,7 @@ function Dashboard() {
                 setSearchValue(e.target.value);
                 setCurrentPage(0);
               }}
-              className="w-full rounded-md border border-zinc-400 bg-white py-1.5 pl-10 pr-3.5 text-sm transition-colors focus:outline-none dark:border-[#292D32] dark:bg-[#121317] dark:text-[#D7D7D7]"
+              className="w-full rounded-lg border border-[#000035] py-1.5 pl-10 pr-3.5 text-sm transition-colors placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
           <div className="mr-22 relative w-full min-w-[162px] max-w-[531px] flex-1">
@@ -192,17 +299,21 @@ function Dashboard() {
                 setSelectedCategory(e.target.value);
                 setCurrentPage(0);
               }}
-              className="w-full cursor-pointer appearance-none rounded-md border border-zinc-400 bg-white px-3.5 py-1.5 pr-9 text-sm transition-colors focus:outline-none dark:border-[#292D32] dark:bg-[#121317] dark:text-[#D7D7D7]"
+              className="w-full cursor-pointer appearance-none rounded-lg border border-[#000035] px-3.5 py-1.5 pr-9 text-sm transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7]"
             >
               <option value="">Category</option>
               {categories.map((cat) => (
-                <option key={cat.category_id} value={cat.category_id}>
+                <option
+                  key={cat.category_id}
+                  value={cat.category_id}
+                  className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
+                >
                   {cat.category_name || cat.name}
                 </option>
               ))}
             </select>
             <ChevronDown
-              className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400"
+              className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
               size={16}
             />
           </div>
@@ -235,7 +346,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="min-[640px]:flex-4 flex w-full flex-col gap-[18px] min-[640px]:h-full">
-            <div className="flex items-center justify-between border-b border-[#525252] dark:border-[#2C2D33]">
+            <div className="flex items-center justify-between border-b border-[#000035] dark:border-[#D7D7D7]">
               <div className="flex gap-16">
                 <button
                   onClick={() => {
@@ -245,7 +356,7 @@ function Dashboard() {
                   className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
                     activeTab === "recommended"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
-                      : "text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
+                      : "cursor-pointer text-[#000035] hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recommended
@@ -258,7 +369,7 @@ function Dashboard() {
                   className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
                     activeTab === "recently"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
-                      : "text-[#525252] hover:text-gray-600 dark:hover:text-gray-300"
+                      : "cursor-pointer text-[#000035] hover:text-gray-600 dark:hover:text-gray-300"
                   }`}
                 >
                   Recently added
@@ -270,8 +381,8 @@ function Dashboard() {
                   disabled={currentPage === 0}
                   className={`rounded transition-colors ${
                     currentPage === 0
-                      ? "cursor-not-allowed text-[#525252] dark:text-gray-600"
-                      : "text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
+                      ? "cursor-not-allowed text-[#000035] dark:text-gray-600"
+                      : "cursor-pointer text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
                   <ArrowLeft size={20} strokeWidth={1.5} />
@@ -283,7 +394,7 @@ function Dashboard() {
                       className={`h-[1.5px] w-[10px] rounded-full transition-colors ${
                         i === Math.min(currentPage, 2)
                           ? "bg-[#000035] dark:bg-[#585858]"
-                          : "bg-[#525252] dark:bg-white"
+                          : "bg-[#000035] dark:bg-white"
                       }`}
                     />
                   ))}
@@ -293,8 +404,8 @@ function Dashboard() {
                   disabled={currentPage >= totalPages - 1}
                   className={`rounded transition-colors ${
                     currentPage >= totalPages - 1
-                      ? "cursor-not-allowed text-[#525252] dark:text-gray-600"
-                      : "text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
+                      ? "cursor-not-allowed text-[#000035] dark:text-gray-600"
+                      : "cursor-pointer text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
                   <ArrowRight size={20} strokeWidth={1.5} />
@@ -303,37 +414,32 @@ function Dashboard() {
             </div>
 
             <div className="grid w-full grid-cols-4 place-items-center gap-y-5 max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2">
-              {loading ? (
-                <div className="col-span-full py-9 text-center text-gray-500">
+              {booksLoading && displayBooks.length === 0 ? (
+                <div className="col-span-full py-9 text-center text-[#000035]">
                   Loading books...
                 </div>
-              ) : paginatedBooks.length === 0 ? (
-                <div className="col-span-full py-9 text-center text-gray-500">
+              ) : displayBooks.length === 0 ? (
+                <div className="col-span-full py-9 text-center text-[#000035]">
                   No books found
                 </div>
               ) : (
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="flex h-60 w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
+                    className="h-65 flex w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
                   >
-                    <div className="flex h-36 w-full items-center justify-center overflow-hidden rounded-md">
-                      {getImageUrl(book.image_url) ? (
+                    <div className="flex h-40 w-full items-center justify-center overflow-hidden rounded-md">
+                      {book.image ? (
                         <LazyImage
-                          src={getImageUrl(book.image_url)}
+                          src={book.image}
                           alt={book.name}
                           className="h-full w-full object-contain text-black dark:text-[#D7D7D7]"
                         />
                       ) : (
-                        <div className="p-2 text-center text-black dark:text-[#D7D7D7]">
+                        <div className="flex h-full w-full items-center justify-center p-2 text-center text-black dark:text-[#D7D7D7]">
                           <div className="line-clamp-2 text-xs font-bold uppercase tracking-wider text-black opacity-80 dark:text-[#D7D7D7]">
                             {book.name}
                           </div>
-                          {book.author && (
-                            <div className="mt-1 text-[10px] text-black opacity-60 dark:text-[#D7D7D7]">
-                              {book.author}
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
@@ -343,7 +449,10 @@ function Dashboard() {
                       </h3>
                       <button
                         className="w-full cursor-pointer whitespace-nowrap rounded-xl bg-[#0b0c28] py-1.5 text-[17px] font-bold text-white transition-colors dark:bg-[#D7D7D7] dark:text-black"
-                        onClick={() => setSelectedBook(book)}
+                        onClick={() => {
+                          setSelectedBookId(book.book_id);
+                          setIsViewLoading(true);
+                        }}
                       >
                         Explore Now
                       </button>
@@ -368,36 +477,57 @@ function Dashboard() {
             </div>
           </div>
         </section>
-        {selectedBook && (
+        {selectedBookId && (
           <ViewDetailsPopup
-            show={!!selectedBook}
-            onClose={() => setSelectedBook(null)}
-            title="Book Details"
-            imageUrl={getImageUrl(selectedBook.image_url)}
-            imageAlt={selectedBook.name || "Book cover"}
-            data={{
-              "Book ID": selectedBook.book_id,
-              "Book Name": selectedBook.name,
-              ...(selectedBook.author ? { Author: selectedBook.author } : {}),
-              Branch:
-                selectedBook.branch ||
-                branches.find(
-                  (branch) =>
-                    String(branch.branch_id) === String(selectedBook.branch_id),
-                )?.name ||
-                "N/A",
-              Category:
-                categories.find(
-                  (c) => c.category_id === selectedBook.category_id,
-                )?.category_name ||
-                selectedBook.category ||
-                "N/A",
-              Language: selectedBook.language || "N/A",
-              Status: selectedBook.status || "N/A",
-              Description:
-                selectedBook.description || "No description available.",
+            show={!!selectedBookId}
+            onClose={() => {
+              setSelectedBookId(null);
+              setIsViewLoading(false);
             }}
-          />
+            title={
+              selectedBookLoading || isViewLoading
+                ? "LOADING INFO..."
+                : "Book Details"
+            }
+            imageUrl={getImageUrl(selectedBookDetail?.image_url)}
+            imageAlt={selectedBookDetail?.name || "Book cover"}
+            data={
+              selectedBookLoading || isViewLoading || !selectedBookDetail
+                ? null
+                : {
+                    "Book ID": selectedBookDetail.book_id,
+                    "Book Name": selectedBookDetail.name,
+                    ...(selectedBookDetail.author
+                      ? { Author: selectedBookDetail.author }
+                      : {}),
+                    Branch:
+                      selectedBookDetail.branch ||
+                      branches.find(
+                        (branch) =>
+                          String(branch.branch_id) ===
+                          String(selectedBookDetail.branch_id),
+                      )?.name ||
+                      "N/A",
+                    Category:
+                      categories.find(
+                        (c) => c.category_id === selectedBookDetail.category_id,
+                      )?.category_name ||
+                      selectedBookDetail.category ||
+                      "N/A",
+                    Language: selectedBookDetail.language || "N/A",
+                    Status: selectedBookDetail.status || "N/A",
+                    Description:
+                      selectedBookDetail.description ||
+                      "No description available.",
+                  }
+            }
+          >
+            {(selectedBookLoading || isViewLoading) && (
+              <div className="flex h-40 w-full items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0b0c28] border-t-transparent dark:border-white"></div>
+              </div>
+            )}
+          </ViewDetailsPopup>
         )}
       </main>
     </div>

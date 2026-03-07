@@ -35,7 +35,6 @@ const AdminNotifications = () => {
     id: "",
     user_id: "",
     name: "",
-    phone_number: "",
     plan: "",
     role: "User",
     status: "Active",
@@ -151,17 +150,12 @@ const AdminNotifications = () => {
         alert("Password is required for new users.");
         return;
       }
-      if (!formData.phone_number || formData.phone_number.trim() === "") {
-        alert("Phone number is required.");
-        return;
-      }
 
       const selectedRole =
         isSuperAdmin && formData.role ? formData.role : "User";
       const apiData = {
         user_id: formData.user_id.trim(),
         name: formData.name,
-        phone_number: formData.phone_number,
         role: selectedRole,
         plan: formData.plan || null,
         status: formData.status || "Active",
@@ -187,7 +181,6 @@ const AdminNotifications = () => {
         id: "",
         user_id: "",
         name: "",
-        phone_number: "",
         plan: "",
         role: "User",
         status: "Active",
@@ -203,11 +196,10 @@ const AdminNotifications = () => {
         error.response?.data?.message || error.message || JSON.stringify(error);
       const responseData = JSON.stringify(error.response?.data || {});
       if (
-        errorMsg.includes("UQ_Users_PhoneNumber") ||
-        responseData.includes("UQ_Users_PhoneNumber") ||
+        errorMsg.includes("duplicate") ||
         responseData.includes("duplicate")
       ) {
-        setFormError("This phone number is already registered.");
+        setFormError("This email is already registered.");
       } else {
         setFormError("Failed to save user. Please try again.");
       }
@@ -240,7 +232,6 @@ const AdminNotifications = () => {
             id: "",
             user_id: "",
             name: request.name || "",
-            phone_number: request.phone_number || "",
             plan: request.plan || "",
             role: "User",
             status: "Active",
@@ -260,7 +251,6 @@ const AdminNotifications = () => {
                 name: request.name,
                 email: request.email,
                 password: request.password,
-                phone_number: request.phone_number,
                 plan: request.plan,
                 status: "Rejected",
               },

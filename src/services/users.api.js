@@ -6,6 +6,10 @@ export const getAllUsers = async ({ page = 1, limit = 12 } = {}) => {
   return await apiGet(`${BASE_ENDPOINT}?page=${page}&limit=${limit}`);
 };
 
+export const getLibrarians = async () => {
+  return await apiGet(`${BASE_ENDPOINT}/librarians`);
+};
+
 // Get user by ID
 export const getUserById = async (id) => {
   return await apiGet(`${BASE_ENDPOINT}/byid/${id}`);

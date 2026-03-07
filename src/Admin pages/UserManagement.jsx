@@ -23,6 +23,7 @@ import CommonLayout from "../Layouts/CommonLayout.jsx";
 import { FilePenLine, Trash2, ReceiptText, RotateCcw } from "lucide-react";
 
 import { getCurrentUser } from "../services/auth.api";
+import { getImageUrl } from "../services/api.config";
 
 function UserManagement({ searchValue, setSearchValue }) {
   const currentUser = getCurrentUser();
@@ -41,8 +42,9 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [formError, setFormError] = useState(null);
   const [formData, setFormData] = useState({
     id: "",
-    name: "",
-    phone_number: "",
+    first_name: "",
+    last_name: "",
+    email: "",
     plan: "",
     role: "User",
     status: "Active",
@@ -114,7 +116,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       <div className="p-10 text-center text-red-500">
         <h2 className="text-xl font-bold">Error Loading Users</h2>
         <p>{error?.message || "Unknown error occurred"}</p>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-[#000035]">
           Check if the backend is running and the API endpoint "/api/Users" is
           accessible.
         </p>
@@ -166,17 +168,14 @@ function UserManagement({ searchValue, setSearchValue }) {
         alert("Password is required for new users.");
         return;
       }
-      if (!formData.phone_number || formData.phone_number.trim() === "") {
-        alert("Phone number is required.");
-        return;
-      }
 
       const selectedRole =
         isSuperAdmin && formData.role ? formData.role : "User";
       const apiData = {
         user_id: formData.user_id.trim(),
-        name: formData.name,
-        phone_number: formData.phone_number,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
         role: selectedRole,
         plan: formData.plan || null,
         status: formData.status || "Active",
@@ -214,8 +213,9 @@ function UserManagement({ searchValue, setSearchValue }) {
       setFormData({
         id: "",
         user_id: "",
-        name: "",
-        phone_number: "",
+        first_name: "",
+        last_name: "",
+        email: "",
         plan: "",
         role: "User",
         status: "Active",
@@ -232,11 +232,10 @@ function UserManagement({ searchValue, setSearchValue }) {
         error.response?.data?.message || error.message || JSON.stringify(error);
       const responseData = JSON.stringify(error.response?.data || {});
       if (
-        errorMsg.includes("UQ_Users_PhoneNumber") ||
-        responseData.includes("UQ_Users_PhoneNumber") ||
+        errorMsg.includes("duplicate") ||
         responseData.includes("duplicate")
       ) {
-        setFormError("This phone number is already registered.");
+        setFormError("This email is already registered.");
       } else {
         setFormError("Failed to save user. Please try again.");
       }
@@ -263,8 +262,9 @@ function UserManagement({ searchValue, setSearchValue }) {
     setFormData({
       id: user.user_id,
       user_id: user.user_id,
-      name: user.name || "",
-      phone_number: user.phone_number || "",
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
+      email: user.email || "",
       plan: user.plan || "",
       role: user.role || "User",
       status: user.status || "Active",
@@ -427,8 +427,9 @@ function UserManagement({ searchValue, setSearchValue }) {
     setFormData({
       id: "",
       user_id: "",
-      name: "",
-      phone_number: "",
+      first_name: "",
+      last_name: "",
+      email: "",
       plan: "",
       role: "User",
       status: "Active",
@@ -536,7 +537,9 @@ function UserManagement({ searchValue, setSearchValue }) {
     searchValue
       ? visibleUsers.filter(
           (user) =>
-            user.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+            `${user.first_name || ""} ${user.last_name || ""}`
+              .toLowerCase()
+              .includes(searchValue.toLowerCase()) ||
             user.user_id?.toString().includes(searchValue) ||
             getUserBranchName(user)
               .toLowerCase()
@@ -545,6 +548,7 @@ function UserManagement({ searchValue, setSearchValue }) {
       : visibleUsers
   ).map((user) => ({
     ...user,
+    name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),
     formatted_exp_date: formatDate(user.subscription_end_date),
     branch_display: getUserBranchName(user),
   }));
@@ -554,7 +558,8 @@ function UserManagement({ searchValue, setSearchValue }) {
   const columns = [
     { header: "User ID", accessor: "user_id" },
     { header: "Name", accessor: "name" },
-    { header: "Contact No", accessor: "phone_number" },
+
+    { header: "Email", accessor: "email" },
     ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display" }] : []),
     { header: "Plan", accessor: "plan" },
     { header: "Exp Date", accessor: "formatted_exp_date" },
@@ -651,7 +656,10 @@ function UserManagement({ searchValue, setSearchValue }) {
     if (!createdById) return { name: "N/A", role: "Not recorded" };
     const creator = users.find((u) => u.user_id === createdById);
     return creator
-      ? { name: creator.name, role: creator.role }
+      ? {
+          name: `${creator.first_name || ""} ${creator.last_name || ""}`.trim(),
+          role: creator.role,
+        }
       : { name: createdById, role: "Unknown" };
   };
 
@@ -717,14 +725,16 @@ function UserManagement({ searchValue, setSearchValue }) {
           setSelectedUser(null);
         }}
         title="View User"
+        imageUrl={selectedUser ? getImageUrl(selectedUser.image_url) : null}
         data={
           selectedUser
             ? {
                 "User ID": selectedUser.user_id,
-                Name: selectedUser.name,
+                Name: `${selectedUser.first_name || ""} ${selectedUser.last_name || ""}`.trim(),
                 Branch: getUserBranchName(selectedUser),
-                "Phone Number": selectedUser.phone_number,
-                Plan: selectedUser.plan || "N/A",
+
+                Email: selectedUser.email || "",
+                Plan: selectedUser.plan || "",
               }
             : null
         }

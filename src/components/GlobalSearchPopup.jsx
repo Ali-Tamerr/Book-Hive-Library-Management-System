@@ -132,7 +132,7 @@ function GlobalSearchPopup({ show, onClose }) {
             <div className="rounded-lg bg-[#D7D7D7] p-4 text-[#0b0b3b]">
               <Search size={24} />
             </div>
-            <span className="text-lg font-bold text-[#000035] font-['Bebas_Neue',sans-serif]">
+            <span className="font-['Bebas_Neue',sans-serif] text-lg font-bold text-[#000035]">
               Global Search
             </span>
           </div>
@@ -144,7 +144,7 @@ function GlobalSearchPopup({ show, onClose }) {
             <X
               size={24}
               strokeWidth={2.9}
-              className="rounded-[7px] border-[2px] p-1 text-[#525252]"
+              className="rounded-[7px] border-[2px] p-1 text-[#000035]"
             />
           </button>
         </div>
@@ -154,7 +154,7 @@ function GlobalSearchPopup({ show, onClose }) {
         <div className="mb-6">
           <div className="relative">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 transform text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 transform text-[#000035]"
               size={20}
             />
             <input
@@ -162,7 +162,7 @@ function GlobalSearchPopup({ show, onClose }) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search books, users, branches, categories..."
-              className="h-[50px] w-full rounded-xl border border-[#3D3E3E] pl-12 pr-4 text-[14px] outline-none focus:border-[#1e255e]"
+              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] pl-12 pr-4 text-[14px] outline-none"
               autoFocus
             />
           </div>
@@ -171,9 +171,9 @@ function GlobalSearchPopup({ show, onClose }) {
         <div className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-[#8787A3]">
           <div className="min-w-[100px] flex-1 overflow-auto">
             {isLoading ? (
-              <div className="p-8 text-center text-gray-500">Loading...</div>
+              <div className="p-8 text-center text-[#000035]">Loading...</div>
             ) : searchTerm === "" ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-[#000035]">
                 <Search size={48} className="mx-auto mb-4 opacity-30" />
                 <p>
                   Start typing to search across books, users, branches, and
@@ -181,7 +181,7 @@ function GlobalSearchPopup({ show, onClose }) {
                 </p>
               </div>
             ) : searchResults.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-[#000035]">
                 No results found for "{searchTerm}"
               </div>
             ) : (
@@ -199,7 +199,7 @@ function GlobalSearchPopup({ show, onClose }) {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="border-t border-[#0a0f33]">
+                <tbody className="border-t border-[#000035]">
                   {searchResults.map((result, index) => {
                     const IconComponent = result.icon;
                     return (
@@ -208,7 +208,7 @@ function GlobalSearchPopup({ show, onClose }) {
                           <div className="flex items-center justify-center gap-2">
                             <IconComponent
                               size={16}
-                              className="text-gray-500"
+                              className="text-[#000035]"
                             />
                             <span>{result.name}</span>
                           </div>
@@ -250,7 +250,7 @@ function GlobalSearchPopup({ show, onClose }) {
           </div>
         </div>
 
-        <div className="mt-4 text-center text-sm text-gray-500">
+        <div className="mt-4 text-center text-sm text-[#000035]">
           {searchTerm && searchResults.length > 0 && (
             <span>
               Found {searchResults.length} result

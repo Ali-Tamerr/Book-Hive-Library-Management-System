@@ -32,7 +32,7 @@ const Popup = ({
       <div className="absolute inset-0" onClick={onClose}></div>
 
       <div
-        className={`popup-typography relative ${maxWidthClass ? maxWidthClass : "max-w-2xl"} flex max-h-[90vh] w-full flex-col rounded-xl bg-white p-14 pb-0 shadow-xl dark:border dark:border-[#E8E8E8] dark:bg-[#131418] ${panelClassName || ""}`}
+        className={`popup-typography relative ${maxWidthClass ? maxWidthClass : "max-w-2xl"} flex max-h-[90vh] w-full flex-col rounded-xl border border-[#000035] bg-[#F2F2F2] p-14 pb-0 shadow-xl dark:border dark:border-[#D7D7D7] dark:border-[#E8E8E8] dark:bg-[#121317] ${panelClassName || ""}`}
       >
         {!hideHeader && (
           <div
@@ -41,20 +41,20 @@ const Popup = ({
             <div className="flex items-center gap-4">
               {icon && (
                 <div
-                  className={`flex min-h-[60px] min-w-[60px] items-center justify-center rounded-lg bg-[#D7D7D7] text-[#0a0f33] ${iconWrapperClassName || ""}`}
+                  className={`flex min-h-[60px] min-w-[60px] items-center justify-center rounded-lg border border-[#000035] dark:border-[#D7D7D7] ${iconWrapperClassName || ""}`}
                 >
                   {icon}
                 </div>
               )}
               <h2
-                className={`text-xl font-bold text-[#0a0f33] dark:text-white font-['Bebas_Neue',sans-serif] ${titleClassName || ""}`}
+                className={`font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-widest text-[#000035] dark:text-white ${titleClassName || ""}`}
               >
                 {title}
               </h2>
             </div>
             <button
               onClick={onClose}
-              className={`mr-13 cursor-pointer rounded-md border border-[#525252] p-1 text-[#525252] transition-colors hover:bg-gray-100 hover:text-gray-600 dark:border-[#E0E0E0] dark:text-[#E0E0E0] dark:hover:bg-[#2C2D33] ${closeButtonClassName || ""}`}
+              className={`mr-13 cursor-pointer rounded-md border border-[#000035] p-1 text-[#000035] transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7] ${closeButtonClassName || ""}`}
             >
               <X size={14} />
             </button>
@@ -62,11 +62,11 @@ const Popup = ({
         )}
         {!hideDivider && (
           <div
-            className={`mx-auto h-[1px] w-[100%] bg-black dark:bg-[#2C2D33] ${dividerClassName || ""}`}
+            className={`mx-auto h-[1px] w-[100%] bg-[#000035] dark:bg-[#D7D7D7] ${dividerClassName || ""}`}
           ></div>
         )}
         <div
-          className={`overflow-y-auto ${contentClassName || "px-4 py-8"}`}
+          className={`flex-1 overflow-y-auto ${contentClassName || "px-4 py-8"}`}
         >
           {children}
         </div>

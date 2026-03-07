@@ -36,8 +36,7 @@ const FeaturedSection = ({
               ).map((book) => (
                 <article
                   key={book.book_id}
-                 
-                  className="duration-400 relative flex h-[760px] min-w-[400px] shrink-0 flex-col items-center overflow-hidden rounded-[24px] border-none bg-white p-[30px_35px] text-center shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-[box-shadow,background-color,border-color] dark:border dark:border-[#b9bdc8] dark:bg-[#121317] dark:shadow-[0_12px_28px_rgba(0,0,0,0.52)]"
+                  className="duration-400 relative flex h-[760px] min-w-[400px] shrink-0 flex-col items-center overflow-hidden rounded-[24px] border-none bg-[#D7D7D7] p-[30px_35px] text-center shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-[box-shadow,background-color,border-color] dark:border dark:border-[#b9bdc8] dark:bg-[#121317] dark:shadow-[0_12px_28px_rgba(0,0,0,0.52)]"
                   style={{
                     width: `calc(${80 / featuredPerView}% - 60px)`,
                     margin: "0 30px",
@@ -62,15 +61,15 @@ const FeaturedSection = ({
               ))}
             </div>
           </div>
-                   <button
+          <button
             onClick={featuredPrev}
-            className="absolute left-0 top-1/2 z-10 flex h-16 w-16 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl border-none bg-[var(--first-color)] font-[family-name:var(--body-font)] text-[length:var(--normal-font-size)] text-white"
+            className="absolute left-0 top-1/2 z-10 flex h-16 w-16 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl border-none bg-[var(--first-color)] font-[family-name:var(--body-font)] text-[length:var(--normal-font-size)] text-[#D7D7D7]"
           >
             <i className="ri-arrow-left-s-line text-4xl"></i>
           </button>
           <button
             onClick={featuredNext}
-            className="absolute right-0 top-1/2 z-10 flex h-16 w-16 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl border-none bg-[var(--first-color)] font-[family-name:var(--body-font)] text-[length:var(--normal-font-size)] text-white"
+            className="absolute right-0 top-1/2 z-10 flex h-16 w-16 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl border-none bg-[var(--first-color)] font-[family-name:var(--body-font)] text-[length:var(--normal-font-size)] text-[#D7D7D7]"
           >
             <i className="ri-arrow-right-s-line text-4xl"></i>
           </button>

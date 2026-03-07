@@ -101,7 +101,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
 
   return (
     <>
-      <header className="flex h-min w-full items-center justify-between bg-white px-4 py-4 text-[#0a0f33] shadow-[0_2px_6px_rgba(0,0,0,0.05)] dark:bg-[#121317] dark:text-[#E8E8E8]">
+      <header className="flex h-min w-full items-center justify-between px-4 py-4 text-[#000035] dark:text-[#E8E8E8]">
         <div className="flex-2 flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
             {currentUser?.image_url ? (
@@ -111,12 +111,14 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <UserRound className="h-12 w-12" />
+              <UserRound className="h-12 w-12 dark:text-[#121317]" />
             )}
           </div>
           <div>
-            <h3 className="text-lg font-semibold max-[480px]:text-sm max-[350px]:text-xs">
-              {currentUser ? currentUser.name || "User" : "Loading..."}
+            <h3 className="text-2xl tracking-wide font-semibold max-[480px]:text-sm max-[350px]:text-xs">
+              {currentUser
+                ? currentUser.first_name + " " + currentUser.last_name || "User"
+                : "Loading..."}
             </h3>
             <p className="text-sm font-semibold max-[350px]:text-[10px]">
               {roleLabel}
