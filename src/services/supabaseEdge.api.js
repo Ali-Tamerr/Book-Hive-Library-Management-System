@@ -1,22 +1,8 @@
-import { apiPost } from "./api.config";
-
-export const checkBook = async (userId, bookCopyId) => {
-  return await apiPost("/supabase/check_book", {
-    user_id: userId,
-    book_copy_id: bookCopyId,
-  });
-};
-
-export const checkUser = async (userId) => {
-  return await apiPost("/supabase/check_user", {
-    user_id: userId,
-  });
-};
-
-export const startRegisterMode = async (deviceId, bookId) => {
+export const startRegisterMode = async (deviceId) => {
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   const supabaseUrl = "https://guoanmhasnpjmlewqzrs.supabase.co";
 
+  // 1) حاول تنادي Edge Function مباشرة
   if (supabaseKey) {
     try {
       const response = await fetch(
@@ -30,22 +16,30 @@ export const startRegisterMode = async (deviceId, bookId) => {
           },
           body: JSON.stringify({
             device_id: deviceId,
-            book_id: bookId,
           }),
-        },
+        }
       );
-      if (response.ok) return await response.json();
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.warn(
+          "Direct Supabase start_register_mode failed:",
+          response.status,
+          text
+        );
+      } else {
+        return await response.json();
+      }
     } catch (err) {
       console.warn(
         "Direct Supabase call failed, falling back to backend:",
-        err,
+        err
       );
     }
   }
 
-  // Fallback to local backend API
+  // 2) Fallback: ننده نفس الفنكشن عبر الباك .NET لو محتاجين
   return await apiPost("/supabase/start_register_mode", {
     device_id: deviceId,
-    book_id: bookId,
   });
 };

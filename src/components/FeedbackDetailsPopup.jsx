@@ -65,7 +65,9 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
             From User
           </label>
           <div className="text-lg font-medium text-[#1e255e] dark:text-white">
-            {user?.name || "Unknown User"}
+            {`${user?.first_name || ""} ${user?.last_name || ""}`.trim() ||
+              user?.user_id ||
+              "Unknown User"}
           </div>
           <div className="text-sm text-[#000035]">
             ID: {feedback.user_id} • {formatDate(feedback.created_at)}

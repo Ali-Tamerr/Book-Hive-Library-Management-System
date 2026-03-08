@@ -22,6 +22,11 @@ const FeedbackPopup = ({ show, onClose }) => {
       return;
     }
 
+    if (!feedbackText.trim()) {
+      alert("Please enter your feedback before submitting.");
+      return;
+    }
+
     const currentUser = getCurrentUser();
     if (!currentUser?.user_id) {
       alert("Please sign in to submit feedback.");
@@ -33,7 +38,7 @@ const FeedbackPopup = ({ show, onClose }) => {
     try {
       const newFeedback = {
         user_id: currentUser.user_id,
-        description: feedbackText,
+        description: feedbackText.trim(),
         rate: Math.round(rating),
       };
 

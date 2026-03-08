@@ -124,18 +124,6 @@ function UserManagement({ searchValue, setSearchValue }) {
     );
   }
 
-  useEffect(() => {
-    const handleOpenRequests = () => {
-      setShowRequestsPopup(true);
-    };
-
-    window.addEventListener("openUserRequests", handleOpenRequests);
-
-    return () => {
-      window.removeEventListener("openUserRequests", handleOpenRequests);
-    };
-  }, []);
-
   // Backup: Window Scroll Listener (in case layout allows body scroll)
   useEffect(() => {
     const handleWindowScroll = () => {
