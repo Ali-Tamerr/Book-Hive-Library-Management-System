@@ -25,16 +25,16 @@ const AdminDashboardCard = ({
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
               <svg
                 viewBox="0 0 100 100"
-                className="absolute inset-0 h-full w-full fill-[#000035]"
+                className="absolute inset-0 h-full w-full fill-[#000035] dark:fill-[#D7D7D7]"
               >
                 <path
                   d="M50 12 L82 30 L82 70 L50 88 L18 70 L18 30 Z"
                   strokeWidth="24"
                   strokeLinejoin="round"
-                  stroke="#000035"
+                  className="stroke-[#000035] dark:stroke-[#D7D7D7]"
                 />
               </svg>
-              <User className="relative z-10 h-5 w-5 text-[#F2F2F2]" />
+              <User className="relative z-10 h-5 w-5 text-[#F2F2F2] dark:text-[#121317]" />
             </div>
 
             <div className="h-10 w-[2px] rounded-full bg-[#000035] dark:bg-[#D7D7D7]"></div>
