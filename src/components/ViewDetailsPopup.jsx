@@ -181,7 +181,7 @@ const ViewDetailsPopup = ({
         onClose={onClose}
         title={title}
         icon={null}
-        maxWidthClass={variant === "book" ? "max-w-[1200px]" : "max-w-[700px]"}
+        maxWidthClass={variant === "book" ? "max-w-[1200px]" : "w-min"}
         panelClassName={`!p-0 ${variant === "book" ? "h-full max-h-[700px]" : "h-auto"} overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#D7D7D7] dark:bg-[#121317]`}
         contentClassName={`${variant === "book" ? "h-full overflow-y-auto" : "h-auto overflow-hidden"} p-0 overflow-x-hidden`}
         hideHeader
@@ -192,7 +192,7 @@ const ViewDetailsPopup = ({
           className={`grid ${variant === "book" ? "h-full grid-cols-1 lg:grid-cols-[440px_1px_1fr]" : "h-auto grid-cols-1 lg:grid-cols-[auto_1px_auto]"}`}
         >
           <div
-            className={`flex flex-col items-center justify-center ${variant === "book" ? "px-10 pb-10 pt-10" : "py-3 pl-4 pr-1"}`}
+            className={`flex flex-col items-center justify-center ${variant === "book" ? "px-10 pb-10 pt-10" : "p-10"}`}
           >
             <div className="flex items-center justify-center">
               {variant === "book" ? (
@@ -208,9 +208,9 @@ const ViewDetailsPopup = ({
                   </div>
                 )
               ) : (
-                <div className="relative flex aspect-square h-[200px] w-[200px] items-center justify-center">
+                <div className="relative flex aspect-square h-[200px] w-[200px] items-center justify-center p-2">
                   {imageUrl ? (
-                    <div className="h-full w-full overflow-hidden rounded-full">
+                    <div className="-mt-4 h-full w-full overflow-hidden rounded-full">
                       <img
                         src={imageUrl}
                         alt={imageAlt || String(headingText || "Details")}
@@ -218,8 +218,11 @@ const ViewDetailsPopup = ({
                       />
                     </div>
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center rounded-full bg-[#000020]">
-                      <UserRound size={64} className="text-[#F2F2F2]" />
+                    <div className="-mt-4 flex h-full w-full items-center justify-center rounded-full bg-[#000035] dark:bg-[#D7D7D7]">
+                      <UserRound
+                        size={64}
+                        className="text-[#F2F2F2] dark:text-[#121317]"
+                      />
                     </div>
                   )}
                 </div>
@@ -235,7 +238,7 @@ const ViewDetailsPopup = ({
           </div>
 
           <div
-            className={`${variant === "book" ? "my-6" : "my-3 h-auto min-h-[140px]"} mx-auto hidden w-px bg-[#000035]/20 lg:block dark:bg-[#D7D7D7]/20`}
+            className={`${variant === "book" ? "my-6" : "my-3 h-auto min-h-[140px]"} mx-auto hidden w-px bg-[#000035]/50 lg:block dark:bg-[#D7D7D7]/50`}
           />
 
           <div
