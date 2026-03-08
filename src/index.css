@@ -41,8 +41,8 @@
   --card-shadow-hover: 0 16px 26px rgba(10, 10, 35, 0.16);
   --center-bg: #ffffff;
   --center-border: #0a0b2b;
-  --pie-borrowed-color: #3d3e3e;
-  --pie-returned-color: #000035;
+  --pie-borrowed-color: #000035;
+  --pie-returned-color: #3d3e3e;
   --max-w: 1500px;
   --gap: 32px;
 }
@@ -294,7 +294,7 @@ body.dark-theme {
   --card-bg: #15161b;
   --center-bg: #15161b;
   --pie-borrowed-color: #d7d7d7;
-  --pie-returned-color: #d7d7d7;
+  --pie-returned-color: #3d3e3e;
   --white: #151515;
   background: #121317;
 }
