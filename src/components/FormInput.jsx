@@ -14,9 +14,11 @@ const FormInput = ({
   className,
   rightIcon,
   onRightIconClick,
+  inputRef,
 }) => {
   const commonProps = {
     name,
+    ref: inputRef,
     value: value || "",
     onChange,
     placeholder,
