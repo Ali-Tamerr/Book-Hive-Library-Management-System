@@ -4,6 +4,8 @@ import { Wifi, Usb, Loader2 } from "lucide-react";
 import { startRegisterMode } from "../services/supabaseEdge.api";
 
 const NFCReaderButton = ({
+  onDataReceived,
+  bookId,
   deviceId = "kiosk1",
   inputRef,
   isFlexOne = "false",
@@ -13,9 +15,16 @@ const NFCReaderButton = ({
     isWireless,
     handleConnectClick,
     toggleWireless,
+    registerCallback,
   } = useNFCReader();
 
   const [isActivating, setIsActivating] = useState(false);
+
+  useEffect(() => {
+    if (!onDataReceived) return;
+    const unregister = registerCallback(onDataReceived);
+    return unregister;
+  }, [onDataReceived, registerCallback]);
 
   useEffect(() => {
     if ((isConnected || isWireless) && inputRef?.current) {
@@ -40,12 +49,17 @@ const NFCReaderButton = ({
     try {
       setIsActivating(true);
 
-      console.log("Calling startRegisterMode for", deviceId);
+      console.log(
+        "Calling startRegisterMode for",
+        deviceId,
+        "with bookId",
+        bookId,
+      );
 
-      // ننده Edge Function ونبعت device_id بس
-      await startRegisterMode(deviceId);
+      // ننده Edge Function ونبعت context كامل (device_id و book_id)
+      await startRegisterMode(deviceId, bookId);
 
-      // (اختياري) فعّل wireless visual state
+      // فعّل wireless visual state والـ polling
       toggleWireless();
     } catch (err) {
       console.error("Activation failed:", err);

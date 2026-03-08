@@ -60,23 +60,30 @@ function BookCopiesPopup({
     setCurrentInputIndex(index);
   };
 
-  const handleNFCData = React.useCallback(
-    (uid) => {
-      // Set the UID in the currently focused/active box
-      handleCopyChange(currentInputIndex, uid);
+  const handleNFCData = React.useCallback((uid) => {
+    setCopies((prev) => {
+      const updated = [...prev];
+      // Find the first empty row
+      const firstEmptyIndex = updated.findIndex((c) => !c || c.trim() === "");
 
-      // Auto-focus next box if exists
-      const nextIndex = currentInputIndex + 1;
-      if (nextIndex < copies.length) {
-        setTimeout(() => {
-          const el = inputRefs.current[nextIndex];
-          if (el) el.focus();
-          setCurrentInputIndex(nextIndex);
-        }, 100);
+      if (firstEmptyIndex !== -1) {
+        updated[firstEmptyIndex] = uid;
+
+        // Auto-focus next empty box if exists
+        const nextEmptyIndex = updated.findIndex(
+          (c, idx) => idx > firstEmptyIndex && (!c || c.trim() === ""),
+        );
+        if (nextEmptyIndex !== -1) {
+          setTimeout(() => {
+            const el = inputRefs.current[nextEmptyIndex];
+            if (el) el.focus();
+            setCurrentInputIndex(nextEmptyIndex);
+          }, 100);
+        }
       }
-    },
-    [currentInputIndex, copies.length],
-  );
+      return updated;
+    });
+  }, []);
 
   // Realtime: استقبل UID من جدول scanned_book_uids للجهاز kiosk1
   useEffect(() => {
@@ -94,23 +101,7 @@ function BookCopiesPopup({
         },
         (payload) => {
           const uid = payload.new.uid;
-
-          // حط الـ UID في الخانة الحالية
-          setCopies((prev) => {
-            const updated = [...prev];
-            updated[currentInputIndex] = uid;
-            return updated;
-          });
-
-          // روح للخانة اللي بعدها لو موجودة
-          const nextIndex = currentInputIndex + 1;
-          if (nextIndex < copies.length) {
-            setCurrentInputIndex(nextIndex);
-            setTimeout(() => {
-              const el = inputRefs.current[nextIndex];
-              if (el) el.focus();
-            }, 100);
-          }
+          handleNFCData(uid);
         },
       )
       .subscribe();
