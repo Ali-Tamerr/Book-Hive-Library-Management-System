@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Copy, ChevronUp } from "lucide-react";
+import { Copy } from "lucide-react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
+import FormInput from "./FormInput.jsx";
+import FormSelect from "./FormSelect.jsx";
 import NFCReaderButton from "./NFCReaderButton.jsx";
 import { useBranches } from "../hooks/useBranches";
 import { createClient } from "@supabase/supabase-js";
@@ -22,7 +24,6 @@ function BookCopiesPopup({
   const [copies, setCopies] = useState([]);
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
   const [selectedBranch, setSelectedBranch] = useState("");
-  const [isBranchSelectOpen, setIsBranchSelectOpen] = useState(false);
   const inputRefs = useRef([]);
   const { data: branches = [] } = useBranches();
 
@@ -159,34 +160,15 @@ function BookCopiesPopup({
             />
           </div>
           <div className="relative flex-1">
-            <select
+            <FormSelect
               value={selectedBranch}
-              onChange={(e) => {
-                setSelectedBranch(e.target.value);
-                setIsBranchSelectOpen(false);
-              }}
-              onClick={() => setIsBranchSelectOpen(!isBranchSelectOpen)}
-              onBlur={() => setIsBranchSelectOpen(false)}
+              onChange={(e) => setSelectedBranch(e.target.value)}
+              placeholder="Select Branch"
               required
-              className="h-[50px] w-full appearance-none rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
-            >
-              <option value="" disabled hidden>
-                Select Branch
-              </option>
-              {branches.map((branch) => (
-                <option
-                  key={branch.branch_id}
-                  value={branch.branch_id}
-                  className="bg-[#D7D7D7] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
-                >
-                  {branch.name}
-                </option>
-              ))}
-            </select>
-            <ChevronUp
-              className={`pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#000035] transition-transform duration-200 dark:text-[#D7D7D7] ${
-                isBranchSelectOpen ? "rotate-180" : "rotate-0"
-              }`}
+              options={branches.map((branch) => ({
+                value: branch.branch_id,
+                label: branch.name,
+              }))}
             />
           </div>
         </div>
@@ -197,16 +179,15 @@ function BookCopiesPopup({
           } gap-3`}
         >
           {copies.map((copy, index) => (
-            <input
+            <FormInput
               key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
+              inputRef={(el) => (inputRefs.current[index] = el)}
               type="text"
               value={copy}
               onChange={(e) => handleCopyChange(index, e.target.value)}
               onFocus={() => handleInputFocus(index)}
               placeholder={`ID`}
               required
-              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           ))}
         </div>
