@@ -50,7 +50,11 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
           <input
             type="text"
             readOnly
-            value={user?.name || ""}
+            value={
+              `${user?.first_name || ""} ${user?.last_name || ""}`.trim() ||
+              user?.user_id ||
+              ""
+            }
             placeholder="Name"
             className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[13px] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
           />

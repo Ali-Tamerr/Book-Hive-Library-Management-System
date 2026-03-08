@@ -29,6 +29,11 @@ const RateBookPopup = ({ show, onClose, bookId, initialReview }) => {
       return;
     }
 
+    if (!reviewText.trim()) {
+      alert("Please write a review before submitting.");
+      return;
+    }
+
     if (!bookId) {
       console.error("Missing bookId");
       return;
@@ -46,8 +51,8 @@ const RateBookPopup = ({ show, onClose, bookId, initialReview }) => {
       const newReview = {
         book_id: bookId,
         user_id: currentUser.user_id,
-        review_text: reviewText,
-        rating: rating,
+        review_text: reviewText.trim(),
+        rating: Math.round(rating),
       };
 
       await createBookReviewMutation.mutateAsync(newReview);

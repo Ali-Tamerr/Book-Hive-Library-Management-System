@@ -75,7 +75,7 @@ function BranchesPopup({ isOpen, onClose }) {
                         {branch.name || "N/A"}
                       </td>
                       <td className="px-4 py-6 text-[#000035]">
-                        {branch.phone_number || branch.contact_no || "N/A"}
+                        {branch.contact_number || branch.phone_number || "N/A"}
                       </td>
                       <td className="px-4 py-6 text-center text-[#000035]">
                         {branch.location || branch.address || "N/A"}

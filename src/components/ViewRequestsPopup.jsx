@@ -663,7 +663,7 @@ const ViewRequestsPopup = ({
                 </thead>
                 <tbody className="border-t border-[#000035]">
                   {filteredFeedbackRequests.map((request, index) => (
-                    <tr key={request.request_id || index}>
+                    <tr key={request.request_id || request.feedback_id || index}>
                       <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
                         {getUserName(request.user_id)}
                       </td>

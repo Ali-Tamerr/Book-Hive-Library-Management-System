@@ -125,7 +125,10 @@ function Categories({ searchValue, setSearchValue }) {
     if (!createdById) return { name: "N/A", role: "Not recorded" };
     const creator = users.find((u) => u.user_id === createdById);
     return creator
-      ? { name: creator.name, role: creator.role }
+      ? {
+          name: `${creator.first_name || ""} ${creator.last_name || ""}`.trim(),
+          role: creator.role,
+        }
       : { name: createdById, role: "Unknown" };
   };
 

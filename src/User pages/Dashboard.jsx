@@ -17,6 +17,10 @@ import { apiGet, getImageUrl } from "../services/api.config";
 
 function Dashboard() {
   const currentUser = getCurrentUser();
+  const currentUserDisplayName =
+    `${currentUser?.first_name || ""} ${currentUser?.last_name || ""}`.trim() ||
+    currentUser?.user_id ||
+    "User";
   const { data: usersData, isLoading: usersLoading } = useUsers();
   const users = usersData
     ? usersData.pages.flatMap((page) => page.data || [])
@@ -464,7 +468,7 @@ function Dashboard() {
             <div className="mb-10 mt-auto flex w-full justify-center">
               <div className="text-md w-fit rounded-md bg-white p-3 pr-6 dark:bg-transparent">
                 <p className="text-[#0b0c28] dark:text-white">
-                  Dear {currentUser?.name || "User"}, please note that your
+                  Dear {currentUserDisplayName}, please note that your
                   subscription will expire on{" "}
                   <span className="block font-bold">
                     {subscriptionExpirationLabel}.
