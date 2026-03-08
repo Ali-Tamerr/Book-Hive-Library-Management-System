@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Copy, ChevronUp } from "lucide-react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
 import NFCReaderButton from "./NFCReaderButton.jsx";
 import { useBranches } from "../hooks/useBranches";
-import { useNFCReader } from "../contexts/NFCReaderContext";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
 
 function BookCopiesPopup({
   show,
@@ -18,13 +23,14 @@ function BookCopiesPopup({
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
   const [selectedBranch, setSelectedBranch] = useState("");
   const [isBranchSelectOpen, setIsBranchSelectOpen] = useState(false);
-  const inputRefs = React.useRef([]);
+  const inputRefs = useRef([]);
   const { data: branches = [] } = useBranches();
-  const { isConnected } = useNFCReader();
 
+  // تهيئة النسخ عند فتح البوب‑اب
   useEffect(() => {
     if (show) {
       const qty = parseInt(quantity, 10) || 1;
+
       if (bookCopies && bookCopies.length > 0) {
         const existingCopies = bookCopies.map((c) => c.book_copy_id || "");
         const firstBranch = bookCopies[0]?.branch_id || "";
@@ -38,19 +44,11 @@ function BookCopiesPopup({
         setCopies(Array(qty).fill(""));
         setSelectedBranch("");
       }
+
       inputRefs.current = Array(qty).fill(null);
       setCurrentInputIndex(0);
     }
   }, [show, quantity, bookCopies]);
-
-  useEffect(() => {
-    if (isConnected && inputRefs.current[0]) {
-      setTimeout(() => {
-        inputRefs.current[0].focus();
-        setCurrentInputIndex(0);
-      }, 150);
-    }
-  }, [isConnected]);
 
   const handleCopyChange = (index, value) => {
     const newCopies = [...copies];
@@ -58,32 +56,51 @@ function BookCopiesPopup({
     setCopies(newCopies);
   };
 
-  const handleNFCData = React.useCallback(
-    (data) => {
-      handleCopyChange(currentInputIndex, data);
-
-      const nextIndex = currentInputIndex + 1;
-      if (nextIndex < copies.length) {
-        setTimeout(() => {
-          if (inputRefs.current[nextIndex]) {
-            inputRefs.current[nextIndex].focus();
-            setCurrentInputIndex(nextIndex);
-          }
-        }, 100);
-      }
-    },
-    [currentInputIndex, copies.length, copies, selectedBranch],
-  );
-
-  // Attach metadata to the function so NFCReaderButton can read it
-  handleNFCData.context = "book_copy";
-  handleNFCData.book_id = quantity; // Using quantity as a proxy for book_id if actual id isn't available yet in New mode
-  // Note: In Add mode, formData in parent has book_id as 0/null often,
-  // but start_register_mode function uses it to link the tag.
-
   const handleInputFocus = (index) => {
     setCurrentInputIndex(index);
   };
+
+  // Realtime: استقبل UID من جدول scanned_book_uids للجهاز kiosk1
+  useEffect(() => {
+    if (!show) return;
+
+    const channel = supabase
+      .channel("book-uid-scans")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "scanned_book_uids",
+          filter: "device_id=eq.kiosk1",
+        },
+        (payload) => {
+          const uid = payload.new.uid;
+
+          // حط الـ UID في الخانة الحالية
+          setCopies((prev) => {
+            const updated = [...prev];
+            updated[currentInputIndex] = uid;
+            return updated;
+          });
+
+          // روح للخانة اللي بعدها لو موجودة
+          const nextIndex = currentInputIndex + 1;
+          if (nextIndex < copies.length) {
+            setCurrentInputIndex(nextIndex);
+            setTimeout(() => {
+              const el = inputRefs.current[nextIndex];
+              if (el) el.focus();
+            }, 100);
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [show, currentInputIndex, copies.length]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -99,9 +116,8 @@ function BookCopiesPopup({
       return;
     }
 
-    const copyIds = copies;
-    const uniqueCopies = new Set(copyIds);
-    if (uniqueCopies.size !== copyIds.length) {
+    const uniqueCopies = new Set(copies);
+    if (uniqueCopies.size !== copies.length) {
       alert("Copy IDs must be unique");
       return;
     }
@@ -110,6 +126,7 @@ function BookCopiesPopup({
       book_copy_id: c,
       branch_id: parseInt(selectedBranch, 10),
     }));
+
     onSave(bookCopiesArray);
     onClose();
   };
@@ -125,11 +142,7 @@ function BookCopiesPopup({
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex gap-3 px-10">
           <div className="w-auto">
-            <NFCReaderButton
-              bookId={bookId || quantity}
-              context="book_copy"
-              onDataReceived={handleNFCData}
-            />
+            <NFCReaderButton deviceId="kiosk1" isFlexOne />
           </div>
           <div className="relative flex-1">
             <select
@@ -150,20 +163,24 @@ function BookCopiesPopup({
                 <option
                   key={branch.branch_id}
                   value={branch.branch_id}
-                  className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
+                  className="bg-[#D7D7D7] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
                 >
                   {branch.name}
                 </option>
               ))}
             </select>
             <ChevronUp
-              className={`pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#000035] transition-transform duration-200 dark:text-[#D7D7D7] ${isBranchSelectOpen ? "rotate-180" : "rotate-0"}`}
+              className={`pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#000035] transition-transform duration-200 dark:text-[#D7D7D7] ${
+                isBranchSelectOpen ? "rotate-180" : "rotate-0"
+              }`}
             />
           </div>
         </div>
 
         <div
-          className={`grid max-h-[400px] overflow-y-auto px-10 text-[#000035] ${copies.length === 1 ? "grid-cols-1" : "grid-cols-2"} gap-3`}
+          className={`grid max-h-[400px] overflow-y-auto px-10 text-[#000035] ${
+            copies.length === 1 ? "grid-cols-1" : "grid-cols-2"
+          } gap-3`}
         >
           {copies.map((copy, index) => (
             <input
@@ -179,7 +196,8 @@ function BookCopiesPopup({
             />
           ))}
         </div>
-        <div className="flex justify-between gap-3">
+
+        <div className="flex justify-between gap-3 px-10 pb-2">
           <FormButton type="button" onClick={onClose}>
             BACK
           </FormButton>
