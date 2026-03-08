@@ -22,14 +22,18 @@ const FeedbackPopup = ({ show, onClose }) => {
       return;
     }
 
+    const currentUser = getCurrentUser();
+    if (!currentUser?.user_id) {
+      alert("Please sign in to submit feedback.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const currentUser = getCurrentUser();
       const newFeedback = {
-        user_id: currentUser?.user_id || "Guest",
+        user_id: currentUser.user_id,
         description: feedbackText,
-        feedback: feedbackText,
         rate: Math.round(rating),
       };
 

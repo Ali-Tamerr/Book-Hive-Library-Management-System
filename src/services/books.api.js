@@ -22,7 +22,27 @@ export const getBookById = async (id) => {
 
 // Search books by title
 export const searchBooksByTitle = async (title) => {
-  return await apiGet(`${BASE_ENDPOINT}/${title}`);
+  const normalizedTitle = String(title || "").trim();
+  if (!normalizedTitle) return [];
+  return await apiGet(
+    `${BASE_ENDPOINT}/title/${encodeURIComponent(normalizedTitle)}`,
+  );
+};
+
+export const searchBooks = async (query) => {
+  const normalizedQuery = String(query || "").trim();
+  if (!normalizedQuery) return [];
+  return await apiGet(
+    `${BASE_ENDPOINT}/search?query=${encodeURIComponent(normalizedQuery)}`,
+  );
+};
+
+export const getRecommendedBooks = async (title) => {
+  const normalizedTitle = String(title || "").trim();
+  if (!normalizedTitle) return [];
+  return await apiGet(
+    `${BASE_ENDPOINT}/recommend?title=${encodeURIComponent(normalizedTitle)}`,
+  );
 };
 
 // Create new book

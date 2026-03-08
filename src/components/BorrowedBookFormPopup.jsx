@@ -17,20 +17,13 @@ function BorrowedBookFormPopup({
 
   const inputs = [
     { name: "user_id", type: "text", placeholder: "User ID", required: true },
-    { name: "book_id", type: "text", placeholder: "Book ID", required: true },
-    {
-      name: "rfid_tag_id",
-      type: "number",
-      placeholder: "RFID Tag ID (optional)",
-    },
+    { name: "book_id", type: "text", placeholder: "Book Copy ID", required: true },
     {
       name: "transaction_type",
       type: "select",
       options: [
-        { value: "Borrow", label: "Borrow" },
-        { value: "Return", label: "Return" },
-        { value: "Renewal", label: "Renewal" },
-        { value: "SaleConversion", label: "Sale Conversion" },
+        { value: "Check-Out", label: "Check-Out" },
+        { value: "Check-In", label: "Check-In" },
       ],
     },
     {
@@ -38,8 +31,8 @@ function BorrowedBookFormPopup({
       type: "select",
       options: [
         { value: "", label: "Select Borrow Type" },
-        { value: "InLibrary", label: "In Library" },
-        { value: "TakeHome", label: "Take Home" },
+        { value: "Borrow", label: "Borrow" },
+        { value: "Purchase", label: "Purchase" },
       ],
     },
     { name: "due_date", type: "datetime-local" },
@@ -54,9 +47,10 @@ function BorrowedBookFormPopup({
       name: "status",
       type: "select",
       options: [
-        { value: "Open", label: "Open" },
+        { value: "Pending", label: "Pending" },
         { value: "Completed", label: "Completed" },
         { value: "Overdue", label: "Overdue" },
+        { value: "Returned", label: "Returned" },
       ],
     },
   ];
