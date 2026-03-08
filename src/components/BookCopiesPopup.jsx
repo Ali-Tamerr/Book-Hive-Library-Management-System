@@ -60,6 +60,24 @@ function BookCopiesPopup({
     setCurrentInputIndex(index);
   };
 
+  const handleNFCData = React.useCallback(
+    (uid) => {
+      // Set the UID in the currently focused/active box
+      handleCopyChange(currentInputIndex, uid);
+
+      // Auto-focus next box if exists
+      const nextIndex = currentInputIndex + 1;
+      if (nextIndex < copies.length) {
+        setTimeout(() => {
+          const el = inputRefs.current[nextIndex];
+          if (el) el.focus();
+          setCurrentInputIndex(nextIndex);
+        }, 100);
+      }
+    },
+    [currentInputIndex, copies.length],
+  );
+
   // Realtime: استقبل UID من جدول scanned_book_uids للجهاز kiosk1
   useEffect(() => {
     if (!show) return;
@@ -142,7 +160,12 @@ function BookCopiesPopup({
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex gap-3 px-10">
           <div className="w-auto">
-            <NFCReaderButton deviceId="kiosk1" isFlexOne />
+            <NFCReaderButton
+              deviceId="kiosk1"
+              isFlexOne
+              bookId={bookId || quantity}
+              onDataReceived={handleNFCData}
+            />
           </div>
           <div className="relative flex-1">
             <select

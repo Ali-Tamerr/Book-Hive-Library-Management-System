@@ -34,13 +34,18 @@ const RateBookPopup = ({ show, onClose, bookId, initialReview }) => {
       return;
     }
 
+    const currentUser = getCurrentUser();
+    if (!currentUser?.user_id) {
+      alert("Please sign in to submit a review.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const currentUser = getCurrentUser();
       const newReview = {
         book_id: bookId,
-        user_id: currentUser?.user_id || "Guest",
+        user_id: currentUser.user_id,
         review_text: reviewText,
         rating: rating,
       };

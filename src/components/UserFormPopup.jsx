@@ -41,15 +41,15 @@ function UserFormPopup({
     {
       name: "first_name",
       type: "text",
-      placeholder: "Name",
+      placeholder: "First Name",
       required: true,
-      autocomplete: "name",
+      autocomplete: "given-name",
     },
     {
       name: "last_name",
       type: "text",
       placeholder: "Last Name",
-      required: false,
+      required: true,
       autocomplete: "family-name",
     },
     {
@@ -137,6 +137,7 @@ function UserFormPopup({
 
   const editInputs = [
     baseInputs.find((input) => input.name === "first_name"),
+    baseInputs.find((input) => input.name === "last_name"),
     baseInputs.find((input) => input.name === "email"),
     baseInputs.find((input) => input.name === "password"),
     planInput,
@@ -147,6 +148,7 @@ function UserFormPopup({
     ? isRoleAdmin
       ? [
           baseInputs.find((input) => input.name === "first_name"),
+          baseInputs.find((input) => input.name === "last_name"),
           baseInputs.find((input) => input.name === "email"),
           baseInputs.find((input) => input.name === "password"),
           roleInput,
@@ -154,6 +156,7 @@ function UserFormPopup({
         ].filter(Boolean)
       : [
           baseInputs.find((input) => input.name === "first_name"),
+          baseInputs.find((input) => input.name === "last_name"),
           baseInputs.find((input) => input.name === "email"),
           baseInputs.find((input) => input.name === "password"),
           planInput,
@@ -163,6 +166,7 @@ function UserFormPopup({
         ].filter(Boolean)
     : [
         baseInputs.find((input) => input.name === "first_name"),
+        baseInputs.find((input) => input.name === "last_name"),
         baseInputs.find((input) => input.name === "email"),
         baseInputs.find((input) => input.name === "password"),
         planInput,
@@ -172,23 +176,25 @@ function UserFormPopup({
   const inputs = editMode ? editInputs : addInputs;
 
   const editCustomLayout = [
-    { type: "flex", inputs: ["first_name", "email"] },
-    { type: "flex", inputs: ["password", "plan"] },
-    { type: "flex", inputs: ["branch_id"] },
+    { type: "flex", inputs: ["first_name", "last_name"] },
+    { type: "flex", inputs: ["email", "password"] },
+    { type: "flex", inputs: ["plan", "branch_id"] },
   ];
 
   const addCustomLayout = isSuperAdmin
     ? [
-        { type: "flex", inputs: ["first_name", "email"] },
-        { type: "flex", inputs: ["password", "plan"] },
+        { type: "flex", inputs: ["first_name", "last_name"] },
+        { type: "flex", inputs: ["email", "password"] },
         isRoleAdmin
           ? { type: "flex", inputs: ["role", "branch_id"] }
-          : { type: "flex", inputs: ["role", "branch_id"] },
+          : { type: "flex", inputs: ["plan", "role"] },
+        ...(isRoleAdmin ? [] : [{ type: "flex", inputs: ["branch_id"] }]),
         ...(isRoleAdmin ? [] : [{ type: "flex", inputs: ["user_id"] }]),
       ]
     : [
-        { type: "flex", inputs: ["first_name", "email"] },
-        { type: "flex", inputs: ["password", "plan"] },
+        { type: "flex", inputs: ["first_name", "last_name"] },
+        { type: "flex", inputs: ["email", "password"] },
+        { type: "flex", inputs: ["plan"] },
         { type: "flex", inputs: ["user_id"] },
       ];
 
