@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
+import FormInput from "./FormInput.jsx";
 import NFCReaderButton from "./NFCReaderButton.jsx";
 import { Trash2 } from "lucide-react";
 
@@ -58,19 +59,17 @@ const DeleteConfirmationPopup = ({
             <div className="flex w-full flex-col items-center gap-3">
               <div className="flex w-full gap-2">
                 <NFCReaderButton
-                  bookId={bookId}
-                  context={context}
                   onDataReceived={handleNFCData}
                   inputRef={inputRef}
                   isFlexOne="true"
                 />
-                <input
-                  ref={inputRef}
+                <FormInput
+                  inputRef={inputRef}
                   type="text"
                   value={nfcId}
                   onChange={(e) => setNfcId(e.target.value)}
                   placeholder="ID"
-                  className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[13px] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
+                  required
                 />
               </div>
               <div className="flex items-center gap-2">
