@@ -55,6 +55,14 @@ const NFCReaderButton = ({
 
       // فعّل wireless visual state والـ polling
       toggleWireless();
+
+      // Automatically focus the first empty ID row after starting registration mode
+      // This ensures the software is ready for the upcoming wireless scan.
+      if (inputRef?.current) {
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 300);
+      }
     } catch (err) {
       console.error("Activation failed:", err);
     } finally {
@@ -74,7 +82,7 @@ const NFCReaderButton = ({
         className={`${flexClass} flex min-w-[100px] cursor-pointer items-center justify-center gap-2 rounded-[12px] px-4 text-[13px] font-medium transition-colors ${
           isActive
             ? "border border-red-200 bg-red-100 text-red-700 hover:bg-red-200"
-            : "border border-[#000035] dark:border-[#D7D7D7] text-[#000035] hover:bg-[#000035] hover:text-[#F2F2F2] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7] dark:hover:bg-gray-300 dark:hover:text-[#121317]"
+            : "border border-[#000035] text-[#000035] hover:bg-[#000035] hover:text-[#F2F2F2] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7] dark:hover:bg-gray-300 dark:hover:text-[#121317]"
         } ${isActivating ? "cursor-not-allowed opacity-50" : ""}`}
         title={isActive ? "Stop Scanning" : "Scan via Wireless"}
       >
