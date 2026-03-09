@@ -25,13 +25,53 @@ const STARTING_MESSAGE = {
   text: "Hello, I'm Library Bot! How can I help you today?",
 };
 
+const getUserId = (user) => {
+  if (!user || typeof user !== "object") return "";
+  return String(user.user_id || user.userId || user.id || "").trim();
+};
+
+const getChatSessionsStorageKey = (userId) =>
+  userId ? `chatSessions:${userId}` : null;
+
+const getReplyText = (responsePayload) => {
+  if (!responsePayload || typeof responsePayload !== "object") {
+    return "I didn't quite understand that.";
+  }
+
+  return (
+    responsePayload.reply ||
+    responsePayload.response ||
+    responsePayload.message ||
+    responsePayload.answer ||
+    "I didn't quite understand that."
+  );
+};
+
+const getChatErrorMessage = (error) => {
+  const rawMessage = String(error?.message || "").trim();
+
+  if (
+    error?.status === 400 &&
+    /x-user-id|user id|header|required/i.test(rawMessage)
+  ) {
+    return "Your session is missing user identity. Please sign in again.";
+  }
+
+  if (error?.status === 401 || error?.status === 403) {
+    return "Your session expired. Please sign in again.";
+  }
+
+  if (rawMessage && rawMessage.length <= 220) {
+    return rawMessage;
+  }
+
+  return "I'm having trouble connecting to the server. Please try again later.";
+};
+
 function UserChatbot() {
   const [sessionId, setSessionId] = useState(() => Date.now());
   const [messages, setMessages] = useState([STARTING_MESSAGE]);
-  const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem("chatSessions");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [sessions, setSessions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef(null);
@@ -40,6 +80,51 @@ function UserChatbot() {
   const { data: userProfile } = useUser(localUser?.user_id);
   const currentUser =
     userProfile && userProfile.user_id ? userProfile : localUser;
+  const activeUserId = getUserId(currentUser) || getUserId(localUser);
+  const sessionsStorageKey = getChatSessionsStorageKey(activeUserId);
+
+  useEffect(() => {
+    localStorage.removeItem("chatSessions");
+  }, []);
+
+  useEffect(() => {
+    if (!sessionsStorageKey) {
+      setSessions([]);
+      setSessionId(Date.now());
+      setMessages([STARTING_MESSAGE]);
+      return;
+    }
+
+    try {
+      const saved = localStorage.getItem(sessionsStorageKey);
+      const parsed = saved ? JSON.parse(saved) : [];
+      const loadedSessions = Array.isArray(parsed)
+        ? parsed.filter(
+            (entry) =>
+              entry &&
+              (typeof entry.id === "number" || typeof entry.id === "string") &&
+              Array.isArray(entry.messages),
+          )
+        : [];
+
+      setSessions(loadedSessions);
+
+      if (loadedSessions.length > 0) {
+        const latest = loadedSessions[0];
+        setSessionId(latest.id);
+        setMessages(
+          latest.messages.length > 0 ? latest.messages : [STARTING_MESSAGE],
+        );
+      } else {
+        setSessionId(Date.now());
+        setMessages([STARTING_MESSAGE]);
+      }
+    } catch {
+      setSessions([]);
+      setSessionId(Date.now());
+      setMessages([STARTING_MESSAGE]);
+    }
+  }, [sessionsStorageKey]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -72,26 +157,24 @@ function UserChatbot() {
   }, [messages, sessionId]);
 
   useEffect(() => {
-    localStorage.setItem("chatSessions", JSON.stringify(sessions));
-  }, [sessions]);
+    if (!sessionsStorageKey) return;
+    localStorage.setItem(sessionsStorageKey, JSON.stringify(sessions));
+  }, [sessions, sessionsStorageKey]);
 
   const chatMutation = useMutation({
-    mutationFn: async (messageText) => {
-      const endpoint = messageText.toLowerCase().includes("recommendation")
-        ? "/librarian/ask"
-        : "/chat";
+    mutationFn: async ({ messageText, userId }) => {
+      const body = { message: messageText };
+      const headers = { "X-User-Id": userId };
 
-      return apiPost(
-        endpoint,
-        {
-          message: messageText,
-        },
-        {
-          headers: {
-            "X-User-Id": currentUser?.user_id || "",
-          },
-        },
-      );
+      try {
+        return await apiPost("/chat", body, { headers });
+      } catch (error) {
+        if (error?.status !== 404 && error?.status !== 405) {
+          throw error;
+        }
+
+        return await apiPost("/librarian/ask", body, { headers });
+      }
     },
     onSuccess: (data) => {
       setMessages((prev) => [
@@ -99,7 +182,7 @@ function UserChatbot() {
         {
           id: Date.now(),
           sender: "bot",
-          text: data?.reply || "I didn't quite understand that.",
+          text: getReplyText(data),
         },
       ]);
     },
@@ -109,7 +192,7 @@ function UserChatbot() {
         {
           id: Date.now(),
           sender: "bot",
-          text: "I'm having trouble connecting to the server. Please try again later.",
+          text: getChatErrorMessage(error),
         },
       ]);
       console.error("Chat error:", error);
@@ -117,19 +200,32 @@ function UserChatbot() {
   });
 
   const handleSendMessage = (text) => {
-    if (!text || !text.trim()) return;
+    const normalizedText = String(text || "").trim();
+    if (!normalizedText) return;
+
+    if (!activeUserId) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          sender: "bot",
+          text: "Please sign in again to continue chatting.",
+        },
+      ]);
+      return;
+    }
 
     setMessages((prev) => [
       ...prev,
       {
         id: Date.now(),
         sender: "user",
-        text: text,
+        text: normalizedText,
       },
     ]);
 
     setInputValue("");
-    chatMutation.mutate(text);
+    chatMutation.mutate({ messageText: normalizedText, userId: activeUserId });
   };
 
   const handleFormSubmit = (event) => {
@@ -216,7 +312,7 @@ function UserChatbot() {
                   <div className="flex flex-col gap-2">
                     {sessions
                       .filter((s) =>
-                        s.title
+                        String(s.title || "")
                           .toLowerCase()
                           .includes(searchQuery.toLowerCase()),
                       )
