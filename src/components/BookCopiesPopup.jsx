@@ -141,6 +141,11 @@ function BookCopiesPopup({
     onClose();
   };
 
+  const firstEmptyIndex = copies.findIndex((c) => !c || c.trim() === "");
+  const firstEmptyRef = {
+    current: inputRefs.current[firstEmptyIndex === -1 ? 0 : firstEmptyIndex],
+  };
+
   return (
     <Popup
       show={show}
@@ -155,7 +160,7 @@ function BookCopiesPopup({
             <NFCReaderButton
               deviceId="kiosk1"
               isFlexOne
-              bookId={bookId || quantity}
+              inputRef={firstEmptyRef}
               onDataReceived={handleNFCData}
             />
           </div>
