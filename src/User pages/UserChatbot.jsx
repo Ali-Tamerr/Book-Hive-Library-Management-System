@@ -1,16 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import {
   Bot,
   MessageSquareText,
   Search,
   SendHorizontal,
-  UserRound,
   Trash2,
 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiPost, getImageUrl } from "../services/api.config";
-import { useUser } from "../hooks/useUsers";
-import { getCurrentUser } from "../services/auth.api";
+
+const STORAGE_KEY = "chatSessions";
 
 const quickActions = [
   "Renew Subscription",
@@ -70,6 +70,16 @@ const getChatErrorMessage = (error) => {
 
   return "I'm having trouble connecting to the server. Please try again later.";
 };
+
+function getStoredSessions() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    const parsed = saved ? JSON.parse(saved) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
 function UserChatbot() {
   const [sessionId, setSessionId] = useState(null);
@@ -157,12 +167,8 @@ function UserChatbot() {
     }
   }, [sessionsStorageKey, activeUserId]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
@@ -307,10 +313,8 @@ function UserChatbot() {
     }
   };
 
-  const deleteSession = (e, id) => {
-    e.stopPropagation();
-    const newSessions = sessions.filter((s) => s.id !== id);
-    setSessions(newSessions);
+  const deleteSession = (event, id) => {
+    event.stopPropagation();
 
     if (activeUserId) {
       localStorage.removeItem(`chatSessionMessages:${activeUserId}:${id}`);
@@ -320,6 +324,10 @@ function UserChatbot() {
       setMessages([STARTING_MESSAGE]);
       setSessionId(Date.now());
     }
+
+    setSessionId(Date.now());
+    setMessages([STARTING_MESSAGE]);
+    setInputValue("");
   };
 
   return (
