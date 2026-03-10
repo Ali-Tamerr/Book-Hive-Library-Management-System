@@ -1,11 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllCategories, getCategoryById, createCategory, updateCategory, deleteCategory } from '../services/categories.api';
+import {
+  getAllCategories,
+  getCategoryById,
+  getCategoryManagementSummary,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from '../services/categories.api';
 import { adminQueryOptions } from './queryConfig';
 
 export const categoryKeys = {
   all: ['categories'],
   lists: () => [...categoryKeys.all, 'list'],
   list: (filters) => [...categoryKeys.lists(), { filters }],
+  management: () => [...categoryKeys.all, 'management'],
   details: () => [...categoryKeys.all, 'detail'],
   detail: (id) => [...categoryKeys.details(), id],
 };
@@ -14,6 +22,14 @@ export const useCategories = () => {
   return useQuery({
     queryKey: categoryKeys.lists(),
     queryFn: getAllCategories,
+    ...adminQueryOptions,
+  });
+};
+
+export const useCategoriesManagement = () => {
+  return useQuery({
+    queryKey: categoryKeys.management(),
+    queryFn: getCategoryManagementSummary,
     ...adminQueryOptions,
   });
 };
@@ -35,6 +51,7 @@ export const useCreateCategory = () => {
     mutationFn: createCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.management() });
     },
   });
 };
@@ -50,6 +67,7 @@ export const useUpdateCategory = () => {
       queryClient.invalidateQueries({ queryKey: categoryKeys.detail(variables.id) });
       // Refetch all categories
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.management() });
     },
   });
 };
@@ -63,6 +81,7 @@ export const useDeleteCategory = () => {
     onSuccess: () => {
       // Invalidate and refetch categories list
       queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: categoryKeys.management() });
     },
   });
 };

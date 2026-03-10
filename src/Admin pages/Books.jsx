@@ -148,8 +148,8 @@ function Books({ searchValue, setSearchValue }) {
     }
   };
 
-  const handleDelete = (book_id) => {
-    setBookToDelete(book_id);
+  const handleDelete = (book) => {
+    setBookToDelete(book.book_id);
     setShowDeleteConfirm(true);
   };
 
@@ -216,7 +216,10 @@ function Books({ searchValue, setSearchValue }) {
     if (!createdById) return { name: "N/A", role: "Not recorded" };
     const creator = users.find((u) => u.user_id === createdById);
     return creator
-      ? { name: creator.name, role: creator.role }
+      ? {
+          name: `${creator.first_name || ""} ${creator.last_name || ""}`.trim(),
+          role: creator.role,
+        }
       : { name: createdById, role: "Unknown" };
   };
 
@@ -314,13 +317,12 @@ function Books({ searchValue, setSearchValue }) {
       const type = (t.transaction_type || "").toLowerCase().trim();
       const status = (t.status || "").toLowerCase().trim();
 
-      const isCompletedActive = status === "completed" && !t.return_date;
-      const isActiveStatus =
-        ["open", "active", "approved", "overdue"].includes(status) ||
-        isCompletedActive;
-      const isLendingType = ["check-out", "borrow"].includes(type);
+      const isActiveStatus = ["pending", "completed", "overdue"].includes(
+        status,
+      );
+      const isLendingType = type === "check-out";
 
-      return isLendingType && isActiveStatus;
+      return isLendingType && isActiveStatus && !t.return_date;
     });
 
     return Math.max(0, copies.length - activeTransactions.length);
@@ -400,6 +402,7 @@ function Books({ searchValue, setSearchValue }) {
         onConfirm={confirmDelete}
         title="Delete Book"
         showNFCInput={true}
+        bookId={bookToDelete}
       />
       <ViewDetailsPopup
         show={showViewDetails}

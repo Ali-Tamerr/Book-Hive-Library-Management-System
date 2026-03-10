@@ -2,6 +2,7 @@ import React from "react";
 import { Users } from "lucide-react";
 import FormLayout from "../Layouts/FormLayout.jsx";
 import NFCReaderButton from "./NFCReaderButton.jsx";
+import FormInput from "./FormInput.jsx";
 
 function UserFormPopup({
   showPopup,
@@ -54,15 +55,13 @@ function UserFormPopup({
     {
       name: "email",
       type: "email",
-      placeholder: "Email Address",
+      placeholder: "Email",
       autocomplete: "email",
     },
     {
       name: "password",
       type: "password",
-      placeholder: editMode
-        ? "Password (leave blank to keep current)"
-        : "Password",
+      placeholder: editMode ? "Password (leave blank)" : "Password",
       required: !editMode,
       autocomplete: editMode ? "off" : "new-password",
     },
@@ -75,21 +74,21 @@ function UserFormPopup({
     required: false,
     autocomplete: "off",
     options: [
-      { value: "Discover", label: "Discover" },
-      { value: "Enterprise", label: "Enterprise" },
-      { value: "Professional", label: "Professional" },
+      { value: "Discover", label: "Plan: Discover" },
+      { value: "Enterprise", label: "Plan: Enterprise" },
+      { value: "Professional", label: "Plan: Professional" },
     ],
   };
 
   const roleInput = {
     name: "role",
     type: "select",
-    placeholder: "Role",
+    placeholder: "User",
     required: true,
     autocomplete: "off",
     options: [
-      { value: "User", label: "User" },
-      { value: "Admin", label: "Admin" },
+      { value: "User", label: "Role: User" },
+      { value: "Admin", label: "Role: Admin" },
     ],
   };
 
@@ -109,27 +108,25 @@ function UserFormPopup({
     name: "user_id",
     type: "custom",
     render: (data, onChange) => (
-      <div>
-        <div className="flex items-center gap-2">
-          <div className="w-auto">
-            <NFCReaderButton
-              onDataReceived={handleNFCData}
-              inputRef={userIdInputRef}
-            />
-          </div>
-          <div className="flex-1">
-            <input
-              ref={userIdInputRef}
-              name="user_id"
-              type="text"
-              value={data.user_id || ""}
-              onChange={onChange}
-              placeholder="User ID"
-              required
-              autoComplete="off"
-              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
-            />
-          </div>
+      <div className="flex items-center gap-2">
+        <div className="w-auto">
+          <NFCReaderButton
+            onDataReceived={handleNFCData}
+            inputRef={userIdInputRef}
+            isFlexOne
+          />
+        </div>
+        <div className="flex-1">
+          <FormInput
+            inputRef={userIdInputRef}
+            name="user_id"
+            type="text"
+            value={data.user_id}
+            onChange={onChange}
+            placeholder="ID"
+            required
+            autocomplete="off"
+          />
         </div>
       </div>
     ),
@@ -142,39 +139,62 @@ function UserFormPopup({
     baseInputs.find((input) => input.name === "last_name"),
     baseInputs.find((input) => input.name === "email"),
     baseInputs.find((input) => input.name === "password"),
-    branchInput,
     planInput,
+    branchInput,
   ].filter(Boolean);
 
   const addInputs = isSuperAdmin
     ? isRoleAdmin
-      ? [...baseInputs, roleInput, branchInput]
-      : [...baseInputs, planInput, roleInput, branchInput, userIdInput]
-    : [...baseInputs, planInput, userIdInput];
+      ? [
+          baseInputs.find((input) => input.name === "first_name"),
+          baseInputs.find((input) => input.name === "last_name"),
+          baseInputs.find((input) => input.name === "email"),
+          baseInputs.find((input) => input.name === "password"),
+          roleInput,
+          branchInput,
+        ].filter(Boolean)
+      : [
+          baseInputs.find((input) => input.name === "first_name"),
+          baseInputs.find((input) => input.name === "last_name"),
+          baseInputs.find((input) => input.name === "email"),
+          baseInputs.find((input) => input.name === "password"),
+          planInput,
+          roleInput,
+          branchInput,
+          userIdInput,
+        ].filter(Boolean)
+    : [
+        baseInputs.find((input) => input.name === "first_name"),
+        baseInputs.find((input) => input.name === "last_name"),
+        baseInputs.find((input) => input.name === "email"),
+        baseInputs.find((input) => input.name === "password"),
+        planInput,
+        userIdInput,
+      ].filter(Boolean);
 
   const inputs = editMode ? editInputs : addInputs;
 
   const editCustomLayout = [
-    { columns: 2, inputs: ["first_name", "last_name"] },
-    { columns: 2, inputs: ["email", "password"] },
-    { columns: 2, inputs: ["branch_id", "plan"] },
+    { type: "flex", inputs: ["first_name", "last_name"] },
+    { type: "flex", inputs: ["email", "password"] },
+    { type: "flex", inputs: ["plan", "branch_id"] },
   ];
 
   const addCustomLayout = isSuperAdmin
     ? [
-        { columns: 2, inputs: ["first_name", "last_name"] },
-        { columns: 2, inputs: ["email", "password"] },
+        { type: "flex", inputs: ["first_name", "last_name"] },
+        { type: "flex", inputs: ["email", "password"] },
         isRoleAdmin
-          ? { columns: 2, inputs: ["role", "branch_id"] }
-          : { columns: 2, inputs: ["role", "plan"] },
-        ...(isRoleAdmin
-          ? []
-          : [{ columns: 2, inputs: ["branch_id", "user_id"] }]),
+          ? { type: "flex", inputs: ["role", "branch_id"] }
+          : { type: "flex", inputs: ["plan", "role"] },
+        ...(isRoleAdmin ? [] : [{ type: "flex", inputs: ["branch_id"] }]),
+        ...(isRoleAdmin ? [] : [{ type: "flex", inputs: ["user_id"] }]),
       ]
     : [
-        { columns: 2, inputs: ["first_name", "last_name"] },
-        { columns: 2, inputs: ["email", "password"] },
-        { columns: 2, inputs: ["plan", "user_id"] },
+        { type: "flex", inputs: ["first_name", "last_name"] },
+        { type: "flex", inputs: ["email", "password"] },
+        { type: "flex", inputs: ["plan"] },
+        { type: "flex", inputs: ["user_id"] },
       ];
 
   const customLayout = editMode ? editCustomLayout : addCustomLayout;

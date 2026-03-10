@@ -79,11 +79,21 @@ const getDisplayName = (user) => {
 };
 
 function Dashboard() {
-  const localUser = getCurrentUser();
-  const { data: userProfile } = useUser(localUser?.user_id);
-  const currentUser =
-    userProfile && userProfile.user_id ? userProfile : localUser;
-
+  const currentUser = getCurrentUser();
+  const currentUserDisplayName =
+    `${currentUser?.first_name || ""} ${currentUser?.last_name || ""}`.trim() ||
+    currentUser?.user_id ||
+    "User";
+  const { data: usersData, isLoading: usersLoading } = useUsers();
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
+  const [displayBooks, setDisplayBooks] = useState([]);
+  const [generalStats, setGeneralStats] = useState({
+    branches: 0,
+    books: 0,
+    users: 0,
+  });
   const { data: booksSource, isLoading: booksLoading } = useBookCovers();
   const { data: categoriesData } = useCategories();
   const { data: branchesData } = useBranches();
@@ -574,15 +584,18 @@ function Dashboard() {
             <div className="flex min-w-[78px] justify-center">
               <ColorableLogo className="h-[58px] w-[58px] text-[var(--accent)]" />
             </div>
-            <div className="h-full w-px bg-[rgba(0,0,53,0.55)] dark:bg-[rgba(215,215,215,0.48)] max-[560px]:h-px max-[560px]:w-full" />
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4 font-['Noto_Sans_Georgian',sans-serif] text-[0.98rem] font-medium leading-[1.3] text-[var(--accent)] max-[560px]:justify-center">
-                <span className="h-[18px] w-[18px] rounded-full bg-[#444548] dark:bg-[#5b5f67]" />
-                <span>Total Borrowed Books</span>
-              </div>
-              <div className="flex items-center gap-4 font-['Noto_Sans_Georgian',sans-serif] text-[0.98rem] font-medium leading-[1.3] text-[var(--accent)] max-[560px]:justify-center">
-                <span className="h-[18px] w-[18px] rounded-full bg-[#000035] dark:bg-[#d7d7d7]" />
-                <span>Borrowed Limited Books</span>
+            <div className="mb-10 mt-auto flex w-full justify-center">
+              <div className="text-md w-fit rounded-md bg-white p-3 pr-6 dark:bg-transparent">
+                <p className="text-[#0b0c28] dark:text-white">
+                  Dear {currentUserDisplayName}, please note that your
+                  subscription will expire on{" "}
+                  <span className="block font-bold">
+                    {subscriptionExpirationLabel}.
+                  </span>
+                </p>
+                <p className="mt-1 text-[#0b0c28] dark:text-white">
+                  To renew your subscription, kindly visit the nearest branch.
+                </p>
               </div>
             </div>
           </div>

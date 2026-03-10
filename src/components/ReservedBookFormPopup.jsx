@@ -9,17 +9,16 @@ function ReservedBookFormPopup({ showPopup, editMode, formData, setFormData, han
 
   const inputs = [
     { name: 'user_id', type: 'text', placeholder: 'User ID', required: true },
-    { name: 'book_id', type: 'text', placeholder: 'Book ID', required: true },
+    { name: 'book_id', type: 'text', placeholder: 'Book Copy ID', required: true },
     { name: 'reservation_date', type: 'datetime-local' },
     { name: 'expiration_date', type: 'datetime-local', required: true },
     {
       name: 'status',
       type: 'select',
       options: [
-        { value: 'Pending', label: 'Pending' },
         { value: 'Active', label: 'Active' },
-        { value: 'Expired', label: 'Expired' },
         { value: 'Cancelled', label: 'Cancelled' },
+        { value: 'Fulfilled', label: 'Fulfilled' },
       ],
     },
   ];

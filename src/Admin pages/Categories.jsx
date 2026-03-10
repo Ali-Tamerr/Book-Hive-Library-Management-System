@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import {
-  useCategories,
+  useCategoriesManagement,
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,
@@ -11,8 +11,6 @@ import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
 import CommonLayout from "../Layouts/CommonLayout.jsx";
 import { getCurrentUser } from "../services/auth.api";
-
-import { useBooks } from "../hooks/useBooks.js";
 
 function Categories({ searchValue, setSearchValue }) {
   const currentUser = getCurrentUser();
@@ -30,8 +28,7 @@ function Categories({ searchValue, setSearchValue }) {
     description: "",
   });
 
-  const { data: categories = [], isLoading } = useCategories();
-  const { data: books = [] } = useBooks();
+  const { data: categories = [], isLoading } = useCategoriesManagement();
   const { data: usersData } = useUsers();
   const users = usersData
     ? usersData.pages.flatMap((page) => page.data || [])
@@ -79,11 +76,15 @@ function Categories({ searchValue, setSearchValue }) {
   const handleDelete = (id) => {
     setCategoryToDelete(id);
 
-    // Check if any book uses this category
-    const linkedBooks = books.filter((book) => book.category_id === id);
-    if (linkedBooks.length > 0) {
+    const selected = categories.find(
+      (category) =>
+        String(category.category_id || category.id) === String(id),
+    );
+    const linkedCount = Number(selected?.book_count || 0);
+
+    if (linkedCount > 0) {
       setDeleteWarning(
-        `Cannot delete this category because it is linked to ${linkedBooks.length} book(s).`,
+        `Cannot delete this category because it is linked to ${linkedCount} book(s).`,
       );
       setIsDeleteDisabled(true);
     } else {
@@ -125,7 +126,10 @@ function Categories({ searchValue, setSearchValue }) {
     if (!createdById) return { name: "N/A", role: "Not recorded" };
     const creator = users.find((u) => u.user_id === createdById);
     return creator
-      ? { name: creator.name, role: creator.role }
+      ? {
+          name: `${creator.first_name || ""} ${creator.last_name || ""}`.trim(),
+          role: creator.role,
+        }
       : { name: createdById, role: "Unknown" };
   };
 
@@ -149,12 +153,6 @@ function Categories({ searchValue, setSearchValue }) {
     {
       header: "Bo Quantity",
       accessor: "book_count",
-      render: (category) => {
-        const count = books.filter(
-          (b) => b.category_id === category.category_id,
-        ).length;
-        return <span className="text-sm font-medium">{count}</span>;
-      },
     },
     { header: "Action", accessor: "action" },
   ];
@@ -206,12 +204,14 @@ function Categories({ searchValue, setSearchValue }) {
           setShowViewDetails(false);
           setSelectedCategory(null);
         }}
+        variant="details"
         title="View Category"
         data={
           selectedCategory
             ? {
                 "Category ID": selectedCategory.category_id,
                 Name: selectedCategory.category_name,
+                "Books Count": selectedCategory.book_count,
               }
             : null
         }

@@ -52,10 +52,16 @@ function GlobalSearchPopup({ show, onClose }) {
     });
 
     users.forEach((user) => {
-      if (user.name?.toLowerCase().includes(term)) {
+      const fullName = `${user.first_name || ""} ${user.last_name || ""}`
+        .trim()
+        .toLowerCase();
+
+      if (fullName.includes(term)) {
         results.push({
           id: user.user_id,
-          name: user.name,
+          name:
+            `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+            user.user_id,
           source: "Users",
           icon: Users,
           route: "/user-management",

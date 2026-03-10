@@ -23,9 +23,13 @@ function BookFormPopup({
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Create a fake URL for preview/demo purposes since we don't have a real upload endpoint
-      const imageUrl = URL.createObjectURL(file);
-      setFormData({ ...formData, image_url: imageUrl });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Strip the "data:image/...;base64," prefix for the backend (bytea)
+        const base64 = reader.result.split(",")[1];
+        setFormData({ ...formData, image_url: base64 });
+      };
+      reader.readAsDataURL(file);
       // Reset input value to allow selecting the same file again if needed
       e.target.value = "";
     }
@@ -127,6 +131,7 @@ function BookFormPopup({
         quantity={formData.quantity}
         bookCopies={formData.BookCopies}
         onSave={handleSaveBookCopies}
+        bookId={formData.book_id}
       />
     </>
   );

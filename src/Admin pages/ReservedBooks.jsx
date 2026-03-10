@@ -31,7 +31,7 @@ function ReservedBooks({
     book_id: "",
     reservation_date: "",
     expiration_date: "",
-    status: "Pending",
+    status: "Active",
   });
 
   const { data: reservations = [], isLoading } = useReservations();
@@ -99,7 +99,7 @@ function ReservedBooks({
         book_id: "",
         reservation_date: "",
         expiration_date: "",
-        status: "Pending",
+        status: "Active",
       });
       setShowPopup(false);
       setEditMode(false);
@@ -116,7 +116,7 @@ function ReservedBooks({
       book_id: reservation.book_id || "",
       reservation_date: reservation.reservation_date || "",
       expiration_date: reservation.expiration_date || "",
-      status: reservation.status || "Pending",
+      status: reservation.status || "Active",
     });
     setEditMode(true);
     setShowPopup(true);
@@ -153,7 +153,7 @@ function ReservedBooks({
       book_id: "",
       reservation_date: "",
       expiration_date: "",
-      status: "Pending",
+      status: "Active",
     });
     setEditMode(false);
     setShowPopup(true);
@@ -262,6 +262,7 @@ function ReservedBooks({
           setShowViewDetails(false);
           setSelectedReservation(null);
         }}
+        variant="details"
         title="View Reservation"
         data={
           selectedReservation

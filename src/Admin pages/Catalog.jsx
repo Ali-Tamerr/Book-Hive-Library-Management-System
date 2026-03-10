@@ -15,18 +15,19 @@ function Catalog({ searchValue, setSearchValue }) {
         onClick={() => setLocalActiveTab("borrowed")}
         position="first"
       />
-      <TabButton
-        label="Overdue Borrowers"
-        isActive={localActiveTab === "overdue"}
-        onClick={() => setLocalActiveTab("overdue")}
-      />
+
       <TabButton
         label="Returned Books"
         isActive={localActiveTab === "returned"}
         onClick={() => setLocalActiveTab("returned")}
+      />
+      <TabButton
+        label="Overdue Borrowers"
+        isActive={localActiveTab === "overdue"}
+        onClick={() => setLocalActiveTab("overdue")}
         position="last"
       />
-        </div>
+    </div>
   );
 
   return (

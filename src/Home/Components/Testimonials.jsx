@@ -99,7 +99,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
 
                   return (
                     <article
-                      key={fb.request_id}
+                      key={fb.request_id ?? fb.feedback_id ?? fb.user_id}
                       className="duration-400 shrink-0 rounded-[24px] bg-[#D7D7D7] px-16 py-14 pb-16 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"
                       style={{
                         width: `calc(${100 / testimonialPerView}% - 60px)`,

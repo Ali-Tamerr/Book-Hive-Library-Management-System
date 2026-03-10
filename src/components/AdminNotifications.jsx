@@ -34,7 +34,9 @@ const AdminNotifications = () => {
   const [formData, setFormData] = useState({
     id: "",
     user_id: "",
-    name: "",
+    first_name: "",
+    last_name: "",
+    email: "",
     plan: "",
     role: "User",
     status: "Active",
@@ -107,14 +109,13 @@ const AdminNotifications = () => {
   const [selectedFeedback, setSelectedFeedback] = useState(null);
 
   const handleApproveFeedback = async (request) => {
+    const feedbackId = request?.request_id ?? request?.feedback_id;
+    if (!feedbackId) return;
+
     try {
       await updateFeedbackMutation.mutateAsync({
-        id: request.request_id,
+        id: feedbackId,
         status: "Approved",
-        rate: request.rate || 5,
-        user_id: request.user_id,
-        description:
-          request.description || request.feedback || "Approved via Admin",
       });
     } catch (error) {
       console.error("Failed to approve feedback:", error);
@@ -122,14 +123,13 @@ const AdminNotifications = () => {
   };
 
   const handleRejectFeedback = async (request) => {
+    const feedbackId = request?.request_id ?? request?.feedback_id;
+    if (!feedbackId) return;
+
     try {
       await updateFeedbackMutation.mutateAsync({
-        id: request.request_id,
+        id: feedbackId,
         status: "Rejected",
-        rate: request.rate || 1,
-        user_id: request.user_id,
-        description:
-          request.description || request.feedback || "Rejected via Admin",
       });
     } catch (error) {
       console.error("Failed to reject feedback:", error);
@@ -150,12 +150,18 @@ const AdminNotifications = () => {
         alert("Password is required for new users.");
         return;
       }
+      if (!formData.first_name?.trim() || !formData.last_name?.trim()) {
+        alert("First name and last name are required.");
+        return;
+      }
 
       const selectedRole =
         isSuperAdmin && formData.role ? formData.role : "User";
       const apiData = {
         user_id: formData.user_id.trim(),
-        name: formData.name,
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim(),
+        email: formData.email?.trim() || null,
         role: selectedRole,
         plan: formData.plan || null,
         status: formData.status || "Active",
@@ -180,7 +186,9 @@ const AdminNotifications = () => {
       setFormData({
         id: "",
         user_id: "",
-        name: "",
+        first_name: "",
+        last_name: "",
+        email: "",
         plan: "",
         role: "User",
         status: "Active",
@@ -228,10 +236,17 @@ const AdminNotifications = () => {
         requests={userRequests}
         isLoading={isLoadingRequests}
         onApprove={(request) => {
+          const fallbackFullName = String(request.name || "").trim();
+          const [fallbackFirstName = "", ...fallbackRest] = fallbackFullName
+            ? fallbackFullName.split(/\s+/)
+            : [""];
+
           setFormData({
             id: "",
             user_id: "",
-            name: request.name || "",
+            first_name: request.first_name || fallbackFirstName,
+            last_name: request.last_name || fallbackRest.join(" "),
+            email: request.email || "",
             plan: request.plan || "",
             role: "User",
             status: "Active",
@@ -245,10 +260,16 @@ const AdminNotifications = () => {
         }}
         onReject={async (request) => {
           try {
+            const fallbackFullName = String(request.name || "").trim();
+            const [fallbackFirstName = "", ...fallbackRest] = fallbackFullName
+              ? fallbackFullName.split(/\s+/)
+              : [""];
+
             await rejectRequestMutation.mutateAsync({
               id: request.request_id,
               data: {
-                name: request.name,
+                first_name: request.first_name || fallbackFirstName,
+                last_name: request.last_name || fallbackRest.join(" "),
                 email: request.email,
                 password: request.password,
                 plan: request.plan,

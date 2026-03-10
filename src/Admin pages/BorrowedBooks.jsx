@@ -34,13 +34,12 @@ function BorrowedBooks({
     transaction_id: "",
     user_id: "",
     book_id: "",
-    rfid_tag_id: "",
-    transaction_type: "Borrow",
+    transaction_type: "Check-Out",
     due_date: "",
     return_date: "",
     fine_amount: "",
-    status: "Open",
-    borrow_type: "TakeHome",
+    status: "Pending",
+    borrow_type: "Borrow",
   });
 
   const { data: borrowedBooks = [], isLoading } = useBorrowedBooks();
@@ -132,7 +131,7 @@ function BorrowedBooks({
   const handleAddBorrowedBook = async (e) => {
     e.preventDefault();
     try {
-      const isBorrowing = formData.transaction_type === "Borrow";
+      const isBorrowing = formData.transaction_type === "Check-Out";
 
       // Hardware proxy / Edge validation flow (if applicable)
       if (!editMode && isBorrowing && formData.user_id && formData.book_id) {
@@ -164,18 +163,18 @@ function BorrowedBooks({
       const apiData = {
         user_id: formData.user_id,
         book_id: formData.book_id,
-        rfid_tag_id: formData.rfid_tag_id
-          ? parseInt(formData.rfid_tag_id, 10)
-          : null,
         transaction_type: formData.transaction_type,
-        due_date: formData.due_date || null,
-        return_date: formData.return_date || null,
-        fine_amount: formData.fine_amount
-          ? parseFloat(formData.fine_amount)
-          : null,
-        status: formData.status,
         borrow_type: formData.borrow_type || null,
+        due_date: formData.due_date || null,
       };
+
+      if (editMode) {
+        apiData.return_date = formData.return_date || null;
+        apiData.fine_amount = formData.fine_amount
+          ? parseFloat(formData.fine_amount)
+          : null;
+        apiData.status = formData.status || "Pending";
+      }
 
       if (editMode && formData.transaction_id) {
         await updateBorrowedBookMutation.mutateAsync({
@@ -189,13 +188,12 @@ function BorrowedBooks({
         transaction_id: "",
         user_id: "",
         book_id: "",
-        rfid_tag_id: "",
-        transaction_type: "Borrow",
+        transaction_type: "Check-Out",
         due_date: "",
         return_date: "",
         fine_amount: "",
-        status: "Open",
-        borrow_type: "TakeHome",
+        status: "Pending",
+        borrow_type: "Borrow",
       });
       setShowPopup(false);
       setEditMode(false);
@@ -210,13 +208,12 @@ function BorrowedBooks({
       transaction_id: transaction.transaction_id || transaction.id,
       user_id: transaction.user_id || "",
       book_id: transaction.book_id || "",
-      rfid_tag_id: transaction.rfid_tag_id || "",
-      transaction_type: transaction.transaction_type || "Borrow",
+      transaction_type: transaction.transaction_type || "Check-Out",
       due_date: transaction.due_date || "",
       return_date: transaction.return_date || "",
       fine_amount: transaction.fine_amount || "",
-      status: transaction.status || "Open",
-      borrow_type: transaction.borrow_type || "TakeHome",
+      status: transaction.status || "Pending",
+      borrow_type: transaction.borrow_type || "Borrow",
     });
     setEditMode(true);
     setShowPopup(true);
@@ -251,13 +248,12 @@ function BorrowedBooks({
       transaction_id: "",
       user_id: "",
       book_id: "",
-      rfid_tag_id: "",
-      transaction_type: "Borrow",
+      transaction_type: "Check-Out",
       due_date: "",
       return_date: "",
       fine_amount: "",
-      status: "Open",
-      borrow_type: "TakeHome",
+      status: "Pending",
+      borrow_type: "Borrow",
     });
     setEditMode(false);
     setShowPopup(true);
@@ -295,12 +291,13 @@ function BorrowedBooks({
     const status = (book.status || "").toLowerCase();
     const isPending = status === "pending";
     const isReturned = status === "returned";
+    const hasReturnDate = !!book.return_date;
 
     if (showPending) {
       return isPending;
     }
     if (showReturned) {
-      return isReturned;
+      return isReturned || hasReturnDate;
     }
     // Show everything except Pending and Returned (i.e., Completed, Overdue)
     return !isPending && !isReturned;
@@ -329,16 +326,19 @@ function BorrowedBooks({
     book_name: getBookName(book.book_id),
     user_name_display: getUserName(book.user_id),
     due_date_formatted: formatDate(book.due_date),
+    return_date_formatted: formatDate(book.return_date),
     borrowed_on_formatted: formatDate(book.created_at),
     branch_name: getBookBranchName(book.book_id),
   }));
-        
-  
+
   const columns = [
     { header: "User Name", accessor: "user_name_display" },
     { header: "Book Name", accessor: "book_name" },
     ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_name" }] : []),
-    { header: "Due Date", accessor: "due_date_formatted" },
+    {
+      header: showReturned ? "Return Date" : "Due Date",
+      accessor: showReturned ? "return_date_formatted" : "due_date_formatted",
+    },
     { header: "Date & Time", accessor: "borrowed_on_formatted" },
     ...(isSuperAdmin ? [{ header: "Action", accessor: "action" }] : []),
   ];
@@ -370,7 +370,7 @@ function BorrowedBooks({
         emphasizedColumns={[
           "user_name_display",
           "book_name",
-          "due_date_formatted",
+          showReturned ? "return_date_formatted" : "due_date_formatted",
           "borrowed_on_formatted",
         ]}
         formPopup={formPopupComponent}
@@ -391,6 +391,7 @@ function BorrowedBooks({
           setShowViewDetails(false);
           setSelectedTransaction(null);
         }}
+        variant="details"
         title="View Transaction"
         data={
           selectedTransaction

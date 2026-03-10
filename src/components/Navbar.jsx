@@ -114,26 +114,26 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
               <UserRound className="h-12 w-12 dark:text-[#121317]" />
             )}
           </div>
-          <div>
-            <h3 className="text-2xl tracking-wide font-semibold max-[480px]:text-sm max-[350px]:text-xs">
+          <div className="flex flex-col text-left">
+            <h3 className="text-xl font-semibold tracking-wider max-[480px]:text-sm max-[350px]:text-xs">
               {currentUser
                 ? currentUser.first_name + " " + currentUser.last_name || "User"
                 : "Loading..."}
             </h3>
-            <p className="text-sm font-semibold max-[350px]:text-[10px]">
+            <p className="text-[12px] -mt-[4px] font-semibold max-[350px]:text-[10px]">
               {roleLabel}
             </p>
           </div>
         </div>
         <div className="flex h-min flex-1 items-center justify-end gap-3">
-          <div className="text-right max-[1080px]:hidden">
-            <span className="text-sm font-bold">
+          <div className="flex flex-col text-right max-[1080px]:hidden">
+            <span className="font-['Bebas_Neue'] text-xl font-bold leading-none">
               {new Date().toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
             </span>
-            <p className="text-xs font-medium">
+            <p className="mt-[1px] text-xs font-medium leading-none">
               {new Date().toLocaleDateString(undefined, {
                 month: "short",
                 day: "2-digit",

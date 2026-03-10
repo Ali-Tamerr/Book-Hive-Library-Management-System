@@ -25,7 +25,7 @@ export const NFCReaderProvider = ({ children }) => {
   const callbacksRef = useRef(new Set());
   const [isWireless, setIsWireless] = useState(false);
   const [targetDeviceId, setTargetDeviceId] = useState(
-    localStorage.getItem("nfc_scanner_id") || "esp8266",
+    localStorage.getItem("nfc_scanner_id") || "esp32",
   );
   const lastProcessedScanTimeRef = useRef(new Date().toISOString());
 
@@ -222,7 +222,7 @@ export const NFCReaderProvider = ({ children }) => {
       // Turning ON: Check for Device ID
       let id = localStorage.getItem("nfc_scanner_id");
       if (!id) {
-        id = prompt("Enter Scanner ID (shown on LCD):", "esp8266");
+        id = prompt("Enter Scanner ID (shown on LCD):", "esp32");
         if (id) {
           localStorage.setItem("nfc_scanner_id", id.trim());
           setTargetDeviceId(id.trim());

@@ -22,14 +22,23 @@ const FeedbackPopup = ({ show, onClose }) => {
       return;
     }
 
+    if (!feedbackText.trim()) {
+      alert("Please enter your feedback before submitting.");
+      return;
+    }
+
+    const currentUser = getCurrentUser();
+    if (!currentUser?.user_id) {
+      alert("Please sign in to submit feedback.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const currentUser = getCurrentUser();
       const newFeedback = {
-        user_id: currentUser?.user_id || "Guest",
-        description: feedbackText,
-        feedback: feedbackText,
+        user_id: currentUser.user_id,
+        description: feedbackText.trim(),
         rate: Math.round(rating),
       };
 

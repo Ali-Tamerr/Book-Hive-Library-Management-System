@@ -1,23 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { Copy, ChevronUp } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Copy } from "lucide-react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
+import FormInput from "./FormInput.jsx";
+import FormSelect from "./FormSelect.jsx";
 import NFCReaderButton from "./NFCReaderButton.jsx";
 import { useBranches } from "../hooks/useBranches";
-import { useNFCReader } from "../contexts/NFCReaderContext";
+import { createClient } from "@supabase/supabase-js";
 
-function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
+
+function BookCopiesPopup({
+  show,
+  onClose,
+  quantity,
+  bookCopies,
+  onSave,
+  bookId,
+}) {
   const [copies, setCopies] = useState([]);
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
   const [selectedBranch, setSelectedBranch] = useState("");
-  const [isBranchSelectOpen, setIsBranchSelectOpen] = useState(false);
-  const inputRefs = React.useRef([]);
+  const inputRefs = useRef([]);
   const { data: branches = [] } = useBranches();
-  const { isConnected } = useNFCReader();
 
+  // تهيئة النسخ عند فتح البوب‑اب
   useEffect(() => {
     if (show) {
       const qty = parseInt(quantity, 10) || 1;
+
       if (bookCopies && bookCopies.length > 0) {
         const existingCopies = bookCopies.map((c) => c.book_copy_id || "");
         const firstBranch = bookCopies[0]?.branch_id || "";
@@ -31,19 +45,11 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
         setCopies(Array(qty).fill(""));
         setSelectedBranch("");
       }
+
       inputRefs.current = Array(qty).fill(null);
       setCurrentInputIndex(0);
     }
   }, [show, quantity, bookCopies]);
-
-  useEffect(() => {
-    if (isConnected && inputRefs.current[0]) {
-      setTimeout(() => {
-        inputRefs.current[0].focus();
-        setCurrentInputIndex(0);
-      }, 150);
-    }
-  }, [isConnected]);
 
   const handleCopyChange = (index, value) => {
     const newCopies = [...copies];
@@ -51,23 +57,60 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
     setCopies(newCopies);
   };
 
-  const handleNFCData = (data) => {
-    handleCopyChange(currentInputIndex, data);
-
-    const nextIndex = currentInputIndex + 1;
-    if (nextIndex < copies.length) {
-      setTimeout(() => {
-        if (inputRefs.current[nextIndex]) {
-          inputRefs.current[nextIndex].focus();
-          setCurrentInputIndex(nextIndex);
-        }
-      }, 100);
-    }
-  };
-
   const handleInputFocus = (index) => {
     setCurrentInputIndex(index);
   };
+
+  const handleNFCData = React.useCallback((uid) => {
+    setCopies((prev) => {
+      const updated = [...prev];
+      // Find the first empty row
+      const firstEmptyIndex = updated.findIndex((c) => !c || c.trim() === "");
+
+      if (firstEmptyIndex !== -1) {
+        updated[firstEmptyIndex] = uid;
+
+        // Auto-focus next empty box if exists
+        const nextEmptyIndex = updated.findIndex(
+          (c, idx) => idx > firstEmptyIndex && (!c || c.trim() === ""),
+        );
+        if (nextEmptyIndex !== -1) {
+          setTimeout(() => {
+            const el = inputRefs.current[nextEmptyIndex];
+            if (el) el.focus();
+            setCurrentInputIndex(nextEmptyIndex);
+          }, 100);
+        }
+      }
+      return updated;
+    });
+  }, []);
+
+  // Realtime: استقبل UID من جدول scanned_book_uids للجهاز kiosk1
+  useEffect(() => {
+    if (!show) return;
+
+    const channel = supabase
+      .channel("book-uid-scans")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "scanned_book_uids",
+          filter: "device_id=eq.kiosk1",
+        },
+        (payload) => {
+          const uid = payload.new.uid;
+          handleNFCData(uid);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [show, currentInputIndex, copies.length]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -83,9 +126,8 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
       return;
     }
 
-    const copyIds = copies;
-    const uniqueCopies = new Set(copyIds);
-    if (uniqueCopies.size !== copyIds.length) {
+    const uniqueCopies = new Set(copies);
+    if (uniqueCopies.size !== copies.length) {
       alert("Copy IDs must be unique");
       return;
     }
@@ -94,8 +136,14 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
       book_copy_id: c,
       branch_id: parseInt(selectedBranch, 10),
     }));
+
     onSave(bookCopiesArray);
     onClose();
+  };
+
+  const firstEmptyIndex = copies.findIndex((c) => !c || c.trim() === "");
+  const firstEmptyRef = {
+    current: inputRefs.current[firstEmptyIndex === -1 ? 0 : firstEmptyIndex],
   };
 
   return (
@@ -109,57 +157,47 @@ function BookCopiesPopup({ show, onClose, quantity, bookCopies, onSave }) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex gap-3 px-10">
           <div className="w-auto">
-            <NFCReaderButton onDataReceived={handleNFCData} />
+            <NFCReaderButton
+              deviceId="kiosk1"
+              isFlexOne
+              inputRef={firstEmptyRef}
+              onDataReceived={handleNFCData}
+            />
           </div>
           <div className="relative flex-1">
-            <select
+            <FormSelect
               value={selectedBranch}
-              onChange={(e) => {
-                setSelectedBranch(e.target.value);
-                setIsBranchSelectOpen(false);
-              }}
-              onClick={() => setIsBranchSelectOpen(!isBranchSelectOpen)}
-              onBlur={() => setIsBranchSelectOpen(false)}
+              onChange={(e) => setSelectedBranch(e.target.value)}
+              placeholder="Select Branch"
               required
-              className="h-[50px] w-full appearance-none rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
-            >
-              <option value="" disabled hidden>
-                Select Branch
-              </option>
-              {branches.map((branch) => (
-                <option
-                  key={branch.branch_id}
-                  value={branch.branch_id}
-                  className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
-                >
-                  {branch.name}
-                </option>
-              ))}
-            </select>
-            <ChevronUp
-              className={`pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7] transition-transform duration-200 ${isBranchSelectOpen ? "rotate-180" : "rotate-0"}`}
+              options={branches.map((branch) => ({
+                value: branch.branch_id,
+                label: branch.name,
+              }))}
             />
           </div>
         </div>
 
         <div
-          className={`grid max-h-[400px] overflow-y-auto px-10 text-[#000035] ${copies.length === 1 ? "grid-cols-1" : "grid-cols-2"} gap-3`}
+          className={`grid max-h-[400px] overflow-y-auto px-10 text-[#000035] ${
+            copies.length === 1 ? "grid-cols-1" : "grid-cols-2"
+          } gap-3`}
         >
           {copies.map((copy, index) => (
-            <input
+            <FormInput
               key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
+              inputRef={(el) => (inputRefs.current[index] = el)}
               type="text"
               value={copy}
               onChange={(e) => handleCopyChange(index, e.target.value)}
               onFocus={() => handleInputFocus(index)}
               placeholder={`ID`}
               required
-              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-white px-4 py-4 text-[13px] text-black placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:bg-[#121317] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7] "
             />
           ))}
         </div>
-        <div className="flex justify-between gap-3">
+
+        <div className="flex justify-between gap-3 px-10 pb-2">
           <FormButton type="button" onClick={onClose}>
             BACK
           </FormButton>

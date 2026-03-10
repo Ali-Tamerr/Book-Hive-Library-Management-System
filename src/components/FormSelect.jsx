@@ -26,8 +26,8 @@ const FormSelect = ({
   const getSelectStyles = () => {
     if (variant === "auth") {
       return isDarkMode
-        ? "w-full p-5 rounded-xl border border-solid border-[#D7D7D7]  bg-transparent text-white outline-none  text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none font-['Noto_Sans_Georgian',sans-serif] cursor-pointer"
-        : "w-full p-5 rounded-xl border border-solid border-[#000035] bg-white text-[#000035] outline-none  text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none font-['Noto_Sans_Georgian',sans-serif] cursor-pointer";
+        ? "w-full p-5 rounded-xl border border-solid border-[#D7D7D7] bg-transparent text-[#D7D7D7] outline-none placeholder-[#D7D7D7]  text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none font-['Noto_Sans_Georgian',sans-serif] cursor-pointer"
+        : "w-full p-5 rounded-xl border border-solid border-[#000035] text-[#000035] outline-none placeholder-[#000035] text-lg max-[1080px]:text-sm max-[1080px]:p-4 pr-12 max-[1080px]:pr-10 appearance-none font-['Noto_Sans_Georgian',sans-serif] cursor-pointer";
     }
     return "w-full h-[50px] px-4 py-4 rounded-xl border border-[#000035] dark:border-[#D7D7D7]  text-[#000035] dark:text-[#D7D7D7] placeholder-[#000035] dark:placeholder-[#D7D7D7] outline-none  text-[13px] appearance-none cursor-pointer";
   };
