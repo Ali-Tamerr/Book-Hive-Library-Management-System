@@ -714,16 +714,16 @@ function UserManagement({ searchValue, setSearchValue }) {
         }}
         title="View User"
         imageUrl={selectedUser ? getImageUrl(selectedUser.image_url) : null}
-        variant="details"
+        variant="user"
+        maxWidthClassOverride="max-w-[1100px]"
         data={
           selectedUser
             ? {
-                "User ID": selectedUser.user_id,
                 Name: `${selectedUser.first_name || ""} ${selectedUser.last_name || ""}`.trim(),
+                "ID User": selectedUser.user_id || "N/A",
+                Email: selectedUser.email || "N/A",
+                Plan: selectedUser.plan || "N/A",
                 Branch: getUserBranchName(selectedUser),
-
-                Email: selectedUser.email || "",
-                Plan: selectedUser.plan || "",
               }
             : null
         }

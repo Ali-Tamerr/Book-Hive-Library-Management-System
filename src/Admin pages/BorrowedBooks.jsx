@@ -291,12 +291,13 @@ function BorrowedBooks({
     const status = (book.status || "").toLowerCase();
     const isPending = status === "pending";
     const isReturned = status === "returned";
+    const hasReturnDate = !!book.return_date;
 
     if (showPending) {
       return isPending;
     }
     if (showReturned) {
-      return isReturned;
+      return isReturned || hasReturnDate;
     }
     // Show everything except Pending and Returned (i.e., Completed, Overdue)
     return !isPending && !isReturned;
@@ -325,6 +326,7 @@ function BorrowedBooks({
     book_name: getBookName(book.book_id),
     user_name_display: getUserName(book.user_id),
     due_date_formatted: formatDate(book.due_date),
+    return_date_formatted: formatDate(book.return_date),
     borrowed_on_formatted: formatDate(book.created_at),
     branch_name: getBookBranchName(book.book_id),
   }));
@@ -333,7 +335,10 @@ function BorrowedBooks({
     { header: "User Name", accessor: "user_name_display" },
     { header: "Book Name", accessor: "book_name" },
     ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_name" }] : []),
-    { header: "Due Date", accessor: "due_date_formatted" },
+    {
+      header: showReturned ? "Return Date" : "Due Date",
+      accessor: showReturned ? "return_date_formatted" : "due_date_formatted",
+    },
     { header: "Date & Time", accessor: "borrowed_on_formatted" },
     ...(isSuperAdmin ? [{ header: "Action", accessor: "action" }] : []),
   ];
@@ -365,7 +370,7 @@ function BorrowedBooks({
         emphasizedColumns={[
           "user_name_display",
           "book_name",
-          "due_date_formatted",
+          showReturned ? "return_date_formatted" : "due_date_formatted",
           "borrowed_on_formatted",
         ]}
         formPopup={formPopupComponent}
