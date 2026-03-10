@@ -7,10 +7,7 @@ import {
   SendHorizontal,
   Trash2,
 } from "lucide-react";
-
-import { useUser } from "../hooks/useUsers";
-import userAvatar from "../assets/img/testimonial-perfil-1.png";
-import { getCurrentUser } from "../services/auth.api";
+import { useMutation } from "@tanstack/react-query";
 import { apiPost, getImageUrl } from "../services/api.config";
 
 const STORAGE_KEY = "chatSessions";
@@ -25,26 +22,54 @@ const quickActions = [
 const STARTING_MESSAGE = {
   id: 1,
   sender: "bot",
-  text: "Hello, I'm Library Bot. How can I help you today?",
+  text: "Hello, I'm Library Bot! How can I help you today?",
 };
 
-const INITIAL_MESSAGES = [
-  {
-    id: 1,
-    sender: "bot",
-    text: "Hello, I'm Library Bot. How can I help you today?",
-  },
-  {
-    id: 2,
-    sender: "user",
-    text: "Show me new books this week.",
-  },
-  {
-    id: 3,
-    sender: "bot",
-    text: "I can help with that. Ask for recommendations, category picks, or your borrowing status.",
-  },
-];
+const getUserId = (user) => {
+  if (!user || typeof user !== "object") return "";
+  return String(user.user_id || user.userId || user.id || "").trim();
+};
+
+const getChatSessionsStorageKey = (userId) =>
+  userId ? `chatSessions:${userId}` : null;
+
+const getActiveChatSessionKey = (userId) =>
+  userId ? `activeChatSessionId:${userId}` : null;
+
+const getReplyText = (responsePayload) => {
+  if (!responsePayload || typeof responsePayload !== "object") {
+    return "I didn't quite understand that.";
+  }
+
+  return (
+    responsePayload.reply ||
+    responsePayload.response ||
+    responsePayload.message ||
+    responsePayload.answer ||
+    "I didn't quite understand that."
+  );
+};
+
+const getChatErrorMessage = (error) => {
+  const rawMessage = String(error?.message || "").trim();
+
+  if (
+    error?.status === 400 &&
+    /x-user-id|user id|header|required/i.test(rawMessage)
+  ) {
+    return "Your session is missing user identity. Please sign in again.";
+  }
+
+  if (error?.status === 401 || error?.status === 403) {
+    return "Your session expired. Please sign in again.";
+  }
+
+  if (rawMessage && rawMessage.length <= 220) {
+    return rawMessage;
+  }
+
+  return "I'm having trouble connecting to the server. Please try again later.";
+};
 
 function getStoredSessions() {
   try {
@@ -57,74 +82,153 @@ function getStoredSessions() {
 }
 
 function UserChatbot() {
-  const storedSessionsRef = useRef(getStoredSessions());
-  const firstStoredSession = storedSessionsRef.current[0];
-
-  const [sessions, setSessions] = useState(storedSessionsRef.current);
-  const [sessionId, setSessionId] = useState(
-    () => firstStoredSession?.id ?? Date.now(),
-  );
-  const [messages, setMessages] = useState(() =>
-    firstStoredSession?.messages?.length
-      ? firstStoredSession.messages
-      : INITIAL_MESSAGES,
-  );
+  const [sessionId, setSessionId] = useState(null);
+  const [messages, setMessages] = useState([STARTING_MESSAGE]);
+  const [sessions, setSessions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
   const messagesEndRef = useRef(null);
 
   const localUser = getCurrentUser();
   const { data: userProfile } = useUser(localUser?.user_id);
   const currentUser =
     userProfile && userProfile.user_id ? userProfile : localUser;
+  const activeUserId = getUserId(currentUser) || getUserId(localUser);
+  const sessionsStorageKey = getChatSessionsStorageKey(activeUserId);
+
+  useEffect(() => {
+    if (!activeUserId) {
+      setSessions([]);
+      setSessionId(Date.now());
+      setMessages([STARTING_MESSAGE]);
+      setIsInitialized(true);
+      return;
+    }
+
+    try {
+      const saved = localStorage.getItem(sessionsStorageKey);
+      const parsed = saved ? JSON.parse(saved) : [];
+      const loadedSessions = Array.isArray(parsed)
+        ? parsed.filter(
+            (entry) =>
+              entry &&
+              (typeof entry.id === "number" || typeof entry.id === "string"),
+          )
+        : [];
+
+      setSessions(loadedSessions);
+
+      const activeSessionKey = getActiveChatSessionKey(activeUserId);
+      const savedActiveId = localStorage.getItem(activeSessionKey);
+      const sessionToLoad = loadedSessions.find(
+        (s) => String(s.id) === savedActiveId,
+      );
+
+      const loadMessagesForSession = (id, sessionObj) => {
+        try {
+          const messagesKey = `chatSessionMessages:${activeUserId}:${id}`;
+          const savedMessages = localStorage.getItem(messagesKey);
+          if (savedMessages) return JSON.parse(savedMessages);
+          if (sessionObj && Array.isArray(sessionObj.messages))
+            return sessionObj.messages;
+        } catch (e) {}
+        return [STARTING_MESSAGE];
+      };
+
+      if (sessionToLoad) {
+        setSessionId(sessionToLoad.id);
+        const msgs = loadMessagesForSession(sessionToLoad.id, sessionToLoad);
+        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
+      } else if (savedActiveId) {
+        setSessionId(
+          isNaN(Number(savedActiveId)) ? savedActiveId : Number(savedActiveId),
+        );
+        const parsedId = isNaN(Number(savedActiveId))
+          ? savedActiveId
+          : Number(savedActiveId);
+        const msgs = loadMessagesForSession(parsedId, null);
+        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
+      } else if (loadedSessions.length > 0) {
+        const latest = loadedSessions[0];
+        setSessionId(latest.id);
+        const msgs = loadMessagesForSession(latest.id, latest);
+        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
+      } else {
+        setSessionId(Date.now());
+        setMessages([STARTING_MESSAGE]);
+      }
+      setIsInitialized(true);
+    } catch {
+      setSessions([]);
+      setSessionId(Date.now());
+      setMessages([STARTING_MESSAGE]);
+      setIsInitialized(true);
+    }
+  }, [sessionsStorageKey, activeUserId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    if (messages.length <= 1) return;
+    if (messages.length > 1 && sessionId) {
+      setSessions((prev) => {
+        const title =
+          messages.find((m) => m.sender === "user")?.text || "New Conversation";
+        const existingIndex = prev.findIndex((s) => s.id === sessionId);
 
-    setSessions((prev) => {
-      const title =
-        messages.find((message) => message.sender === "user")?.text ||
-        "New Conversation";
-      const existingIndex = prev.findIndex((session) => session.id === sessionId);
-      const nextSessions = [...prev];
-
-      if (existingIndex >= 0) {
-        nextSessions[existingIndex] = {
-          ...nextSessions[existingIndex],
-          title,
-          messages,
-        };
-      } else {
-        nextSessions.unshift({ id: sessionId, title, messages });
-      }
-
-      return nextSessions;
-    });
+        let newSessions = [...prev];
+        if (existingIndex >= 0) {
+          newSessions[existingIndex] = {
+            ...newSessions[existingIndex],
+            title,
+            messageCount: messages.length,
+          };
+          delete newSessions[existingIndex].messages;
+        } else {
+          newSessions.unshift({
+            id: sessionId,
+            title,
+            messageCount: messages.length,
+          });
+        }
+        return newSessions;
+      });
+    }
   }, [messages, sessionId]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-  }, [sessions]);
+    if (!isInitialized || !sessionsStorageKey) return;
+    localStorage.setItem(sessionsStorageKey, JSON.stringify(sessions));
+  }, [sessions, sessionsStorageKey, isInitialized]);
+
+  useEffect(() => {
+    if (!isInitialized || !sessionId || !activeUserId) return;
+    const key = getActiveChatSessionKey(activeUserId);
+    if (key) {
+      localStorage.setItem(key, String(sessionId));
+    }
+    const messagesKey = `chatSessionMessages:${activeUserId}:${sessionId}`;
+    if (messages.length > 0) {
+      localStorage.setItem(messagesKey, JSON.stringify(messages));
+    }
+  }, [sessionId, messages, activeUserId, isInitialized]);
 
   const chatMutation = useMutation({
-    mutationFn: async (messageText) => {
-      const endpoint = messageText.toLowerCase().includes("recommendation")
-        ? "/librarian/ask"
-        : "/chat";
+    mutationFn: async ({ messageText, userId }) => {
+      const body = { message: messageText };
+      const headers = { "X-User-Id": userId };
 
-      return apiPost(
-        endpoint,
-        { message: messageText },
-        {
-          headers: {
-            "X-User-Id": currentUser?.user_id || "",
-          },
-        },
-      );
+      try {
+        return await apiPost("/chat", body, { headers });
+      } catch (error) {
+        if (error?.status !== 404 && error?.status !== 405) {
+          throw error;
+        }
+
+        return await apiPost("/librarian/ask", body, { headers });
+      }
     },
     onSuccess: (data) => {
       setMessages((prev) => [
@@ -132,7 +236,7 @@ function UserChatbot() {
         {
           id: Date.now(),
           sender: "bot",
-          text: data?.reply || "I didn't quite understand that.",
+          text: getReplyText(data),
         },
       ]);
     },
@@ -142,7 +246,7 @@ function UserChatbot() {
         {
           id: Date.now(),
           sender: "bot",
-          text: "I'm having trouble connecting to the server. Please try again later.",
+          text: getChatErrorMessage(error),
         },
       ]);
       console.error("Chat error:", error);
@@ -150,19 +254,32 @@ function UserChatbot() {
   });
 
   const handleSendMessage = (text) => {
-    if (!text || !text.trim()) return;
+    const normalizedText = String(text || "").trim();
+    if (!normalizedText) return;
+
+    if (!activeUserId) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          sender: "bot",
+          text: "Please sign in again to continue chatting.",
+        },
+      ]);
+      return;
+    }
 
     setMessages((prev) => [
       ...prev,
       {
         id: Date.now(),
         sender: "user",
-        text: text.trim(),
+        text: normalizedText,
       },
     ]);
 
     setInputValue("");
-    chatMutation.mutate(text.trim());
+    chatMutation.mutate({ messageText: normalizedText, userId: activeUserId });
   };
 
   const handleFormSubmit = (event) => {
@@ -177,40 +294,41 @@ function UserChatbot() {
   };
 
   const loadSession = (id) => {
-    const session = sessions.find((item) => item.id === id);
-    if (!session) return;
-
-    setMessages(session.messages);
-    setSessionId(session.id);
-    setInputValue("");
+    const session = sessions.find((s) => s.id === id);
+    if (session) {
+      setSessionId(id);
+      try {
+        const messagesKey = `chatSessionMessages:${activeUserId}:${id}`;
+        const savedMessages = localStorage.getItem(messagesKey);
+        if (savedMessages) {
+          setMessages(JSON.parse(savedMessages));
+        } else if (session.messages) {
+          setMessages(session.messages);
+        } else {
+          setMessages([STARTING_MESSAGE]);
+        }
+      } catch (e) {
+        setMessages([STARTING_MESSAGE]);
+      }
+    }
   };
 
   const deleteSession = (event, id) => {
     event.stopPropagation();
 
-    const remainingSessions = sessions.filter((session) => session.id !== id);
-    setSessions(remainingSessions);
+    if (activeUserId) {
+      localStorage.removeItem(`chatSessionMessages:${activeUserId}:${id}`);
+    }
 
-    if (sessionId !== id) return;
-
-    const nextSession = remainingSessions[0];
-    if (nextSession) {
-      setSessionId(nextSession.id);
-      setMessages(nextSession.messages);
-      return;
+    if (sessionId === id) {
+      setMessages([STARTING_MESSAGE]);
+      setSessionId(Date.now());
     }
 
     setSessionId(Date.now());
     setMessages([STARTING_MESSAGE]);
     setInputValue("");
   };
-
-  const filteredSessions = sessions.filter((session) =>
-    session.title.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  const userImage =
-    currentUser?.image_url ? getImageUrl(currentUser.image_url) : userAvatar;
 
   return (
     <div className="flex h-full w-full">
@@ -234,7 +352,7 @@ function UserChatbot() {
                   Conversation
                 </h2>
                 <span className="text-xs text-[#000035] opacity-70 dark:text-[#D7D7D7]">
-                  {filteredSessions.length}
+                  {sessions.length}
                 </span>
               </div>
 
@@ -253,54 +371,82 @@ function UserChatbot() {
               </div>
 
               <div className="mt-4 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
-                {filteredSessions.length === 0 ? (
+                {sessions.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center rounded-lg border border-dashed border-[#000035] px-6 text-center text-sm text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7]">
                     No saved conversations yet.
                   </div>
                 ) : (
-                  filteredSessions.map((session) => {
-                    const isActive = session.id === sessionId;
+                  sessions
+                    .filter((s) =>
+                      String(s.title || "")
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
+                    )
+                    .map((session) => {
+                      const isActive = session.id === sessionId;
 
-                    return (
-                      <button
-                        key={session.id}
-                        type="button"
-                        onClick={() => loadSession(session.id)}
-                        className={`flex items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors ${
-                          isActive
-                            ? "border-[#000035] bg-white dark:border-[#D7D7D7] dark:bg-[#D7D7D7]"
-                            : "border-[#000035]/30 bg-transparent hover:bg-white/70 dark:border-[#D7D7D7]/40 dark:hover:bg-[#D7D7D7]/10"
-                        }`}
-                      >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
-                          <Bot size={18} />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-sm font-semibold text-[#000035] dark:text-black">
-                            {session.title}
-                          </div>
-                          <div className="mt-0.5 text-xs text-[#000035] opacity-70 dark:text-black">
-                            {session.messages.length} messages
-                          </div>
-                        </div>
+                      return (
                         <button
+                          key={session.id}
                           type="button"
-                          onClick={(event) => deleteSession(event, session.id)}
-                          className="shrink-0 cursor-pointer text-[#000035] opacity-70 transition-colors hover:text-red-600 dark:text-black"
-                          aria-label="Delete chat"
+                          onClick={() => loadSession(session.id)}
+                          className={`flex items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors cursor-pointer ${
+                            isActive && messages.length > 1
+                              ? "border-[#000035] bg-white dark:border-[#D7D7D7] dark:bg-[#D7D7D7]"
+                              : "border-[#000035] bg-transparent hover:bg-white/70 dark:border-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
+                          }`}
                         >
-                          <Trash2 size={16} />
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                            <Bot size={18} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div
+                              className={`truncate text-sm font-semibold ${
+                                isActive && messages.length > 1
+                                  ? "text-[#D7D7D7] dark:text-[#121317]"
+                                  : "text-[#000035] dark:text-[#D7D7D7]"
+                              }`}
+                            >
+                              {session.title}
+                            </div>
+                            <div
+                              className={`mt-0.5 text-xs ${
+                                isActive && messages.length > 1
+                                  ? "text-[#D7D7D7] opacity-70 dark:text-[#121317]"
+                                  : "text-[#121317] opacity-70 dark:text-[#D7D7D7]"
+                              }`}
+                            >
+                              {session.messageCount ||
+                                (session.messages
+                                  ? session.messages.length
+                                  : 0)}{" "}
+                              messages
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(event) =>
+                              deleteSession(event, session.id)
+                            }
+                            className={`shrink-0 cursor-pointer ${
+                              isActive && messages.length > 1
+                                ? "text-[#D7D7D7] dark:text-[#121317]"
+                                : "text-[#000035] dark:text-[#D7D7D7]"
+                            } opacity-70 transition-colors hover:text-red-600`}
+                            aria-label="Delete chat"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </button>
-                      </button>
-                    );
-                  })
+                      );
+                    })
                 )}
               </div>
 
               <button
                 type="button"
                 onClick={handleNewChat}
-                className="mt-4 mx-auto min-w-[132px] rounded-xl border border-[#000035] bg-transparent px-5 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
+                className="mx-auto mt-4 min-w-[132px] rounded-xl border border-[#000035] bg-transparent px-5 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10 cursor-pointer"
               >
                 New Chat
               </button>
@@ -317,7 +463,7 @@ function UserChatbot() {
                     type="button"
                     onClick={() => handleSendMessage(action)}
                     disabled={chatMutation.isPending}
-                    className="rounded-xl border border-[#000035] bg-transparent px-3 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
+                    className="rounded-xl cursor-pointer border border-[#000035] bg-transparent px-3 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
                   >
                     {action}
                   </button>
@@ -366,11 +512,17 @@ function UserChatbot() {
                         <div className="rounded-2xl rounded-br-md bg-[#0b0c28] px-4 py-3 text-sm text-white dark:bg-[#D7D7D7] dark:text-black">
                           {message.text}
                         </div>
-                        <img
-                          src={userImage}
-                          alt="User avatar"
-                          className="h-10 w-10 shrink-0 rounded-full object-cover"
-                        />
+                        {currentUser?.image_url ? (
+                          <img
+                            src={getImageUrl(currentUser.image_url)}
+                            alt="User avatar"
+                            className="h-10 w-10 shrink-0 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+                            <UserRound className="h-6 w-6 text-[#000035]" />
+                          </div>
+                        )}
                       </div>
                     </div>
                   ),
@@ -402,7 +554,10 @@ function UserChatbot() {
               </div>
             </div>
 
-            <form className="mt-4 flex items-center gap-3" onSubmit={handleFormSubmit}>
+            <form
+              className="mt-4 flex items-center gap-3"
+              onSubmit={handleFormSubmit}
+            >
               <div className="relative flex-1">
                 <input
                   type="text"
@@ -415,7 +570,7 @@ function UserChatbot() {
                 <button
                   type="submit"
                   disabled={!inputValue.trim() || chatMutation.isPending}
-                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-[#000035] transition-colors hover:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 dark:text-[#D7D7D7] dark:hover:text-white"
+                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-[#000035] transition-colors hover:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 dark:text-[#D7D7D7] cursor-pointer dark:hover:text-white"
                   aria-label="Send message"
                 >
                   <SendHorizontal size={16} />

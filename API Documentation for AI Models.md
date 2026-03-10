@@ -121,6 +121,14 @@ This README is the authoritative, machine- and frontend-consumable contract for 
 | `device_id` | string | default: `"esp8266"` |
 | `created_at` | timestamp | default: `now()` |
 
+### ScannedBookUid (transient NFC book UIDs)
+| Field | Type | Constraints |
+|-------|------|-------------|
+| `id` | bigint | PK, identity |
+| `device_id` | string | **required** |
+| `uid` | string | **required** |
+| `created_at` | timestamp with time zone | **required** |
+
 > **Note:** UserRequests are standalone registration requests. Admins review these requests and manually create Users separately. The `request_id` is auto-generated and should not be included in POST requests.
  
 ### Feedback
@@ -208,6 +216,7 @@ interface BookReviewDTO {
 - BookCopy operations (create/delete) update `BookDetail.quantity` atomically and are performed in transactions.
 - Deleting a BookCopy is blocked if the copy is referenced by reservations or transactions.
 - Deleting a BookDetail is blocked if any of its copies are referenced by reservations or transactions.
+- **ScannedBookUids cleanup:** background service removes rows older than 24 hours.
 - **User fields:** `password_hash`, `first_name`, and `last_name` are required fields.
 - **BookReservation:** `expiration_date` is now **required**.
 
@@ -974,6 +983,7 @@ Sets a short-lived device registration state for NFC devices.
 - **Transactions:** Added `GET /api/BookTransactions/dashboard` for dashboard summaries.
 - **FeedbackRequests:** Added moderation workflow via `GET/POST/PUT /api/FeedbackRequests`.
 - **Stats:** Added `GET /api/Stats` for cached counts.
+- **ScannedBookUids:** Added transient NFC UID table with hourly cleanup of rows older than 24 hours.
 
 ### Previous Update (AI Chat Integration & BookReview Feature)
 - **AI Chat Endpoint:** Added `POST /api/chat` with Groq/LLM-powered intent detection

@@ -29,20 +29,30 @@ const RateBookPopup = ({ show, onClose, bookId, initialReview }) => {
       return;
     }
 
+    if (!reviewText.trim()) {
+      alert("Please write a review before submitting.");
+      return;
+    }
+
     if (!bookId) {
       console.error("Missing bookId");
+      return;
+    }
+
+    const currentUser = getCurrentUser();
+    if (!currentUser?.user_id) {
+      alert("Please sign in to submit a review.");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const currentUser = getCurrentUser();
       const newReview = {
         book_id: bookId,
-        user_id: currentUser?.user_id || "Guest",
-        review_text: reviewText,
-        rating: rating,
+        user_id: currentUser.user_id,
+        review_text: reviewText.trim(),
+        rating: Math.round(rating),
       };
 
       await createBookReviewMutation.mutateAsync(newReview);

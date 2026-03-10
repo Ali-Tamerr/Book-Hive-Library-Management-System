@@ -124,18 +124,6 @@ function UserManagement({ searchValue, setSearchValue }) {
     );
   }
 
-  useEffect(() => {
-    const handleOpenRequests = () => {
-      setShowRequestsPopup(true);
-    };
-
-    window.addEventListener("openUserRequests", handleOpenRequests);
-
-    return () => {
-      window.removeEventListener("openUserRequests", handleOpenRequests);
-    };
-  }, []);
-
   // Backup: Window Scroll Listener (in case layout allows body scroll)
   useEffect(() => {
     const handleWindowScroll = () => {
@@ -726,15 +714,16 @@ function UserManagement({ searchValue, setSearchValue }) {
         }}
         title="View User"
         imageUrl={selectedUser ? getImageUrl(selectedUser.image_url) : null}
+        variant="user"
+        maxWidthClassOverride="max-w-[1100px]"
         data={
           selectedUser
             ? {
-                "User ID": selectedUser.user_id,
                 Name: `${selectedUser.first_name || ""} ${selectedUser.last_name || ""}`.trim(),
+                "ID User": selectedUser.user_id || "N/A",
+                Email: selectedUser.email || "N/A",
+                Plan: selectedUser.plan || "N/A",
                 Branch: getUserBranchName(selectedUser),
-
-                Email: selectedUser.email || "",
-                Plan: selectedUser.plan || "",
               }
             : null
         }

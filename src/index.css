@@ -41,8 +41,8 @@
   --card-shadow-hover: 0 16px 26px rgba(10, 10, 35, 0.16);
   --center-bg: #ffffff;
   --center-border: #0a0b2b;
-  --pie-borrowed-color: #d7d7d7;
-  --pie-returned-color: #000035;
+  --pie-borrowed-color: #000035;
+  --pie-returned-color: #3d3e3e;
   --max-w: 1500px;
   --gap: 32px;
 }
@@ -294,7 +294,7 @@ body.dark-theme {
   --card-bg: #15161b;
   --center-bg: #15161b;
   --pie-borrowed-color: #d7d7d7;
-  --pie-returned-color: #d7d7d7;
+  --pie-returned-color: #3d3e3e;
   --white: #151515;
   background: #121317;
 }
@@ -409,8 +409,11 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
   background-color: hsl(230, 16%, 35%);
 }
 .sidebar-stable-transition {
-  transition: width 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99) !important;
-  will-change: width;
+  transition:
+    width 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
+    padding 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
+    margin 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99) !important;
+  will-change: width, padding, margin;
 }
 
 .logo-stable-transition {
@@ -419,5 +422,8 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
     transform 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
     max-width 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
     width 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
+    height 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
+    margin 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
+    padding 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
     scale 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99) !important;
 }

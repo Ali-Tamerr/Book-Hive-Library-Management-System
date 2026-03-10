@@ -54,7 +54,7 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
     // { header: 'ID', accessor: 'transaction_id' },
     { header: "Book Name", accessor: "book_name" },
     { header: "Category", accessor: "category" },
-    { header: "Due Date", accessor: "due_date" },
+    { header: "Return Date", accessor: "return_date" },
     { header: "Date & Time", accessor: "created_at" },
   ];
 
@@ -64,9 +64,6 @@ function ReturnedBooksContent({ searchValue, customTitle }) {
     category: getBookCategory(book.book_id),
     created_at: book.created_at
       ? new Date(book.created_at).toLocaleDateString()
-      : "N/A",
-    due_date: book.due_date
-      ? new Date(book.due_date).toLocaleDateString()
       : "N/A",
     return_date: book.return_date
       ? new Date(book.return_date).toLocaleDateString()

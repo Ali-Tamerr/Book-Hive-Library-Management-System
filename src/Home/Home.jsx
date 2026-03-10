@@ -43,7 +43,8 @@ const Home = () => {
   const queryClient = useQueryClient();
   const { data: booksSource, isLoading: booksLoading } = useBooks();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
-  const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } = useApprovedFeedbacks();
+  const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } =
+    useApprovedFeedbacks();
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showShadowHeader, setShowShadowHeader] = useState(false);
@@ -64,24 +65,22 @@ const Home = () => {
         // fallback to fetching branches/categories and deriving book count
         // from the prefetched books. Use non-throwing fetches so one
         // failure doesn't block the other.
-        const statsPromise = apiGet("/Stats").catch(() => null);
-        const booksPromise = queryClient
-          .fetchQuery({ queryKey: bookKeys.lists(), queryFn: getAllBooks })
-          .catch(() => null);
-
-        const [maybeStats, maybeBooks] = await Promise.all([
-          statsPromise,
-          booksPromise,
-        ]);
+        const maybeStats = await apiGet("/Stats").catch(() => null);
 
         let branches = 0;
         let categories = 0;
         let booksCount = 0;
 
         if (maybeStats && typeof maybeStats === "object") {
-          branches = Number.isFinite(+maybeStats.branches) ? +maybeStats.branches : 0;
-          categories = Number.isFinite(+maybeStats.categories) ? +maybeStats.categories : 0;
-          booksCount = Number.isFinite(+maybeStats.books) ? +maybeStats.books : 0;
+          branches = Number.isFinite(+maybeStats.branches)
+            ? +maybeStats.branches
+            : 0;
+          categories = Number.isFinite(+maybeStats.categories)
+            ? +maybeStats.categories
+            : 0;
+          booksCount = Number.isFinite(+maybeStats.books)
+            ? +maybeStats.books
+            : 0;
         }
 
         // If stats endpoint didn't yield useful numbers, fetch branches/categories
@@ -103,10 +102,14 @@ const Home = () => {
           }
         }
 
-        if (!booksCount) {
-          if (Array.isArray(maybeBooks)) booksCount = maybeBooks.length;
-          else if (maybeBooks && Array.isArray(maybeBooks.data))
-            booksCount = maybeBooks.data.length;
+        // No longer waiting for all books data here for faster loading.
+        // Book count will be updated from the useBooks hook results when available.
+        if (
+          maybeStats &&
+          typeof maybeStats === "object" &&
+          Number.isFinite(+maybeStats.books)
+        ) {
+          booksCount = +maybeStats.books;
         }
 
         setStats({ branches, categories, books: booksCount });
@@ -178,16 +181,26 @@ const Home = () => {
       image: getImageUrl(book.image_url) || "",
     });
 
-    const heroList = heroRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
+    const heroList = heroRaw
+      .map(toViewModel)
+      .filter((b) => b.image)
+      .slice(0, 10);
 
-    const featuredList = featuredRaw.map(toViewModel).filter((b) => b.image).slice(0, 10);
+    const featuredList = featuredRaw
+      .map(toViewModel)
+      .filter((b) => b.image)
+      .slice(0, 10);
 
     const poolMap = new Map();
     [...heroList, ...featuredList].forEach((b) => {
       if (!b?.book_id) return;
       poolMap.set(b.book_id, b);
     });
-    const pool = poolMap.size ? Array.from(poolMap.values()) : heroList.length ? heroList : featuredList;
+    const pool = poolMap.size
+      ? Array.from(poolMap.values())
+      : heroList.length
+        ? heroList
+        : featuredList;
 
     const pickTwo = (list) => {
       if (!list.length) return [];
@@ -206,15 +219,16 @@ const Home = () => {
     setHeroBooks(heroList);
     setFeaturedBooks(featuredList);
     setAboutBooks(aboutSelected);
+
+    // If stats.books was not set by the Stats API, update it from the loaded books
+    if (rawArray.length > 0 && stats.books === 0) {
+      setStats((prev) => ({ ...prev, books: rawArray.length }));
+    }
   }, [pageLoaded, booksSource]);
 
   // 2d. Persist processed home book covers in local storage for faster reloads
   useEffect(() => {
-    if (
-      !heroBooks.length &&
-      !aboutBooks.length &&
-      !featuredBooks.length
-    ) {
+    if (!heroBooks.length && !aboutBooks.length && !featuredBooks.length) {
       return;
     }
 
@@ -347,7 +361,7 @@ const Home = () => {
 
   return (
     <>
-      {!pageLoaded && (
+      {(!pageLoaded || isFeedbacksLoading) && (
         <PageLoader className="!fixed !z-[9999] bg-[#E8E8E8] dark:bg-[#111214]" />
       )}
       <div

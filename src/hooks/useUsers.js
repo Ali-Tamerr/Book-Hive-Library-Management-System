@@ -82,7 +82,8 @@ export const useCreateUser = () => {
   return useMutation({
     mutationFn: createUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: userKeys.all });
+      queryClient.invalidateQueries({ queryKey: userKeys.infinite() });
     },
   });
 };
@@ -99,7 +100,8 @@ export const useUpdateUser = () => {
         queryKey: userKeys.detail(variables.id),
       });
       // Refetch all users
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: userKeys.all });
+      queryClient.invalidateQueries({ queryKey: userKeys.infinite() });
     },
   });
 };
@@ -112,7 +114,8 @@ export const useDeleteUser = () => {
     mutationFn: deleteUser,
     onSuccess: () => {
       // Invalidate and refetch users list
-      queryClient.invalidateQueries({ queryKey: userKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: userKeys.all });
+      queryClient.invalidateQueries({ queryKey: userKeys.infinite() });
     },
   });
 };

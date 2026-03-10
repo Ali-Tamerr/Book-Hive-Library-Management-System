@@ -8,29 +8,38 @@ import {
 import React, { Suspense, lazy, useEffect } from "react";
 import PageLoader from "./components/PageLoader";
 
-const Home = lazy(() => import("./Home/Home"));
-import Login from "./shared/Login";
-const Signup = lazy(() => import("./shared/Signup"));
-const ForgotPassword = lazy(() => import("./shared/ForgotPassword"));
-const OTP = lazy(() => import("./shared/OTP"));
-const ResetPassword = lazy(() => import("./shared/ResetPassword"));
+const loadHome = () => import("./Home/Home");
+const loadAdminDashboard = () => import("./Admin pages/Dashboard");
+const loadOverdue = () => import("./Admin pages/Overdue");
+const loadUserManagement = () => import("./Admin pages/UserManagement");
+const loadCatalog = () => import("./Admin pages/Catalog");
+const loadBooks = () => import("./Admin pages/Books");
+const loadCategories = () => import("./Admin pages/Categories");
+const loadBranches = () => import("./Admin pages/Branches");
+const loadUserDashboard = () => import("./User pages/Dashboard");
+const loadUserBorrowedBooks = () => import("./User pages/UserBorrowedBooks");
+const loadUserReturnedBooks = () => import("./User pages/UserReturnedBooks");
+const loadUserLibraryLane = () => import("./User pages/UserLibraryLane");
+const loadUserCatalog = () => import("./User pages/UserCatalog");
+const loadUserChatbot = () => import("./User pages/UserChatbot");
 
-const AdminDashboard = lazy(() => import("./Admin pages/Dashboard"));
-const Overdue = lazy(() => import("./Admin pages/Overdue"));
-const UserManagement = lazy(() => import("./Admin pages/UserManagement"));
-const Catalog = lazy(() => import("./Admin pages/Catalog"));
-const Books = lazy(() => import("./Admin pages/Books"));
-const Categories = lazy(() => import("./Admin pages/Categories"));
-const Settings = lazy(() => import("./shared/Settings"));
-const Branches = lazy(() => import("./Admin pages/Branches"));
+const Home = lazy(loadHome);
 
-const UserDashboard = lazy(() => import("./User pages/Dashboard"));
+const AdminDashboard = lazy(loadAdminDashboard);
+const Overdue = lazy(loadOverdue);
+const UserManagement = lazy(loadUserManagement);
+const Catalog = lazy(loadCatalog);
+const Books = lazy(loadBooks);
+const Categories = lazy(loadCategories);
+const Branches = lazy(loadBranches);
+
+const UserDashboard = lazy(loadUserDashboard);
 // const UserBooks = lazy(() => import("./User pages/UserBooks"));
-const UserBorrowedBooks = lazy(() => import("./User pages/UserBorrowedBooks"));
-const UserReturnedBooks = lazy(() => import("./User pages/UserReturnedBooks"));
-const UserLibraryLane = lazy(() => import("./User pages/UserLibraryLane"));
-const UserCatalog = lazy(() => import("./User pages/UserCatalog"));
-const UserChatbot = lazy(() => import("./User pages/UserChatbot"));
+const UserBorrowedBooks = lazy(loadUserBorrowedBooks);
+const UserReturnedBooks = lazy(loadUserReturnedBooks);
+const UserLibraryLane = lazy(loadUserLibraryLane);
+const UserCatalog = lazy(loadUserCatalog);
+const UserChatbot = lazy(loadUserChatbot);
 
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
@@ -74,6 +83,35 @@ function Layout({
     }
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (!isProtectedRoute || !currentUser) {
+      return;
+    }
+
+    const role = String(currentUser.role || "").toLowerCase();
+    const loaders =
+      role === "user"
+        ? [
+            loadUserDashboard,
+            loadUserCatalog,
+            loadUserChatbot,
+            loadUserBorrowedBooks,
+            loadUserReturnedBooks,
+            loadUserLibraryLane,
+          ]
+        : [
+            loadAdminDashboard,
+            loadCatalog,
+            loadBooks,
+            loadUserManagement,
+            loadOverdue,
+            loadBranches,
+            loadCategories,
+          ];
+
+    void Promise.all(loaders.map((load) => load().catch(() => null)));
+  }, [currentUser?.role, isProtectedRoute]);
+
   // Global Theme Initialization
   useEffect(() => {
     const selectedTheme = localStorage.getItem("selected-theme");
@@ -83,6 +121,13 @@ function Layout({
       document.body.classList.remove("dark-theme");
     }
   }, []);
+
+  // Collapse sidebar when not in protected routes to ensure clean state after login
+  useEffect(() => {
+    if (isAuthRoute || isHomePage) {
+      setSidebarOpen(false);
+    }
+  }, [isAuthRoute, isHomePage, setSidebarOpen]);
 
   if (isProtectedRoute && !currentUser) {
     return <Navigate to="/" replace />;
@@ -168,11 +213,6 @@ function App() {
         >
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/otp" element={<OTP />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="admin/dashboard" element={<AdminDashboard />} />
             <Route
@@ -220,7 +260,6 @@ function App() {
                 />
               }
             />
-            <Route path="admin/settings" element={<Settings />} />
             <Route
               path="admin/branches"
               element={
