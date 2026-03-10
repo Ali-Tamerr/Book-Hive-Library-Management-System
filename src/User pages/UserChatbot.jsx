@@ -7,7 +7,6 @@ import {
   SendHorizontal,
   Trash2,
 } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
 import { apiPost, getImageUrl } from "../services/api.config";
 
 const STORAGE_KEY = "chatSessions";
