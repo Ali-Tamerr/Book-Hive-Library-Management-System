@@ -170,8 +170,6 @@ function Dashboard() {
     }
   }, [selectedBookFetching, selectedBookLoading]);
 
-  const displayBooks = liveBooks.length > 0 ? liveBooks : cachedBooks;
-
   const categories = useMemo(
     () =>
       normalizeArrayPayload(categoriesData)
