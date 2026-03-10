@@ -2,6 +2,11 @@ import { apiGet, apiPost, apiPut, apiDelete } from './api.config';
 
 const BASE_ENDPOINT = '/Categories';
 
+// Get lightweight category summary for admin category table
+export const getCategoryManagementSummary = async () => {
+  return await apiGet(`${BASE_ENDPOINT}/management`);
+};
+
 // Get all categories
 export const getAllCategories = async () => {
   return await apiGet(BASE_ENDPOINT);

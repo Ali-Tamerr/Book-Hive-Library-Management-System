@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import BorrowedBooksContent from './UserBorrowedBooks';
 import ReturnedBooksContent from './UserReturnedBooks';
+import UserOverdueBorrows from './UserOverdueBorrows';
 import TabButton from '../components/TabButton';
 
 function UserCatalog({ searchValue }) {
@@ -19,6 +20,11 @@ function UserCatalog({ searchValue }) {
                 label="Returned Books"
                 isActive={localActiveTab === 'returned'}
                 onClick={() => setLocalActiveTab('returned')}
+            />
+            <TabButton
+                label="OVERDUE BORROWS"
+                isActive={localActiveTab === 'overdue'}
+                onClick={() => setLocalActiveTab('overdue')}
                 position="last"
                 className="font-[family-name:var(--body-font)]"
             />
@@ -29,6 +35,7 @@ function UserCatalog({ searchValue }) {
         <>
             {localActiveTab === 'borrowed' && <BorrowedBooksContent searchValue={searchValue} customTitle={tabButtons} />}
             {localActiveTab === 'returned' && <ReturnedBooksContent searchValue={searchValue} customTitle={tabButtons} />}
+            {localActiveTab === 'overdue' && <UserOverdueBorrows searchValue={searchValue} customTitle={tabButtons} />}
         </>
     );
 }

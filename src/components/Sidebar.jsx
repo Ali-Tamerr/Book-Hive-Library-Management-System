@@ -65,7 +65,11 @@ const Sidebar = ({
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate("/", { flushSync: true });
+  };
+
+  const goTo = (path) => {
+    navigate(path, { flushSync: true });
   };
 
   return (
@@ -103,7 +107,7 @@ const Sidebar = ({
                 isExpanded={isExpanded}
                 active={location.pathname === "/user/dashboard"}
                 onClick={() => {
-                  navigate("/user/dashboard");
+                  goTo("/user/dashboard");
                 }}
                 icon={<Home size={18} strokeWidth={2.3} />}
                 text="Dashboard"
@@ -114,7 +118,7 @@ const Sidebar = ({
                 isExpanded={isExpanded}
                 active={location.pathname === "/user/catalog"}
                 onClick={() => {
-                  navigate("/user/catalog");
+                  goTo("/user/catalog");
                 }}
                 icon={<Compass size={18} strokeWidth={2.3} />}
                 text="Catalog"
@@ -124,7 +128,7 @@ const Sidebar = ({
                 isExpanded={isExpanded}
                 active={location.pathname === "/user/chatbot"}
                 onClick={() => {
-                  navigate("/user/chatbot");
+                  goTo("/user/chatbot");
                 }}
                 icon={<MessageSquare size={18} strokeWidth={2.3} />}
                 text="Chatbot"
@@ -141,7 +145,7 @@ const Sidebar = ({
                 isExpanded={isExpanded}
                 active={location.pathname === "/admin/dashboard"}
                 onClick={() => {
-                  navigate("/admin/dashboard");
+                  goTo("/admin/dashboard");
                 }}
                 icon={<Home size={18} strokeWidth={2.3} />}
                 text="Dashboard"
@@ -151,7 +155,7 @@ const Sidebar = ({
                 isExpanded={isExpanded}
                 active={location.pathname.startsWith("/admin/catalog")}
                 onClick={() => {
-                  navigate("/admin/catalog");
+                  goTo("/admin/catalog");
                 }}
                 icon={<Compass size={18} strokeWidth={2.3} />}
                 text="Catalog"
@@ -161,7 +165,7 @@ const Sidebar = ({
                 isExpanded={isExpanded}
                 active={location.pathname === "/admin/books"}
                 onClick={() => {
-                  navigate("/admin/books");
+                  goTo("/admin/books");
                 }}
                 icon={<BookOpen size={18} strokeWidth={2.3} />}
                 text="Books"
@@ -171,7 +175,7 @@ const Sidebar = ({
                 isExpanded={isExpanded}
                 active={location.pathname === "/admin/user-management"}
                 onClick={() => {
-                  navigate("/admin/user-management");
+                  goTo("/admin/user-management");
                 }}
                 icon={<Users size={18} strokeWidth={2.3} />}
                 text="Users"
@@ -183,7 +187,7 @@ const Sidebar = ({
                     isExpanded={isExpanded}
                     active={location.pathname === "/admin/branches"}
                     onClick={() => {
-                      navigate("/admin/branches");
+                      goTo("/admin/branches");
                     }}
                     icon={<MapPin size={18} strokeWidth={2.3} />}
                     text="Branches"
@@ -193,7 +197,7 @@ const Sidebar = ({
                     isExpanded={isExpanded}
                     active={location.pathname === "/admin/categories"}
                     onClick={() => {
-                      navigate("/admin/categories");
+                      goTo("/admin/categories");
                     }}
                     icon={<Shapes size={18} strokeWidth={2.3} />}
                     text="Categories"

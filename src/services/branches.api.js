@@ -2,6 +2,10 @@ import { apiGet, apiPost, apiPut, apiDelete } from './api.config';
 
 const BASE_ENDPOINT = '/Branches';
 
+export const getBranchesManagementSummary = async () => {
+    return await apiGet(`${BASE_ENDPOINT}/management`);
+};
+
 export const getBranches = async () => {
     return await apiGet(BASE_ENDPOINT);
 };

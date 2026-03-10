@@ -24,8 +24,11 @@ const ViewDetailsPopup = ({
   imageUrl,
   imageAlt,
   variant = "book",
+  maxWidthClassOverride,
 }) => {
   const [showRatePopup, setShowRatePopup] = useState(false);
+  const isBookVariant = variant === "book";
+  const isUserVariant = variant === "user";
   const bookId = data?.["Book ID"];
   const { data: bookReviews = [], isLoading: isLoadingReviews } =
     useBookReviews(bookId);
@@ -106,6 +109,17 @@ const ViewDetailsPopup = ({
     });
   }
 
+  const userDetailsEntries = [
+    ["ID User", firstMatchingEntry(["ID User", "User ID"])?.[1]],
+    ["Email", firstMatchingEntry(["Email"])?.[1]],
+    ["Plan", firstMatchingEntry(["Plan"])?.[1]],
+    ["Branch", firstMatchingEntry(["Branch", "Branch Name"])?.[1]],
+  ];
+
+  const visibleDetailsEntries = isUserVariant
+    ? userDetailsEntries
+    : detailsEntries;
+
   const reviewerName =
     savedBy &&
     typeof savedBy === "object" &&
@@ -181,21 +195,29 @@ const ViewDetailsPopup = ({
         onClose={onClose}
         title={title}
         icon={null}
-        maxWidthClass={variant === "book" ? "max-w-[1200px]" : "w-min"}
-        panelClassName={`!p-0 ${variant === "book" ? "h-full max-h-[700px]" : "h-auto"} overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#D7D7D7] dark:bg-[#121317]`}
-        contentClassName={`${variant === "book" ? "h-full overflow-y-auto" : "h-auto overflow-hidden"} p-0 overflow-x-hidden`}
+        maxWidthClass={
+          maxWidthClassOverride || (isBookVariant ? "max-w-[1200px]" : "w-min")
+        }
+        panelClassName={`!p-0 ${isBookVariant ? "h-full max-h-[700px]" : "h-auto"} overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#D7D7D7] dark:bg-[#121317]`}
+        contentClassName={`${isBookVariant ? "h-full overflow-y-auto" : "h-auto overflow-hidden"} p-0 overflow-x-hidden`}
         hideHeader
         hideDivider
-        heightClass={variant === "book" ? "px-1 py-1 sm:px-4 sm:py-4" : "p-0"}
+        heightClass={isBookVariant ? "px-1 py-1 sm:px-4 sm:py-4" : "p-0"}
       >
         <div
-          className={`grid ${variant === "book" ? "h-full grid-cols-1 lg:grid-cols-[440px_1px_1fr]" : "h-auto grid-cols-1 lg:grid-cols-[auto_1px_auto]"}`}
+          className={`grid ${
+            isBookVariant
+              ? "h-full grid-cols-1 lg:grid-cols-[440px_1px_1fr]"
+              : isUserVariant
+                ? "h-auto grid-cols-1 lg:grid-cols-[320px_1px_minmax(0,1fr)]"
+                : "h-auto grid-cols-1 lg:grid-cols-[auto_1px_auto]"
+          }`}
         >
           <div
-            className={`flex flex-col items-center justify-center ${variant === "book" ? "px-10 pb-10 pt-10" : "p-10"}`}
+            className={`flex flex-col items-center justify-center ${isBookVariant ? "px-10 pb-10 pt-10" : "p-10"}`}
           >
             <div className="flex items-center justify-center">
-              {variant === "book" ? (
+              {isBookVariant ? (
                 imageUrl ? (
                   <img
                     src={imageUrl}
@@ -238,20 +260,26 @@ const ViewDetailsPopup = ({
           </div>
 
           <div
-            className={`${variant === "book" ? "my-6" : "my-3 h-auto min-h-[140px]"} mx-auto hidden w-px bg-[#000035]/50 lg:block dark:bg-[#D7D7D7]/50`}
+            className={`${isBookVariant ? "my-6" : "my-3 h-auto min-h-[140px]"} mx-auto hidden w-px bg-[#000035]/50 lg:block dark:bg-[#D7D7D7]/50`}
           />
 
           <div
-            className={`flex min-h-0 flex-1 flex-col justify-center ${variant === "book" ? "px-12 py-12" : "py-3 pl-4 pr-6"}`}
+            className={`flex min-h-0 flex-1 flex-col justify-center ${
+              isBookVariant
+                ? "px-12 py-12"
+                : isUserVariant
+                  ? "px-8 py-6"
+                  : "py-3 pl-4 pr-6"
+            }`}
           >
             {/* Header and Details - Fixed */}
             <div className="shrink-0">
               <div className="flex flex-col items-start">
                 <h3
-                  className={`truncate font-bold uppercase leading-[1.1] tracking-[0.5px] text-[#000035] dark:text-[#D7D7D7] ${variant === "book" ? "text-4xl font-bold sm:text-5xl lg:text-[56px]" : "text-4xl font-bold sm:text-5xl lg:text-[56px]"}`}
+                  className={`truncate font-bold uppercase leading-[1.1] tracking-[0.5px] text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-4xl font-bold sm:text-5xl lg:text-[56px]" : "text-4xl font-bold sm:text-5xl lg:text-[56px]"}`}
                   style={{
                     fontFamily:
-                      variant === "book"
+                      isBookVariant
                         ? "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif"
                         : "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
                   }}
@@ -259,7 +287,7 @@ const ViewDetailsPopup = ({
                 >
                   {String(headingText || "N/A")}
                 </h3>
-                {variant === "book" && bookReviews.length > 0 && (
+                {isBookVariant && bookReviews.length > 0 && (
                   <div className="flex items-center gap-2">
                     {renderStars(averageRating, 24)}
                     {/* <span className="text-xl font-medium text-[#000035] dark:text-[#D7D7D7]">
@@ -270,22 +298,22 @@ const ViewDetailsPopup = ({
               </div>
               {subtitleText && (
                 <p
-                  className={`font-medium text-[#000035] dark:text-[#D7D7D7] ${variant === "book" ? "text-xl sm:text-[28px]" : "mb-6 text-2xl sm:text-[32px]"}`}
+                  className={`font-medium text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-xl sm:text-[28px]" : "mb-6 text-2xl sm:text-[32px]"}`}
                 >
                   {subtitleText}
                 </p>
               )}
 
               <div
-                className={`flex flex-col ${variant === "book" ? "mt-6 gap-4" : "mt-1 gap-2"}`}
+                className={`flex flex-col ${isBookVariant ? "mt-6 gap-4" : "mt-1 gap-2"}`}
                 style={{
                   fontFamily: "'Noto Sans Georgian', sans-serif",
                 }}
               >
-                {detailsEntries.map(([key, value]) => (
+                {visibleDetailsEntries.map(([key, value]) => (
                   <p
                     key={key}
-                    className={`whitespace-nowrap text-[#000035] dark:text-[#D7D7D7] ${variant === "book" ? "text-xl sm:text-[28px]" : "text-base font-medium sm:text-[20px]"}`}
+                    className={`whitespace-nowrap text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-xl sm:text-[28px]" : "text-base font-medium sm:text-[20px]"}`}
                   >
                     {key} :{" "}
                     <span className="font-normal">{toDisplayValue(value)}</span>
@@ -293,7 +321,7 @@ const ViewDetailsPopup = ({
                 ))}
               </div>
 
-              {variant === "book" && (
+              {isBookVariant && (
                 <div className="my-6 h-px w-full max-w-[280px] bg-[#000035] dark:bg-[#D7D7D7]" />
               )}
             </div>

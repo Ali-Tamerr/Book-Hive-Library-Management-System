@@ -1,12 +1,10 @@
 import { useState } from "react";
 import {
-  useBranches,
+  useBranchesManagement,
   useCreateBranch,
   useUpdateBranch,
   useDeleteBranch,
 } from "../hooks/useBranches";
-import { useBookCopies } from "../hooks/useBookCopies";
-import { useBooks } from "../hooks/useBooks";
 import { useUsers } from "../hooks/useUsers";
 import CommonLayout from "../Layouts/CommonLayout";
 import BranchFormPopup from "../components/BranchFormPopup";
@@ -28,9 +26,7 @@ function Branches({ searchValue, setSearchValue }) {
     contact_number: "",
   });
 
-  const { data: branches = [], isLoading } = useBranches();
-  const { data: bookCopies = [] } = useBookCopies();
-  const { data: books = [] } = useBooks();
+  const { data: branches = [], isLoading } = useBranchesManagement();
   const { data: usersData } = useUsers();
   const users = usersData
     ? usersData.pages.flatMap((page) => page.data || [])
@@ -136,12 +132,6 @@ function Branches({ searchValue, setSearchValue }) {
     {
       header: "Bo Quantity",
       accessor: "book_count",
-      render: (branch) => {
-        const count = bookCopies.filter(
-          (bc) => bc.branch_id === branch.branch_id,
-        ).length;
-        return <span className="text-sm font-medium">{count}</span>;
-      },
     },
     { header: "Action", accessor: "action" },
   ];
@@ -198,15 +188,7 @@ function Branches({ searchValue, setSearchValue }) {
                 Name: selectedBranch.name,
                 Location: selectedBranch.location,
                 "Contact Number": selectedBranch.contact_number,
-                // 'Book Copies': (() => {
-                //   const branchCopies = bookCopies.filter(bc => bc.branch_id === selectedBranch.branch_id);
-                //   if (branchCopies.length === 0) return 'No books in this branch';
-                //   const bookDetails = branchCopies.map(bc => {
-                //     const book = books.find(b => b.book_id === bc.book_id);
-                //     return `${book?.name || 'Unknown'} (${bc.book_copy_id})`;
-                //   });
-                //   return bookDetails.join(', ');
-                // })()
+                "Books Count": selectedBranch.book_count,
               }
             : null
         }
