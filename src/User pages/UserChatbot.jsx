@@ -33,6 +33,9 @@ const getUserId = (user) => {
 const getChatSessionsStorageKey = (userId) =>
   userId ? `chatSessions:${userId}` : null;
 
+const getActiveChatSessionKey = (userId) =>
+  userId ? `activeChatSessionId:${userId}` : null;
+
 const getReplyText = (responsePayload) => {
   if (!responsePayload || typeof responsePayload !== "object") {
     return "I didn't quite understand that.";
@@ -69,11 +72,12 @@ const getChatErrorMessage = (error) => {
 };
 
 function UserChatbot() {
-  const [sessionId, setSessionId] = useState(() => Date.now());
+  const [sessionId, setSessionId] = useState(null);
   const [messages, setMessages] = useState([STARTING_MESSAGE]);
   const [sessions, setSessions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
   const messagesEndRef = useRef(null);
 
   const localUser = getCurrentUser();
@@ -84,14 +88,11 @@ function UserChatbot() {
   const sessionsStorageKey = getChatSessionsStorageKey(activeUserId);
 
   useEffect(() => {
-    localStorage.removeItem("chatSessions");
-  }, []);
-
-  useEffect(() => {
-    if (!sessionsStorageKey) {
+    if (!activeUserId) {
       setSessions([]);
       setSessionId(Date.now());
       setMessages([STARTING_MESSAGE]);
+      setIsInitialized(true);
       return;
     }
 
@@ -102,29 +103,59 @@ function UserChatbot() {
         ? parsed.filter(
             (entry) =>
               entry &&
-              (typeof entry.id === "number" || typeof entry.id === "string") &&
-              Array.isArray(entry.messages),
+              (typeof entry.id === "number" || typeof entry.id === "string"),
           )
         : [];
 
       setSessions(loadedSessions);
 
-      if (loadedSessions.length > 0) {
+      const activeSessionKey = getActiveChatSessionKey(activeUserId);
+      const savedActiveId = localStorage.getItem(activeSessionKey);
+      const sessionToLoad = loadedSessions.find(
+        (s) => String(s.id) === savedActiveId,
+      );
+
+      const loadMessagesForSession = (id, sessionObj) => {
+        try {
+          const messagesKey = `chatSessionMessages:${activeUserId}:${id}`;
+          const savedMessages = localStorage.getItem(messagesKey);
+          if (savedMessages) return JSON.parse(savedMessages);
+          if (sessionObj && Array.isArray(sessionObj.messages))
+            return sessionObj.messages;
+        } catch (e) {}
+        return [STARTING_MESSAGE];
+      };
+
+      if (sessionToLoad) {
+        setSessionId(sessionToLoad.id);
+        const msgs = loadMessagesForSession(sessionToLoad.id, sessionToLoad);
+        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
+      } else if (savedActiveId) {
+        setSessionId(
+          isNaN(Number(savedActiveId)) ? savedActiveId : Number(savedActiveId),
+        );
+        const parsedId = isNaN(Number(savedActiveId))
+          ? savedActiveId
+          : Number(savedActiveId);
+        const msgs = loadMessagesForSession(parsedId, null);
+        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
+      } else if (loadedSessions.length > 0) {
         const latest = loadedSessions[0];
         setSessionId(latest.id);
-        setMessages(
-          latest.messages.length > 0 ? latest.messages : [STARTING_MESSAGE],
-        );
+        const msgs = loadMessagesForSession(latest.id, latest);
+        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
       } else {
         setSessionId(Date.now());
         setMessages([STARTING_MESSAGE]);
       }
+      setIsInitialized(true);
     } catch {
       setSessions([]);
       setSessionId(Date.now());
       setMessages([STARTING_MESSAGE]);
+      setIsInitialized(true);
     }
-  }, [sessionsStorageKey]);
+  }, [sessionsStorageKey, activeUserId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -135,7 +166,7 @@ function UserChatbot() {
   }, [messages]);
 
   useEffect(() => {
-    if (messages.length > 1) {
+    if (messages.length > 1 && sessionId) {
       setSessions((prev) => {
         const title =
           messages.find((m) => m.sender === "user")?.text || "New Conversation";
@@ -145,11 +176,16 @@ function UserChatbot() {
         if (existingIndex >= 0) {
           newSessions[existingIndex] = {
             ...newSessions[existingIndex],
-            messages,
             title,
+            messageCount: messages.length,
           };
+          delete newSessions[existingIndex].messages;
         } else {
-          newSessions.unshift({ id: sessionId, title, messages });
+          newSessions.unshift({
+            id: sessionId,
+            title,
+            messageCount: messages.length,
+          });
         }
         return newSessions;
       });
@@ -157,9 +193,21 @@ function UserChatbot() {
   }, [messages, sessionId]);
 
   useEffect(() => {
-    if (!sessionsStorageKey) return;
+    if (!isInitialized || !sessionsStorageKey) return;
     localStorage.setItem(sessionsStorageKey, JSON.stringify(sessions));
-  }, [sessions, sessionsStorageKey]);
+  }, [sessions, sessionsStorageKey, isInitialized]);
+
+  useEffect(() => {
+    if (!isInitialized || !sessionId || !activeUserId) return;
+    const key = getActiveChatSessionKey(activeUserId);
+    if (key) {
+      localStorage.setItem(key, String(sessionId));
+    }
+    const messagesKey = `chatSessionMessages:${activeUserId}:${sessionId}`;
+    if (messages.length > 0) {
+      localStorage.setItem(messagesKey, JSON.stringify(messages));
+    }
+  }, [sessionId, messages, activeUserId, isInitialized]);
 
   const chatMutation = useMutation({
     mutationFn: async ({ messageText, userId }) => {
@@ -242,8 +290,20 @@ function UserChatbot() {
   const loadSession = (id) => {
     const session = sessions.find((s) => s.id === id);
     if (session) {
-      setMessages(session.messages);
-      setSessionId(session.id);
+      setSessionId(id);
+      try {
+        const messagesKey = `chatSessionMessages:${activeUserId}:${id}`;
+        const savedMessages = localStorage.getItem(messagesKey);
+        if (savedMessages) {
+          setMessages(JSON.parse(savedMessages));
+        } else if (session.messages) {
+          setMessages(session.messages);
+        } else {
+          setMessages([STARTING_MESSAGE]);
+        }
+      } catch (e) {
+        setMessages([STARTING_MESSAGE]);
+      }
     }
   };
 
@@ -252,6 +312,10 @@ function UserChatbot() {
     const newSessions = sessions.filter((s) => s.id !== id);
     setSessions(newSessions);
 
+    if (activeUserId) {
+      localStorage.removeItem(`chatSessionMessages:${activeUserId}:${id}`);
+    }
+
     if (sessionId === id) {
       setMessages([STARTING_MESSAGE]);
       setSessionId(Date.now());
@@ -259,164 +323,195 @@ function UserChatbot() {
   };
 
   return (
-    <div className="flex h-full w-full items-center justify-center bg-[#e7e7e7] px-6 py-8 text-[#000035] transition-colors duration-300 lg:px-10 dark:bg-[#0b0d14] dark:text-[#ebebf0]">
-      <div className="h-[800px] w-full">
+    <div className="flex h-full w-full">
+      <main className="flex h-full flex-1 flex-col gap-3 px-5 py-3">
         <div className="flex items-center gap-3">
           <MessageSquareText
-            size={28}
-            strokeWidth={2.4}
-            className="text-[#00004f] dark:text-[#ebebf0]"
+            className="text-[#000035] dark:text-[#D7D7D7]"
+            size={22}
+            strokeWidth={2}
           />
-          <h1 className="bebas-neue-regular text-[52px] leading-none tracking-[0.4px] text-[#000035] dark:text-[#ebebf0]">
-            CHATBOT
+          <h1 className="text-3xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
+            Chatbot
           </h1>
         </div>
 
-        <div className="flex items-stretch gap-[10%] pb-10">
-          <div className="flex flex-1 flex-col gap-5">
-            <section className="flex h-[450px] shrink-0 flex-col overflow-hidden rounded-[16px] border border-[#dedede] bg-[#f4f4f4] dark:border-[#babec6] dark:bg-[#dbdde1]">
-              <div className="border-b border-[#8f8fb1] px-7 pb-4 pt-6 dark:border-[#8f93a4]">
-                <h2 className="bebas-neue-regular text-[44px] leading-none text-[#000035] dark:text-[#121747]">
-                  CONVERSATION
+        <section className="flex h-full gap-3 max-[980px]:flex-col">
+          <aside className="flex w-full max-w-[360px] flex-col gap-3 max-[980px]:max-w-none">
+            <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
+                  Conversation
                 </h2>
+                <span className="text-xs text-[#000035] opacity-70 dark:text-[#D7D7D7]">
+                  {sessions.length}
+                </span>
               </div>
 
-              <div className="px-2 pb-2 pt-5">
-                <div className="relative">
-                  <Search
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#121747]"
-                    size={16}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search Conversations"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-11 w-full rounded-[10px] border border-[#52558a] bg-transparent py-2 pl-10 pr-3 text-sm text-[#000035] outline-none placeholder:text-[#52558a] dark:border-[#555d80] dark:text-[#121747] dark:placeholder:text-[#555d80]"
-                  />
-                </div>
+              <div className="relative mt-4">
+                <Search
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
+                  size={16}
+                />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search conversations"
+                  className="w-full rounded-lg border border-[#000035] py-1.5 pl-10 pr-3.5 text-sm transition-colors placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7]"
+                />
               </div>
 
-              <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 py-4">
+              <div className="mt-4 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
                 {sessions.length === 0 ? (
-                  <div className="flex h-full flex-col items-center justify-center text-center">
-                    <MessageSquareText
-                      size={48}
-                      className="mb-3 text-[#8f8fb1] opacity-50"
-                    />
-                    <p className="text-lg font-medium text-[#8f8fb1]">
-                      Your previous chat sessions will appear here soon.
-                    </p>
+                  <div className="flex h-full flex-col items-center justify-center rounded-lg border border-dashed border-[#000035] px-6 text-center text-sm text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7]">
+                    No saved conversations yet.
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-2">
-                    {sessions
-                      .filter((s) =>
-                        String(s.title || "")
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()),
-                      )
-                      .map((session) => (
-                        <div
+                  sessions
+                    .filter((s) =>
+                      String(s.title || "")
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
+                    )
+                    .map((session) => {
+                      const isActive = session.id === sessionId;
+
+                      return (
+                        <button
                           key={session.id}
+                          type="button"
                           onClick={() => loadSession(session.id)}
-                          className={`group flex cursor-pointer items-center justify-between rounded-[10px] px-4 py-3 transition-colors ${
-                            session.id === sessionId && messages.length > 1
-                              ? "bg-[#d9d9d9] font-bold text-[#000035] dark:bg-[#555d80] dark:text-[#ebebf0]"
-                              : "text-[#52558a] hover:bg-[#e4e4e4] dark:text-[#8f93a4] dark:hover:bg-[#4a4f6d]"
+                          className={`flex items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors cursor-pointer ${
+                            isActive && messages.length > 1
+                              ? "border-[#000035] bg-white dark:border-[#D7D7D7] dark:bg-[#D7D7D7]"
+                              : "border-[#000035] bg-transparent hover:bg-white/70 dark:border-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
                           }`}
                         >
-                          <span className="truncate pr-2">{session.title}</span>
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                            <Bot size={18} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div
+                              className={`truncate text-sm font-semibold ${
+                                isActive && messages.length > 1
+                                  ? "text-[#D7D7D7] dark:text-[#121317]"
+                                  : "text-[#000035] dark:text-[#D7D7D7]"
+                              }`}
+                            >
+                              {session.title}
+                            </div>
+                            <div
+                              className={`mt-0.5 text-xs ${
+                                isActive && messages.length > 1
+                                  ? "text-[#D7D7D7] opacity-70 dark:text-[#121317]"
+                                  : "text-[#121317] opacity-70 dark:text-[#D7D7D7]"
+                              }`}
+                            >
+                              {session.messageCount ||
+                                (session.messages
+                                  ? session.messages.length
+                                  : 0)}{" "}
+                              messages
+                            </div>
+                          </div>
                           <button
                             type="button"
-                            onClick={(e) => deleteSession(e, session.id)}
-                            className={`shrink-0 transition-colors hover:text-red-500`}
+                            onClick={(event) =>
+                              deleteSession(event, session.id)
+                            }
+                            className={`shrink-0 cursor-pointer ${
+                              isActive && messages.length > 1
+                                ? "text-[#D7D7D7] dark:text-[#121317]"
+                                : "text-[#000035] dark:text-[#D7D7D7]"
+                            } opacity-70 transition-colors hover:text-red-600`}
                             aria-label="Delete chat"
                           >
                             <Trash2 size={16} />
                           </button>
-                        </div>
-                      ))}
-                  </div>
+                        </button>
+                      );
+                    })
                 )}
               </div>
 
-              <div className="border-t border-[#8f8fb1] px-4 py-4 dark:border-[#8f93a4]">
-                <button
-                  type="button"
-                  onClick={handleNewChat}
-                  className="bebas-neue-regular mx-auto flex h-10 min-w-[122px] items-center justify-center rounded-[12px] bg-[#00004f] px-6 text-[34px] leading-none text-white transition-colors hover:bg-[#161669] dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
-                >
-                  New Chat
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleNewChat}
+                className="mx-auto mt-4 min-w-[132px] rounded-xl border border-[#000035] bg-transparent px-5 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10 cursor-pointer"
+              >
+                New Chat
+              </button>
             </section>
 
-            <section className="shrink-0 rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-5 pb-5 pt-6 dark:border-[#babec6] dark:bg-[#dbdde1]">
-              <h2 className="noto-sans-georgian-medium text-[44px] leading-none text-[#000035] dark:text-[#121747]">
-                QUICK ACTION
+            <section className="rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
+              <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
+                Quick Action
               </h2>
-              <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="mt-4 grid grid-cols-2 gap-3">
                 {quickActions.map((action) => (
                   <button
                     key={action}
                     type="button"
                     onClick={() => handleSendMessage(action)}
                     disabled={chatMutation.isPending}
-                    className="noto-sans-georgian-bold h-10 rounded-[12px] bg-[#00004f] px-3 text-[20px] leading-none text-white transition-colors hover:bg-[#161669] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
+                    className="rounded-xl cursor-pointer border border-[#000035] bg-transparent px-3 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
                   >
                     {action}
                   </button>
                 ))}
               </div>
             </section>
-          </div>
+          </aside>
 
-          <div className="relative min-w-0 flex-[2]">
-            <section className="absolute inset-0 flex flex-col rounded-[16px] border border-[#dedede] bg-[#f4f4f4] px-6 pb-4 pt-6 lg:px-8 dark:border-[#babec6] dark:bg-[#dbdde1]">
-              <div className="flex items-center justify-center gap-2 text-[#000035] dark:text-[#121747]">
-                <Bot size={20} strokeWidth={2.1} />
-                <h2 className="bebas-neue-regular text-[46px] leading-none">
-                  LIBRARY BOT
-                </h2>
-                <span className="ml-2 mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                <span className="mt-1 text-sm text-[#4f4f4f] dark:text-[#60657a]">
-                  Online
-                </span>
+          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
+            <div className="flex items-center justify-between border-b border-[#000035] pb-3 dark:border-[#D7D7D7]">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                  <Bot size={18} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
+                    Library Bot
+                  </h2>
+                  <div className="flex items-center gap-2 text-xs text-[#000035] opacity-70 dark:text-[#D7D7D7]">
+                    <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                    Online
+                  </div>
+                </div>
               </div>
 
-              <div className="mt-5 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-[14px] bg-[#e1e1e1] p-5 lg:p-6 dark:bg-[#cfd2d7]">
+              <div className="text-xs text-[#000035] opacity-70 dark:text-[#D7D7D7]">
+                {messages.length} messages
+              </div>
+            </div>
+
+            <div className="mt-4 flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
+              <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1">
                 {messages.map((message) =>
                   message.sender === "bot" ? (
-                    <div key={message.id} className="flex items-start gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D7D7D7]">
-                        <Bot
-                          size={20}
-                          strokeWidth={2.1}
-                          className="text-[#000035] dark:text-[#121747]"
-                        />
-                      </span>
-                      <div
-                        dir="rtl"
-                        className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 text-[15px] font-semibold text-[#000035] dark:bg-[#e2e4e8] dark:text-[#121747]"
-                      >
+                    <div key={message.id} className="flex items-end gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                        <Bot size={18} />
+                      </div>
+                      <div className="max-w-[70%] rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm text-[#000035] dark:border dark:border-[#D7D7D7]/30 dark:bg-transparent dark:text-[#D7D7D7]">
                         {message.text}
                       </div>
                     </div>
                   ) : (
                     <div key={message.id} className="flex justify-end">
-                      <div className="flex items-start gap-3">
-                        <div className="max-w-[80%] rounded-bl-[12px] rounded-br-[12px] rounded-tl-[12px] bg-[#00004f] px-4 py-3 text-[15px] font-semibold text-white dark:bg-[#1d2142] dark:text-white">
+                      <div className="flex max-w-[70%] items-end gap-3">
+                        <div className="rounded-2xl rounded-br-md bg-[#0b0c28] px-4 py-3 text-sm text-white dark:bg-[#D7D7D7] dark:text-black">
                           {message.text}
                         </div>
                         {currentUser?.image_url ? (
                           <img
                             src={getImageUrl(currentUser.image_url)}
                             alt="User avatar"
-                            className="h-9 w-9 shrink-0 rounded-full object-cover"
+                            className="h-10 w-10 shrink-0 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
                             <UserRound className="h-6 w-6 text-[#000035]" />
                           </div>
                         )}
@@ -426,60 +521,57 @@ function UserChatbot() {
                 )}
 
                 {chatMutation.isPending && (
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D7D7D7]">
-                      <Bot
-                        size={20}
-                        strokeWidth={2.1}
-                        className="animate-pulse text-[#000035] dark:text-[#121747]"
-                      />
-                    </span>
-                    <div className="rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] bg-[#d9d9d9] px-4 py-3 dark:bg-[#e2e4e8]">
-                      <span className="flex h-full items-center gap-1">
-                        <span
-                          className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                          style={{ animationDelay: "0ms" }}
-                        ></span>
-                        <span
-                          className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                          style={{ animationDelay: "150ms" }}
-                        ></span>
-                        <span
-                          className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
-                          style={{ animationDelay: "300ms" }}
-                        ></span>
-                      </span>
+                  <div className="flex items-end gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                      <Bot size={18} className="animate-pulse" />
+                    </div>
+                    <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-white px-4 py-3 dark:border dark:border-[#D7D7D7]/30 dark:bg-transparent">
+                      <span
+                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                        style={{ animationDelay: "0ms" }}
+                      ></span>
+                      <span
+                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                        style={{ animationDelay: "150ms" }}
+                      ></span>
+                      <span
+                        className="h-2 w-2 animate-bounce rounded-full bg-[#6a6a8b]"
+                        style={{ animationDelay: "300ms" }}
+                      ></span>
                     </div>
                   </div>
                 )}
+
                 <div ref={messagesEndRef} />
               </div>
+            </div>
 
-              <form
-                className="mt-4 flex items-center gap-3 rounded-[12px] border border-[#7d7d90] bg-[#f1f1f1] px-3 py-2 dark:border-[#84899a] dark:bg-[#dde0e5]"
-                onSubmit={handleFormSubmit}
-              >
+            <form
+              className="mt-4 flex items-center gap-3"
+              onSubmit={handleFormSubmit}
+            >
+              <div className="relative flex-1">
                 <input
                   type="text"
                   value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  onChange={(event) => setInputValue(event.target.value)}
                   disabled={chatMutation.isPending}
                   placeholder="Type your message"
-                  className="flex-1 bg-transparent text-lg text-[#000035] outline-none placeholder:text-[#7b7b8f] disabled:opacity-50 dark:text-[#121747] dark:placeholder:text-[#6c7184]"
+                  className="w-full rounded-lg border border-[#000035] py-2 pl-4 pr-12 text-sm transition-colors placeholder:text-[#000035] disabled:opacity-50 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7]"
                 />
                 <button
                   type="submit"
                   disabled={!inputValue.trim() || chatMutation.isPending}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[#00004f] text-white transition-colors hover:bg-[#161669] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#0d1130] dark:hover:bg-[#1d2142]"
+                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-[#000035] transition-colors hover:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 dark:text-[#D7D7D7] cursor-pointer dark:hover:text-white"
                   aria-label="Send message"
                 >
-                  <SendHorizontal size={17} />
+                  <SendHorizontal size={16} />
                 </button>
-              </form>
-            </section>
-          </div>
-        </div>
-      </div>
+              </div>
+            </form>
+          </section>
+        </section>
+      </main>
     </div>
   );
 }
