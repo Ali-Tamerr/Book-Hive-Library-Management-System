@@ -12,6 +12,7 @@ import { useBranches } from "../hooks/useBranches";
 import { useOverdueBooks } from "../hooks/useOverdueBooks";
 import { useBookTransactions } from "../hooks/useBookTransactions";
 import { useBookCopies } from "../hooks/useBookCopies";
+import { usePlans } from "../hooks/usePlans";
 import { getCurrentUser } from "../services/auth.api";
 import { apiGet, getImageUrl } from "../services/api.config";
 
@@ -55,6 +56,7 @@ function Dashboard() {
   const { data: bookTransactions = [], isLoading: transactionsLoading } =
     useBookTransactions();
   const { data: bookCopies = [] } = useBookCopies();
+  const { data: plansData } = usePlans();
 
   const [searchValue, setSearchValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -152,32 +154,6 @@ function Dashboard() {
     categoriesLoading ||
     transactionsLoading;
 
-  // Filter transactions for the current user only
-  const userBorrowedTransactions = Array.isArray(bookTransactions)
-    ? bookTransactions.filter(
-        (t) =>
-          t.transaction_type === "Check-Out" &&
-          t.status === "Completed" &&
-          t.user_id === currentUser?.user_id,
-      )
-    : [];
-  const userReturnedBooks = userBorrowedTransactions.filter(
-    (t) => t.return_date,
-  ).length;
-  const userCurrentlyBorrowed = userBorrowedTransactions.filter(
-    (t) => !t.return_date,
-  ).length;
-  const userTotalBorrowed = userBorrowedTransactions.length;
-
-  const stats = {
-    totalUsers: generalStats.users || users?.length || 0,
-    totalBooks: generalStats.books || displayBooks?.length || 0,
-    branchCount: generalStats.branches || branches?.length || 0,
-    totalBorrowed: userTotalBorrowed,
-    currentlyBorrowed: userCurrentlyBorrowed,
-    returnedBooks: userReturnedBooks,
-  };
-
   const currentUserFromList = useMemo(() => {
     if (!currentUser?.user_id) return null;
     return (
@@ -186,6 +162,39 @@ function Dashboard() {
       ) || null
     );
   }, [users, currentUser?.user_id]);
+
+  // Calculate current month's limits
+  const userPlanId = currentUserFromList?.plan || currentUser?.plan || "plan-discover";
+  const userPlan = plansData?.find((p) => p.id === userPlanId);
+  const borrowLimit = userPlan?.borrow_limit || 3;
+
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  const userBorrowedTransactions = Array.isArray(bookTransactions)
+    ? bookTransactions.filter(
+        (t) =>
+          t.transaction_type === "Check-Out" &&
+          t.user_id === currentUser?.user_id,
+      )
+    : [];
+
+  const monthlyBorrowedCount = userBorrowedTransactions.filter((t) => {
+    const borrowDate = new Date(t.created_at);
+    return (
+      borrowDate.getMonth() === currentMonth &&
+      borrowDate.getFullYear() === currentYear
+    );
+  }).length;
+
+  const stats = {
+    totalUsers: generalStats.users || users?.length || 0,
+    totalBooks: generalStats.books || displayBooks?.length || 0,
+    branchCount: generalStats.branches || branches?.length || 0,
+    totalBorrowed: borrowLimit, // Total pie size
+    currentlyBorrowed: Math.max(0, borrowLimit - monthlyBorrowedCount), // Grey empty limit left
+    returnedBooks: monthlyBorrowedCount, // Navy Blue filled part
+  };
 
   const subscriptionExpirationRaw =
     currentUserFromList?.subscription_end_date ||
@@ -324,7 +333,7 @@ function Dashboard() {
         </div>
         <section className="flex h-full gap-3 max-[640px]:flex-col">
           <div
-            className={`min-[1540px]:ml-18 flex-3 flex w-full flex-col items-center justify-center gap-3 max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full`}
+            className={`min-[1540px]:-ml-5 flex-3 flex w-full flex-col items-center justify-center gap-3 max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full`}
           >
             <div className="flex h-full w-full flex-col items-center justify-start rounded-md min-[1200px]:mb-6">
               <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-6 overflow-hidden max-[380px]:w-[110%]">
@@ -357,7 +366,7 @@ function Dashboard() {
                     setActiveTab("recommended");
                     setCurrentPage(0);
                   }}
-                  className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
+                  className={`w-45 relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors ${
                     activeTab === "recommended"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:hover:text-gray-300"
@@ -370,7 +379,7 @@ function Dashboard() {
                     setActiveTab("recently");
                     setCurrentPage(0);
                   }}
-                  className={`w-45 relative pb-3 text-base font-semibold transition-colors ${
+                  className={`w-45 relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors ${
                     activeTab === "recently"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:hover:text-gray-300"
@@ -379,17 +388,17 @@ function Dashboard() {
                   Recently added
                 </button>
               </div>
-              <div className="flex items-center gap-3 pb-1.5">
+              <div className="flex items-center gap-3 pb-1.5 mr-10">
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage === 0}
                   className={`rounded transition-colors ${
                     currentPage === 0
-                      ? "cursor-not-allowed text-[#000035] dark:text-gray-600"
+                      ? "cursor-not-allowed text-[#000035]/10 dark:text-gray-500/20"
                       : "cursor-pointer text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
-                  <ArrowLeft size={20} strokeWidth={1.5} />
+                  <ArrowLeft size={20} strokeWidth={2} className="scale-x-150" />
                 </button>
                 <div className="flex gap-4">
                   {Array.from({ length: 3 }).map((_, i) => (
@@ -397,8 +406,8 @@ function Dashboard() {
                       key={i}
                       className={`h-[1.5px] w-[10px] rounded-full transition-colors ${
                         i === Math.min(currentPage, 2)
-                          ? "bg-[#000035] dark:bg-[#585858]"
-                          : "bg-[#000035] dark:bg-white"
+                          ? "bg-[#000035] dark:bg-[#D7D7D7]"
+                          : "bg-[#000035]/10 dark:bg-[#D7D7D7]/10"
                       }`}
                     />
                   ))}
@@ -408,11 +417,11 @@ function Dashboard() {
                   disabled={currentPage >= totalPages - 1}
                   className={`rounded transition-colors ${
                     currentPage >= totalPages - 1
-                      ? "cursor-not-allowed text-[#000035] dark:text-gray-600"
+                      ? "cursor-not-allowed text-[#000035]/10 dark:text-gray-500/20"
                       : "cursor-pointer text-[#000035] hover:opacity-75 dark:text-[#D7D7D7] dark:hover:text-white"
                   }`}
                 >
-                  <ArrowRight size={20} strokeWidth={1.5} />
+                  <ArrowRight size={20} strokeWidth={2} className="scale-x-150" />
                 </button>
               </div>
             </div>
@@ -430,29 +439,29 @@ function Dashboard() {
                 paginatedBooks.map((book) => (
                   <div
                     key={book.book_id}
-                    className="h-65 flex w-40 cursor-pointer flex-col items-center justify-between overflow-hidden rounded-lg bg-white px-2 py-2 transition-shadow dark:bg-transparent"
+                    className="flex h-[300px] w-40 cursor-pointer flex-col overflow-hidden rounded-lg px-2 py-2 font-['Noto_Sans_Georgian',sans-serif]"
                   >
-                    <div className="flex h-40 w-full items-center justify-center overflow-hidden rounded-md">
+                    <div className="relative flex h-[160px] w-full shrink-0 items-center justify-center overflow-hidden rounded-md">
                       {book.image ? (
                         <LazyImage
                           src={book.image}
                           alt={book.name}
-                          className="h-full w-full object-contain text-black dark:text-[#D7D7D7]"
+                          className="h-full w-full object-contain text-[#000035] dark:text-[#D7D7D7]"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center p-2 text-center text-black dark:text-[#D7D7D7]">
-                          <div className="line-clamp-2 text-xs font-bold uppercase tracking-wider text-black opacity-80 dark:text-[#D7D7D7]">
+                        <div className="flex h-full w-full items-center justify-center p-2 text-center text-[#000035] dark:text-[#D7D7D7]">
+                          <div className="line-clamp-2 font-['Noto_Sans_Georgian',sans-serif] text-xs font-bold uppercase tracking-wider text-[#000035] opacity-80 dark:text-[#D7D7D7]">
                             {book.name}
                           </div>
                         </div>
                       )}
                     </div>
-                    <div className="flex w-full flex-col gap-1">
-                      <h3 className="text-md line-clamp-2 text-center font-semibold text-[#0b0c28] text-black dark:text-[#D7D7D7]">
+                    <div className="mt-2 flex w-full shrink-0 flex-col gap-1">
+                      <h3 className="text-md min-h-[44px] line-clamp-2 text-center !font-['Noto_Sans_Georgian',sans-serif] font-bold text-[#000035] dark:text-[#D7D7D7]">
                         {book.name || "Untitled"}
                       </h3>
                       <button
-                        className="w-full cursor-pointer whitespace-nowrap rounded-xl bg-[#0b0c28] py-1.5 text-[17px] font-bold text-white transition-colors dark:bg-[#D7D7D7] dark:text-black"
+                        className="w-full shrink-0 cursor-pointer whitespace-nowrap rounded-xl border border-[#000035] py-1.5 text-[17px] font-bold text-[#000035] transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7]"
                         onClick={() => {
                           setSelectedBookId(book.book_id);
                           setIsViewLoading(true);
@@ -465,8 +474,8 @@ function Dashboard() {
                 ))
               )}
             </div>
-            <div className="mb-10 mt-auto flex w-full justify-center">
-              <div className="text-md w-fit rounded-md bg-white p-3 pr-6 dark:bg-transparent">
+            <div className="mb-10 mt-auto flex w-full justify-start md:ml-10">
+              <div className="text-lg max-sm:text-md w-fit rounded-md p-3 pr-6">
                 <p className="text-[#0b0c28] dark:text-white">
                   Dear {currentUserDisplayName}, please note that your
                   subscription will expire on{" "}
