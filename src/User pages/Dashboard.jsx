@@ -165,7 +165,7 @@ function Dashboard() {
   }, [users, currentUser?.user_id]);
 
   // Calculate current month's limits
-  const userPlanId = currentUserFromList?.plan || currentUser?.plan || "plan-discover";
+  const userPlanId = currentUserFromList?.plan || currentUser?.plan || "Discover";
   const userPlan = plansData?.find((p) => p.id === userPlanId);
   const borrowLimit = userPlan?.borrow_limit || 3;
 
