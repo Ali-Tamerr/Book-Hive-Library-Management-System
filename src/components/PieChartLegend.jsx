@@ -31,7 +31,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
               />
             </svg>
             <p className="text-xs font-medium text-[#000035] max-[340px]:whitespace-nowrap dark:text-[#d3d6de]">
-              Total Returned Books
+              Borrowed Limited Books
             </p>
           </div>
         </div>
@@ -71,7 +71,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
             />
           </svg>
           <p className="text-lg font-medium text-[#000035] dark:text-[#d3d6de]">
-            Total Returned Books
+            Borrowed Limited Books
           </p>
         </div>
       </div>

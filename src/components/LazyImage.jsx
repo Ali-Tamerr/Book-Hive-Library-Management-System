@@ -57,6 +57,12 @@ const LazyImage = ({
     return () => cancelAnimationFrame(rafId);
   }, [shouldLoad, src]);
 
+  const objectFitClass = className.includes("object-contain")
+    ? "object-contain"
+    : className.includes("object-fill")
+    ? "object-fill"
+    : "object-cover";
+
   return (
     <div ref={imgRef} className={`relative ${className}`} style={style}>
       <div className={`lazy-sizer relative h-full w-full overflow-hidden`}>
@@ -73,7 +79,7 @@ const LazyImage = ({
             loading={priority ? "eager" : "lazy"}
             ref={imgElRef}
             referrerPolicy="no-referrer"
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+            className={`absolute inset-0 h-full w-full ${objectFitClass} transition-opacity duration-300 ${
               loaded ? "opacity-100" : "opacity-0"
             }`}
             onLoad={() => setLoaded(true)}

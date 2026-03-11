@@ -1,40 +1,6 @@
 import React from "react";
 
-const plansData = [
-  {
-    id: "plan-discover",
-    title: "Discover",
-    price: "$99",
-    features: [
-      "Borrow up to 3 books per month.",
-      "Loan period: 7 days per book.",
-      "1 renewal per book",
-    ],
-    isPopular: false,
-  },
-  {
-    id: "plan-enterprise",
-    title: "Enterprise",
-    price: "$299",
-    features: [
-      "Borrow up to 15 books per month",
-      "Loan period: 21 days per book.",
-      "3 renewal per book",
-    ],
-    isPopular: true,
-  },
-  {
-    id: "plan-pro",
-    title: "Professional",
-    price: "$199",
-    features: [
-      "Borrow up to 10 books per month",
-      "Loan period: 14 days per book.",
-      "2 renewal per book",
-    ],
-    isPopular: false,
-  },
-];
+import { usePlans } from "../../hooks/usePlans";
 
 const PricingCard = ({ plan, setIsLoginOpen }) => {
   const subscribeButtonClass =
@@ -59,10 +25,16 @@ const PricingCard = ({ plan, setIsLoginOpen }) => {
       <div
         className={`price mb-10 font-[family-name:Inter,sans-serif] text-[50px] font-normal text-[var(--accent)] dark:!text-[#D7D7D7]`}
       >
-        <span>{plan.price} / Per Month</span>
+        <span>${plan.price_per_month} / Per Month</span>
       </div>
       <div className="features mb-12 mt-4 flex-1 text-left">
-        {plan.features.map((feature, index) => (
+        {[
+          `Borrow up to ${plan.borrow_limit} books per month${
+            plan.borrow_limit === 3 ? "." : ""
+          }`,
+          `Loan period: ${plan.loan_period_days} days per book.`,
+          `${plan.renewal_limit} renewal per book`,
+        ].map((feature, index) => (
           <div
             key={index}
             className="my-8 flex items-start gap-3 font-[family-name:var(--second-font)] text-[23px] font-normal text-[#121317] dark:!text-[#cfd1d7]"
@@ -91,6 +63,8 @@ const PricingCard = ({ plan, setIsLoginOpen }) => {
 };
 
 const Pricing = ({ setIsLoginOpen }) => {
+  const { data: backendPlans, isLoading } = usePlans();
+
   return (
     <section
       className="section px-24 py-14 pb-[72px]"
@@ -111,13 +85,19 @@ const Pricing = ({ setIsLoginOpen }) => {
         </p>
 
         <div className="plans px-13 flex flex-col items-stretch gap-16 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-[var(--card-bg)] py-14 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none">
-          {plansData.map((plan) => (
-            <PricingCard
-              key={plan.id}
-              plan={plan}
-              setIsLoginOpen={setIsLoginOpen}
-            />
-          ))}
+          {isLoading ? (
+            <div className="py-20 text-center text-xl text-[#000035] dark:text-[#D7D7D7] w-full">
+              Loading plans...
+            </div>
+          ) : (
+            backendPlans?.map((plan) => (
+              <PricingCard
+                key={plan.id}
+                plan={plan}
+                setIsLoginOpen={setIsLoginOpen}
+              />
+            ))
+          )}
         </div>
       </div>
     </section>

@@ -3,6 +3,7 @@ import { Users } from "lucide-react";
 import FormLayout from "../Layouts/FormLayout.jsx";
 import NFCReaderButton from "./NFCReaderButton.jsx";
 import FormInput from "./FormInput.jsx";
+import { usePlans } from "../hooks/usePlans";
 
 function UserFormPopup({
   showPopup,
@@ -18,6 +19,7 @@ function UserFormPopup({
   branches = [],
 }) {
   const userIdInputRef = React.useRef(null);
+  const { data: plansData } = usePlans();
 
   const onFormChange = (e) => {
     const { name, value } = e.target;
@@ -73,11 +75,9 @@ function UserFormPopup({
     placeholder: "Plan",
     required: false,
     autocomplete: "off",
-    options: [
-      { value: "Discover", label: "Plan: Discover" },
-      { value: "Enterprise", label: "Plan: Enterprise" },
-      { value: "Professional", label: "Plan: Professional" },
-    ],
+    options: plansData
+      ? plansData.map((p) => ({ value: p.id, label: `Plan: ${p.title}` }))
+      : [],
   };
 
   const roleInput = {
