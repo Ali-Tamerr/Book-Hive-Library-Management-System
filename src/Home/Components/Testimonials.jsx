@@ -100,7 +100,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                   return (
                     <article
                       key={fb.request_id ?? fb.feedback_id ?? fb.user_id}
-                      className="duration-400 shrink-0 rounded-[24px] bg-[#D7D7D7] px-16 py-14 pb-16 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"
+                      className="duration-400 shrink-0 rounded-[24px] border dark:border-[#D7D7D7] border-[#000035] px-16 py-14 pb-16 text-center transition-colors"
                       style={{
                         width: `calc(${100 / testimonialPerView}% - 60px)`,
                         margin: "0 30px",
@@ -110,11 +110,11 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                         <LazyImage
                           src={getImageUrl(fb.user_image || fb.image)}
                           alt={fb.user_name || fb.user_id || "Guest"}
-                          className="mx-auto mb-10 h-[140px] w-[140px] rounded-full object-cover"
+                          className="mx-auto mb-10 !h-[110px] !w-[110px] rounded-full object-cover"
                         />
                       ) : (
-                        <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] dark:bg-[#171c29] dark:text-[#d3d6de]">
-                          <i className="ri-user-line text-[70px]"></i>
+                        <div className="mx-auto mb-10 flex h-[110px] w-[110px] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] dark:bg-[#171c29] dark:text-[#d3d6de]">
+                          <i className="ri-user-line text-[65px]"></i>
                         </div>
                       )}
                       <h2 className="mb-6 font-[family-name:var(--body-font)] text-[52px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-[#d3d6de]">
