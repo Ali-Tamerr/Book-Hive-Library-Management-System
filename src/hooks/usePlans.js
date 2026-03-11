@@ -10,9 +10,9 @@ export function usePlans() {
   return useQuery({
     queryKey: planKeys.lists(),
     queryFn: async () => {
-      const response = await apiGet("/api/Plans");
-      if (!response.ok) {
-        throw new Error("Failed to fetch plans");
+      const response = await apiGet("/Plans");
+      if (response && response.length !== undefined) {
+         return response;
       }
       return response.json();
     },

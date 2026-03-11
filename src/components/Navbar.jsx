@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../hooks/useUsers";
+import { usePlans } from "../hooks/usePlans";
 import { getImageUrl } from "../services/api.config";
 import {
   Settings,
@@ -31,10 +32,17 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const { data: userProfile } = useUser(localUser?.user_id);
   const currentUser =
     userProfile && userProfile.user_id ? userProfile : localUser;
+
+  const { data: plansData } = usePlans();
+
   const getRoleLabel = () => {
     const role = currentUser?.role?.toLowerCase();
     if (role === "admin") return "Librarian";
-    if (role === "user") return currentUser?.plan || "User";
+    if (role === "user") {
+      const planId = currentUser?.plan || "plan-discover";
+      const planObj = plansData?.find((p) => p.id === planId);
+      return planObj ? `Plan: ${planObj.title}` : "User";
+    }
     return currentUser?.role || "User";
   };
   const roleLabel = getRoleLabel();

@@ -14,6 +14,7 @@ import {
   useReservations,
   useDeleteReservation,
 } from "../hooks/useReservations.js";
+import { usePlans } from "../hooks/usePlans.js";
 
 import UserFormPopup from "../components/UserFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
@@ -63,6 +64,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     isFetchingNextPage,
   } = useUsers();
   const { data: branches = [] } = useBranches();
+  const { data: plans = [] } = usePlans();
 
   const users = data ? data.pages.flatMap((page) => page.data || []) : [];
 
@@ -539,6 +541,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     name: `${user.first_name || ""} ${user.last_name || ""}`.trim(),
     formatted_exp_date: formatDate(user.subscription_end_date),
     branch_display: getUserBranchName(user),
+    plan_display: plans.find((p) => p.id === user.plan)?.title || user.plan || "-",
   }));
 
   const title = "User Management";
@@ -549,7 +552,7 @@ function UserManagement({ searchValue, setSearchValue }) {
 
     { header: "Email", accessor: "email" },
     ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display" }] : []),
-    { header: "Plan", accessor: "plan" },
+    { header: "Plan", accessor: "plan_display" },
     { header: "Exp Date", accessor: "formatted_exp_date" },
     { header: "Action", accessor: "action" },
   ];
@@ -722,7 +725,10 @@ function UserManagement({ searchValue, setSearchValue }) {
                 Name: `${selectedUser.first_name || ""} ${selectedUser.last_name || ""}`.trim(),
                 "ID User": selectedUser.user_id || "N/A",
                 Email: selectedUser.email || "N/A",
-                Plan: selectedUser.plan || "N/A",
+                Plan:
+                  plans.find((p) => p.id === selectedUser.plan)?.title ||
+                  selectedUser.plan ||
+                  "N/A",
                 Branch: getUserBranchName(selectedUser),
               }
             : null
