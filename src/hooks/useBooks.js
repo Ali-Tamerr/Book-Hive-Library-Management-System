@@ -3,6 +3,7 @@ import {
   getAllBooks,
   getBookManagement,
   getBookCovers,
+  getDashboardBooks,
   getBookById,
   searchBooksByTitle,
   createBook,
@@ -17,6 +18,7 @@ export const bookKeys = {
   list: (filters) => [...bookKeys.lists(), { filters }],
   management: () => [...bookKeys.all, "management"],
   covers: () => [...bookKeys.all, "covers"],
+  dashboard: () => [...bookKeys.all, "dashboard"],
   details: () => [...bookKeys.all, "detail"],
   detail: (id) => [...bookKeys.details(), id],
 };
@@ -41,6 +43,14 @@ export const useBookCovers = () => {
   return useQuery({
     queryKey: bookKeys.covers(),
     queryFn: getBookCovers,
+    ...adminQueryOptions,
+  });
+};
+
+export const useDashboardBooks = () => {
+  return useQuery({
+    queryKey: bookKeys.dashboard(),
+    queryFn: getDashboardBooks,
     ...adminQueryOptions,
   });
 };
