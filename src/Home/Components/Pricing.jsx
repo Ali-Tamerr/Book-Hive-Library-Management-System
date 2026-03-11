@@ -89,14 +89,18 @@ const Pricing = ({ setIsLoginOpen }) => {
             <div className="py-20 text-center text-xl text-[#000035] dark:text-[#D7D7D7] w-full">
               Loading plans...
             </div>
-          ) : (
-            backendPlans?.map((plan) => (
+          ) : backendPlans && backendPlans.length > 0 ? (
+            backendPlans.map((plan) => (
               <PricingCard
                 key={plan.id}
                 plan={plan}
                 setIsLoginOpen={setIsLoginOpen}
               />
             ))
+          ) : (
+            <div className="py-20 text-center text-xl text-[#e74c3c] dark:text-[#ff7675] w-full">
+              Failed to load subscription plans. Please ensure the backend server is running.
+            </div>
           )}
         </div>
       </div>

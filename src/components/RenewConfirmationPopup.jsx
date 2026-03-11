@@ -2,9 +2,11 @@ import React from "react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
 import { RotateCcw } from "lucide-react";
+import { usePlans } from "../hooks/usePlans.js";
 
 const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
   const [selectedPlan, setSelectedPlan] = React.useState("");
+  const { data: plans = [] } = usePlans();
 
   React.useEffect(() => {
     if (!show) {
@@ -63,35 +65,15 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
             onChange={(e) => setSelectedPlan(e.target.value)}
             className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[13px] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
           >
-            {user?.plan &&
-              !["Discover", "Enterprise", "Professional"].includes(
-                user.plan,
-              ) && (
-                <option
-                  value={user.plan}
-                  className="font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:text-[#D7D7D7]"
-                >
-                  {user.plan}
-                </option>
-              )}
-            <option
-              value="Discover"
-              className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
-            >
-              Discover
-            </option>
-            <option
-              value="Enterprise"
-              className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
-            >
-              Enterprise
-            </option>
-            <option
-              value="Professional"
-              className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
-            >
-              Professional
-            </option>
+            {plans.map((p) => (
+              <option
+                key={p.id}
+                value={p.id}
+                className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
+              >
+                {p.title}
+              </option>
+            ))}
           </select>
         </div>
 
