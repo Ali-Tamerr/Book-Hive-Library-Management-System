@@ -8,6 +8,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { apiPost, getImageUrl } from "../services/api.config";
+import { getCurrentUser } from "../services/auth.api";
+import { useUser } from "../hooks/useUsers";
 
 const STORAGE_KEY = "chatSessions";
 
@@ -402,7 +404,7 @@ function UserChatbot() {
                             <div
                               className={`truncate text-sm font-semibold ${
                                 isActive && messages.length > 1
-                                  ? "text-[#D7D7D7] dark:text-[#121317]"
+                                  ? "text-[#000035] dark:text-[#121317]"
                                   : "text-[#000035] dark:text-[#D7D7D7]"
                               }`}
                             >
@@ -411,7 +413,7 @@ function UserChatbot() {
                             <div
                               className={`mt-0.5 text-xs ${
                                 isActive && messages.length > 1
-                                  ? "text-[#D7D7D7] opacity-70 dark:text-[#121317]"
+                                  ? "text-[#000035] opacity-70 dark:text-[#121317]"
                                   : "text-[#121317] opacity-70 dark:text-[#D7D7D7]"
                               }`}
                             >
@@ -429,7 +431,7 @@ function UserChatbot() {
                             }
                             className={`shrink-0 cursor-pointer ${
                               isActive && messages.length > 1
-                                ? "text-[#D7D7D7] dark:text-[#121317]"
+                                ? "text-[#000035] dark:text-[#121317]"
                                 : "text-[#000035] dark:text-[#D7D7D7]"
                             } opacity-70 transition-colors hover:text-red-600`}
                             aria-label="Delete chat"

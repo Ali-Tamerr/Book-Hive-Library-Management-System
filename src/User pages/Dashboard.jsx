@@ -5,7 +5,7 @@ import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
 import { useUsers } from "../hooks/useUsers";
-import { useBooks, useBookCovers, useBook } from "../hooks/useBooks";
+import { useBooks, useDashboardBooks, useBook } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
 import { useReservations } from "../hooks/useReservations";
 import { useBranches } from "../hooks/useBranches";
@@ -32,7 +32,7 @@ function Dashboard() {
     books: 0,
     users: 0,
   });
-  const { data: booksSource, isLoading: booksLoading } = useBookCovers();
+  const { data: booksSource, isLoading: booksLoading } = useDashboardBooks();
   const books = useMemo(() => {
     if (Array.isArray(booksSource)) return booksSource;
     if (booksSource?.data && Array.isArray(booksSource.data))
@@ -110,6 +110,7 @@ function Dashboard() {
         book_id: book.book_id,
         name: book.name,
         category_id: book.category_id,
+        category_name: book.category_name || book.category,
         quantity: book.quantity,
         created_at: book.created_at,
         image: getImageUrl(book.image_url) || "",
@@ -248,8 +249,7 @@ function Dashboard() {
     if (selectedCategory) {
       result = result.filter(
         (book) =>
-          book.category_id === parseInt(selectedCategory) ||
-          book.category === selectedCategory,
+          String(book.category_id) === String(selectedCategory),
       );
     }
 

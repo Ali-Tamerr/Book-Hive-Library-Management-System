@@ -15,6 +15,11 @@ export const getBookCovers = async () => {
   return await apiGet(`${BASE_ENDPOINT}/covers`);
 };
 
+// Get richer book data for dashboard filtering
+export const getDashboardBooks = async () => {
+  return await apiGet(`${BASE_ENDPOINT}/dashboard`);
+};
+
 // Get book by ID
 export const getBookById = async (id) => {
   return await apiGet(`${BASE_ENDPOINT}/${id}`);
