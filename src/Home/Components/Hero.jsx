@@ -1,27 +1,28 @@
 import React from "react";
 import LazyImage from "../../components/LazyImage";
+import HomeButton from "./HomeButton";
 
 const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
   return (
     <section className="home py-20 pb-4" id="home">
-      <div className="home__container mx-auto grid w-full max-w-[1688px] gap-x-9 gap-y-14 px-6 pt-10 min-[1220px]:grid-cols-[612px_1044px] min-[1220px]:items-center min-[1220px]:pb-7 min-[1220px]:pt-40">
+      <div className="home__container min-[1220px]:pt-35 mx-auto grid w-full max-w-[1688px] gap-x-9 gap-y-14 px-6 pt-20 min-[1220px]:grid-cols-[612px_1044px] min-[1220px]:items-center min-[1220px]:pb-7">
         <div className="text-center min-[1220px]:text-left" data-reveal>
-          <h1 className="mb-4 font-[family-name:var(--body-font)] text-[3.375rem] font-extrabold leading-[1.1] text-[var(--title-color)] min-[1220px]:text-[5.0625rem] dark:!text-[#c7c9cf]">
+          <h1 className="mb-4 font-[family-name:var(--body-font)] text-[5.375rem] font-extrabold leading-[1.1] text-[var(--title-color)] min-[1220px]:text-[5.0625rem] dark:!text-[#c7c9cf]">
             One Library, <br />
             Infinite Stories
           </h1>
-          <p className="min-[1220px]:mb-22 font-[family-name:var(--second-font)] text-[25px] font-medium text-[var(--title-color)] dark:!text-[#b9bbc1]">
+          <p className="min-[1220px]:mb-22 font-[family-name:var(--second-font)] text-[25px] font-medium text-[var(--title-color)] max-[1220px]:mt-10 dark:!text-[#b9bbc1]">
             With Bookhive, every book has a place and every reader has a path:
             search, borrow, and renew in a few clicks, while librarians track
             everything effortlessly.
           </p>
-          <a
+          <HomeButton
             href="#featured"
-            className="dark:border-[#D7D7D7] dark:text-[#D7D7D7] inline-block rounded-lg border border-[#f7f7f7] bg-[#000035] px-9 py-5 font-[family-name:Montserrat,sans-serif] text-[20px] font-bold text-[#f7f7f7] duration-500 hover:border-[#111214] hover:bg-[#f7f7f7] hover:text-[#111214] dark:bg-[#111214] dark:hover:border-[#111214] dark:hover:bg-[#D7D7D7 ] dark:hover:text-[#111214] dark:hover:shadow-[0_6px_30px_rgba(0,0,0,0.25)]"
+            className="px-9 py-5 max-[1220px]:mt-10"
             onClick={(e) => scrollToSection(e, "featured")}
           >
             Explore Now
-          </a>
+          </HomeButton>
         </div>
         <div className="grid gap-6" data-reveal>
           <div className="relative overflow-hidden" ref={heroContainerRef}>

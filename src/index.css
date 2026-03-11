@@ -427,3 +427,18 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
     padding 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99),
     scale 0.35s cubic-bezier(0.61, -0.01, 0.34, 0.99) !important;
 }
+
+@keyframes infinite-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-infinite-scroll {
+  animation: infinite-scroll 40s linear infinite;
+}
+
+

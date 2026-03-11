@@ -23,15 +23,18 @@ const Header = ({
             href="#"
             className="inline-flex items-center gap-x-2 font-medium text-[var(--first-color)]"
           >
-            <img
-              src={logoIcon}
-              alt="Book Hive Logo"
-              style={{ width: "90px", height: "auto" }}
-              className="dark:brightness-[1.2] dark:invert-[84%]"
+            <div
+              className="h-[80px] w-[90px] bg-[#000035] dark:bg-[#D7D7D7]"
+              style={{
+                mask: `url(${logoIcon}) no-repeat center`,
+                WebkitMask: `url(${logoIcon}) no-repeat center`,
+                maskSize: "contain",
+                WebkitMaskSize: "contain",
+              }}
             />
           </a>
 
-          <div className="max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1) max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full max-[1150px]:px-16 max-[1150px]:py-5 min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:min-[1150px]:shadow-none">
+          <div className="max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1) max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full max-[1150px]:px-16 max-[1150px]:py-5 min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center max-[1150px]:bg-[var(--container-color)] dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:max-[1150px]:shadow-none">
             <ul className="min-[1150px]:px-30 flex w-full items-center justify-around">
               <NavLink
                 href="#home"

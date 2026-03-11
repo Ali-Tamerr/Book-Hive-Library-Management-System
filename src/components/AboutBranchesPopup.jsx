@@ -48,7 +48,7 @@ const AboutBranchesPopup = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="branches-popup popup-typography flex max-h-[90vh] w-[min(940px,96vw)] flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#d1d1dd] bg-white px-[22px] pb-7 pt-3 shadow-[0_12px_28px_rgba(10,10,35,0.18)] max-[700px]:gap-1.5 max-[700px]:p-[14px] max-[700px]:pb-5 dark:border-[#242732] dark:bg-[#14161b] dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]"
+        className="branches-popup popup-typography flex max-h-[92vh] w-[min(1100px,96vw)] flex-col gap-4 overflow-hidden rounded-[25px] bg-[#F2F2F2] px-[60px] pb-14 pt-8 shadow-[0_20px_50px_rgba(10,10,35,0.25)] max-[700px]:gap-2 max-[700px]:px-[20px] max-[700px]:pb-8  dark:bg-[#121317] "
         role="dialog"
         aria-modal="true"
         aria-labelledby="branches-popup-title"
@@ -57,22 +57,26 @@ const AboutBranchesPopup = ({ isOpen, onClose }) => {
         <div className="flex items-start justify-between gap-4">
           <button
             type="button"
-            className="cursor-pointer rounded-xl border border-[#0a0b2b] bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-[0.3px] text-[#0a0b2b] hover:bg-[#0a0b2b] hover:text-white dark:border-[#e3e6f0] dark:bg-transparent dark:text-[#e3e6f0] dark:hover:bg-[#e3e6f0] dark:hover:text-[#0f1116]"
+            className="cursor-pointer rounded-xl border-2 border-[#0a0b2b] bg-white px-5 py-2 text-[14px] font-bold uppercase tracking-[0.5px] text-[#0a0b2b] transition-all hover:bg-[#0a0b2b] hover:text-white dark:border-[#e3e6f0] dark:bg-transparent dark:text-[#e3e6f0] dark:hover:bg-[#e3e6f0] dark:hover:text-[#0f1116]"
             onClick={onClose}
           >
             Back
           </button>
-          <div className="flex items-center gap-2">
-            <img
-              src={new URL("../assets/logo.svg", import.meta.url).href}
-              alt="Book Hive Logo"
-              className="h-auto w-[44px]"
+          <div className="flex items-center gap-4">
+            <div
+              className="h-[60px] w-[75px] bg-[#000035] dark:bg-[#D7D7D7]"
+              style={{
+                mask: `url(${new URL("../assets/logo.svg", import.meta.url).href}) no-repeat center`,
+                WebkitMask: `url(${new URL("../assets/logo.svg", import.meta.url).href}) no-repeat center`,
+                maskSize: "contain",
+                WebkitMaskSize: "contain",
+              }}
             />
             <div>
-              <span className="text-base font-extrabold text-[#0a0b2b] dark:text-[#f1f2f6]">
+              <span className="font-[family-name:var(--body-font)] text-[32px] uppercase leading-none tracking-wider text-[#000035] dark:text-[#f1f2f6]">
                 BookHive
               </span>
-              <span className="-mt-1 block text-[11px] text-[#0a0b2b] dark:text-[#f1f2f6]">
+              <span className="-mt-1 block text-right font-[family-name:var(--second-font)] text-[16px] font-normal text-[#000035] dark:text-[#f1f2f6]">
                 Library
               </span>
             </div>
@@ -81,19 +85,19 @@ const AboutBranchesPopup = ({ isOpen, onClose }) => {
 
         <h3
           id="branches-popup-title"
-          className="mt-2 font-[family-name:var(--body-font)] text-2xl font-extrabold text-[#0a0b2b] max-[700px]:text-[20px] dark:text-[#f1f2f6]"
+          className="mt-6 font-[family-name:var(--body-font)] text-[56px] font-extrabold uppercase tracking-wide text-[#000035] max-[700px]:text-[36px] dark:text-[#f1f2f6]"
         >
-          Our Branches
+          OUR BRANCHES
         </h3>
 
-        <div className="mt-2.5 overflow-auto border-t border-[#9a9aa7] pt-2.5 dark:border-[#2b2f3a]">
-          <table className="w-full min-w-[620px] border-collapse max-[700px]:min-w-[520px]">
+        <div className="mt-2.5 overflow-auto pt-2.5">
+          <table className="w-full min-w-[620px] table-fixed border-collapse max-[700px]:min-w-[520px]">
             <thead>
-              <tr className="*:border-b *:border-[#9a9aa7] *:p-2.5 *:text-left *:text-[13px] *:font-bold *:text-[#0a0b2b] dark:*:border-[#2b2f3a] dark:*:text-[#e3e6f0]">
-                <th>Name</th>
-                <th>Contact No</th>
-                <th>Location</th>
-                <th className="!w-[120px] !text-center">Bo Quantity</th>
+              <tr className="*:border-b-2 *:border-[#000035] *:p-6 *:text-center *:font-[family-name:var(--body-font)] *:text-[28px] *:font-normal *:uppercase *:tracking-wider *:text-[#000035] dark:*:border-[#f1f2f6] dark:*:text-[#f1f2f6]">
+                <th className="w-1/4">NAME</th>
+                <th className="w-1/4">CONTACT NO</th>
+                <th className="w-1/4">LOCATION</th>
+                <th className="w-1/4">BO QUANTITY</th>
               </tr>
             </thead>
             <tbody>
@@ -139,12 +143,12 @@ const AboutBranchesPopup = ({ isOpen, onClose }) => {
                   return (
                     <tr
                       key={branchId}
-                      className="*:p-2.5 *:py-5 *:text-sm *:text-[#0a0b2b] dark:*:text-[#d8dbe6]"
+                      className="*:p-6 *:py-10 *:text-center *:font-[family-name:var(--second-font)] *:text-[20px] *:font-bold *:text-[#000035] dark:*:text-[#d8dbe6]"
                     >
                       <td>{branch?.name || "N/A"}</td>
                       <td>{branch?.contact_number || "N/A"}</td>
                       <td>{branch?.location || "N/A"}</td>
-                      <td className="!w-[120px] !text-center">{bookCount}</td>
+                      <td>{bookCount}</td>
                     </tr>
                   );
                 })

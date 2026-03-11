@@ -537,7 +537,7 @@ function Dashboard() {
           >
             {(selectedBookLoading || isViewLoading) && (
               <div className="flex h-40 w-full items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0b0c28] border-t-transparent dark:border-white"></div>
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0b0c28] border-t-transparent dark:border-white dark:border-t-transparent"></div>
               </div>
             )}
           </ViewDetailsPopup>
