@@ -39,7 +39,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
     const role = currentUser?.role?.toLowerCase();
     if (role === "admin") return "Librarian";
     if (role === "user") {
-      const planId = currentUser?.plan || "plan-discover";
+      const planId = currentUser?.plan || "Discover";
       const planObj = plansData?.find((p) => p.id === planId);
       return planObj ? `${planObj.title}` : "User";
     }
