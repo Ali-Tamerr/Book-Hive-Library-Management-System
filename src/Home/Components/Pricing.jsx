@@ -4,7 +4,6 @@ import { usePlans } from "../../hooks/usePlans";
 import HomeButton from "./HomeButton";
 
 const PricingCard = ({ plan, setIsLoginOpen }) => {
-
   return (
     <article
       className={`plan group flex w-full transform-gpu flex-col justify-start rounded-[18px] border-2 px-9 pb-[18px] pt-[55px] text-[var(--accent)] transition-all duration-[300ms] ease-in-out hover:-translate-y-3 hover:shadow-[0_16px_34px_rgba(0,0,0,0.2)] max-[680px]:min-h-[380px] dark:hover:shadow-[0_20px_36px_rgba(255,255,255,0.2)] ${
@@ -46,7 +45,7 @@ const PricingCard = ({ plan, setIsLoginOpen }) => {
         ))}
       </div>
       <HomeButton
-        className="mx-auto mt-4 px-18 py-2.5"
+        className="px-18 mx-auto mt-4 py-2.5"
         href="#"
         aria-label={`Subscribe to ${plan.title}`}
         onClick={(e) => {
@@ -82,9 +81,9 @@ const Pricing = ({ setIsLoginOpen }) => {
           No hidden charges.
         </p>
 
-        <div className="plans px-12 flex flex-col items-stretch gap-14 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-[var(--card-bg)] py-12 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none">
+        <div className="plans flex flex-col items-stretch gap-14 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-[var(--card-bg)] px-12 py-12 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none">
           {isLoading ? (
-            <div className="py-20 text-center text-xl text-[#000035] dark:text-[#D7D7D7] w-full">
+            <div className="w-full py-20 text-center text-xl text-[#000035] dark:text-[#D7D7D7]">
               Loading plans...
             </div>
           ) : backendPlans && backendPlans.length > 0 ? (
@@ -96,8 +95,9 @@ const Pricing = ({ setIsLoginOpen }) => {
               />
             ))
           ) : (
-            <div className="py-20 text-center text-xl text-[#e74c3c] dark:text-[#ff7675] w-full">
-              Failed to load subscription plans. Please ensure the backend server is running.
+            <div className="w-full py-20 text-center text-xl text-[#e74c3c] dark:text-[#ff7675]">
+              Failed to load subscription plans. Please ensure the backend
+              server is running.
             </div>
           )}
         </div>
