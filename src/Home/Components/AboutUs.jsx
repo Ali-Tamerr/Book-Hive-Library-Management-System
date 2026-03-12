@@ -10,7 +10,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
       aria-labelledby="about-heading"
       data-reveal
     >
-      <div className="mx-auto max-w-[1875px] px-5">
+      <div className="mx-auto max-w-[1688px] px-5">
         <h2
           id="about-heading"
           className="about-title mb-16 text-center font-[family-name:var(--body-font)] text-[80px] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)]"
