@@ -57,10 +57,10 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
 
   return (
     <section className="py-20 pb-4" id="testimonial">
-      <h2 className="mb-16 text-center font-[family-name:var(--body-font)] text-[80px] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)]">
+      <h2 className="mb-16 text-center font-[family-name:var(--body-font)] text-[72px] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)]">
         CUSTOMER OPINIONS
       </h2>
-      <div className="mx-auto w-full max-w-[1875px] px-6" data-reveal>
+      <div className="mx-auto w-full max-w-[1688px] px-6" data-reveal>
         <div className="relative">
           <div className="overflow-hidden">
             <div
@@ -73,18 +73,18 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                 Array.from({ length: safePerView }).map((_, idx) => (
                   <article
                     key={`skeleton-${idx}`}
-                    className="duration-400 shrink-0 rounded-[24px] bg-[#D7D7D7] px-16 py-14 pb-16 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"
+                    className="duration-400 shrink-0 rounded-[24px] bg-[#D7D7D7] px-14 py-12 pb-14 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"
                     style={{
-                      width: `calc(${100 / testimonialPerView}% - 60px)`,
-                      margin: "0 30px",
+                      width: `calc(${100 / testimonialPerView}% - 50px)`,
+                      margin: "0 25px",
                     }}
                   >
-                    <div className="mx-auto mb-10 flex h-[140px] w-[140px] items-center justify-center rounded-full bg-[#e6e7eb] dark:bg-[#171c29]">
-                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#D7D7D7]/30 border-t-transparent" />
+                    <div className="mx-auto mb-9 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-[#e6e7eb] dark:bg-[#171c29]">
+                      <div className="h-7 w-7 animate-spin rounded-full border-4 border-[#D7D7D7]/30 border-t-transparent" />
                     </div>
-                    <div className="mx-auto mb-6 h-8 w-48 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
-                    <div className="mx-auto mb-10 h-20 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
-                    <div className="text-[44px] text-[#000035] dark:text-[#d3d6de]">
+                    <div className="mx-auto mb-6 h-7 w-40 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
+                    <div className="mx-auto mb-9 h-18 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
+                    <div className="text-[40px] text-[#000035] dark:text-[#d3d6de]">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <i key={i} className="ri-star-line"></i>
                       ))}
@@ -100,30 +100,30 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                   return (
                     <article
                       key={fb.request_id ?? fb.feedback_id ?? fb.user_id}
-                      className="duration-400 shrink-0 rounded-[24px] border dark:border-[#D7D7D7] border-[#000035] px-16 py-14 pb-16 text-center transition-colors"
+                      className="duration-400 shrink-0 rounded-[24px] border dark:border-[#D7D7D7] border-[#000035] px-14 py-12 pb-14 text-center transition-colors"
                       style={{
-                        width: `calc(${100 / testimonialPerView}% - 60px)`,
-                        margin: "0 30px",
+                        width: `calc(${100 / testimonialPerView}% - 50px)`,
+                        margin: "0 25px",
                       }}
                     >
                       {fb.user_image || fb.image ? (
                         <LazyImage
                           src={getImageUrl(fb.user_image || fb.image)}
                           alt={fb.user_name || fb.user_id || "Guest"}
-                          className="mx-auto mb-10 !h-[110px] !w-[110px] rounded-full object-cover"
+                          className="mx-auto mb-9 !h-[100px] !w-[100px] rounded-full object-cover"
                         />
                       ) : (
-                        <div className="mx-auto mb-10 flex h-[110px] w-[110px] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] dark:bg-[#171c29] dark:text-[#d3d6de]">
-                          <i className="ri-user-line text-[65px]"></i>
+                        <div className="mx-auto mb-9 flex h-[100px] w-[100px] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] dark:bg-[#171c29] dark:text-[#d3d6de]">
+                          <i className="ri-user-line text-[60px]"></i>
                         </div>
                       )}
-                      <h2 className="mb-6 font-[family-name:var(--body-font)] text-[52px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-[#d3d6de]">
+                      <h2 className="mb-6 font-[family-name:var(--body-font)] text-[48px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-[#d3d6de]">
                         {fb.user_name || fb.user_id || "Guest"}
                       </h2>
-                      <p className="mx-auto mb-10 max-w-[800px] font-[family-name:var(--second-font)] text-[30px] font-bold leading-relaxed text-[#000035] dark:!text-[#c3c7d1]">
+                      <p className="mx-auto mb-9 max-w-[800px] font-[family-name:var(--second-font)] text-[27px] font-bold leading-relaxed text-[#000035] dark:!text-[#c3c7d1]">
                         {fb.feedback || fb.description || "Great experience!"}
                       </p>
-                      <div className="text-[44px] text-[#000035] dark:text-[#d3d6de]">
+                      <div className="text-[40px] text-[#000035] dark:text-[#d3d6de]">
                         {Array.from({ length: fullStars }, (_, i) => (
                           <i key={`full-${i}`} className="ri-star-fill"></i>
                         ))}
