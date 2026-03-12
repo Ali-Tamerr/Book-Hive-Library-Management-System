@@ -3,7 +3,7 @@ import ServiceCard from "./ServiceCard";
 
 const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
   return (
-    <section className="services pb-28 pb-[1.4rem]">
+    <section className="services pb-28 pb-[1.4rem]" data-reveal>
       <div
         className="services__container grid max-w-[1700px] px-5"
         style={{
