@@ -3,16 +3,9 @@ import LazyImage from "../../components/LazyImage";
 import HomeButton from "./HomeButton";
 
 const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
-  const originalLength = heroBooks.length > 0 ? heroBooks.length : 3;
-  const [offset, setOffset] = React.useState(() => {
-    const guessWidth = typeof window !== 'undefined' ? (window.innerWidth >= 1150 ? 340 : 250) : 340;
-    const guessGap = 20;
-    const guessStep = guessWidth + guessGap;
-    const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 1688) * 0.6 : 1000;
-    const baseIndex = originalLength + heroIndex;
-    return (containerWidth / 2) - (guessWidth / 2) - (baseIndex * guessStep);
-  });
+  const [offset, setOffset] = React.useState(0);
   const [isReady, setIsReady] = React.useState(false);
+  const [transitionEnabled, setTransitionEnabled] = React.useState(false);
 
   const displayBooks = React.useMemo(() => {
     const list =
@@ -28,8 +21,8 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
   }, [heroBooks]);
 
 
+  const originalLength = heroBooks.length > 0 ? heroBooks.length : 3;
   const [localIndex, setLocalIndex] = React.useState(heroIndex);
-  const [transitionEnabled, setTransitionEnabled] = React.useState(true);
 
   // Sync heroIndex to localIndex with seamless wrapping logic
   React.useEffect(() => {
@@ -67,21 +60,27 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
       if (containerWidth === 0) return;
 
       const baseIndex = originalLength + localIndex;
-      const centerPos = containerWidth / 2 - slideWidth / 2;
-      const newOffset = centerPos - baseIndex * step;
-
-      setOffset(newOffset);
-      if (!isReady) setIsReady(true);
+      const centerPos = (containerWidth / 2) - (slideWidth / 2);
+      const newOffset = centerPos - (baseIndex * step);
+      
+      if (!isReady) {
+        setOffset(newOffset);
+        setIsReady(true);
+        // Wait for next tick to enable transitions to avoid initial snap slide
+        setTimeout(() => setTransitionEnabled(true), 200);
+      } else {
+        setOffset(newOffset);
+      }
     };
 
     calculate();
-    const timer = setTimeout(calculate, 80);
+    const timer = setTimeout(calculate, 100);
     window.addEventListener("resize", calculate);
     return () => {
       clearTimeout(timer);
       window.removeEventListener("resize", calculate);
     };
-  }, [localIndex, originalLength, heroContainerRef]);
+  }, [localIndex, originalLength, heroContainerRef, isReady]);
 
   return (
     <section className="home py-20 pb-4" id="home" data-reveal>
@@ -110,7 +109,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
             ref={heroContainerRef}
           >
             <div
-              className={`flex ${isReady && transitionEnabled ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
+              className={`flex ${transitionEnabled ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
               style={{
                 transform: `translateX(${offset}px)`,
               }}

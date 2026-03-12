@@ -332,25 +332,41 @@ const Home = () => {
     setFeaturedIndex((prev) => (prev >= featuredMaxIndex ? 0 : prev + 1));
   }, [featuredMaxIndex]);
 
-  useEffect(() => {
-    if (!pageLoaded) return;
+  const isEverythingLoaded = pageLoaded && !isFeedbacksLoading;
 
-    const els = document.querySelectorAll("[data-reveal]");
-    if (!els.length) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("revealed");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15 },
-    );
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [pageLoaded]);
+  useEffect(() => {
+    if (!isEverythingLoaded) return;
+
+    // Small delay to ensure DOM has updated visibility from PageLoader removal
+    const timeout = setTimeout(() => {
+      const els = document.querySelectorAll("[data-reveal]");
+      if (!els.length) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("revealed");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.05, rootMargin: "50px" },
+      );
+
+      els.forEach((el) => {
+        // Immediate check for elements already in or near viewport
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+          el.classList.add("revealed");
+        } else {
+          observer.observe(el);
+        }
+      });
+    }, 150);
+
+    return () => clearTimeout(timeout);
+  }, [isEverythingLoaded]);
 
   const aboutBooksForDisplay = (() => {
     if (aboutBooks.length >= 2) return aboutBooks;
@@ -361,14 +377,14 @@ const Home = () => {
 
   return (
     <>
-      {(!pageLoaded || isFeedbacksLoading) && (
+      {!isEverythingLoaded && (
         <PageLoader className="!fixed !z-[9999] bg-[#E8E8E8] dark:bg-[#111214]" />
       )}
       <div
         className="duration-400 m-0 mx-auto max-w-[1920px] scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
         ref={homeRef}
         style={{
-          visibility: pageLoaded ? "visible" : "hidden",
+          visibility: isEverythingLoaded ? "visible" : "hidden",
           zoom: 0.8,
         }}
       >
