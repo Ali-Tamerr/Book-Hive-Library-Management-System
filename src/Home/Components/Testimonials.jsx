@@ -83,7 +83,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                       <div className="h-7 w-7 animate-spin rounded-full border-4 border-[#D7D7D7]/30 border-t-transparent" />
                     </div>
                     <div className="mx-auto mb-6 h-7 w-40 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
-                    <div className="mx-auto mb-9 h-18 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
+                    <div className="h-18 mx-auto mb-9 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
                     <div className="text-[40px] text-[#000035] dark:text-[#d3d6de]">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <i key={i} className="ri-star-line"></i>
@@ -100,7 +100,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                   return (
                     <article
                       key={fb.request_id ?? fb.feedback_id ?? fb.user_id}
-                      className="duration-400 shrink-0 rounded-[24px] border dark:border-[#D7D7D7] border-[#000035] px-14 py-12 pb-14 text-center transition-colors"
+                      className="duration-400 shrink-0 rounded-[24px] border border-[#000035] px-14 py-12 pb-14 text-center transition-colors dark:border-[#D7D7D7]"
                       style={{
                         width: `calc(${100 / testimonialPerView}% - 50px)`,
                         margin: "0 25px",

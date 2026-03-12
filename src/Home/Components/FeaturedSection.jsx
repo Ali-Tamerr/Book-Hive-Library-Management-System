@@ -22,7 +22,7 @@ const FeaturedSection = ({ featuredBooks, setSelectedFeaturedBook }) => {
       </h2>
 
       <div
-        className="featured__container mx-auto w-full max-w-[1520px]"
+        className="featured__container mx-auto w-full max-w-[1250px]"
         data-reveal
       >
         <div className="animate-infinite-scroll flex w-max">
