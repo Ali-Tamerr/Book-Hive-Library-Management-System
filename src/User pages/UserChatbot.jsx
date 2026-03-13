@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
   Bot,
+  Loader2,
   MessageSquareText,
   Search,
   SendHorizontal,
   Trash2,
 } from "lucide-react";
-import { apiPost, getImageUrl } from "../services/api.config";
+import { apiDelete, apiGet, apiPost, getImageUrl } from "../services/api.config";
 import { getCurrentUser } from "../services/auth.api";
 import { useUser } from "../hooks/useUsers";
 
@@ -90,6 +91,7 @@ function UserChatbot() {
   const [inputValue, setInputValue] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
   const messagesEndRef = useRef(null);
+  const currentLoadingIdRef = useRef(null);
 
   const localUser = getCurrentUser();
   const { data: userProfile } = useUser(localUser?.user_id);
@@ -107,66 +109,45 @@ function UserChatbot() {
       return;
     }
 
-    try {
-      const saved = localStorage.getItem(sessionsStorageKey);
-      const parsed = saved ? JSON.parse(saved) : [];
-      const loadedSessions = Array.isArray(parsed)
-        ? parsed.filter(
-            (entry) =>
-              entry &&
-              (typeof entry.id === "number" || typeof entry.id === "string"),
-          )
-        : [];
+    const fetchHistory = async () => {
+      if (!activeUserId) return;
+      try {
+        const dbSessions = await apiGet("/chat/sessions", {
+          headers: { "X-User-Id": activeUserId },
+        });
 
-      setSessions(loadedSessions);
+        const formattedSessions = dbSessions.map((s) => ({
+          id: s.sessionId,
+          title: s.title,
+          createdAt: s.createdAt,
+        }));
 
+        setSessions(formattedSessions);
+        return formattedSessions;
+      } catch (error) {
+        console.error("Failed to fetch chat history:", error);
+        return [];
+      }
+    };
+
+    const initializeChat = async () => {
+      const history = await fetchHistory();
+      
       const activeSessionKey = getActiveChatSessionKey(activeUserId);
       const savedActiveId = localStorage.getItem(activeSessionKey);
-      const sessionToLoad = loadedSessions.find(
-        (s) => String(s.id) === savedActiveId,
-      );
 
-      const loadMessagesForSession = (id, sessionObj) => {
-        try {
-          const messagesKey = `chatSessionMessages:${activeUserId}:${id}`;
-          const savedMessages = localStorage.getItem(messagesKey);
-          if (savedMessages) return JSON.parse(savedMessages);
-          if (sessionObj && Array.isArray(sessionObj.messages))
-            return sessionObj.messages;
-        } catch (e) {}
-        return [STARTING_MESSAGE];
-      };
-
-      if (sessionToLoad) {
-        setSessionId(sessionToLoad.id);
-        const msgs = loadMessagesForSession(sessionToLoad.id, sessionToLoad);
-        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
-      } else if (savedActiveId) {
-        setSessionId(
-          isNaN(Number(savedActiveId)) ? savedActiveId : Number(savedActiveId),
-        );
-        const parsedId = isNaN(Number(savedActiveId))
-          ? savedActiveId
-          : Number(savedActiveId);
-        const msgs = loadMessagesForSession(parsedId, null);
-        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
-      } else if (loadedSessions.length > 0) {
-        const latest = loadedSessions[0];
-        setSessionId(latest.id);
-        const msgs = loadMessagesForSession(latest.id, latest);
-        setMessages(msgs.length > 0 ? msgs : [STARTING_MESSAGE]);
+      if (savedActiveId && history.some((s) => s.id === savedActiveId)) {
+        loadSession(savedActiveId);
+      } else if (history.length > 0) {
+        loadSession(history[0].id);
       } else {
-        setSessionId(Date.now());
-        setMessages([STARTING_MESSAGE]);
+        handleNewChat();
       }
       setIsInitialized(true);
-    } catch {
-      setSessions([]);
-      setSessionId(Date.now());
-      setMessages([STARTING_MESSAGE]);
-      setIsInitialized(true);
-    }
-  }, [sessionsStorageKey, activeUserId]);
+    };
+
+    initializeChat();
+  }, [activeUserId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -217,8 +198,8 @@ function UserChatbot() {
   }, [sessionId, messages, activeUserId, isInitialized]);
 
   const chatMutation = useMutation({
-    mutationFn: async ({ messageText, userId }) => {
-      const body = { message: messageText };
+    mutationFn: async ({ messageText, userId, sessionId }) => {
+      const body = { message: messageText, sessionId: sessionId?.toString() };
       const headers = { "X-User-Id": userId };
 
       try {
@@ -231,26 +212,58 @@ function UserChatbot() {
         return await apiPost("/librarian/ask", body, { headers });
       }
     },
-    onSuccess: (data) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          sender: "bot",
-          text: getReplyText(data),
-        },
-      ]);
+    onSuccess: (data, variables) => {
+      const botMsg = {
+        id: Date.now(),
+        sender: "bot",
+        text: getReplyText(data),
+      };
+
+      // 1. Update localStorage for the specific session it belongs to
+      if (activeUserId && variables.sessionId) {
+        const messagesKey = `chatSessionMessages:${activeUserId}:${variables.sessionId}`;
+        const savedMessages = localStorage.getItem(messagesKey);
+        const currentMsgs = savedMessages ? JSON.parse(savedMessages) : messages;
+        localStorage.setItem(messagesKey, JSON.stringify([...currentMsgs, botMsg]));
+      }
+
+      // 2. Only update UI if the user is still looking at that same session
+      if (sessionId === variables.sessionId) {
+        setMessages((prev) => [...prev, botMsg]);
+      }
+      
+      // Refresh sidebar list to show new session title
+      if (activeUserId) {
+        apiGet("/chat/sessions", {
+          headers: { "X-User-Id": activeUserId },
+        }).then(dbSessions => {
+          setSessions(dbSessions.map(s => ({
+            id: s.sessionId,
+            title: s.title,
+            createdAt: s.createdAt
+          })));
+        });
+      }
     },
-    onError: (error) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          sender: "bot",
-          text: getChatErrorMessage(error),
-        },
-      ]);
+    onError: (error, variables) => {
+      const errorMsg = {
+        id: Date.now(),
+        sender: "bot",
+        text: getChatErrorMessage(error),
+      };
+
+      if (sessionId === variables.sessionId) {
+        setMessages((prev) => [...prev, errorMsg]);
+      }
       console.error("Chat error:", error);
+    },
+  });
+
+  const deleteSessionMutation = useMutation({
+    mutationFn: async (id) => {
+      return apiDelete(`/chat/session/${id}`, {
+        headers: { "X-User-Id": activeUserId },
+      });
     },
   });
 
@@ -280,7 +293,11 @@ function UserChatbot() {
     ]);
 
     setInputValue("");
-    chatMutation.mutate({ messageText: normalizedText, userId: activeUserId });
+    chatMutation.mutate({
+      messageText: normalizedText,
+      userId: activeUserId,
+      sessionId: sessionId,
+    });
   };
 
   const handleFormSubmit = (event) => {
@@ -289,28 +306,39 @@ function UserChatbot() {
   };
 
   const handleNewChat = () => {
+    currentLoadingIdRef.current = null;
     setMessages([STARTING_MESSAGE]);
     setInputValue("");
     setSessionId(Date.now());
   };
 
-  const loadSession = (id) => {
-    const session = sessions.find((s) => s.id === id);
-    if (session) {
-      setSessionId(id);
-      try {
-        const messagesKey = `chatSessionMessages:${activeUserId}:${id}`;
-        const savedMessages = localStorage.getItem(messagesKey);
-        if (savedMessages) {
-          setMessages(JSON.parse(savedMessages));
-        } else if (session.messages) {
-          setMessages(session.messages);
-        } else {
-          setMessages([STARTING_MESSAGE]);
-        }
-      } catch (e) {
-        setMessages([STARTING_MESSAGE]);
+  const loadSession = async (id) => {
+    currentLoadingIdRef.current = id;
+    setSessionId(id);
+    if (!activeUserId) return;
+
+    try {
+      const messagesKey = `chatSessionMessages:${activeUserId}:${id}`;
+      // 1. Try local cache first for instant UI response
+      const savedMessages = localStorage.getItem(messagesKey);
+      if (savedMessages && currentLoadingIdRef.current === id) {
+        setMessages(JSON.parse(savedMessages));
       }
+
+      // 2. Sync with server for the authoritative history
+      const dbMessages = await apiGet(`/chat/session/${id}/messages`, {
+        headers: { "X-User-Id": activeUserId },
+      });
+
+      // CRITICAL: Only update if the user hasn't switched to a different chat while we were waiting
+      if (currentLoadingIdRef.current === id) {
+        // Always ensure the greeting is at the top
+        const fullConversation = [STARTING_MESSAGE, ...dbMessages];
+        setMessages(fullConversation);
+        localStorage.setItem(messagesKey, JSON.stringify(fullConversation));
+      }
+    } catch (e) {
+      console.error("Failed to load session messages:", e);
     }
   };
 
@@ -319,16 +347,19 @@ function UserChatbot() {
 
     if (activeUserId) {
       localStorage.removeItem(`chatSessionMessages:${activeUserId}:${id}`);
+      deleteSessionMutation.mutate(id);
     }
+
+    const updatedSessions = sessions.filter((s) => s.id !== id);
+    setSessions(updatedSessions);
 
     if (sessionId === id) {
-      setMessages([STARTING_MESSAGE]);
-      setSessionId(Date.now());
+      if (updatedSessions.length > 0) {
+        loadSession(updatedSessions[0].id);
+      } else {
+        handleNewChat();
+      }
     }
-
-    setSessionId(Date.now());
-    setMessages([STARTING_MESSAGE]);
-    setInputValue("");
   };
 
   return (
@@ -435,8 +466,14 @@ function UserChatbot() {
                                 : "text-[#000035] dark:text-[#D7D7D7]"
                             } opacity-70 transition-colors hover:text-red-600`}
                             aria-label="Delete chat"
+                            disabled={deleteSessionMutation.isPending}
                           >
-                            <Trash2 size={16} />
+                            {deleteSessionMutation.isPending &&
+                            deleteSessionMutation.variables === session.id ? (
+                              <Loader2 size={16} className="animate-spin" />
+                            ) : (
+                              <Trash2 size={16} />
+                            )}
                           </button>
                         </button>
                       );
@@ -503,14 +540,22 @@ function UserChatbot() {
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
                         <Bot size={18} />
                       </div>
-                      <div className="max-w-[70%] rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm text-[#000035] dark:border dark:border-[#D7D7D7]/30 dark:bg-transparent dark:text-[#D7D7D7]">
+                      <div
+                        className="max-w-[70%] rounded-2xl rounded-bl-md bg-white px-4 py-3 text-sm text-[#000035] dark:border dark:border-[#D7D7D7]/30 dark:bg-transparent dark:text-[#D7D7D7]"
+                        dir="auto"
+                        style={{ unicodeBidi: "plaintext" }}
+                      >
                         {message.text}
                       </div>
                     </div>
                   ) : (
                     <div key={message.id} className="flex justify-end">
                       <div className="flex max-w-[70%] items-end gap-3">
-                        <div className="rounded-2xl rounded-br-md bg-[#0b0c28] px-4 py-3 text-sm text-white dark:bg-[#D7D7D7] dark:text-black">
+                        <div
+                          className="rounded-2xl rounded-br-md bg-[#0b0c28] px-4 py-3 text-sm text-white dark:bg-[#D7D7D7] dark:text-black"
+                          dir="auto"
+                          style={{ unicodeBidi: "plaintext" }}
+                        >
                           {message.text}
                         </div>
                         {currentUser?.image_url ? (
