@@ -110,20 +110,18 @@ function UserChatbot() {
     }
 
     const fetchHistory = async () => {
-      if (!activeUserId) return;
+      if (!activeUserId) return [];
       try {
         const dbSessions = await apiGet("/chat/sessions", {
           headers: { "X-User-Id": activeUserId },
         });
 
-        const formattedSessions = dbSessions.map((s) => ({
-          id: s.sessionId,
+        return dbSessions.map((s) => ({
+          id: String(s.sessionId),
           title: s.title,
           createdAt: s.createdAt,
+          messageCount: s.messageCount || 0
         }));
-
-        setSessions(formattedSessions);
-        return formattedSessions;
       } catch (error) {
         console.error("Failed to fetch chat history:", error);
         return [];
@@ -131,15 +129,34 @@ function UserChatbot() {
     };
 
     const initializeChat = async () => {
-      const history = await fetchHistory();
+      // 1. Load from DB
+      const dbHistory = await fetchHistory();
+      
+      // 2. Load from LocalStorage to find potential unsynced/local chats
+      let localHistory = [];
+      try {
+        const saved = localStorage.getItem(sessionsStorageKey);
+        localHistory = saved ? JSON.parse(saved) : [];
+      } catch (e) {}
+
+      // 3. Merge: Database is source of truth, but keep local ones not yet in DB
+      const merged = [...dbHistory];
+      localHistory.forEach(local => {
+        if (!merged.some(db => String(db.id) === String(local.id))) {
+          merged.push(local);
+        }
+      });
+
+      // Sort by creation or update? Let's unshift new ones
+      setSessions(merged);
       
       const activeSessionKey = getActiveChatSessionKey(activeUserId);
       const savedActiveId = localStorage.getItem(activeSessionKey);
 
-      if (savedActiveId && history.some((s) => s.id === savedActiveId)) {
-        loadSession(savedActiveId);
-      } else if (history.length > 0) {
-        loadSession(history[0].id);
+      if (savedActiveId && merged.some((s) => String(s.id) === String(savedActiveId))) {
+        loadSession(String(savedActiveId));
+      } else if (merged.length > 0) {
+        loadSession(String(merged[0].id));
       } else {
         handleNewChat();
       }
@@ -147,38 +164,46 @@ function UserChatbot() {
     };
 
     initializeChat();
-  }, [activeUserId]);
+  }, [activeUserId, sessionsStorageKey]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    if (messages.length > 1 && sessionId) {
+    // Only update local session titles if we are SURE the messages belong to this session
+    // and we have at least one user message
+    const userMsg = messages.find((m) => m.sender === "user");
+    if (userMsg && sessionId && isInitialized) {
       setSessions((prev) => {
-        const title =
-          messages.find((m) => m.sender === "user")?.text || "New Conversation";
-        const existingIndex = prev.findIndex((s) => s.id === sessionId);
+        const sidStr = String(sessionId);
+        const existingIndex = prev.findIndex((s) => String(s.id) === sidStr);
 
         let newSessions = [...prev];
+        const updatedTitle = userMsg.text.length > 30 
+          ? userMsg.text.substring(0, 30) + "..." 
+          : userMsg.text;
+
         if (existingIndex >= 0) {
-          newSessions[existingIndex] = {
-            ...newSessions[existingIndex],
-            title,
-            messageCount: messages.length,
-          };
-          delete newSessions[existingIndex].messages;
+          // Verify it's not a race condition (checking if title actually needs update)
+          if (newSessions[existingIndex].title !== updatedTitle) {
+            newSessions[existingIndex] = {
+              ...newSessions[existingIndex],
+              title: updatedTitle,
+              messageCount: messages.length,
+            };
+          }
         } else {
           newSessions.unshift({
-            id: sessionId,
-            title,
+            id: sidStr,
+            title: updatedTitle,
             messageCount: messages.length,
           });
         }
         return newSessions;
       });
     }
-  }, [messages, sessionId]);
+  }, [messages, sessionId, isInitialized]);
 
   useEffect(() => {
     if (!isInitialized || !sessionsStorageKey) return;
@@ -228,20 +253,32 @@ function UserChatbot() {
       }
 
       // 2. Only update UI if the user is still looking at that same session
-      if (sessionId === variables.sessionId) {
+      if (String(sessionId) === String(variables.sessionId)) {
         setMessages((prev) => [...prev, botMsg]);
       }
       
-      // Refresh sidebar list to show new session title
+      // Refresh sidebar list to show new session title from server
       if (activeUserId) {
         apiGet("/chat/sessions", {
           headers: { "X-User-Id": activeUserId },
         }).then(dbSessions => {
-          setSessions(dbSessions.map(s => ({
-            id: s.sessionId,
-            title: s.title,
-            createdAt: s.createdAt
-          })));
+          setSessions(prev => {
+            const serverSessions = dbSessions.map(s => ({
+              id: String(s.sessionId),
+              title: s.title,
+              createdAt: s.createdAt,
+              messageCount: s.messageCount || 0
+            }));
+            
+            // Merge again: Keep local ones that might have just been added
+            const merged = [...serverSessions];
+            prev.forEach(local => {
+              if (!merged.some(db => String(db.id) === String(local.id))) {
+                merged.push(local);
+              }
+            });
+            return merged;
+          });
         });
       }
     },
@@ -307,31 +344,33 @@ function UserChatbot() {
 
   const handleNewChat = () => {
     currentLoadingIdRef.current = null;
+    const newId = String(Date.now());
     setMessages([STARTING_MESSAGE]);
     setInputValue("");
-    setSessionId(Date.now());
+    setSessionId(newId);
   };
 
   const loadSession = async (id) => {
-    currentLoadingIdRef.current = id;
-    setSessionId(id);
+    const idStr = String(id);
+    currentLoadingIdRef.current = idStr;
+    setSessionId(idStr);
     if (!activeUserId) return;
 
     try {
-      const messagesKey = `chatSessionMessages:${activeUserId}:${id}`;
+      const messagesKey = `chatSessionMessages:${activeUserId}:${idStr}`;
       // 1. Try local cache first for instant UI response
       const savedMessages = localStorage.getItem(messagesKey);
-      if (savedMessages && currentLoadingIdRef.current === id) {
+      if (savedMessages && currentLoadingIdRef.current === idStr) {
         setMessages(JSON.parse(savedMessages));
       }
 
       // 2. Sync with server for the authoritative history
-      const dbMessages = await apiGet(`/chat/session/${id}/messages`, {
+      const dbMessages = await apiGet(`/chat/session/${idStr}/messages`, {
         headers: { "X-User-Id": activeUserId },
       });
 
       // CRITICAL: Only update if the user hasn't switched to a different chat while we were waiting
-      if (currentLoadingIdRef.current === id) {
+      if (currentLoadingIdRef.current === idStr) {
         // Always ensure the greeting is at the top
         const fullConversation = [STARTING_MESSAGE, ...dbMessages];
         setMessages(fullConversation);
