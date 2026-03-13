@@ -336,6 +336,14 @@ interface BookReviewDTO {
 |--------|----------|-------------|
 | POST | `/api/librarian/ask` | Ask the AI librarian for recommendations; body: `{ message }` |
 
+### Chat (sessions & logs)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/chat/sessions` | Returns chat session list for current user (requires `X-User-Id`) |
+| GET | `/api/chat/session/{sessionId}/messages` | Returns messages for a session (requires `X-User-Id`) |
+| DELETE | `/api/chat/session/{sessionId}` | Deletes a session and its messages (requires `X-User-Id`) |
+| DELETE | `/api/chat/logs` | Deletes all chat logs for the user (requires `X-User-Id`) |
+
 ---
 
 ## Request/Response Examples (exact shapes)
@@ -734,7 +742,8 @@ A new conversational AI endpoint has been added to handle user queries with natu
 **ChatRequest:**
 ```json
 {
-  "message": "Is 'Clean Code' available?"
+  "message": "Is 'Clean Code' available?",
+  "sessionId": "optional-session-id"
 }
 ```
 
@@ -790,11 +799,13 @@ public class IntentResult
 - **IDatabaseService** — Interface for database operations (book search)
 
 ### Current Chat Behavior (in `Program.cs`)
-- Requires `X-User-Id` header, validates the user, and enriches prompts with:
+- If `X-User-Id` is missing, the chat falls back to the librarian RAG response and logs as `anonymous`.
+- With `X-User-Id`, validates the user and enriches prompts with:
   - Active borrowed books (due dates and remaining days)
   - Suggested books (latest available titles not currently borrowed)
 - Uses a function-routing step (search books, user borrowed, book due dates, or recommendations) and RAG-based context when answering.
 - Logs each chat interaction to `ChatLogs` using `IChatLogService`.
+- Supports lightweight intent routing for branch/author/info prompts and includes branch data in responses.
 
 ### Supported Intents
 
@@ -984,6 +995,8 @@ Sets a short-lived device registration state for NFC devices.
 - **FeedbackRequests:** Added moderation workflow via `GET/POST/PUT /api/FeedbackRequests`.
 - **Stats:** Added `GET /api/Stats` for cached counts.
 - **ScannedBookUids:** Added transient NFC UID table with hourly cleanup of rows older than 24 hours.
+- **Chat sessions:** Added endpoints to list sessions, fetch session messages, and delete sessions/logs.
+- **Chat anonymous mode:** `POST /api/chat` now accepts requests without `X-User-Id` (logs as anonymous) and supports optional `sessionId`.
 
 ### Previous Update (AI Chat Integration & BookReview Feature)
 - **AI Chat Endpoint:** Added `POST /api/chat` with Groq/LLM-powered intent detection
