@@ -805,9 +805,11 @@ public class IntentResult
 - With `X-User-Id`, validates the user and enriches prompts with:
   - Active borrowed books (due dates and remaining days)
   - Suggested books (latest available titles not currently borrowed)
-- Uses a function-routing step (search books, availability/branch, user borrowed, book due dates, recommendations, and recommend-from-borrowed) and RAG-based context when answering.
+- Uses a function-routing step (search books, availability/branch, user borrowed, book due dates, general recommendations, recommend-from-borrowed, and new-books listing) and RAG-based context when answering.
 - Logs each chat interaction to `ChatLogs` using `IChatLogService`.
 - Supports lightweight intent routing for branch/author/info/availability/borrowed prompts, includes branch availability in responses, and can add recommendations based on borrowed books.
+- Topic-specific recommendation prompts (for example: sports/soccer in Arabic or English) are filtered by relevant title/category terms; if no relevant matches are found, the response returns a no-match message with related-topic suggestions instead of unrelated general books.
+- Frontend quick actions can send Arabic prompts by default while keeping button labels unchanged; Arabic prompt content makes chatbot responses default to Arabic behavior.
 - Uses a grounded-response step that validates mentioned titles against database context.
 
 ### Supported Intents
@@ -819,6 +821,7 @@ public class IntentResult
 | `availability` | Ask if a book is available in a branch | "Is Clean Code available in Cairo?" |
 | `borrowed` | Ask about borrowed books or due dates | "When should I return my books?" |
 | `recommend_from_borrowed` | Ask for recommendations based on borrowed books | "Suggest books like what I borrowed" |
+| `new_books` | Ask for newly available books | "Show me new available books" |
 | `working_hours` | Get library working hours | "What are your working hours?" |
 | `unknown` | Unable to determine intent | "Random text" |
 
