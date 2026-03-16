@@ -217,6 +217,7 @@ interface BookReviewDTO {
 - Deleting a BookCopy is blocked if the copy is referenced by reservations or transactions.
 - Deleting a BookDetail is blocked if any of its copies are referenced by reservations or transactions.
 - **ScannedBookUids cleanup:** background service removes rows older than 24 hours.
+- **ScannedBookUids clear-on-copy:** creating a BookCopy removes matching `scanned_book_uids.uid` rows for the new `book_copy_id`.
 - **User fields:** `password_hash`, `first_name`, and `last_name` are required fields.
 - **BookReservation:** `expiration_date` is now **required**.
 
@@ -743,12 +744,13 @@ A new conversational AI endpoint has been added to handle user queries with natu
 ```json
 {
   "message": "Is 'Clean Code' available?",
+  "userId": "optional-user-id",
   "sessionId": "optional-session-id"
 }
 ```
 
 **Headers:**
-- `X-User-Id`: required (current authenticated user id used to personalize responses)
+- `X-User-Id`: optional. If omitted, the backend uses the librarian RAG response and logs as `anonymous`.
 
 **Chat Response:**
 ```json
@@ -799,7 +801,7 @@ public class IntentResult
 - **IDatabaseService** — Interface for database operations (book search)
 
 ### Current Chat Behavior (in `Program.cs`)
-- If `X-User-Id` is missing, the chat falls back to the librarian RAG response and logs as `anonymous`.
+- If `X-User-Id` is missing, the chat falls back to the librarian RAG response and logs as `anonymous` (uses optional `sessionId`).
 - With `X-User-Id`, validates the user and enriches prompts with:
   - Active borrowed books (due dates and remaining days)
   - Suggested books (latest available titles not currently borrowed)

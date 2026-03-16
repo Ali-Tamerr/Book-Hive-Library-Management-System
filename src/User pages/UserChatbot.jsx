@@ -7,12 +7,11 @@ import {
   Search,
   SendHorizontal,
   Trash2,
+  UserRound,
 } from "lucide-react";
 import { apiDelete, apiGet, apiPost, getImageUrl } from "../services/api.config";
 import { getCurrentUser } from "../services/auth.api";
 import { useUser } from "../hooks/useUsers";
-
-const STORAGE_KEY = "chatSessions";
 
 const quickActions = [
   "Renew Subscription",
@@ -52,14 +51,23 @@ const getReplyText = (responsePayload) => {
   );
 };
 
+const getChatRequestConfig = (userId) => {
+  if (!userId) {
+    return {};
+  }
+
+  return {
+    headers: {
+      "X-User-Id": userId,
+    },
+  };
+};
+
 const getChatErrorMessage = (error) => {
   const rawMessage = String(error?.message || "").trim();
 
-  if (
-    error?.status === 400 &&
-    /x-user-id|user id|header|required/i.test(rawMessage)
-  ) {
-    return "Your session is missing user identity. Please sign in again.";
+  if (error?.status === 400 && /user not found/i.test(rawMessage)) {
+    return "Your account session is invalid. Please sign in again.";
   }
 
   if (error?.status === 401 || error?.status === 403) {
@@ -72,16 +80,6 @@ const getChatErrorMessage = (error) => {
 
   return "I'm having trouble connecting to the server. Please try again later.";
 };
-
-function getStoredSessions() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const parsed = saved ? JSON.parse(saved) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
 
 function UserChatbot() {
   const [sessionId, setSessionId] = useState(null);
@@ -103,7 +101,7 @@ function UserChatbot() {
   useEffect(() => {
     if (!activeUserId) {
       setSessions([]);
-      setSessionId(Date.now());
+      setSessionId(String(Date.now()));
       setMessages([STARTING_MESSAGE]);
       setIsInitialized(true);
       return;
@@ -112,9 +110,10 @@ function UserChatbot() {
     const fetchHistory = async () => {
       if (!activeUserId) return [];
       try {
-        const dbSessions = await apiGet("/chat/sessions", {
-          headers: { "X-User-Id": activeUserId },
-        });
+        const dbSessions = await apiGet(
+          "/chat/sessions",
+          getChatRequestConfig(activeUserId),
+        );
 
         return dbSessions.map((s) => ({
           id: String(s.sessionId),
@@ -224,17 +223,21 @@ function UserChatbot() {
 
   const chatMutation = useMutation({
     mutationFn: async ({ messageText, userId, sessionId }) => {
-      const body = { message: messageText, sessionId: sessionId?.toString() };
-      const headers = { "X-User-Id": userId };
+      const requestConfig = getChatRequestConfig(userId);
+      const body = {
+        message: messageText,
+        userId: userId || undefined,
+        sessionId: String(sessionId || Date.now()),
+      };
 
       try {
-        return await apiPost("/chat", body, { headers });
+        return await apiPost("/chat", body, requestConfig);
       } catch (error) {
         if (error?.status !== 404 && error?.status !== 405) {
           throw error;
         }
 
-        return await apiPost("/librarian/ask", body, { headers });
+        return await apiPost("/librarian/ask", body, requestConfig);
       }
     },
     onSuccess: (data, variables) => {
@@ -259,9 +262,7 @@ function UserChatbot() {
       
       // Refresh sidebar list to show new session title from server
       if (activeUserId) {
-        apiGet("/chat/sessions", {
-          headers: { "X-User-Id": activeUserId },
-        }).then(dbSessions => {
+        apiGet("/chat/sessions", getChatRequestConfig(activeUserId)).then((dbSessions) => {
           setSessions(prev => {
             const serverSessions = dbSessions.map(s => ({
               id: String(s.sessionId),
@@ -289,7 +290,7 @@ function UserChatbot() {
         text: getChatErrorMessage(error),
       };
 
-      if (sessionId === variables.sessionId) {
+      if (String(sessionId) === String(variables.sessionId)) {
         setMessages((prev) => [...prev, errorMsg]);
       }
       console.error("Chat error:", error);
@@ -298,9 +299,7 @@ function UserChatbot() {
 
   const deleteSessionMutation = useMutation({
     mutationFn: async (id) => {
-      return apiDelete(`/chat/session/${id}`, {
-        headers: { "X-User-Id": activeUserId },
-      });
+      return apiDelete(`/chat/session/${id}`, getChatRequestConfig(activeUserId));
     },
   });
 
@@ -308,16 +307,10 @@ function UserChatbot() {
     const normalizedText = String(text || "").trim();
     if (!normalizedText) return;
 
-    if (!activeUserId) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          sender: "bot",
-          text: "Please sign in again to continue chatting.",
-        },
-      ]);
-      return;
+    const targetSessionId = String(sessionId || Date.now());
+
+    if (!sessionId) {
+      setSessionId(targetSessionId);
     }
 
     setMessages((prev) => [
@@ -333,7 +326,7 @@ function UserChatbot() {
     chatMutation.mutate({
       messageText: normalizedText,
       userId: activeUserId,
-      sessionId: sessionId,
+      sessionId: targetSessionId,
     });
   };
 
@@ -366,7 +359,7 @@ function UserChatbot() {
 
       // 2. Sync with server for the authoritative history
       const dbMessages = await apiGet(`/chat/session/${idStr}/messages`, {
-        headers: { "X-User-Id": activeUserId },
+        ...getChatRequestConfig(activeUserId),
       });
 
       // CRITICAL: Only update if the user hasn't switched to a different chat while we were waiting
