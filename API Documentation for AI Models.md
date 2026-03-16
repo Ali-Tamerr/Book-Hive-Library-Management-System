@@ -217,7 +217,6 @@ interface BookReviewDTO {
 - Deleting a BookCopy is blocked if the copy is referenced by reservations or transactions.
 - Deleting a BookDetail is blocked if any of its copies are referenced by reservations or transactions.
 - **ScannedBookUids cleanup:** background service removes rows older than 24 hours.
-- **ScannedBookUids clear-on-copy:** creating a BookCopy removes matching `scanned_book_uids.uid` rows for the new `book_copy_id`.
 - **User fields:** `password_hash`, `first_name`, and `last_name` are required fields.
 - **BookReservation:** `expiration_date` is now **required**.
 
@@ -344,6 +343,7 @@ interface BookReviewDTO {
 | GET | `/api/chat/session/{sessionId}/messages` | Returns messages for a session (requires `X-User-Id`) |
 | DELETE | `/api/chat/session/{sessionId}` | Deletes a session and its messages (requires `X-User-Id`) |
 | DELETE | `/api/chat/logs` | Deletes all chat logs for the user (requires `X-User-Id`) |
+| POST | `/api/chat/borrowed` | Returns borrowed book titles as a comma-separated string (requires `X-User-Id`) |
 
 ---
 
@@ -750,7 +750,7 @@ A new conversational AI endpoint has been added to handle user queries with natu
 ```
 
 **Headers:**
-- `X-User-Id`: optional. If omitted, the backend uses the librarian RAG response and logs as `anonymous`.
+- `X-User-Id`: required for full chat flow. If omitted, the endpoint returns "I cannot identify the current user." and logs as `anonymous`.
 
 **Chat Response:**
 ```json
@@ -801,13 +801,14 @@ public class IntentResult
 - **IDatabaseService** — Interface for database operations (book search)
 
 ### Current Chat Behavior (in `Program.cs`)
-- If `X-User-Id` is missing, the chat falls back to the librarian RAG response and logs as `anonymous` (uses optional `sessionId`).
+- If `X-User-Id` is missing, the endpoint returns "I cannot identify the current user." and logs as `anonymous`.
 - With `X-User-Id`, validates the user and enriches prompts with:
   - Active borrowed books (due dates and remaining days)
   - Suggested books (latest available titles not currently borrowed)
-- Uses a function-routing step (search books, user borrowed, book due dates, or recommendations) and RAG-based context when answering.
+- Uses a function-routing step (search books, availability/branch, user borrowed, book due dates, recommendations, and recommend-from-borrowed) and RAG-based context when answering.
 - Logs each chat interaction to `ChatLogs` using `IChatLogService`.
-- Supports lightweight intent routing for branch/author/info prompts and includes branch data in responses.
+- Supports lightweight intent routing for branch/author/info/availability/borrowed prompts, includes branch availability in responses, and can add recommendations based on borrowed books.
+- Uses a grounded-response step that validates mentioned titles against database context.
 
 ### Supported Intents
 
@@ -815,6 +816,9 @@ public class IntentResult
 |--------|-------------|---------------|
 | `check_book_availability` | Check if a book is available | "Is Clean Code available?" |
 | `search_book` | Search for a book by name | "Find me a book about algorithms" |
+| `availability` | Ask if a book is available in a branch | "Is Clean Code available in Cairo?" |
+| `borrowed` | Ask about borrowed books or due dates | "When should I return my books?" |
+| `recommend_from_borrowed` | Ask for recommendations based on borrowed books | "Suggest books like what I borrowed" |
 | `working_hours` | Get library working hours | "What are your working hours?" |
 | `unknown` | Unable to determine intent | "Random text" |
 
@@ -990,7 +994,8 @@ Sets a short-lived device registration state for NFC devices.
 - **Users:** Switched to `first_name`/`last_name` user profile fields and updated request/response shapes accordingly.
 - **User requests:** Registration requests now accept `first_name` and `last_name` (no `phone_number`).
 - **Librarian listing:** Added `GET /api/Users/librarians`, returning `LibrarianDTO` (name, branch, status, last activity).
-- **Chat endpoint:** `/api/chat` now requires `X-User-Id`, enriches prompts with borrowed books and suggestions, uses RAG/function routing, and logs chats to `ChatLogs`.
+- **Chat endpoint:** `/api/chat` uses `X-User-Id` for personalized responses (borrowed books/suggestions), uses RAG/function routing, and logs chats to `ChatLogs`.
+- **Chat router updates:** Added availability/borrowed/recommend-from-borrowed intent handling, grounded-title validation, and `/api/chat/borrowed` helper endpoint.
 - **Librarian assistant:** Added `POST /api/librarian/ask` for AI recommendations using embeddings.
 - **Books:** Added `covers`, `management`, `search`, `recommend`, `duedate`, and `embeddings/backfill` endpoints.
 - **Transactions:** Added `GET /api/BookTransactions/dashboard` for dashboard summaries.
@@ -1024,10 +1029,10 @@ Developer implementation notes (scanned from repository)
 The following notes summarize the current in-repo chatbot implementation discovered while scanning the codebase. Use these details to finish integration, tests or frontend wiring.
 
 - Endpoint status (updated):
-  - `POST /api/chat` is mapped as a minimal API in `Program.cs`, requires an `X-User-Id` header, enriches prompts with borrowed books and suggestions, and logs chats to `ChatLogs` using `IChatLogService`.
+  - `POST /api/chat` is mapped as a minimal API in `Program.cs`; without `X-User-Id` it returns "I cannot identify the current user." and logs as `anonymous`, and with `X-User-Id` it enriches prompts with borrowed books/suggestions and logs to `ChatLogs` via `IChatLogService`.
   - The handler calls Groq LLM with model `llama-3.1-8b-instant` and returns `{ reply: "..." }` from the first choice.
   - `POST /api/Chat` exists in `ChatController` but currently returns a placeholder `"Working"` response.
-  - Two `ChatRequest` types exist (`Models/ChatRequest.cs` with `UserId` and `Message`, and `DTO/ChatRequest.cs` with optional `UserId`); consider consolidating to avoid binding confusion.
+  - Two `ChatRequest` types exist (`Models/ChatRequest.cs` with optional `UserId`, `Message`, and optional `SessionId`, and `DTO/ChatRequest.cs` with optional `UserId`); consider consolidating to avoid binding confusion.
 
 - Dependency Injection (registered in `Program.cs`):
   - `IChatService` → `ChatService`
@@ -1051,7 +1056,7 @@ The following notes summarize the current in-repo chatbot implementation discove
 
 - DTOs and logging:
   - `ChatRequest` DTO exists (`DTO/ChatRequest.cs`) and expects `message` and optional `userId`.
-  - Another `ChatRequest` exists in `Models/ChatRequest.cs` (only `Message`); unify to one type to prevent binding conflicts.
+  - Another `ChatRequest` exists in `Models/ChatRequest.cs` (optional `UserId`, required `Message`, optional `SessionId`); unify to one type to prevent binding conflicts.
   - `IntentResult` DTO exists with `Intent`, `Book_Name`, and `Confidence` fields.
   - `GroqResponse` DTO models the Groq API response shape.
   - `ChatLogService` persists chat logs using `Npgsql` and expects a connection string named `DefaultConnection` (it also exposes `GetLastMessages` and a helper `LogChat`).

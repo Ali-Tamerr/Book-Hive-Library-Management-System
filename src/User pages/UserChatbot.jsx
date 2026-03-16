@@ -14,10 +14,22 @@ import { getCurrentUser } from "../services/auth.api";
 import { useUser } from "../hooks/useUsers";
 
 const quickActions = [
-  "Renew Subscription",
-  "Borrow Status",
-  "Recommendations",
-  "New Books",
+  {
+    label: "Renew Subscription",
+    prompt: "How can I renew my subscription?",
+  },
+  {
+    label: "Borrow Status",
+    prompt: "Show me my currently borrowed books and due dates.",
+  },
+  {
+    label: "Recommendations",
+    prompt: "Can you recommend some books for me?",
+  },
+  {
+    label: "New Books",
+    prompt: "Show me new available books.",
+  },
 ];
 
 const STARTING_MESSAGE = {
@@ -450,10 +462,18 @@ function UserChatbot() {
                       const isActive = session.id === sessionId;
 
                       return (
-                        <button
+                        <div
                           key={session.id}
-                          type="button"
                           onClick={() => loadSession(session.id)}
+                          onKeyDown={(event) => {
+                            if (event.target !== event.currentTarget) return;
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              loadSession(session.id);
+                            }
+                          }}
+                          role="button"
+                          tabIndex={0}
                           className={`flex items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors cursor-pointer ${
                             isActive && messages.length > 1
                               ? "border-[#000035] bg-white dark:border-[#D7D7D7] dark:bg-[#D7D7D7]"
@@ -507,7 +527,7 @@ function UserChatbot() {
                               <Trash2 size={16} />
                             )}
                           </button>
-                        </button>
+                        </div>
                       );
                     })
                 )}
@@ -529,13 +549,13 @@ function UserChatbot() {
               <div className="mt-4 grid grid-cols-2 gap-3">
                 {quickActions.map((action) => (
                   <button
-                    key={action}
+                    key={action.label}
                     type="button"
-                    onClick={() => handleSendMessage(action)}
+                    onClick={() => handleSendMessage(action.prompt)}
                     disabled={chatMutation.isPending}
                     className="rounded-xl cursor-pointer border border-[#000035] bg-transparent px-3 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
                   >
-                    {action}
+                    {action.label}
                   </button>
                 ))}
               </div>
