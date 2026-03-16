@@ -16,26 +16,26 @@ import { useUser } from "../hooks/useUsers";
 const quickActions = [
   {
     label: "Renew Subscription",
-    prompt: "How can I renew my subscription?",
+    prompt: "كيف يمكنني تجديد اشتراكي؟",
   },
   {
     label: "Borrow Status",
-    prompt: "Show me my currently borrowed books and due dates.",
+    prompt: "اعرض لي الكتب التي استعرتها حاليا ومواعيد إرجاعها.",
   },
   {
     label: "Recommendations",
-    prompt: "Can you recommend some books for me?",
+    prompt: "هل يمكنك أن توصي لي ببعض الكتب؟",
   },
   {
     label: "New Books",
-    prompt: "Show me new available books.",
+    prompt: "اعرض لي الكتب الجديدة المتاحة.",
   },
 ];
 
 const STARTING_MESSAGE = {
   id: 1,
   sender: "bot",
-  text: "Hello, I'm Library Bot! How can I help you today?",
+  text: "مرحبا، أنا مساعد المكتبة. كيف يمكنني مساعدتك اليوم؟",
 };
 
 const getUserId = (user) => {
@@ -51,7 +51,7 @@ const getActiveChatSessionKey = (userId) =>
 
 const getReplyText = (responsePayload) => {
   if (!responsePayload || typeof responsePayload !== "object") {
-    return "I didn't quite understand that.";
+    return "لم أفهم طلبك بشكل واضح.";
   }
 
   return (
@@ -59,7 +59,7 @@ const getReplyText = (responsePayload) => {
     responsePayload.response ||
     responsePayload.message ||
     responsePayload.answer ||
-    "I didn't quite understand that."
+    "لم أفهم طلبك بشكل واضح."
   );
 };
 
@@ -79,18 +79,18 @@ const getChatErrorMessage = (error) => {
   const rawMessage = String(error?.message || "").trim();
 
   if (error?.status === 400 && /user not found/i.test(rawMessage)) {
-    return "Your account session is invalid. Please sign in again.";
+    return "جلسة حسابك غير صالحة. يرجى تسجيل الدخول مرة أخرى.";
   }
 
   if (error?.status === 401 || error?.status === 403) {
-    return "Your session expired. Please sign in again.";
+    return "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.";
   }
 
   if (rawMessage && rawMessage.length <= 220) {
     return rawMessage;
   }
 
-  return "I'm having trouble connecting to the server. Please try again later.";
+  return "أواجه مشكلة في الاتصال بالخادم حاليا. يرجى المحاولة مرة أخرى لاحقا.";
 };
 
 function UserChatbot() {
