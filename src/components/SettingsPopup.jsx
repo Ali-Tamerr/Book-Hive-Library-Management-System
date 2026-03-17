@@ -169,11 +169,18 @@ const SettingsPopup = ({ show, onClose }) => {
           ? formData.newPassword
           : currentUser.password_hash,
       };
-      // Only store minimal session info (exclude image_url)
+
+      // Store the updated user in localStorage (KEEP image_url for fast UI update)
       const sessionUser = { ...updatedUser };
-      delete sessionUser.image_url;
+      // Note: We keep image_url now to allow immediate preview in Navbar even if refetch is slow
       localStorage.setItem("authToken", JSON.stringify(sessionUser));
       localStorage.setItem("currentUser", JSON.stringify(sessionUser));
+
+      // Optimistically update the React Query cache for the specific user detail
+      queryClient.setQueryData(
+        ["users", "detail", currentUser.user_id],
+        updatedUser,
+      );
 
       // Force React Query cache to re-fetch and components to update with the new image
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -189,10 +196,9 @@ const SettingsPopup = ({ show, onClose }) => {
         newPassword: "",
         confirmPassword: "",
       });
-      setSelectedImageBase64("");
-
       setTimeout(() => {
         setSuccess("");
+        setSelectedImageBase64("");
       }, 3000);
     } catch (err) {
       console.error("Failed to update credentials:", err);
