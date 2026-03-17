@@ -50,9 +50,9 @@ const SettingsPopup = ({ show, onClose }) => {
       return;
     }
 
-    // 2MB = 2 * 1024 * 1024 bytes
-    if (file.size > 2 * 1024 * 1024) {
-      setError("Profile picture must be below 2MB in size.");
+    // 5MB = 5 * 1024 * 1024 bytes
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Profile picture must be below 5MB in size.");
       return;
     }
 
@@ -145,6 +145,7 @@ const SettingsPopup = ({ show, onClose }) => {
         user_id: currentUser.user_id,
         first_name: currentUser.first_name,
         last_name: currentUser.last_name,
+        email: currentUser.email,
         role: currentUser.role,
         status: currentUser.status || "Active",
         plan: currentUser.plan || null,
