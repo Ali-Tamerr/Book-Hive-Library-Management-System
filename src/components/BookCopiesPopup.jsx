@@ -8,10 +8,13 @@ import NFCReaderButton from "./NFCReaderButton.jsx";
 import { useBranches } from "../hooks/useBranches";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-);
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+const getSupabaseClient = () => {
+  if (!supabaseUrl || !supabaseKey) return null;
+  return createClient(supabaseUrl, supabaseKey);
+};
 
 function BookCopiesPopup({
   show,
@@ -89,6 +92,9 @@ function BookCopiesPopup({
   // Realtime: استقبل UID من جدول scanned_book_uids للجهاز kiosk1
   useEffect(() => {
     if (!show) return;
+
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
 
     const channel = supabase
       .channel("book-uid-scans")

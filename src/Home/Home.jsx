@@ -53,6 +53,7 @@ const Home = () => {
   const [heroIndex, setHeroIndex] = useState(0);
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const heroIntervalRef = useRef(null);
+  const featuredIntervalRef = useRef(null);
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
 
@@ -323,6 +324,19 @@ const Home = () => {
     typeof window !== "undefined" && window.innerWidth >= 1150 ? 3 : 1;
 
   const featuredMaxIndex = Math.max(0, featuredBooks.length - featuredPerView);
+
+  useEffect(() => {
+    if (!featuredBooks.length) return;
+    if (featuredBooks.length <= featuredPerView) return;
+
+    featuredIntervalRef.current = setInterval(() => {
+      setFeaturedIndex((prev) =>
+        prev >= featuredMaxIndex ? 0 : prev + 1,
+      );
+    }, 3500);
+
+    return () => clearInterval(featuredIntervalRef.current);
+  }, [featuredBooks.length, featuredMaxIndex, featuredPerView]);
 
   const featuredPrev = useCallback(() => {
     setFeaturedIndex((prev) => (prev <= 0 ? featuredMaxIndex : prev - 1));
