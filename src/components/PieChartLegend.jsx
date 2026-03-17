@@ -10,12 +10,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-1.5">
             <svg width="14" height="14" viewBox="0 0 14 14">
-              <circle
-                cx="7"
-                cy="7"
-                r="5"
-                fill="var(--pie-borrowed-color)"
-              />
+              <circle cx="7" cy="7" r="5" fill="var(--pie-returned-color)" />
             </svg>
             <p className="text-xs font-medium text-[#000035] max-[340px]:whitespace-nowrap dark:text-[#d3d6de]">
               Total Borrowed Books
@@ -23,12 +18,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
           </div>
           <div className="flex items-center gap-1.5">
             <svg width="14" height="14" viewBox="0 0 14 14">
-              <circle
-                cx="7"
-                cy="7"
-                r="5"
-                fill="var(--pie-returned-color)"
-              />
+              <circle cx="7" cy="7" r="5" fill="var(--pie-borrowed-color)" />
             </svg>
             <p className="text-xs font-medium text-[#000035] max-[340px]:whitespace-nowrap dark:text-[#d3d6de]">
               Borrowed Limited Books
@@ -50,12 +40,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
       <div className="flex flex-col gap-5">
         <div className="flex items-center gap-4">
           <svg width="18" height="18" viewBox="0 0 18 18">
-            <circle
-              cx="9"
-              cy="9"
-              r="9"
-              fill="var(--pie-borrowed-color)"
-            />
+            <circle cx="9" cy="9" r="9" fill="var(--pie-returned-color)" />
           </svg>
           <p className="text-lg font-medium text-[#000035] dark:text-[#d3d6de]">
             Total Borrowed Books
@@ -63,12 +48,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
         </div>
         <div className="flex items-center gap-4">
           <svg width="18" height="18" viewBox="0 0 18 18">
-            <circle
-              cx="9"
-              cy="9"
-              r="9"
-              fill="var(--pie-returned-color)"
-            />
+            <circle cx="9" cy="9" r="9" fill="var(--pie-borrowed-color)" />
           </svg>
           <p className="text-lg font-medium text-[#000035] dark:text-[#d3d6de]">
             Borrowed Limited Books

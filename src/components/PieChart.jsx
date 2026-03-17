@@ -6,8 +6,8 @@ const PieChart = ({
   returnedBooks,
   className,
 }) => {
-  const borrowedColor = "var(--pie-borrowed-color)";
-  const returnedColor = "var(--pie-returned-color)";
+  const borrowedColor = "var(--pie-returned-color)";
+  const returnedColor = "var(--pie-borrowed-color)";
 
   const size = 9999;
   const radius = size / 2;
