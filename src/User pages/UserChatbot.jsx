@@ -7,6 +7,8 @@ import {
   SendHorizontal,
   Trash2,
 } from "lucide-react";
+import { useUser } from "../hooks/useUsers";
+import { getCurrentUser } from "../services/auth.api";
 import { apiPost, getImageUrl } from "../services/api.config";
 
 const STORAGE_KEY = "chatSessions";

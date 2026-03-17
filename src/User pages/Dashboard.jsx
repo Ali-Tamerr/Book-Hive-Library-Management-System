@@ -9,7 +9,7 @@ import { useBookTransactions } from "../hooks/useBookTransactions";
 import { useBook, useBookCovers } from "../hooks/useBooks";
 import { useBranches } from "../hooks/useBranches";
 import { useCategories } from "../hooks/useCategories";
-import { useUser } from "../hooks/useUsers";
+import { useUsers } from "../hooks/useUsers";
 import { getCurrentUser } from "../services/auth.api";
 import { getImageUrl } from "../services/api.config";
 
