@@ -95,18 +95,18 @@ const CommonLayout = ({
         </div>
       </div>
 
-      <section className="flex min-h-0 flex-1 gap-6 overflow-hidden rounded-lg">
+      <section className="flex min-h-0 flex-1 overflow-x-auto rounded-lg">
         <div
           ref={scrollContainerRef}
-          className="min-h-0 flex-1 overflow-y-auto rounded-lg pb-4"
+          className="min-h-0 min-w-[800px] flex-1 overflow-y-auto rounded-lg pb-4"
         >
-          <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
+          <table className="w-full border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead className="sticky top-0 z-10 bg-[#f0f0f1] transition-colors duration-300 dark:bg-[#121317]">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className={`py-3 text-center text-[22px] font-extrabold tracking-widest`}
+                    className={`py-3 px-4 text-center text-[22px] font-extrabold tracking-widest whitespace-nowrap`}
                   >
                     {col.header}
                   </th>
@@ -190,7 +190,7 @@ const CommonLayout = ({
                       return (
                         <td
                           key={col.accessor}
-                          className={`py-3 text-center dark:text-white`}
+                          className={`py-3 px-4 text-center whitespace-nowrap dark:text-white`}
                         >
                           {cellContent}
                         </td>
