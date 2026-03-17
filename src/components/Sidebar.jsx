@@ -75,15 +75,15 @@ const Sidebar = ({
   return (
     <>
       <div
-        className={`fixed inset-0 z-40 bg-[#0000009a] bg-opacity-50 backdrop-blur-lg transition-opacity duration-300 ${isSidebarOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} hidden max-[1080px]:block`}
+        className={`fixed inset-0 z-40 bg-[#0000009a] bg-opacity-50 backdrop-blur-lg transition-opacity duration-[350ms] ease-[cubic-bezier(0.61,-0.01,0.34,0.99)] ${isSidebarOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} hidden max-[1080px]:block`}
         onClick={toggleSidebar}
       ></div>
       <aside
         onMouseEnter={() => setSidebarOpen(true)}
         onMouseLeave={() => window.innerWidth > 1080 && setSidebarOpen(false)}
-        className={`sidebar-stable-transition relative flex shrink-0 flex-col items-stretch justify-start overflow-hidden bg-[#000035] pb-3 pt-6 text-white dark:bg-[#D7D7D7] dark:text-black ${isExpanded ? "w-[256px]" : "w-[72px]"} max-[1080px]:fixed max-[1080px]:z-50 max-[1080px]:h-full max-[1080px]:w-64 max-[1080px]:transition-transform max-[1080px]:duration-300 ${isSidebarOpen ? "max-[1080px]:translate-x-0" : "max-[1080px]:translate-x-full"} shadow-lg max-[1080px]:right-0`}
+        className={`sidebar-stable-transition relative flex shrink-0 flex-col items-stretch justify-start overflow-hidden bg-[#000035] pb-3 pt-6 text-white dark:bg-[#D7D7D7] dark:text-black ${isExpanded ? "w-[256px]" : "w-[72px]"} max-[1080px]:fixed max-[1080px]:right-0 max-[1080px]:z-50 max-[1080px]:h-full max-[1080px]:w-64 ${isSidebarOpen ? "sidebar-mobile-active" : "sidebar-mobile-inactive"} shadow-lg`}
       >
-        <div className="pointer-events-none absolute right-0 top-0 z-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200" />
+        <div className="pointer-events-none absolute right-0 top-0 z-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200 max-[1080px]:hidden" />
 
         <div className="relative z-10 flex h-40 flex-col items-center justify-start text-center">
           <ColorableLogo
@@ -210,7 +210,7 @@ const Sidebar = ({
           </div>
         )}
         <div
-          className={`mt-auto flex w-full flex-col gap-2 transition-all duration-300 dark:bg-[#D7D7D7] ${isExpanded ? "" : "flex justify-center"}`}
+          className={`mt-auto flex w-full flex-col gap-2 transition-all duration-[350ms] ease-[cubic-bezier(0.61,-0.01,0.34,0.99)] dark:bg-[#D7D7D7] ${isExpanded ? "" : "flex justify-center"}`}
         >
           <NavLink
             isExpanded={isExpanded}
