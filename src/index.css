@@ -450,6 +450,6 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
   animation: infinite-scroll 40s linear infinite;
 }
 
-
-
-
+.card-returned h4 {
+  color: var(--pie-returned-color) !important;
+}
