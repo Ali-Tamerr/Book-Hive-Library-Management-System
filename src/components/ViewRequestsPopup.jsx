@@ -47,7 +47,7 @@ const ViewRequestsPopup = ({
 
   const currentUserRole = String(currentUser?.role || "").toLowerCase();
   const isBranchScopedRole =
-    currentUserRole === "admin" || currentUserRole === "librarian";
+    currentUserRole !== "super admin";
 
   const currentUserBranch =
     normalizeBranchValue(currentUser?.branch_id) ||
