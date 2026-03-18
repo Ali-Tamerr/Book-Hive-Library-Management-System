@@ -25,6 +25,7 @@ const ViewDetailsPopup = ({
   imageAlt,
   variant = "book",
   maxWidthClassOverride,
+  onRequireLogin,
 }) => {
   const [showRatePopup, setShowRatePopup] = useState(false);
   const isBookVariant = variant === "book";
@@ -44,6 +45,16 @@ const ViewDetailsPopup = ({
   const existingReview = bookReviews.find(
     (rev) => String(rev.user_id) === String(currentUser?.user_id || "Guest"),
   );
+
+  const handleActionRequiringLogin = (actionCallback) => {
+    if (!currentUser) {
+      if (onRequireLogin) {
+        onRequireLogin();
+      }
+      return; // Do not execute action if not logged in
+    }
+    if (actionCallback) actionCallback();
+  };
 
   const normalizedEntries =
     data && typeof data === "object" ? Object.entries(data) : [];
@@ -398,6 +409,7 @@ const ViewDetailsPopup = ({
                         <FormButton
                           isPrimary
                           fullWidth={false}
+                          onClick={() => handleActionRequiringLogin(() => {})}
                           className="h-12 w-[140px] !p-0 text-lg"
                         >
                           Replay
@@ -411,7 +423,7 @@ const ViewDetailsPopup = ({
                   <FormButton
                     isPrimary
                     fullWidth={false}
-                    onClick={() => setShowRatePopup(true)}
+                    onClick={() => handleActionRequiringLogin(() => setShowRatePopup(true))}
                     className={`h-[54px] w-[190px] cursor-pointer rounded-[10px] !p-0 text-[18px] transition-colors`}
                   >
                     Comment
