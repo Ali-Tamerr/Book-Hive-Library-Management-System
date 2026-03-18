@@ -40,6 +40,7 @@ const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [heroBooks, setHeroBooks] = useState([]);
   const [aboutBooks, setAboutBooks] = useState([]);
+  const [categories, setCategories] = useState({});
   const queryClient = useQueryClient();
   const { data: booksSource, isLoading: booksLoading } = useBooks();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
@@ -51,9 +52,7 @@ const Home = () => {
   const [showScrollUp, setShowScrollUp] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [heroIndex, setHeroIndex] = useState(0);
-  const [featuredIndex, setFeaturedIndex] = useState(0);
   const heroIntervalRef = useRef(null);
-  const featuredIntervalRef = useRef(null);
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
 
@@ -92,12 +91,22 @@ const Home = () => {
               apiGet("/Branches").catch(() => null),
               apiGet("/Categories").catch(() => null),
             ]);
+            
             branches = Array.isArray(branchData)
               ? branchData.length
               : branchData?.data?.length || 0;
-            categories = Array.isArray(catData)
-              ? catData.length
-              : catData?.data?.length || 0;
+            
+            const catsArray = Array.isArray(catData) ? catData : catData?.data || [];
+            categories = catsArray.length;
+            
+            const catMap = {};
+            catsArray.forEach(c => {
+              if (c.category_id && c.category_name) {
+                catMap[c.category_id] = c.category_name;
+              }
+            });
+            setCategories(catMap);
+            
           } catch (e) {
             // ignore
           }
@@ -177,7 +186,11 @@ const Home = () => {
       book_id: book.book_id,
       name: book.name,
       category_id: book.category_id,
+      category: categories[book.category_id] || "Various",
       quantity: book.quantity,
+      availability: book.quantity > 0 ? "Available" : "Not Available",
+      language: "English", // Default language per scope 
+      branch: "Multiple Branches", // Specific individual branch isn't resolvable
       created_at: book.created_at,
       image: getImageUrl(book.image_url) || "",
     });
@@ -225,7 +238,7 @@ const Home = () => {
     if (rawArray.length > 0 && stats.books === 0) {
       setStats((prev) => ({ ...prev, books: rawArray.length }));
     }
-  }, [pageLoaded, booksSource]);
+  }, [pageLoaded, booksSource, categories]);
 
   // 2d. Persist processed home book covers in local storage for faster reloads
   useEffect(() => {
@@ -323,29 +336,6 @@ const Home = () => {
   const testimonialPerView =
     typeof window !== "undefined" && window.innerWidth >= 1150 ? 3 : 1;
 
-  const featuredMaxIndex = Math.max(0, featuredBooks.length - featuredPerView);
-
-  useEffect(() => {
-    if (!featuredBooks.length) return;
-    if (featuredBooks.length <= featuredPerView) return;
-
-    featuredIntervalRef.current = setInterval(() => {
-      setFeaturedIndex((prev) =>
-        prev >= featuredMaxIndex ? 0 : prev + 1,
-      );
-    }, 3500);
-
-    return () => clearInterval(featuredIntervalRef.current);
-  }, [featuredBooks.length, featuredMaxIndex, featuredPerView]);
-
-  const featuredPrev = useCallback(() => {
-    setFeaturedIndex((prev) => (prev <= 0 ? featuredMaxIndex : prev - 1));
-  }, [featuredMaxIndex]);
-
-  const featuredNext = useCallback(() => {
-    setFeaturedIndex((prev) => (prev >= featuredMaxIndex ? 0 : prev + 1));
-  }, [featuredMaxIndex]);
-
   const isEverythingLoaded = pageLoaded && !isFeedbacksLoading;
 
   useEffect(() => {
@@ -436,11 +426,8 @@ const Home = () => {
 
           <FeaturedSection
             featuredBooks={featuredBooks}
-            featuredIndex={featuredIndex}
             featuredPerView={featuredPerView}
             setSelectedFeaturedBook={setSelectedFeaturedBook}
-            featuredPrev={featuredPrev}
-            featuredNext={featuredNext}
           />
 
           <Pricing setIsLoginOpen={setIsLoginOpen} />

@@ -81,7 +81,7 @@ const Pricing = ({ setIsLoginOpen }) => {
           No hidden charges.
         </p>
 
-        <div className="plans flex flex-col items-stretch gap-14 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-[var(--card-bg)] px-12 py-12 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent dark:!shadow-none">
+        <div className="plans dark:!shadow-[-5px_5px_5px_rgba(255,255,255,0.4)] flex flex-col items-stretch gap-14 rounded-[18px] border border-[rgba(10,11,43,0.08)] bg-[var(--card-bg)] px-12 py-12 shadow-[-5px_5px_5px_rgba(0,0,0,0.4)] max-[1000px]:p-7 max-[680px]:p-[22px] xl:flex-row dark:!border-none dark:!bg-transparent">
           {isLoading ? (
             <div className="w-full py-20 text-center text-xl text-[#000035] dark:text-[#D7D7D7]">
               Loading plans...
