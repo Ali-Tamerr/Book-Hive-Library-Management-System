@@ -120,12 +120,11 @@ function Dashboard() {
     }
   }, [booksSource]);
 
-  // Sync isViewLoading with React Query's fetching state
   React.useEffect(() => {
-    if (!selectedBookFetching && !selectedBookLoading) {
+    if (selectedBookDetail || (!selectedBookFetching && !selectedBookLoading)) {
       setIsViewLoading(false);
     }
-  }, [selectedBookFetching, selectedBookLoading]);
+  }, [selectedBookDetail, selectedBookFetching, selectedBookLoading]);
 
   const [booksPerPage, setBooksPerPage] = useState(8);
 
