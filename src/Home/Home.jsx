@@ -402,7 +402,9 @@ const Home = () => {
           toggleTheme={toggleTheme}
           showShadowHeader={showShadowHeader}
           isSearchOpen={isSearchOpen}
+          onBookClick={(book) => setSelectedFeaturedBook(book)}
         />
+
 
         <main className="overflow-hidden">
           <Hero
@@ -455,34 +457,46 @@ const Home = () => {
           onClose={() => setIsLoginOpen(false)}
           onForgotPassword={() => setIsForgotPasswordOpen(true)}
           onSignup={() => setIsSignupOpen(true)}
+          slideFromTop={true}
         />
+
         <SignupPopup
           isOpen={isSignupOpen}
           onClose={() => setIsSignupOpen(false)}
           onLogin={() => setIsLoginOpen(true)}
+          slideFromTop={true}
         />
+
         <ForgotPasswordPopup
           isOpen={isForgotPasswordOpen}
           onClose={() => setIsForgotPasswordOpen(false)}
           onOTP={() => setIsOTPOpen(true)}
           onBack={() => setIsLoginOpen(true)}
+          slideFromTop={true}
         />
+
         <OTPPopup
           isOpen={isOTPOpen}
           onClose={() => setIsOTPOpen(false)}
           onResetPassword={() => setIsResetPasswordOpen(true)}
           onBack={() => setIsForgotPasswordOpen(true)}
+          slideFromTop={true}
         />
+
         <ResetPasswordPopup
           isOpen={isResetPasswordOpen}
           onClose={() => setIsResetPasswordOpen(false)}
           onLogin={() => setIsLoginOpen(true)}
           onBack={() => setIsOTPOpen(true)}
+          slideFromTop={true}
         />
+
         <AboutBranchesPopup
           isOpen={activePopup === "branches"}
           onClose={() => setActivePopup(null)}
+          slideFromTop={true}
         />
+
         <ViewDetailsPopup
           show={Boolean(selectedFeaturedBook)}
           onClose={() => setSelectedFeaturedBook(null)}

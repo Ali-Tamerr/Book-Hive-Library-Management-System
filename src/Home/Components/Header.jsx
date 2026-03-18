@@ -1,5 +1,6 @@
 import React from "react";
 import NavLink from "./NavLink";
+import SearchOverlay from "../../components/SearchOverlay";
 
 const Header = ({
   logoIcon,
@@ -11,6 +12,7 @@ const Header = ({
   toggleTheme,
   showShadowHeader,
   isSearchOpen,
+  onBookClick, // Pass a handler from Home.jsx to open the book details
 }) => {
   return (
     <>
@@ -99,25 +101,15 @@ const Header = ({
         </nav>
       </header>
 
-      <div
-        className={`duration-400 fixed left-0 right-0 z-[100] mx-auto h-full w-full max-w-[1920px] bg-[hsla(230,12%,96%,0.6)] px-6 pt-32 backdrop-blur-[12px] transition-[top] dark:bg-[rgba(17,18,20,0.88)] ${isSearchOpen ? "top-0" : "top-[-100%]"}`}
-      >
-        <form
-          action=""
-          className="flex items-center gap-x-2 rounded-xl border border-[var(--border-color)] bg-[var(--container-color)] px-4 dark:border-[#2a2c31] dark:bg-[#1d1e23]"
-        >
-          <i className="ri-search-line dark:text-[#f1f1f3]"></i>
-          <input
-            type="search"
-            placeholder="What are you looking for?"
-            className="w-full border-none bg-[var(--container-color)] py-4 font-[family-name:var(--body-font)] text-[length:var(--normal-font-size)] text-[var(--text-color)] outline-none dark:bg-[#1d1e23] dark:text-[#f1f1f3]"
-          />
-        </form>
-        <i
-          className="ri-close-line absolute right-8 top-8 cursor-pointer text-[2rem] text-[var(--title-color)] dark:text-[#f1f1f3]"
-          onClick={() => setIsSearchOpen(false)}
-        ></i>
-      </div>
+      <SearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onBookClick={onBookClick}
+        setIsLoginOpen={setIsLoginOpen}
+      />
+
+
+
     </>
   );
 };

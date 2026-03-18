@@ -26,13 +26,13 @@ const Popup = ({
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm ${heightClass || ""}`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/10 backdrop-blur-sm ${heightClass || ""}`}
     >
       {/* Overlay click to close */}
       <div className="absolute inset-0" onClick={onClose}></div>
 
       <div
-        className={`popup-typography relative ${maxWidthClass ? maxWidthClass : "max-w-2xl"} flex max-h-[90vh] w-full flex-col rounded-xl border border-[#000035] bg-[#F2F2F2] p-6 pb-0 sm:p-10 sm:pb-0 md:p-14 md:pb-0 shadow-xl dark:border dark:border-[#D7D7D7] dark:border-[#E8E8E8] dark:bg-[#121317] ${panelClassName || ""}`}
+        className={`popup-typography relative ${maxWidthClass ? maxWidthClass : "max-w-2xl"} flex max-h-[90vh] w-full flex-col rounded-xl border border-[#000035] bg-[#F2F2F2] p-6 pb-0 shadow-xl sm:p-10 sm:pb-0 md:p-14 md:pb-0 dark:border dark:border-[#D7D7D7] dark:border-[#E8E8E8] dark:bg-[#121317] ${panelClassName || ""}`}
       >
         {!hideHeader && (
           <div

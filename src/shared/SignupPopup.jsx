@@ -12,7 +12,9 @@ import DarkBgSection from "../components/DarkBgSection";
 import WhiteBgSection from "../components/WhiteBgSection";
 import FormSelect from "../components/FormSelect";
 
-function SignupPopup({ isOpen, onClose, onLogin }) {
+function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [shouldRender, setShouldRender] = useState(isOpen);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -50,16 +52,18 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
           getAllUsers(),
           getAllUserRequests(),
         ]);
-        
+
         let usersArray = [];
         if (Array.isArray(users)) usersArray = users;
         else if (users && Array.isArray(users.data)) usersArray = users.data;
         else if (users && Array.isArray(users.users)) usersArray = users.users;
-        
+
         let requestsArray = [];
         if (Array.isArray(requests)) requestsArray = requests;
-        else if (requests && Array.isArray(requests.data)) requestsArray = requests.data;
-        else if (requests && Array.isArray(requests.requests)) requestsArray = requests.requests;
+        else if (requests && Array.isArray(requests.data))
+          requestsArray = requests.data;
+        else if (requests && Array.isArray(requests.requests))
+          requestsArray = requests.requests;
 
         setExistingUsers(usersArray);
         setExistingRequests(requestsArray);
@@ -147,15 +151,29 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
     onLogin?.();
   };
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      const id = requestAnimationFrame(() => setIsAnimating(true));
+      return () => cancelAnimationFrame(id);
+    } else {
+      setIsAnimating(false);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  if (!shouldRender && !isOpen) return null;
 
   const popupContent = (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/10 backdrop-blur-sm transition-all duration-500 ${slideFromTop ? (isAnimating ? "translate-y-0" : "-translate-y-full") : (isAnimating ? "opacity-100" : "opacity-0")}`}
       onClick={onClose}
     >
       <div
-        className="relative h-full max-h-[87vh] w-[95%] max-w-[1420px] overflow-hidden rounded-2xl shadow-2xl"
+        className={`relative h-full max-h-[87vh] w-[95%] max-w-[1420px] overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div
@@ -249,7 +267,10 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                     placeholder="Branch"
                     variant="auth"
                     isDarkMode={isDarkMode}
-                    options={branches.map(b => ({ value: b.branch_id || b.id, label: b.name }))}
+                    options={branches.map((b) => ({
+                      value: b.branch_id || b.id,
+                      label: b.name,
+                    }))}
                   />
                   <FormSelect
                     name="plan"

@@ -1,9 +1,11 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useBranches } from "../hooks/useBranches";
 import { useBookCopies } from "../hooks/useBookCopies";
 
-const AboutBranchesPopup = ({ isOpen, onClose }) => {
+const AboutBranchesPopup = ({ isOpen, onClose, slideFromTop = false }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [shouldRender, setShouldRender] = useState(isOpen);
   const {
     data: branches = [],
     isLoading: branchesLoading,
@@ -33,23 +35,34 @@ const AboutBranchesPopup = ({ isOpen, onClose }) => {
   }, [bookCopies]);
 
   useEffect(() => {
-    if (!isOpen) return undefined;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
+    if (isOpen) {
+      setShouldRender(true);
+      const id = requestAnimationFrame(() => setIsAnimating(true));
+      
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        cancelAnimationFrame(id);
+      };
+    } else {
+      setIsAnimating(false);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!shouldRender && !isOpen) return null;
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[1001] flex items-center justify-center bg-[rgba(140,140,140,0.7)] p-8 dark:bg-[rgba(10,10,12,0.7)]"
+      className={`fixed inset-0 z-[1001] flex items-center justify-center bg-[rgba(140,140,140,0.7)] p-8 backdrop-blur-sm transition-all duration-500 dark:bg-[rgba(10,10,12,0.7)] ${slideFromTop ? (isAnimating ? "translate-y-0" : "-translate-y-full") : (isAnimating ? "opacity-100" : "opacity-0")}`}
       onClick={onClose}
     >
       <div
-        className="branches-popup popup-typography flex max-h-[92vh] w-[min(1100px,96vw)] flex-col gap-4 overflow-hidden rounded-[25px] bg-[#F2F2F2] px-[60px] pb-14 pt-8 shadow-[0_20px_50px_rgba(10,10,35,0.25)] max-[700px]:gap-2 max-[700px]:px-[20px] max-[700px]:pb-8  dark:bg-[#121317] "
+        className={`branches-popup popup-typography flex max-h-[92vh] w-[min(1100px,96vw)] flex-col gap-4 overflow-hidden rounded-[25px] bg-[#F2F2F2] px-[60px] pb-14 pt-8 shadow-[0_20px_50px_rgba(10,10,35,0.25)] transition-all duration-500 max-[700px]:gap-2 max-[700px]:px-[20px] max-[700px]:pb-8 dark:bg-[#121317] ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="branches-popup-title"

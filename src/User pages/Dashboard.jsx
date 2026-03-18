@@ -4,6 +4,7 @@ import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
+import BookCard from "../components/BookCard";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import { useUsers } from "../hooks/useUsers";
 import { useBooks, useDashboardBooks, useBook } from "../hooks/useBooks";
@@ -462,52 +463,15 @@ function Dashboard() {
                 </div>
               ) : (
                 paginatedBooks.map((book) => (
-                  <div
+                  <BookCard
                     key={book.book_id}
-                    className="flex items-center justify-center transition-all duration-300"
-                    style={{
-                      width: "calc(160px * var(--card-scale, 1))",
-                      height: "calc(300px * var(--card-scale, 1))",
+                    book={book}
+                    onClick={() => {
+                      setSelectedBookId(book.book_id);
+                      setIsViewLoading(true);
                     }}
-                  >
-                    <div
-                      className="flex h-[300px] w-40 cursor-pointer flex-col overflow-hidden rounded-lg px-2 py-2 font-['Noto_Sans_Georgian',sans-serif] shrink-0"
-                      style={{
-                        transform: "scale(var(--card-scale, 1))",
-                        transformOrigin: "center center",
-                      }}
-                    >
-                      <div className="relative flex h-[160px] w-full shrink-0 items-center justify-center overflow-hidden rounded-md">
-                        {book.image ? (
-                          <LazyImage
-                            src={book.image}
-                            alt={book.name}
-                            className="h-full w-full object-contain text-[#000035] dark:text-[#D7D7D7]"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center p-2 text-center text-[#000035] dark:text-[#D7D7D7]">
-                            <div className="line-clamp-2 font-['Noto_Sans_Georgian',sans-serif] text-xs font-bold uppercase tracking-wider text-[#000035] opacity-80 dark:text-[#D7D7D7]">
-                              {book.name}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <div className="mt-1 flex w-full shrink-0 flex-col gap-1">
-                        <h3 className="text-md min-h-[44px] line-clamp-2 text-center !font-['Noto_Sans_Georgian',sans-serif] font-bold text-[#000035] dark:text-[#D7D7D7]">
-                          {book.name || "Untitled"}
-                        </h3>
-                        <button
-                          className="w-full shrink-0 cursor-pointer whitespace-nowrap rounded-xl border border-[#000035] py-1.5 text-[17px] font-bold text-[#000035] transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7]"
-                          onClick={() => {
-                            setSelectedBookId(book.book_id);
-                            setIsViewLoading(true);
-                          }}
-                        >
-                          Explore Now
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                    scale={1} // You can use a variable here if you want it to scale dynamically
+                  />
                 ))
               )}
             </div>

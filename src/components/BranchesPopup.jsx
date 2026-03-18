@@ -9,7 +9,7 @@ function BranchesPopup({ isOpen, onClose }) {
 
   const popupContent = (
     <div
-      className="fixed inset-0 z-[1001] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-[1001] flex items-center justify-center bg-black/10 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
