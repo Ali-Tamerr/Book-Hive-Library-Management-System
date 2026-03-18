@@ -45,6 +45,13 @@
   --pie-returned-color: #3d3e3e;
   --max-w: 1500px;
   --gap: 32px;
+  --scrollbar-thumb: #000035;
+  --scrollbar-thumb-hover: #000053;
+}
+
+.dark-theme {
+  --scrollbar-thumb: #D7D7D7;
+  --scrollbar-thumb-hover: #ffffff;
 }
 
 @media screen and (min-width: 1150px) {
@@ -385,28 +392,16 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
 ::-webkit-scrollbar {
   border-radius: 4px;
   width: 0.6rem;
-  background-color: #191926;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  background-color: #31314b;
+  background-color: var(--scrollbar-thumb);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #2b2b41;
-}
-
-.dark-theme::-webkit-scrollbar {
-  background-color: hsl(230, 16%, 15%);
-}
-
-.dark-theme::-webkit-scrollbar-thumb {
-  background-color: hsl(230, 16%, 25%);
-}
-
-.dark-theme::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(230, 16%, 35%);
+  background-color: var(--scrollbar-thumb-hover);
 }
 
 .sidebar-stable-transition {
