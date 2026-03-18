@@ -5,9 +5,9 @@ import {
   Star,
   StarHalf,
   UserRound,
-  Loader2,
   Book,
 } from "lucide-react";
+import LoadingSpinner from "./LoadingSpinner.jsx";
 import reviewerAvatar from "../assets/img/testimonial-perfil-1.png";
 import { useBookReviews, useCreateBookReviewReply } from "../hooks/useBookReviews.js";
 import RateBookPopup from "./RateBookPopup.jsx";
@@ -360,7 +360,7 @@ const ViewDetailsPopup = ({
                   {isLoadingReviews ? (
                     <div className="flex flex-1 items-center justify-center p-8">
                       <div className="flex flex-col items-center gap-3">
-                        <Loader2 className="h-10 w-10 animate-spin text-[#000035] dark:text-[#D7D7D7]" />
+                        <LoadingSpinner size="md" />
                         <p className="text-lg font-medium text-[#000035] dark:text-[#D7D7D7]">
                           Loading reviews...
                         </p>

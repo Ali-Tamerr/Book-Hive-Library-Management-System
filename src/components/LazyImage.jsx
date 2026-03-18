@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import LoadingSpinner from "./LoadingSpinner.jsx";
 
 const LazyImage = ({
   src,
@@ -68,7 +69,7 @@ const LazyImage = ({
       <div className={`lazy-sizer relative h-full w-full overflow-hidden`}>
         {!loaded && !failed && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#D7D7D7] dark:bg-[#1a1b1e]">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--first-color)] border-t-transparent dark:border-[#a9abb2] dark:border-t-transparent" />
+            <LoadingSpinner size="md" />
           </div>
         )}
 

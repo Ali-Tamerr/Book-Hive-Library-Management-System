@@ -19,6 +19,7 @@ import { getCurrentUser } from "../services/auth.api";
 import { getImageUrl } from "../services/api.config";
 import { getBookById } from "../services/books.api";
 import { useQueryClient } from "@tanstack/react-query";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 function Books({ searchValue, setSearchValue }) {
   const queryClient = useQueryClient();
@@ -441,7 +442,7 @@ function Books({ searchValue, setSearchValue }) {
       >
         {isViewLoading && (
           <div className="flex h-40 w-full items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0b0c28] border-t-transparent dark:border-white"></div>
+            <LoadingSpinner size="sm" />
           </div>
         )}
       </ViewDetailsPopup>

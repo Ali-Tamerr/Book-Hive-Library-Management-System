@@ -4,6 +4,7 @@ import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import { useUsers } from "../hooks/useUsers";
 import { useBooks, useDashboardBooks, useBook } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
@@ -586,7 +587,7 @@ function Dashboard() {
           >
             {(selectedBookLoading || isViewLoading) && (
               <div className="flex h-40 w-full items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0b0c28] border-t-transparent dark:border-white dark:border-t-transparent"></div>
+                <LoadingSpinner size="sm" />
               </div>
             )}
           </ViewDetailsPopup>
