@@ -9,7 +9,7 @@ import {
   Book,
 } from "lucide-react";
 import reviewerAvatar from "../assets/img/testimonial-perfil-1.png";
-import { useBookReviews } from "../hooks/useBookReviews.js";
+import { useBookReviews, useCreateBookReviewReply } from "../hooks/useBookReviews.js";
 import RateBookPopup from "./RateBookPopup.jsx";
 import FormButton from "./FormButton.jsx";
 import { getCurrentUser } from "../services/auth.api";
@@ -28,6 +28,8 @@ const ViewDetailsPopup = ({
   onRequireLogin,
 }) => {
   const [showRatePopup, setShowRatePopup] = useState(false);
+  const [replyingTo, setReplyingTo] = useState(null);
+
   const isBookVariant = variant === "book";
   const isUserVariant = variant === "user";
   const bookId = data?.["Book ID"];
@@ -369,53 +371,72 @@ const ViewDetailsPopup = ({
                       No reviews yet. Be the first!
                     </p>
                   ) : (
-                    bookReviews.map((review) => (
-                      <div
-                        key={review.review_id}
-                        className="flex min-h-[96px] items-center justify-between gap-4 rounded-[12px] border border-[#000035] bg-transparent px-3 py-2 pr-10 dark:border-[#D7D7D7]"
-                      >
-                        <div className="flex min-w-0 items-center gap-3">
-                          <div className="flex h-16 w-16 min-w-[64px] items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
-                            {review.user_image_url ? (
-                              <img
-                                src={`data:image/png;base64,${review.user_image_url}`}
-                                alt={review.user_name}
-                                className="h-full w-full object-cover"
-                              />
-                            ) : (
-                              <UserRound className="h-16 w-16 text-[#0b0c28] dark:text-[#121317]" />
-                            )}
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="truncate text-[18px] leading-tight text-[#000035] dark:text-[#D7D7D7]">
-                                {review.user_name?.toUpperCase() || "GUEST"}
-                              </span>
-                              <div className="flex gap-0.5">
-                                {renderStars(review.rating || review.rate, 12)}
+                    bookReviews.map((review) => {
+                      const hasReplies = review.replies && review.replies.length > 0;
+                      return (
+                        <div key={review.review_id} className="rounded-[12px] border border-[#000035] bg-transparent dark:border-[#D7D7D7]">
+                          {/* PARENT ROW */}
+                          <div className={`flex px-3 pr-4 ${hasReplies ? "items-stretch pt-2.5 pb-0" : "items-center py-2.5"}`}>
+                            <div className="flex w-14 min-w-[56px] shrink-0 flex-col items-center">
+                              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+                                {review.user_image_url ? (
+                                  <img src={`data:image/png;base64,${review.user_image_url}`} alt={review.user_name} className="h-full w-full object-cover" />
+                                ) : (
+                                  <UserRound className="h-14 w-14 text-[#0b0c28] dark:text-[#121317]" />
+                                )}
                               </div>
+                              {hasReplies && <div className="flex-1 border-l-[1.5px] border-[#000035] dark:border-[#D7D7D7]"></div>}
                             </div>
-                            {(review.review || review.review_text) && (
-                              <p className="truncate text-[14px] text-[#000035] dark:text-[#D7D7D7]">
-                                {review.review || review.review_text}
-                              </p>
-                            )}
-                            <p className="text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">
-                              {timeSince(review.created_at)}
-                            </p>
+                            <div className="flex min-w-0 flex-1 items-center justify-between gap-4 pl-3">
+                              <div className="min-w-0 pt-0.5">
+                                <div className="flex items-center gap-2">
+                                  <span className="truncate text-[16px] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">{review.user_name?.toUpperCase() || "GUEST"}</span>
+                                  <div className="flex gap-0.5">{renderStars(review.rating || review.rate, 12)}</div>
+                                </div>
+                                {(review.review || review.review_text) && <p className="mt-1 text-[13px] text-[#000035] dark:text-[#D7D7D7]">{review.review || review.review_text}</p>}
+                                <p className="mt-1 text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">{timeSince(review.created_at)}</p>
+                              </div>
+                              <FormButton isPrimary fullWidth={false} onClick={() => handleActionRequiringLogin(() => { setReplyingTo(review.review_id); setShowRatePopup(true); })} className="h-9 w-[150px] shrink-0 !p-0 text-sm">
+                                Reply
+                              </FormButton>
+                            </div>
                           </div>
-                        </div>
 
-                        <FormButton
-                          isPrimary
-                          fullWidth={false}
-                          onClick={() => handleActionRequiringLogin(() => {})}
-                          className="h-12 w-[140px] !p-0 text-lg"
-                        >
-                          Replay
-                        </FormButton>
-                      </div>
-                    ))
+                          {/* REPLY ROWS — each reply is its own sibling row */}
+                          {hasReplies && review.replies.map((reply, idx) => {
+                            const isLast = idx === review.replies.length - 1;
+                            return (
+                              <div key={reply.reply_id} className={`flex gap-0 px-3 pr-4 ${isLast ? "pb-2.5" : "pb-0"}`}>
+                                {/* Left col: L-shaped connector (same width 56px keeps alignment) */}
+                                <div className="flex w-14 min-w-[56px] shrink-0 flex-col">
+                                  {/* L curve: border-l (vertical) + border-b (horizontal) + rounded-bl (curve) */}
+                                  <div
+                                    className="shrink-0 border-l-[1.5px] border-b-[1.5px] border-[#000035] dark:border-[#D7D7D7]  rounded-bl-[12px]"
+                                    style={{ height: "28px", width: "28px", marginLeft: "28px" }}
+                                  />
+                                  {!isLast && <div className="flex-1 border-l-[1.5px] border-[#000035] dark:border-[#D7D7D7]" style={{ marginLeft: "28px" }}></div>}
+                                </div>
+                                {/* Reply avatar + content, shifted down so avatar center = L bottom */}
+                                <div className="flex min-w-0 flex-1 items-start gap-3 mt-[8px]">
+                                  <div className="flex h-10 w-10 min-w-[40px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+                                    {reply.user_image_url ? (
+                                      <img src={`data:image/png;base64,${reply.user_image_url}`} alt={reply.user_name} className="h-full w-full object-cover" />
+                                    ) : (
+                                      <UserRound className="h-10 w-10 text-[#0b0c28] dark:text-[#121317]" />
+                                    )}
+                                  </div>
+                                  <div className="min-w-0 pt-0.5">
+                                    <span className="block truncate text-[14px] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">{reply.user_name?.toUpperCase() || "GUEST"}</span>
+                                    <p className="mt-1 text-[13px] text-[#000035] dark:text-[#D7D7D7]">{reply.reply_text}</p>
+                                    <p className="mt-1 text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">{timeSince(reply.created_at)}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })
                   )}
                 </div>
 
@@ -423,7 +444,10 @@ const ViewDetailsPopup = ({
                   <FormButton
                     isPrimary
                     fullWidth={false}
-                    onClick={() => handleActionRequiringLogin(() => setShowRatePopup(true))}
+                    onClick={() => handleActionRequiringLogin(() => {
+                      setReplyingTo(null);
+                      setShowRatePopup(true);
+                    })}
                     className={`h-[54px] w-[190px] cursor-pointer rounded-[10px] !p-0 text-[18px] transition-colors`}
                   >
                     Comment
@@ -436,9 +460,13 @@ const ViewDetailsPopup = ({
       </Popup>
       <RateBookPopup
         show={showRatePopup}
-        onClose={() => setShowRatePopup(false)}
+        onClose={() => {
+          setShowRatePopup(false);
+          setReplyingTo(null);
+        }}
         bookId={bookId}
         initialReview={existingReview}
+        replyToReviewId={replyingTo}
       />
     </>
   );
