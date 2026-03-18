@@ -26,13 +26,13 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
         <div key={star} className="relative">
           <Star
             size={24}
-            className="text-[#0b0b3b] dark:text-[#D7D7D7]"
+            className="text-[#000035] dark:text-[#D7D7D7]"
             strokeWidth={1.5}
           />
           {isFull && (
             <Star
               size={24}
-              className="absolute left-0 top-0 fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+              className="absolute left-0 top-0 fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
               strokeWidth={1.5}
             />
           )}
@@ -40,7 +40,7 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
             <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
               <Star
                 size={24}
-                className="min-w-[24px] fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                className="min-w-[24px] fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                 strokeWidth={1.5}
                 style={{ width: "24px", height: "24px", minWidth: "24px" }}
               />
@@ -61,7 +61,7 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035]">
+          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035] dark:text-[#D7D7D7]">
             From User
           </label>
           <div className="text-lg font-medium text-[#1e255e] dark:text-white">
@@ -69,20 +69,20 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
               user?.user_id ||
               "Unknown User"}
           </div>
-          <div className="text-sm text-[#000035]">
+          <div className="text-sm text-[#000035] dark:text-[#D7D7D7]">
             ID: {feedback.user_id} • {formatDate(feedback.created_at)}
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035]">
+          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035] dark:text-[#D7D7D7]">
             Rating
           </label>
           <div className="flex gap-1">{renderStars(feedback.rate)}</div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035]">
+          <label className="text-xs font-semibold uppercase tracking-wider text-[#000035] dark:text-[#D7D7D7]">
             Message
           </label>
           <div className="rounded-xl border border-[#D7D7D7] bg-white p-4 text-sm text-[#1e255e] dark:bg-[#121317] dark:text-[#D7D7D7]">

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
 import TabButton from "./TabButton.jsx";
+import RequestsTable from "./RequestsTable.jsx";
 import {
   Users,
   Search,
@@ -422,8 +423,8 @@ const ViewRequestsPopup = ({
       onClose={onClose}
       title="Requests"
       icon={getTabIcon()}
-      maxWidthClass="max-w-[1100px] max-[856px]:scale-80"
-      heightClass="min-h-[1000px]"
+      maxWidthClass="w-[95vw] lg:w-[90vw] max-w-[1100px]"
+      panelClassName="h-[90vh] lg:max-h-[850px]"
     >
       <div className="flex h-full flex-col gap-4">
         <div className="flex gap-2">
@@ -487,227 +488,121 @@ const ViewRequestsPopup = ({
                     : "No pending requests."}
               </div>
             ) : activeTab === "users" ? (
-              <table className="w-full">
-                <thead className="sticky top-0 bg-[#F2F2F2] dark:bg-[#121317]">
-                  <tr>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Name
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Email
-                    </th>
-
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Plan
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Sent At
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Status
-                    </th>
-                    {!showRejected && (
-                      <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                        Actions
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="border-t border-[#000035] dark:border-[#D7D7D7]">
-                  {filteredUserRequests.map((request, index) => (
-                    <tr key={request.request_id || index}>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7] text-[#000035]">
-                        {request.first_name} {request.last_name}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7] text-[#000035]">
-                        {request.email}
-                      </td>
-
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7] text-[#000035]">
-                        {request.plan || "N/A"}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm dark:text-[#D7D7D7] text-[#000035]">
-                        {formatDate(request.created_at)}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center dark:text-[#D7D7D7] text-[#000035]">
-                        {getUserStatusBadge(request)}
-                      </td>
-                      {!showRejected && (
-                        <td className="p-4">
-                          <div className="flex justify-center gap-2">
-                            {request.status === "Pending" && (
-                              <>
-                                <button
-                                  onClick={() =>
-                                    onApprove && onApprove(request)
-                                  }
-                                  className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
-                                  title="Approve"
-                                >
-                                  <Check size={16} />
-                                </button>
-                                <button
-                                  onClick={() => onReject && onReject(request)}
-                                  className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
-                                  title="Reject"
-                                >
-                                  <X size={16} />
-                                </button>
-                              </>
-                            )}
-                            {request.status !== "Pending" && (
-                              <span className="text-sm italic text-[#000035] dark:text-[#D7D7D7]">
-                                Processed
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <RequestsTable
+                data={filteredUserRequests}
+                keyExtractor={(req, idx) => req.request_id || idx}
+                columns={[
+                  { header: "Name", accessor: "name", render: (req) => `${req.first_name || ""} ${req.last_name || ""}`.trim() },
+                  { header: "Email", accessor: "email", render: (req) => req.email },
+                  { header: "Plan", accessor: "plan", render: (req) => req.plan || "N/A" },
+                  { header: "Sent At", accessor: "created_at", render: (req) => formatDate(req.created_at) },
+                  { header: "Status", accessor: "status", render: (req) => getUserStatusBadge(req) },
+                  ...(showRejected ? [] : [{
+                    header: "Actions",
+                    accessor: "actions",
+                    render: (request) => (
+                      <div className="flex justify-center gap-2">
+                        {request.status === "Pending" && (
+                          <>
+                            <button
+                              onClick={() => onApprove && onApprove(request)}
+                              className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
+                              title="Approve"
+                            >
+                              <Check size={16} />
+                            </button>
+                            <button
+                              onClick={() => onReject && onReject(request)}
+                              className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
+                              title="Reject"
+                            >
+                              <X size={16} />
+                            </button>
+                          </>
+                        )}
+                        {request.status !== "Pending" && (
+                          <span className="text-sm italic text-[#000035] dark:text-[#D7D7D7]">
+                            Processed
+                          </span>
+                        )}
+                      </div>
+                    )
+                  }])
+                ]}
+              />
             ) : activeTab === "books" ? (
-              <table className="w-full">
-                <thead className="sticky top-0 bg-[#F2F2F2] dark:bg-[#121317]">
-                  <tr>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      User Name
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Book Name
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Due Date
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Requested At
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Status
-                    </th>
-                    {!showRejected && (
-                      <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                        Actions
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="border-t border-[#000035] dark:border-[#D7D7D7]">
-                  {filteredBookRequests.map((request, index) => (
-                    <tr key={request.transaction_id || index}>
-                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
-                        {getUserName(request.user_id)}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
-                        {getBookName(request.book_id)}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
-                        {formatDateShort(request.due_date)}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
-                        {formatDate(request.created_at)}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center text-[#000035] dark:text-[#D7D7D7]">
-                        {getBookStatusBadge(request)}
-                      </td>
-                      {!showRejected && (
-                        <td className="p-4">
-                          <div className="flex justify-center gap-2">
-                            {request.status === "Pending" && (
-                              <>
-                                <button
-                                  onClick={() =>
-                                    onApproveBook && onApproveBook(request)
-                                  }
-                                  className="cursor-pointer rounded-lg border border-[#1e255e] bg-white p-2 text-[#1e255e]"
-                                  title="Approve"
-                                >
-                                  <Check size={16} />
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    onRejectBook && onRejectBook(request)
-                                  }
-                                  className="cursor-pointer rounded-lg border border-[#1e255e] bg-white p-2 text-[#1e255e]"
-                                  title="Reject"
-                                >
-                                  <X size={16} />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <RequestsTable
+                data={filteredBookRequests}
+                keyExtractor={(req, idx) => req.transaction_id || idx}
+                columns={[
+                  { header: "User Name", accessor: "user_name", render: (request) => getUserName(request.user_id) },
+                  { header: "Book Name", accessor: "book_name", render: (request) => getBookName(request.book_id) },
+                  { header: "Due Date", accessor: "due_date", render: (request) => formatDateShort(request.due_date) },
+                  { header: "Requested At", accessor: "created_at", render: (request) => formatDate(request.created_at) },
+                  { header: "Status", accessor: "status", render: (request) => getBookStatusBadge(request) },
+                  ...(showRejected ? [] : [{
+                    header: "Actions",
+                    accessor: "actions",
+                    render: (request) => (
+                      <div className="flex justify-center gap-2">
+                        {request.status === "Pending" && (
+                          <>
+                            <button
+                              onClick={() => onApproveBook && onApproveBook(request)}
+                              className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
+                              title="Approve"
+                            >
+                              <Check size={16} />
+                            </button>
+                            <button
+                              onClick={() => onRejectBook && onRejectBook(request)}
+                              className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
+                              title="Reject"
+                            >
+                              <X size={16} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )
+                  }])
+                ]}
+              />
             ) : (
-              <table className="w-full">
-                <thead className="sticky top-0 bg-[#F2F2F2] dark:bg-[#121317]">
-                  <tr>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      User Name
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      ID User
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Requested At
-                    </th>
-                    <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="border-t border-[#000035]">
-                  {filteredFeedbackRequests.map((request, index) => (
-                    <tr key={request.request_id || request.feedback_id || index}>
-                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
-                        {getUserName(request.user_id)}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
-                        {request.user_id}
-                      </td>
-                      <td className="whitespace-nowrap p-4 text-center text-sm text-[#000035] dark:text-[#D7D7D7]">
-                        {formatDate(request.created_at)}
-                      </td>
-                      <td className="p-4">
-                        <div className="flex justify-center gap-2">
-                          <button
-                            onClick={() =>
-                              onApproveFeedback && onApproveFeedback(request)
-                            }
-                            className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
-                            title="Approve"
-                          >
-                            <Check size={16} />
-                          </button>
-                          <button
-                            onClick={() =>
-                              onRejectFeedback && onRejectFeedback(request)
-                            }
-                            className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
-                            title="Reject"
-                          >
-                            <X size={16} />
-                          </button>
-                          <button
-                            onClick={() =>
-                              onViewFeedback && onViewFeedback(request)
-                            }
-                            className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
-                            title="View Details"
-                          >
-                            <ReceiptText size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <RequestsTable
+                data={filteredFeedbackRequests}
+                keyExtractor={(req, idx) => req.request_id || req.feedback_id || idx}
+                columns={[
+                  { header: "User Name", accessor: "name", render: (request) => getUserName(request.user_id) },
+                  { header: "ID User", accessor: "id", render: (request) => request.user_id },
+                  { header: "Requested At", accessor: "created_at", render: (request) => formatDate(request.created_at) },
+                  { header: "Actions", accessor: "actions", render: (request) => (
+                    <div className="flex justify-center gap-2">
+                      <button
+                        onClick={() => onApproveFeedback && onApproveFeedback(request)}
+                        className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
+                        title="Approve"
+                      >
+                        <Check size={16} />
+                      </button>
+                      <button
+                        onClick={() => onRejectFeedback && onRejectFeedback(request)}
+                        className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
+                        title="Reject"
+                      >
+                        <X size={16} />
+                      </button>
+                      <button
+                        onClick={() => onViewFeedback && onViewFeedback(request)}
+                        className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
+                        title="View Details"
+                      >
+                        <ReceiptText size={16} />
+                      </button>
+                    </div>
+                  )}
+                ]}
+              />
             )}
           </div>
         </div>

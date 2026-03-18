@@ -114,6 +114,7 @@ const AdminNotifications = () => {
 
     try {
       await updateFeedbackMutation.mutateAsync({
+        ...request,
         id: feedbackId,
         status: "Approved",
       });
@@ -128,6 +129,7 @@ const AdminNotifications = () => {
 
     try {
       await updateFeedbackMutation.mutateAsync({
+        ...request,
         id: feedbackId,
         status: "Rejected",
       });

@@ -42,14 +42,12 @@ export const createFeedback = async (feedbackData) => {
 };
 
 export const updateFeedbackStatus = async (id, data) => {
-  const statusPayload = { status: data?.status };
-
   return await withFallback(
-    () => apiPut(`${FEEDBACKS_ENDPOINT}/${id}`, statusPayload),
+    () => apiPut(`${FEEDBACKS_ENDPOINT}/${id}`, data),
     () =>
       apiPut(`${FEEDBACK_REQUESTS_ENDPOINT}/${id}`, {
         feedback_id: id,
-        ...statusPayload,
+        ...data,
       }),
   );
 };

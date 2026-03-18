@@ -106,11 +106,11 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                         margin: "0 25px",
                       }}
                     >
-                      {fb.user_image || fb.image ? (
+                      {fb.user_image || fb.image || fb.user_image_url ? (
                         <LazyImage
-                          src={getImageUrl(fb.user_image || fb.image)}
+                          src={getImageUrl(fb.user_image || fb.image || fb.user_image_url)}
                           alt={fb.user_name || fb.user_id || "Guest"}
-                          className="mx-auto mb-8 !h-[92px] !w-[92px] rounded-full object-cover"
+                          className="mx-auto mb-8 !h-[92px] !w-[92px] overflow-hidden rounded-full object-cover"
                         />
                       ) : (
                         <div className="mx-auto mb-8 flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] dark:bg-[#171c29] dark:text-[#d3d6de]">
