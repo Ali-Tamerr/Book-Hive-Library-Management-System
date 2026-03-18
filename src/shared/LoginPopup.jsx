@@ -8,9 +8,16 @@ import DarkBgSection from "../components/DarkBgSection";
 import WhiteBgSection from "../components/WhiteBgSection";
 import AboutBranchesPopup from "../components/AboutBranchesPopup";
 
-function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
+function LoginPopup({
+  isOpen,
+  onClose,
+  onForgotPassword,
+  onSignup,
+  slideFromTop = false,
+}) {
   const navigate = useNavigate();
   const [isAnimating, setIsAnimating] = useState(false);
+  const [shouldRender, setShouldRender] = useState(isOpen);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -69,21 +76,29 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
   };
 
   useEffect(() => {
-    if (!isOpen) return undefined;
-    setIsAnimating(false);
-    const id = requestAnimationFrame(() => setIsAnimating(true));
-    return () => cancelAnimationFrame(id);
+    if (isOpen) {
+      setShouldRender(true);
+      const id = requestAnimationFrame(() => setIsAnimating(true));
+      return () => cancelAnimationFrame(id);
+    } else {
+      setIsAnimating(false);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!shouldRender && !isOpen) return null;
 
   const popupContent = (
     <div
-      className="login-popup-overlay fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/10 backdrop-blur-sm transition-all duration-500 ${slideFromTop ? (isAnimating ? "translate-y-0" : "-translate-y-full") : (isAnimating ? "opacity-100" : "opacity-0")}`}
       onClick={onClose}
     >
+
       <div
-        className={`relative h-full max-h-[87vh] w-[95%] max-w-[1420px] overflow-hidden rounded-2xl shadow-2xl transition-[transform,opacity] duration-200 ease-in-out will-change-[transform,opacity] ${isAnimating ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}`}
+        className={`relative h-full max-h-[87vh] w-[95%] max-w-[1420px] overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div

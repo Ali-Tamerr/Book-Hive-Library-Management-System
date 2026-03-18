@@ -1,79 +1,115 @@
-import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import AuthInput from '../components/AuthInput';
-import PrimaryButton from '../components/PrimaryButton';
-import DarkBgSection from '../components/DarkBgSection';
-import WhiteBgSection from '../components/WhiteBgSection';
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import AuthInput from "../components/AuthInput";
+import PrimaryButton from "../components/PrimaryButton";
+import DarkBgSection from "../components/DarkBgSection";
+import WhiteBgSection from "../components/WhiteBgSection";
 
-function OTPPopup({ isOpen, onClose, onResetPassword, onBack }) {
-    const [otp, setOtp] = useState('');
-    const [isDarkMode, setIsDarkMode] = useState(false);
+function OTPPopup({
+  isOpen,
+  onClose,
+  onResetPassword,
+  onBack,
+  slideFromTop = false,
+}) {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [shouldRender, setShouldRender] = useState(isOpen);
+  const [otp, setOtp] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-    useEffect(() => {
-        const checkTheme = () => {
-            setIsDarkMode(document.body.classList.contains('dark-theme'));
-        };
-        checkTheme();
-        const observer = new MutationObserver(checkTheme);
-        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-        return () => observer.disconnect();
-    }, []);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onClose?.();
-        onResetPassword?.();
+  useEffect(() => {
+    const checkTheme = () => {
+      setIsDarkMode(document.body.classList.contains("dark-theme"));
     };
+    checkTheme();
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
-    const handleBack = () => {
-        onClose?.();
-        onBack?.();
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onClose?.();
+    onResetPassword?.();
+  };
 
-    if (!isOpen) return null;
+  const handleBack = () => {
+    onClose?.();
+    onBack?.();
+  };
 
-    const popupContent = (
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      const id = requestAnimationFrame(() => setIsAnimating(true));
+      return () => cancelAnimationFrame(id);
+    } else {
+      setIsAnimating(false);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  if (!shouldRender && !isOpen) return null;
+
+  const popupContent = (
+    <div
+      className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/10 backdrop-blur-sm transition-all duration-500 ${slideFromTop ? (isAnimating ? "translate-y-0" : "-translate-y-full") : (isAnimating ? "opacity-100" : "opacity-0")}`}
+      onClick={onClose}
+    >
+      <div
+        className={`relative h-full max-h-[87vh] w-[95%] max-w-[1420px] overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div
-            className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
-            onClick={onClose}
+          className={`flex h-full w-full max-[1080px]:flex-col ${isDarkMode ? "bg-[#121317]" : "bg-white"} overflow-hidden`}
         >
-            <div
-                className="relative w-[95%] max-w-[1420px] h-full max-h-[87vh] overflow-hidden rounded-2xl shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
+          <WhiteBgSection
+            title="Check your Mailbox"
+            subtitle="Please enter the OTP to proceed"
+            backButton={{ text: "BACK", onClick: handleBack, position: "left" }}
+            isDarkMode={isDarkMode}
+          >
+            <form
+              onSubmit={handleSubmit}
+              className="flex w-full flex-col items-center gap-6"
             >
-                <div className={`flex max-[1080px]:flex-col w-full h-full ${isDarkMode ? 'bg-[#121317]' : 'bg-white'} overflow-hidden`}>
-                    <WhiteBgSection
-                        title="Check your Mailbox"
-                        subtitle="Please enter the OTP to proceed"
-                        backButton={{ text: 'BACK', onClick: handleBack, position: 'left' }}
-                        isDarkMode={isDarkMode}
-                    >
-                        <form onSubmit={handleSubmit} className="w-full items-center flex flex-col gap-6">
-                            <AuthInput
-                                type="text"
-                                placeholder="OTP"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
-                                required
-                                isDarkMode={isDarkMode}
-                            />
-                            <PrimaryButton type="submit" isDarkMode={isDarkMode}>
-                                VERIFY
-                            </PrimaryButton>
-                        </form>
-                    </WhiteBgSection>
+              <AuthInput
+                type="text"
+                placeholder="OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+                isDarkMode={isDarkMode}
+              />
+              <PrimaryButton type="submit" isDarkMode={isDarkMode}>
+                VERIFY
+              </PrimaryButton>
+            </form>
+          </WhiteBgSection>
 
-                    <DarkBgSection
-                        message={<>"Your premier digital library<br />for borrowing and reading books"</>}
-                        position="right"
-                        isDarkMode={isDarkMode}
-                    />
-                </div>
-            </div>
+          <DarkBgSection
+            message={
+              <>
+                "Your premier digital library
+                <br />
+                for borrowing and reading books"
+              </>
+            }
+            position="right"
+            isDarkMode={isDarkMode}
+          />
         </div>
-    );
+      </div>
+    </div>
+  );
 
-    return createPortal(popupContent, document.body);
+  return createPortal(popupContent, document.body);
 }
 
 export default OTPPopup;
