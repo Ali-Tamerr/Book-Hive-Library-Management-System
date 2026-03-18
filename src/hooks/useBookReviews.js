@@ -43,3 +43,18 @@ export const useDeleteBookReview = () => {
     },
   });
 };
+
+export const useCreateBookReviewReply = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newReply) => {
+      return await apiPost("/BookReviews/reply", newReply);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["bookReviews", variables.book_id],
+      });
+    },
+  });
+};
