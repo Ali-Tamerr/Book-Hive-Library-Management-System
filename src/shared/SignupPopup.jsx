@@ -5,6 +5,7 @@ import {
   getAllUserRequests,
 } from "../services/userRequests.api";
 import { getAllUsers } from "../services/users.api";
+import { useBranches } from "../hooks/useBranches";
 import AuthInput from "../components/AuthInput";
 import PrimaryButton from "../components/PrimaryButton";
 import DarkBgSection from "../components/DarkBgSection";
@@ -17,6 +18,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
     last_name: "",
     email: "",
     password: "",
+    branch_id: "",
     plan: "",
   });
   const [error, setError] = useState("");
@@ -25,6 +27,8 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [existingUsers, setExistingUsers] = useState([]);
   const [existingRequests, setExistingRequests] = useState([]);
+
+  const { data: branches = [] } = useBranches();
 
   useEffect(() => {
     const checkTheme = () => {
@@ -120,6 +124,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
         last_name: "",
         email: "",
         password: "",
+        branch_id: "",
         plan: "",
       });
       setTimeout(() => {
@@ -237,6 +242,15 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                   />
                 </div>
                 <div className="flex w-full gap-4">
+                  <FormSelect
+                    name="branch_id"
+                    value={formData.branch_id || ""}
+                    onChange={handleChange}
+                    placeholder="Branch"
+                    variant="auth"
+                    isDarkMode={isDarkMode}
+                    options={branches.map(b => ({ value: b.branch_id || b.id, label: b.name }))}
+                  />
                   <FormSelect
                     name="plan"
                     value={formData.plan}
