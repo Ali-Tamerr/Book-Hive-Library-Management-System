@@ -1,4 +1,5 @@
 import React from "react";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import Popup from "../components/Popup.jsx";
 import FormInput from "../components/FormInput.jsx";
 import FormSelect from "../components/FormSelect.jsx";
@@ -119,7 +120,7 @@ const FormLayout = ({
     <Popup show={show} onClose={onClose} title={title} icon={icon}>
       {isLoading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center rounded-xl bg-white/50 backdrop-blur-sm dark:bg-[#131418]/50">
-          <div className="border-t-primary dark:border-t-primary h-10 w-10 animate-spin rounded-full border-4 border-gray-300 dark:border-gray-600"></div>
+          <LoadingSpinner size="md" />
         </div>
       )}
       <form onSubmit={onSubmit} className="flex flex-col gap-14">

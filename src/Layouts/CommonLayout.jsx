@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { FilePenLine, Trash2, ReceiptText } from "lucide-react";
 import SearchBar from "../components/SearchBar.jsx";
 import ButtonOne from "../components/ButtonOne.jsx";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 const CommonLayout = ({
   searchValue,
@@ -123,9 +124,11 @@ const CommonLayout = ({
                 <tr>
                   <td
                     colSpan={columns.length}
-                    className="p-3 text-center text-[#000035] dark:text-[#D7D7D7]"
+                    className="py-12 text-center"
                   >
-                    Loading...
+                    <div className="flex justify-center">
+                      <LoadingSpinner size="sm" />
+                    </div>
                   </td>
                 </tr>
               ) : data.length === 0 ? (
