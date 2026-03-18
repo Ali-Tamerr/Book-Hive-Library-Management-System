@@ -289,10 +289,10 @@ function Dashboard() {
     <div 
       className="flex h-full w-full"
       style={{
-        "--card-scale": "clamp(0.55, 100vh / 995px, 1)",
+        "--card-scale": "clamp(0.35, calc((100vh - 280px) / 620px), 1)",
       }}
     >
-      <main className="flex h-full flex-1 flex-col px-5 py-3" style={{ gap: "clamp(12px, 2vh, 18px)" }}>
+      <main className="flex h-full flex-1 flex-col px-5 py-3" style={{ gap: "clamp(4px, 1.5vh, 18px)" }}>
         <div className="flex w-full items-center gap-3.5">
           <div className="relative flex-1">
             <Search
@@ -371,7 +371,7 @@ function Dashboard() {
           </div>
           <div 
             className="min-[640px]:flex-4 flex w-full flex-col min-[640px]:h-full"
-            style={{ gap: "clamp(16px, 2.5vh, 24px)" }}
+            style={{ gap: "clamp(2px, 1vh, 20px)" }}
           >
             <div className="flex items-center justify-between border-b border-[#000035] dark:border-[#D7D7D7]">
               <div className="flex gap-16">
@@ -450,7 +450,7 @@ function Dashboard() {
 
             <div 
               className="grid w-full grid-cols-4 place-items-center max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2"
-              style={{ rowGap: "calc(1.25rem * var(--card-scale, 1))" }}
+              style={{ rowGap: "calc(0.5rem * var(--card-scale, 1))" }}
             >
               {booksLoading && displayBooks.length === 0 ? (
                 <div className="col-span-full py-9 text-center text-[#000035]">
@@ -492,7 +492,7 @@ function Dashboard() {
                           </div>
                         )}
                       </div>
-                      <div className="mt-2 flex w-full shrink-0 flex-col gap-1">
+                      <div className="mt-1 flex w-full shrink-0 flex-col gap-1">
                         <h3 className="text-md min-h-[44px] line-clamp-2 text-center !font-['Noto_Sans_Georgian',sans-serif] font-bold text-[#000035] dark:text-[#D7D7D7]">
                           {book.name || "Untitled"}
                         </h3>
@@ -513,13 +513,16 @@ function Dashboard() {
             </div>
             <div 
               className="mt-auto flex w-full justify-start md:ml-10"
-              style={{ marginBottom: "calc(1.5rem * var(--card-scale, 1))" }}
+              style={{ 
+                marginTop: "calc(0.1rem * var(--card-scale, 1))",
+                marginBottom: "calc(0.25rem * var(--card-scale, 1))" 
+              }}
             >
               <div 
                 className="w-fit rounded-md transition-all duration-300"
                 style={{ 
-                  fontSize: "calc(1.1rem * var(--card-scale, 1))",
-                  padding: "calc(0.5rem * var(--card-scale, 1))",
+                  fontSize: "calc(1.2rem * var(--card-scale, 1))",
+                  padding: "calc(0.2rem * var(--card-scale, 1))",
                   paddingRight: "1.5rem"
                 }}
               >
