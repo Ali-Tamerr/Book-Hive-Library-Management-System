@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { useBranches } from "../hooks/useBranches";
 import { useBookCopies } from "../hooks/useBookCopies";
 
@@ -42,9 +43,9 @@ const AboutBranchesPopup = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[300] flex items-center justify-center bg-[rgba(140,140,140,0.7)] p-8 dark:bg-[rgba(10,10,12,0.7)]"
+      className="fixed inset-0 z-[1001] flex items-center justify-center bg-[rgba(140,140,140,0.7)] p-8 dark:bg-[rgba(10,10,12,0.7)]"
       onClick={onClose}
     >
       <div
@@ -157,7 +158,8 @@ const AboutBranchesPopup = ({ isOpen, onClose }) => {
           </table>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
