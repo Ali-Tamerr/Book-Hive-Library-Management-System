@@ -5,7 +5,7 @@ import HomeButton from "./HomeButton";
 const FeaturedSection = ({
   featuredBooks,
   featuredPerView = 1,
-  setSelectedFeaturedBook,
+  onExplore,
 }) => {
   const [localIndex, setLocalIndex] = useState(0);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
@@ -104,9 +104,9 @@ const FeaturedSection = ({
                 </h2>
                 <HomeButton
                   className="px-[40px] py-[18px]"
-                  onClick={() => setSelectedFeaturedBook(book)}
+                  onClick={() => onExplore()}
                 >
-                  Book Now
+                  Explore Now
                 </HomeButton>
               </article>
             ))}

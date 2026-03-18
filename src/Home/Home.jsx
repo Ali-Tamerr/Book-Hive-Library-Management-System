@@ -427,7 +427,7 @@ const Home = () => {
           <FeaturedSection
             featuredBooks={featuredBooks}
             featuredPerView={featuredPerView}
-            setSelectedFeaturedBook={setSelectedFeaturedBook}
+            onExplore={() => setIsLoginOpen(true)}
           />
 
           <Pricing setIsLoginOpen={setIsLoginOpen} />
