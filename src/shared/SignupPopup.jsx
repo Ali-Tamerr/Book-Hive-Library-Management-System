@@ -46,8 +46,19 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
           getAllUsers(),
           getAllUserRequests(),
         ]);
-        setExistingUsers(users || []);
-        setExistingRequests(requests || []);
+        
+        let usersArray = [];
+        if (Array.isArray(users)) usersArray = users;
+        else if (users && Array.isArray(users.data)) usersArray = users.data;
+        else if (users && Array.isArray(users.users)) usersArray = users.users;
+        
+        let requestsArray = [];
+        if (Array.isArray(requests)) requestsArray = requests;
+        else if (requests && Array.isArray(requests.data)) requestsArray = requests.data;
+        else if (requests && Array.isArray(requests.requests)) requestsArray = requests.requests;
+
+        setExistingUsers(usersArray);
+        setExistingRequests(requestsArray);
       } catch (err) {
         console.error("Failed to fetch existing data:", err);
       }
@@ -170,7 +181,7 @@ function SignupPopup({ isOpen, onClose, onLogin }) {
                   ✓ Request Submitted Successfully!
                 </div>
                 <p
-                  className={`${isDarkMode ? "text-[#000035]" : "text-gray-600"}`}
+                  className={`${isDarkMode ? "text-[#D7D7D7]" : "text-[#000035]"}`}
                 >
                   Your registration request has been sent to the admin for
                   approval. You will be notified once your account is approved.

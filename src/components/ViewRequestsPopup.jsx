@@ -488,7 +488,7 @@ const ViewRequestsPopup = ({
               </div>
             ) : activeTab === "users" ? (
               <table className="w-full">
-                <thead className="sticky top-0 bg-white dark:bg-[#000035]">
+                <thead className="sticky top-0 bg-[#F2F2F2] dark:bg-[#121317]">
                   <tr>
                     <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       Name
@@ -569,7 +569,7 @@ const ViewRequestsPopup = ({
               </table>
             ) : activeTab === "books" ? (
               <table className="w-full">
-                <thead className="sticky top-0 bg-white">
+                <thead className="sticky top-0 bg-[#F2F2F2] dark:bg-[#121317]">
                   <tr>
                     <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       User Name
@@ -645,7 +645,7 @@ const ViewRequestsPopup = ({
               </table>
             ) : (
               <table className="w-full">
-                <thead className="sticky top-0 bg-white">
+                <thead className="sticky top-0 bg-[#F2F2F2] dark:bg-[#121317]">
                   <tr>
                     <th className="p-4 text-center text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
                       User Name
