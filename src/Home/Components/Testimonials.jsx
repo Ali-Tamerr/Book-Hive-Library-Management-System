@@ -6,7 +6,6 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
   const processedFeedbacks = useMemo(() => {
     if (!Array.isArray(feedbacks)) return [];
 
-    // Keep only the latest feedback per user (later entries override earlier ones)
     const byUser = new Map();
     feedbacks.forEach((fb) => {
       const userKey = fb.user_id || fb.user_name || fb.email || "anonymous";
@@ -15,7 +14,6 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
 
     const unique = Array.from(byUser.values());
 
-    // Sort by rating (desc), then by date (newest first) if available
     unique.sort((a, b) => {
       const rateA = Number(a.rate || 0);
       const rateB = Number(b.rate || 0);
@@ -26,31 +24,52 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
       return dateB - dateA;
     });
 
-    // Take only the top 10 feedbacks
     return unique.slice(0, 10);
   }, [feedbacks]);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Triple the list for the infinite loop effect
+  const displayFeedbacks = useMemo(() => {
+    if (processedFeedbacks.length === 0) return [];
+    return [...processedFeedbacks, ...processedFeedbacks, ...processedFeedbacks];
+  }, [processedFeedbacks]);
 
-  useEffect(() => {
-    setCurrentIndex(0);
-  }, [processedFeedbacks.length, testimonialPerView]);
+  const [localIndex, setLocalIndex] = useState(0);
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
 
   const safePerView = testimonialPerView || 1;
-  const isCarousel = processedFeedbacks.length > 3;
-  const maxIndex = Math.max(0, processedFeedbacks.length - safePerView);
+  const isCarousel = processedFeedbacks.length > safePerView;
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  };
+  // Auto-scroll logic
+  useEffect(() => {
+    if (!isCarousel || isLoading) return;
+    const interval = setInterval(() => {
+      setLocalIndex((prev) => prev + 1);
+    }, 3500); // 3.5 seconds per slide
+    return () => clearInterval(interval);
+  }, [isCarousel, isLoading]);
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
+  // Infinite loop snap-back logic
+  useEffect(() => {
+    const originalLength = processedFeedbacks.length;
+    if (originalLength === 0) return;
+
+    // When we've scrolled a full original set, snap back silently
+    if (localIndex > 0 && localIndex % originalLength === 0) {
+      const timer = setTimeout(() => {
+        setTransitionEnabled(false);
+        setLocalIndex(0); // Snap back to the real 0
+        
+        // Re-enable transition after snap
+        setTimeout(() => setTransitionEnabled(true), 50);
+      }, 700); // Wait for the smooth CSS transition (duration-700) to finish
+      
+      return () => clearTimeout(timer);
+    }
+  }, [localIndex, processedFeedbacks.length]);
 
   const trackTransform =
     !isLoading && isCarousel
-      ? `translateX(-${currentIndex * (100 / safePerView)}%)`
+      ? `translateX(-${localIndex * (100 / safePerView)}%)`
       : "none";
 
   const hasFeedbacks = processedFeedbacks.length > 0;
@@ -64,7 +83,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
         <div className="relative">
           <div className="overflow-hidden">
             <div
-              className="flex transition-transform duration-500 ease-in-out"
+              className={`flex ${transitionEnabled ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
               style={{
                 transform: trackTransform,
               }}
@@ -75,7 +94,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                     key={`skeleton-${idx}`}
                     className="duration-400 shrink-0 rounded-[24px] bg-[#D7D7D7] px-12 py-10 pb-12 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"
                     style={{
-                      width: `calc(${100 / testimonialPerView}% - 50px)`,
+                      width: `calc(${100 / safePerView}% - 50px)`,
                       margin: "0 25px",
                     }}
                   >
@@ -83,7 +102,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                       <div className="h-7 w-7 animate-spin rounded-full border-4 border-[#D7D7D7]/30 border-t-transparent" />
                     </div>
                     <div className="mx-auto mb-5 h-7 w-36 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
-                    <div className="h-16 mx-auto mb-8 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
+                    <div className="mx-auto mb-8 h-16 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
                     <div className="text-[36px] text-[#000035] dark:text-[#d3d6de]">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <i key={i} className="ri-star-line"></i>
@@ -92,17 +111,17 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                   </article>
                 ))
               ) : hasFeedbacks ? (
-                processedFeedbacks.map((fb) => {
+                displayFeedbacks.map((fb, idx) => {
                   const rate = Number(fb.rate || 0);
                   const fullStars = Math.floor(rate);
                   const hasHalf = rate % 1 > 0;
 
                   return (
                     <article
-                      key={fb.request_id ?? fb.feedback_id ?? fb.user_id}
+                      key={`${fb.request_id ?? fb.feedback_id ?? fb.user_id}-${idx}`}
                       className="duration-400 shrink-0 rounded-[24px] border border-[#000035] px-12 py-10 pb-12 text-center transition-colors dark:border-[#D7D7D7]"
                       style={{
-                        width: `calc(${100 / testimonialPerView}% - 50px)`,
+                        width: `calc(${100 / safePerView}% - 50px)`,
                         margin: "0 25px",
                       }}
                     >
@@ -152,22 +171,6 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
               )}
             </div>
           </div>
-          {isCarousel && !isLoading && hasFeedbacks && (
-            <>
-              <button
-                onClick={handlePrev}
-                className="absolute left-0 top-1/2 z-10 flex h-16 w-16 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl border-none bg-[var(--first-color)] font-[family-name:var(--body-font)] text-[length:var(--normal-font-size)] text-[#D7D7D7]"
-              >
-                <i className="ri-arrow-left-s-line text-4xl"></i>
-              </button>
-              <button
-                onClick={handleNext}
-                className="absolute right-0 top-1/2 z-10 flex h-16 w-16 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl border-none bg-[var(--first-color)] font-[family-name:var(--body-font)] text-[length:var(--normal-font-size)] text-[#D7D7D7]"
-              >
-                <i className="ri-arrow-right-s-line text-4xl"></i>
-              </button>
-            </>
-          )}
         </div>
       </div>
     </section>
@@ -175,3 +178,4 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
 };
 
 export default Testimonials;
+
