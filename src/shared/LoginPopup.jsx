@@ -6,7 +6,7 @@ import AuthInput from "../components/AuthInput";
 import PrimaryButton from "../components/PrimaryButton";
 import DarkBgSection from "../components/DarkBgSection";
 import WhiteBgSection from "../components/WhiteBgSection";
-import BranchesPopup from "../components/BranchesPopup";
+import AboutBranchesPopup from "../components/AboutBranchesPopup";
 
 function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
   const navigate = useNavigate();
@@ -167,7 +167,7 @@ function LoginPopup({ isOpen, onClose, onForgotPassword, onSignup }) {
   return (
     <>
       {createPortal(popupContent, document.body)}
-      <BranchesPopup
+      <AboutBranchesPopup
         isOpen={showBranchesPopup}
         onClose={() => setShowBranchesPopup(false)}
       />
