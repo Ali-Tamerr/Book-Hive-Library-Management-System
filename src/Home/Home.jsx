@@ -6,7 +6,7 @@ import ForgotPasswordPopup from "../shared/ForgotPasswordPopup";
 import OTPPopup from "../shared/OTPPopup";
 import ResetPasswordPopup from "../shared/ResetPasswordPopup";
 import AboutBranchesPopup from "../components/AboutBranchesPopup";
-import FeaturedBookPopup from "../components/FeaturedBookPopup";
+import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import PageLoader from "../components/PageLoader";
 import logoIcon from "../assets/bookhive_icon_only_black-removebg-preview 2.svg";
 import testimonialImg1 from "../assets/img/testimonial-perfil-1.png";
@@ -483,10 +483,28 @@ const Home = () => {
           isOpen={activePopup === "branches"}
           onClose={() => setActivePopup(null)}
         />
-        <FeaturedBookPopup
-          isOpen={Boolean(selectedFeaturedBook)}
-          book={selectedFeaturedBook}
+        <ViewDetailsPopup
+          show={Boolean(selectedFeaturedBook)}
           onClose={() => setSelectedFeaturedBook(null)}
+          title="Book Details"
+          imageUrl={selectedFeaturedBook?.image}
+          imageAlt={selectedFeaturedBook?.name || "Book cover"}
+          onRequireLogin={() => {
+            setSelectedFeaturedBook(null);
+            setIsLoginOpen(true);
+          }}
+          data={
+            selectedFeaturedBook
+              ? {
+                  "Book ID": selectedFeaturedBook.book_id,
+                  "Book Name": selectedFeaturedBook.name,
+                  Category: selectedFeaturedBook.category,
+                  Language: selectedFeaturedBook.language,
+                  Availability: selectedFeaturedBook.availability,
+                  Quantity: selectedFeaturedBook.quantity,
+                }
+              : null
+          }
         />
       </div>
     </>
