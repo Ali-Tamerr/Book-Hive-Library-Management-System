@@ -6,6 +6,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
     return (
       <div
         className={`max-[340px]:scale-70 hidden items-center gap-7 whitespace-nowrap rounded-md border border-[#000035] bg-transparent p-5 max-[1540px]:flex max-[1080px]:scale-90 dark:border-[rgba(185,189,200,0.78)] dark:bg-[#121317] dark:text-[#d3d6de] ${className || ""}`}
+        style={{ transform: `scale(clamp(0.75, calc((100vh - 200px) / 700px), 1))`, transformOrigin: "center center" }}
       >
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-1.5">
@@ -32,6 +33,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
   return (
     <div
       className={`flex items-center gap-7 whitespace-nowrap rounded-md border border-[#000035] bg-transparent px-8 py-5 max-[1540px]:hidden dark:border dark:border-[rgba(185,189,200,0.78)] dark:bg-[#121317] ${className || ""}`}
+      style={{ transform: `scale(clamp(0.75, calc((100vh - 200px) / 700px), 1))`, transformOrigin: "center center" }}
     >
       <div className="block max-[1650px]:hidden">
         <ColorableLogo className="w-17 -mr-1.5 h-16 text-[#000035] dark:text-[#d3d6de]" />
