@@ -13,6 +13,7 @@ import { useBookReviews, useCreateBookReviewReply } from "../hooks/useBookReview
 import RateBookPopup from "./RateBookPopup.jsx";
 import FormButton from "./FormButton.jsx";
 import { getCurrentUser } from "../services/auth.api";
+import BookCopiesViewPopup from "./BookCopiesViewPopup.jsx";
 
 const ViewDetailsPopup = ({
   show,
@@ -26,8 +27,11 @@ const ViewDetailsPopup = ({
   variant = "book",
   maxWidthClassOverride,
   onRequireLogin,
+  bookCopiesData = [],
+  isAdmin = false,
 }) => {
   const [showRatePopup, setShowRatePopup] = useState(false);
+  const [showCopiesPopup, setShowCopiesPopup] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
 
   const isBookVariant = variant === "book";
@@ -440,7 +444,17 @@ const ViewDetailsPopup = ({
                   )}
                 </div>
 
-                <div className="shrink-0 pt-2">
+                <div className="flex shrink-0 gap-3 pt-2">
+                  {isAdmin && bookCopiesData.length > 0 && (
+                    <FormButton
+                      isPrimary
+                      fullWidth={false}
+                      onClick={() => setShowCopiesPopup(true)}
+                      className={`h-[54px] w-[190px] cursor-pointer rounded-[10px] !p-0 text-[18px] transition-colors`}
+                    >
+                      Show IDs
+                    </FormButton>
+                  )}
                   <FormButton
                     isPrimary
                     fullWidth={false}
@@ -467,6 +481,12 @@ const ViewDetailsPopup = ({
         bookId={bookId}
         initialReview={existingReview}
         replyToReviewId={replyingTo}
+      />
+      <BookCopiesViewPopup
+        show={showCopiesPopup}
+        onClose={() => setShowCopiesPopup(false)}
+        bookName={data?.["Name"]}
+        copies={bookCopiesData}
       />
     </>
   );

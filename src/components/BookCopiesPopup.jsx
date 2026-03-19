@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Copy } from "lucide-react";
+import { BookCopy } from "lucide-react";
 import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
-import FormInput from "./FormInput.jsx";
-import FormSelect from "./FormSelect.jsx";
 import NFCReaderButton from "./NFCReaderButton.jsx";
 import { useBranches } from "../hooks/useBranches";
 import { createClient } from "@supabase/supabase-js";
@@ -23,30 +21,26 @@ function BookCopiesPopup({
   bookCopies,
   onSave,
   bookId,
+  editMode = false,
 }) {
   const [copies, setCopies] = useState([]);
   const [currentInputIndex, setCurrentInputIndex] = useState(0);
-  const [selectedBranch, setSelectedBranch] = useState("");
   const inputRefs = useRef([]);
   const { data: branches = [] } = useBranches();
 
-  // تهيئة النسخ عند فتح البوب‑اب
   useEffect(() => {
     if (show) {
       const qty = parseInt(quantity, 10) || 1;
 
       if (bookCopies && bookCopies.length > 0) {
-        const existingCopies = bookCopies.map((c) => c.book_copy_id || "");
-        const firstBranch = bookCopies[0]?.branch_id || "";
-        setSelectedBranch(firstBranch);
-
-        while (existingCopies.length < qty) {
-          existingCopies.push("");
-        }
-        setCopies(existingCopies.slice(0, qty));
+        const initial = bookCopies.slice(0, qty).map((c) => ({
+          id: c.book_copy_id || "",
+          branch: String(c.branch_id || ""),
+        }));
+        while (initial.length < qty) initial.push({ id: "", branch: "" });
+        setCopies(initial);
       } else {
-        setCopies(Array(qty).fill(""));
-        setSelectedBranch("");
+        setCopies(Array(qty).fill(null).map(() => ({ id: "", branch: "" })));
       }
 
       inputRefs.current = Array(qty).fill(null);
@@ -54,10 +48,20 @@ function BookCopiesPopup({
     }
   }, [show, quantity, bookCopies]);
 
-  const handleCopyChange = (index, value) => {
-    const newCopies = [...copies];
-    newCopies[index] = value;
-    setCopies(newCopies);
+  const handleIdChange = (index, value) => {
+    setCopies((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], id: value };
+      return next;
+    });
+  };
+
+  const handleBranchChange = (index, value) => {
+    setCopies((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], branch: value };
+      return next;
+    });
   };
 
   const handleInputFocus = (index) => {
@@ -67,15 +71,11 @@ function BookCopiesPopup({
   const handleNFCData = React.useCallback((uid) => {
     setCopies((prev) => {
       const updated = [...prev];
-      // Find the first empty row
-      const firstEmptyIndex = updated.findIndex((c) => !c || c.trim() === "");
-
+      const firstEmptyIndex = updated.findIndex((c) => !c.id || c.id.trim() === "");
       if (firstEmptyIndex !== -1) {
-        updated[firstEmptyIndex] = uid;
-
-        // Auto-focus next empty box if exists
+        updated[firstEmptyIndex] = { ...updated[firstEmptyIndex], id: uid };
         const nextEmptyIndex = updated.findIndex(
-          (c, idx) => idx > firstEmptyIndex && (!c || c.trim() === ""),
+          (c, idx) => idx > firstEmptyIndex && (!c.id || c.id.trim() === "")
         );
         if (nextEmptyIndex !== -1) {
           setTimeout(() => {
@@ -89,10 +89,8 @@ function BookCopiesPopup({
     });
   }, []);
 
-  // Realtime: استقبل UID من جدول scanned_book_uids للجهاز kiosk1
   useEffect(() => {
     if (!show) return;
-
     const supabase = getSupabaseClient();
     if (!supabase) return;
 
@@ -107,9 +105,8 @@ function BookCopiesPopup({
           filter: "device_id=eq.kiosk1",
         },
         (payload) => {
-          const uid = payload.new.uid;
-          handleNFCData(uid);
-        },
+          handleNFCData(payload.new.uid);
+        }
       )
       .subscribe();
 
@@ -121,33 +118,34 @@ function BookCopiesPopup({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const allFilled = copies.every((c) => c.trim() !== "");
-    if (!allFilled) {
+    const allIdsFilled = copies.every((c) => c.id.trim() !== "");
+    if (!allIdsFilled) {
       alert(`Please fill all ${copies.length} copy IDs`);
       return;
     }
 
-    if (!selectedBranch) {
-      alert("Please select a branch");
+    const allBranchesFilled = copies.every((c) => c.branch !== "");
+    if (!allBranchesFilled) {
+      alert("Please select a branch for every copy");
       return;
     }
 
-    const uniqueCopies = new Set(copies);
-    if (uniqueCopies.size !== copies.length) {
+    const uniqueIds = new Set(copies.map((c) => c.id));
+    if (uniqueIds.size !== copies.length) {
       alert("Copy IDs must be unique");
       return;
     }
 
     const bookCopiesArray = copies.map((c) => ({
-      book_copy_id: c,
-      branch_id: parseInt(selectedBranch, 10),
+      book_copy_id: c.id,
+      branch_id: parseInt(c.branch, 10),
     }));
 
     onSave(bookCopiesArray);
     onClose();
   };
 
-  const firstEmptyIndex = copies.findIndex((c) => !c || c.trim() === "");
+  const firstEmptyIndex = copies.findIndex((c) => !c.id || c.id.trim() === "");
   const firstEmptyRef = {
     current: inputRefs.current[firstEmptyIndex === -1 ? 0 : firstEmptyIndex],
   };
@@ -156,13 +154,16 @@ function BookCopiesPopup({
     <Popup
       show={show}
       onClose={onClose}
-      title={`Add Book`}
-      icon={<Copy size={24} strokeWidth={2.3} />}
-      maxWidthClass="max-w-[800px]"
+      title={editMode ? "Edit Book" : "Add Book"}
+      icon={<BookCopy size={32} strokeWidth={2.2} />}
+      iconWrapperClassName="min-h-[70px] min-w-[70px]"
+      titleClassName="!text-4xl"
+      maxWidthClass="max-w-[860px]"
+      contentClassName="px-4 py-6"
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <div className="flex gap-3 px-10">
-          <div className="w-auto">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex items-start gap-4 px-20">
+          <div className="shrink-0">
             <NFCReaderButton
               deviceId="kiosk1"
               isFlexOne
@@ -170,45 +171,48 @@ function BookCopiesPopup({
               onDataReceived={handleNFCData}
             />
           </div>
-          <div className="relative flex-1">
-            <FormSelect
-              value={selectedBranch}
-              onChange={(e) => setSelectedBranch(e.target.value)}
-              placeholder="Select Branch"
-              required
-              options={branches.map((branch) => ({
-                value: branch.branch_id,
-                label: branch.name,
-              }))}
-            />
+
+          <div className="flex flex-1 flex-col gap-5 max-h-[360px] overflow-y-auto pr-1">
+            {copies.map((copy, index) => (
+              <div key={index} className="flex h-14 items-stretch overflow-hidden rounded-2xl border border-[#000035] dark:border-[#D7D7D7]">
+                <input
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  type="text"
+                  value={copy.id}
+                  onChange={(e) => handleIdChange(index, e.target.value)}
+                  onFocus={() => handleInputFocus(index)}
+                  placeholder="ID"
+                  required
+                  className="w-[180px] shrink-0 bg-transparent px-5 py-4 text-[16px] font-semibold text-[#000035] outline-none placeholder:font-semibold placeholder:text-[#000035] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7]"
+                />
+                <div className="w-px h-[80%] self-center bg-[#000035] dark:bg-[#D7D7D7]" />
+                <select
+                  value={copy.branch}
+                  onChange={(e) => handleBranchChange(index, e.target.value)}
+                  required
+                  className="flex-1 cursor-pointer appearance-none bg-transparent px-5 py-4 text-[16px] font-semibold text-[#000035] outline-none dark:text-[#D7D7D7]"
+                >
+                  <option value="" disabled>Branch</option>
+                  {branches.map((branch) => (
+                    <option key={branch.branch_id} value={branch.branch_id}>
+                      {branch.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex items-center pr-4 pointer-events-none text-[#000035] dark:text-[#D7D7D7]">
+                  ▼
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div
-          className={`grid max-h-[400px] overflow-y-auto px-10 text-[#000035] ${
-            copies.length === 1 ? "grid-cols-1" : "grid-cols-2"
-          } gap-3`}
-        >
-          {copies.map((copy, index) => (
-            <FormInput
-              key={index}
-              inputRef={(el) => (inputRefs.current[index] = el)}
-              type="text"
-              value={copy}
-              onChange={(e) => handleCopyChange(index, e.target.value)}
-              onFocus={() => handleInputFocus(index)}
-              placeholder={`ID`}
-              required
-            />
-          ))}
-        </div>
-
-        <div className="flex justify-between gap-3 px-10 pb-2">
+        <div className="flex justify-between gap-3 px-6 pb-2 pt-2">
           <FormButton type="button" onClick={onClose}>
-            BACK
+            CANCEL
           </FormButton>
           <FormButton type="submit" isPrimary>
-            SAVE COPIES
+            {editMode ? "UPDATE" : "ADD"}
           </FormButton>
         </div>
       </form>

@@ -11,6 +11,7 @@ import {
   deleteBook,
 } from "../services/books.api";
 import { adminQueryOptions } from "./queryConfig";
+import { bookCopyKeys } from "./useBookCopies";
 
 export const bookKeys = {
   all: ["books"],
@@ -84,6 +85,7 @@ export const useCreateBook = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
       queryClient.invalidateQueries({ queryKey: bookKeys.management() });
+      queryClient.invalidateQueries({ queryKey: bookCopyKeys.lists() });
     },
   });
 };
@@ -100,6 +102,7 @@ export const useUpdateBook = () => {
       });
       queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
       queryClient.invalidateQueries({ queryKey: bookKeys.management() });
+      queryClient.invalidateQueries({ queryKey: bookCopyKeys.lists() });
     },
   });
 };
@@ -113,6 +116,7 @@ export const useDeleteBook = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
       queryClient.invalidateQueries({ queryKey: bookKeys.management() });
+      queryClient.invalidateQueries({ queryKey: bookCopyKeys.lists() });
     },
   });
 };
