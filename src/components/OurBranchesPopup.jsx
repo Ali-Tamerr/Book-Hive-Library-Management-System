@@ -44,11 +44,11 @@ const OurBranchesPopup = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-[300] flex items-center justify-center bg-[rgba(140,140,140,0.7)] p-8 dark:bg-[rgba(10,10,12,0.7)]"
+      className="fixed inset-0 z-[300] flex items-center justify-center bg-[rgba(140,140,140,0.7)] dark:bg-[rgba(10,10,12,0.7)] min-[769px]:p-8"
       onClick={onClose}
     >
       <div
-        className="branches-popup popup-typography flex max-h-[90vh] w-[min(940px,96vw)] flex-col gap-2.5 overflow-hidden rounded-[10px] border border-[#d1d1dd] bg-white px-[22px] pb-7 pt-3 shadow-[0_12px_28px_rgba(10,10,35,0.18)] max-[700px]:gap-1.5 max-[700px]:p-[14px] max-[700px]:pb-5 dark:border-[#242732] dark:bg-[#14161b] dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)]"
+        className="branches-popup popup-typography flex h-full max-h-none w-full flex-col gap-2.5 overflow-hidden rounded-none bg-white px-4 pb-7 pt-3 shadow-[0_12px_28px_rgba(10,10,35,0.18)] max-[700px]:gap-1.5 max-[700px]:pb-5 dark:bg-[#14161b] dark:shadow-[0_12px_28px_rgba(0,0,0,0.45)] min-[769px]:h-auto min-[769px]:max-h-[90vh] min-[769px]:w-[min(940px,96vw)] min-[769px]:rounded-[10px] min-[769px]:border min-[769px]:border-[#d1d1dd] min-[769px]:px-[22px] min-[769px]:dark:border-[#242732] max-[768px]:justify-center"
         role="dialog"
         aria-modal="true"
         aria-labelledby="branches-popup-title"
