@@ -108,7 +108,7 @@ function BookFormPopup({
         inputs={inputs}
         formData={formData}
         onFormChange={onFormChange}
-        submitButtonText="Enter Ids"
+        submitButtonText={editMode ? "Edit Copies" : "Enter IDs"}
         onCancel={() => {
           setShowPopup(false);
           setEditMode(false);
@@ -132,6 +132,7 @@ function BookFormPopup({
         bookCopies={formData.BookCopies}
         onSave={handleSaveBookCopies}
         bookId={formData.book_id}
+        editMode={editMode}
       />
     </>
   );

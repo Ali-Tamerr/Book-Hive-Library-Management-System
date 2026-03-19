@@ -8,7 +8,7 @@ import {
 } from "../hooks/useBooks.js";
 import { useCategories } from "../hooks/useCategories.js";
 import { useUsers } from "../hooks/useUsers.js";
-import { useBookCopies } from "../hooks/useBookCopies.js";
+import { useBookCopies, useDeleteBookCopy } from "../hooks/useBookCopies.js";
 import { useBorrowedBooks } from "../hooks/useBorrowedBooks.js";
 import { useBranches } from "../hooks/useBranches.js";
 import BookFormPopup from "../components/BookFormPopup.jsx";
@@ -56,6 +56,7 @@ function Books({ searchValue, setSearchValue }) {
   const createBookMutation = useCreateBook();
   const updateBookMutation = useUpdateBook();
   const deleteBookMutation = useDeleteBook();
+  const deleteBookCopyMutation = useDeleteBookCopy();
 
   const handleAddBook = async (e, overrideData) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -117,66 +118,72 @@ function Books({ searchValue, setSearchValue }) {
   };
 
   const handleEdit = async (book) => {
-    // Open the popup immediately with a loading spinner
     setEditMode(true);
     setShowPopup(true);
-    setIsPopupLoading(true);
 
+    const copiesToEdit = bookCopies
+      .filter((c) => c.book_id === book.book_id)
+      .map((c) => ({
+        book_copy_id: c.book_copy_id,
+        branch_id: c.branch_id ?? "",
+      }));
+
+    setFormData({
+      book_id: book.book_id,
+      name: book.name || "",
+      category_id: book.category_id || "",
+      quantity: book.quantity || 1,
+      sale_price: book.sale_price || "",
+      BookCopies: copiesToEdit,
+    });
+
+    setIsPopupLoading(true);
     try {
       const fullBook = await queryClient.fetchQuery({
         queryKey: bookKeys.detail(book.book_id),
         queryFn: () => getBookById(book.book_id),
+        staleTime: 0,
       });
 
-      const existingCopies =
-        fullBook.BookCopies?.map((c) => ({ book_copy_id: c.book_copy_id })) ||
-        [];
-
-      setFormData({
+      setFormData((prev) => ({
+        ...prev,
         book_id: fullBook.book_id,
-        name: fullBook.name || "",
-        category_id: fullBook.category_id || "",
-        quantity: fullBook.quantity || 1,
-        sale_price: fullBook.sale_price || "",
-        BookCopies: existingCopies,
-      });
+        name: fullBook.name || prev.name,
+        category_id: fullBook.category_id || prev.category_id,
+        quantity: fullBook.quantity || prev.quantity,
+        sale_price: fullBook.sale_price || prev.sale_price,
+      }));
     } catch (error) {
       console.error(error);
-      alert("Failed to load full book details.");
-      setShowPopup(false);
     } finally {
       setIsPopupLoading(false);
     }
   };
 
-  const handleDelete = (book) => {
-    setBookToDelete(book.book_id);
+  const handleDelete = (bookId) => {
+    setBookToDelete(bookId);
     setShowDeleteConfirm(true);
   };
 
-  const confirmDelete = async () => {
-    if (bookToDelete) {
-      try {
+  const confirmDelete = async ({ nfcId, deleteAll } = {}) => {
+    if (!bookToDelete) return;
+    try {
+      if (!deleteAll && nfcId?.trim()) {
+        await deleteBookCopyMutation.mutateAsync(nfcId.trim());
+      } else {
         await deleteBookMutation.mutateAsync(bookToDelete);
-        setShowDeleteConfirm(false);
-        setBookToDelete(null);
-      } catch (error) {
-        if (error.status === 405) {
-          alert(
-            "Book deletion is not supported by the API. The Books endpoint may be read-only.",
-          );
-        } else if (error.status === 400) {
-          alert(
-            "This book cannot be deleted because it has related reservations, sales, or transactions.",
-          );
-        } else {
-          alert(
-            `Failed to delete book: ${error.message || "Please try again."}`,
-          );
-        }
-        setShowDeleteConfirm(false);
-        setBookToDelete(null);
       }
+      setShowDeleteConfirm(false);
+      setBookToDelete(null);
+    } catch (error) {
+      const status = error?.status || error?.response?.status;
+      if (status === 400) {
+        alert(`Cannot delete: ${error.message || "This item may be referenced by a transaction or reservation."}`);
+      } else {
+        alert(`Failed to delete: ${error.message || "Please try again."}`);
+      }
+      setShowDeleteConfirm(false);
+      setBookToDelete(null);
     }
   };
 
@@ -414,6 +421,20 @@ function Books({ searchValue, setSearchValue }) {
         title={isViewLoading ? "LOADING INFO..." : "View Book"}
         imageUrl={selectedBook ? getImageUrl(selectedBook.image_url) : null}
         imageAlt={selectedBook?.name || "Book cover"}
+        isAdmin={isSuperAdmin}
+        bookCopiesData={
+          selectedBook
+            ? bookCopies
+                .filter((c) => c.book_id === selectedBook.book_id)
+                .map((c) => ({
+                  ...c,
+                  branch_name:
+                    branches.find(
+                      (b) => String(b.branch_id) === String(c.branch_id),
+                    )?.name || `Branch ${c.branch_id}`,
+                }))
+            : []
+        }
         data={
           isViewLoading || !selectedBook
             ? null
