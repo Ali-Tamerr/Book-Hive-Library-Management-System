@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { User } from "lucide-react";
 import { useLibrarians } from "../hooks/useUsers";
 import { useDashboardTransactions } from "../hooks/useBookTransactions";
@@ -10,6 +10,7 @@ import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import AdminDashboardCard from "../components/AdminDashboardCard.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
+
 const MaximizeIcon = ({ className }) => (
   <svg
     width="24"
@@ -43,6 +44,8 @@ function Dashboard() {
   const isSuperAdmin = currentUser?.role === "Super Admin";
   const [loadingAdmins, setLoadingAdmins] = useState({});
   const [selectedTransactionItem, setSelectedTransactionItem] = useState(null);
+  const [activeDotIndex, setActiveDotIndex] = useState(0);
+  const carouselRef = useRef(null);
   useUserActivity();
 
   // Use React Query hooks - newly optimized tiny footprint
@@ -180,14 +183,32 @@ function Dashboard() {
   const compactCardClass =
     "!flex-none !w-[320px] !min-w-[320px] !h-full !min-h-[250px] max-[900px]:!w-full max-[900px]:max-w-[420px]";
 
+  const handleCarouselScroll = () => {
+    if (!carouselRef.current) return;
+    const { scrollLeft, clientWidth } = carouselRef.current;
+    if (clientWidth === 0) return;
+    const newIndex = Math.round(scrollLeft / clientWidth);
+    if (newIndex !== activeDotIndex) {
+      setActiveDotIndex(newIndex);
+    }
+  };
+
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (el) {
+      el.addEventListener("scroll", handleCarouselScroll);
+      return () => el.removeEventListener("scroll", handleCarouselScroll);
+    }
+  }, [activeDotIndex]);
+
   return (
-    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[1540px]:py-4 max-[1080px]:px-11 max-[430px]:w-dvw max-[430px]:px-4">
-      <div className="flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto max-[1540px]:flex-col max-[1540px]:gap-0 max-[1540px]:overflow-x-hidden max-[650px]:overflow-hidden">
-        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[1540px]:mx-0 max-[1540px]:h-fit max-[1540px]:flex-none max-[650px]:shrink">
-          <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[1540px]:h-fit">
-            <div className="[430px]:px-0 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[1540px]:my-0 max-[1540px]:h-fit max-[1540px]:max-w-full max-[1540px]:flex-row max-[1540px]:justify-center max-[1540px]:overflow-hidden max-[650px]:h-auto max-[650px]:gap-4 max-[430px]:scale-90">
+    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[1024px]:py-4 max-[1024px]:px-11 max-[430px]:w-dvw max-[430px]:px-4">
+      <div className="flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto max-[1024px]:flex-col max-[1024px]:gap-0 max-[1024px]:overflow-x-hidden max-[650px]:overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[1024px]:mx-0 max-[1024px]:h-fit max-[1024px]:flex-none max-[650px]:shrink">
+          <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[1024px]:h-fit">
+            <div className="[430px]:px-0 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[1024px]:my-0 max-[1024px]:h-fit max-[1024px]:max-w-full max-[1024px]:flex-row max-[1024px]:justify-center max-[1024px]:overflow-hidden max-[650px]:h-auto max-[650px]:flex-col-reverse max-[650px]:gap-4">
               <PieChartLegend variant="mobile" />
-              <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[1540px]:min-h-[162px] max-[1540px]:min-w-0 max-[1540px]:max-w-[250px] max-[1540px]:pb-0 max-[1080px]:max-w-[180px] max-[650px]:mb-0 max-[650px]:w-[120px]">
+              <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[1024px]:min-h-[162px] max-[1024px]:min-w-0 max-[1024px]:max-w-[250px] max-[1024px]:pb-0 max-[1024px]:max-w-[180px] max-[650px]:mb-0 max-[650px]:w-[50vw] max-[650px]:max-w-none">
                 <PieChart
                   totalBorrowed={stats.totalBorrowed}
                   currentlyBorrowed={stats.currentlyBorrowed}
@@ -199,27 +220,88 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="flex min-h-0 w-full flex-1 flex-col gap-6 max-[1540px]:mt-6">
+        <div className="flex min-h-0 w-full flex-1 max-[1540px]:flex-2 flex-col gap-6 max-[1024px]:mt-6">
           {isSuperAdmin ? (
-            <div className="grid h-full w-full auto-rows-fr grid-cols-2 gap-6 max-[900px]:grid-cols-1">
-              <DashboardCard title="Borrowed Books">
-                {renderTransactionList(borrowedItems, "No borrowed books")}
-              </DashboardCard>
-              <DashboardCard title="Overdue Borrowers">
-                {renderTransactionList(overdueItems, "No overdue books")}
-              </DashboardCard>
-              <DashboardCard title="Returned Books">
-                {renderTransactionList(returnedItems, "No returned books")}
-              </DashboardCard>
-              <AdminDashboardCard
-                title="BookHive Librarian"
-                loading={librariansLoading}
-                displayAdmins={displayAdmins}
-                handleRefreshAdmins={handleRefreshAdmins}
-                loadingAdmins={loadingAdmins}
-                emptyLabel="No librarians found"
-              />
-            </div>
+            <>
+              {/* Desktop Grid */}
+              <div className="grid h-full w-full auto-rows-fr grid-cols-2 gap-6 max-[650px]:hidden">
+                <DashboardCard title="Borrowed Books">
+                  {renderTransactionList(borrowedItems, "No borrowed books")}
+                </DashboardCard>
+                <DashboardCard title="Overdue Borrowers">
+                  {renderTransactionList(overdueItems, "No overdue books")}
+                </DashboardCard>
+                <DashboardCard title="Returned Books">
+                  {renderTransactionList(returnedItems, "No returned books")}
+                </DashboardCard>
+                <AdminDashboardCard
+                  title="BookHive Librarian"
+                  loading={librariansLoading}
+                  displayAdmins={displayAdmins}
+                  handleRefreshAdmins={handleRefreshAdmins}
+                  loadingAdmins={loadingAdmins}
+                  emptyLabel="No librarians found"
+                />
+              </div>
+
+              {/* Mobile Carousel */}
+              <div className="hidden h-full w-full flex-col gap-4 max-[650px]:flex">
+                <div
+                  ref={carouselRef}
+                  className="flex h-full w-full snap-x snap-mandatory flex-row gap-6 overflow-x-auto pb-2 scrollbar-none"
+                  style={{ scrollbarWidth: "none", "-ms-overflow-style": "none" }}
+                >
+                  <div className="w-full shrink-0 snap-center">
+                    <DashboardCard title="Borrowed Books">
+                      {renderTransactionList(borrowedItems, "No borrowed books")}
+                    </DashboardCard>
+                  </div>
+                  <div className="w-full shrink-0 snap-center">
+                    <DashboardCard title="Overdue Borrowers">
+                      {renderTransactionList(overdueItems, "No overdue books")}
+                    </DashboardCard>
+                  </div>
+                  <div className="w-full shrink-0 snap-center">
+                    <DashboardCard title="Returned Books">
+                      {renderTransactionList(returnedItems, "No returned books")}
+                    </DashboardCard>
+                  </div>
+                  <div className="w-full shrink-0 snap-center">
+                    <AdminDashboardCard
+                      title="BookHive Librarian"
+                      loading={librariansLoading}
+                      displayAdmins={displayAdmins}
+                      handleRefreshAdmins={handleRefreshAdmins}
+                      loadingAdmins={loadingAdmins}
+                      emptyLabel="No librarians found"
+                    />
+                  </div>
+                </div>
+
+                {/* Carousel Dots */}
+                <div className="flex justify-center gap-2.5 pb-2">
+                  {[0, 1, 2, 3].map((idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        if (carouselRef.current) {
+                          carouselRef.current.scrollTo({
+                            left: idx * carouselRef.current.clientWidth,
+                            behavior: "smooth",
+                          });
+                        }
+                      }}
+                      className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
+                        activeDotIndex === idx
+                          ? "w-6 bg-[#000035] dark:bg-[#D7D7D7]"
+                          : "bg-[#000035]/30 dark:bg-[#D7D7D7]/30"
+                      }`}
+                      aria-label={`Go to slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
           ) : (
             <div className="mx-auto mt-2 flex h-full min-h-0 w-full max-w-[700px] flex-col gap-5">
               <div className="flex min-h-0 flex-1 justify-center max-[900px]:block max-[900px]:w-full max-[900px]:max-w-[420px] max-[900px]:self-center">
