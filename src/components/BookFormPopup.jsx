@@ -14,6 +14,7 @@ function BookFormPopup({
   categories,
 }) {
   const [showCopiesPopup, setShowCopiesPopup] = useState(false);
+  const [fileName, setFileName] = useState("");
   const fileInputRef = useRef(null);
 
   const onFormChange = (e) => {
@@ -23,6 +24,7 @@ function BookFormPopup({
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setFileName(file.name);
       const reader = new FileReader();
       reader.onloadend = () => {
         // Strip the "data:image/...;base64," prefix for the backend (bytea)
@@ -66,6 +68,15 @@ function BookFormPopup({
 
   const inputs = [
     {
+      name: "file_info",
+      type: "custom",
+      render: () => (
+        <span className=" block text-end text-[11px] -mb-2.5 font-medium text-[#000035]  dark:text-[#D7D7D7]">
+          {fileName}
+        </span>
+      ),
+    },
+    {
       name: "name",
       type: "text",
       placeholder: "Name",
@@ -91,6 +102,7 @@ function BookFormPopup({
   ];
 
   const customLayout = [
+    ...(fileName ? [{ type: "flex", inputs: ["file_info"] }] : []),
     { columns: 1, inputs: ["name"] },
     { columns: 2, inputs: ["quantity", "category_id"] },
   ];
@@ -102,6 +114,7 @@ function BookFormPopup({
         onClose={() => {
           setShowPopup(false);
           setEditMode(false);
+          setFileName("");
         }}
         title={editMode ? "Edit Book" : "Add Book"}
         onSubmit={handleSubmit}
@@ -112,6 +125,7 @@ function BookFormPopup({
         onCancel={() => {
           setShowPopup(false);
           setEditMode(false);
+          setFileName("");
         }}
         icon={<BookOpen size={24} strokeWidth={2.3} />}
         customLayout={customLayout}

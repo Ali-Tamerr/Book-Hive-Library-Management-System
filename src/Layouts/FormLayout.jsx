@@ -58,7 +58,7 @@ const FormLayout = ({
               return (
                 <div
                   key={rowIndex}
-                  className={`flex gap-4 ${row.justify === "center" ? "justify-center" : ""}`}
+                  className={`flex gap-4 ${row.justify === "center" ? "justify-center" : ""} max-[768px]:flex-col`}
                 >
                   {row.inputs.map((inputConfig) => {
                     const inputName =
@@ -93,7 +93,7 @@ const FormLayout = ({
             return (
               <div
                 key={rowIndex}
-                className={`grid gap-4`}
+                className={`grid gap-4 max-[768px]:!grid-cols-1`}
                 style={{ gridTemplateColumns: `repeat(${row.columns}, 1fr)` }}
               >
                 {row.inputs.map((inputName) => {
@@ -109,7 +109,11 @@ const FormLayout = ({
 
     return (
       <div
-        className={inputs.length > 6 ? "grid grid-cols-2 gap-4" : "space-y-3"}
+        className={
+          inputs.length > 6
+            ? "grid grid-cols-1 gap-4 min-[769px]:grid-cols-2"
+            : "space-y-3"
+        }
       >
         {inputs.map((input) => renderInput(input))}
       </div>
@@ -123,18 +127,18 @@ const FormLayout = ({
           <LoadingSpinner size="md" />
         </div>
       )}
-      <form onSubmit={onSubmit} className="flex flex-col gap-14">
-        <div className="px-10">
+      <form onSubmit={onSubmit} className="flex flex-col gap-14 max-[768px]:justify-center">
+        <div className="px-3 sm:px-10">
           {renderFormContent()}
           {children}
         </div>
         {error && (
-          <div className="px-10 text-center text-sm font-medium text-red-500">
+          <div className="px-3 text-center text-sm font-medium text-red-500 sm:px-10">
             {error}
           </div>
         )}
         <div
-          className={`flex justify-between gap-3 ${inputs.length > 6 && !customLayout ? "col-span-2" : ""}`}
+          className={`px-3 sm:px-10 flex flex-col-reverse min-[769px]:flex-row justify-between gap-3 ${inputs.length > 6 && !customLayout ? "col-span-2" : ""}`}
         >
           <FormButton
             onClick={onCancel}

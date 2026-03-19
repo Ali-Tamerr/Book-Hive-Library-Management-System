@@ -13,10 +13,10 @@ function BranchesPopup({ isOpen, onClose }) {
       onClick={onClose}
     >
       <div
-        className="popup-typography relative max-h-[90vh] w-[95%] max-w-[900px] overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="popup-typography relative h-full max-h-none w-full overflow-hidden rounded-none bg-white shadow-2xl min-[769px]:h-auto min-[769px]:max-h-[90vh] min-[769px]:w-[95%] min-[769px]:max-w-[900px] min-[769px]:rounded-2xl max-[768px]:flex max-[768px]:flex-col max-[768px]:justify-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-8">
+        <div className="p-4 min-[769px]:p-8">
           <div className="mb-8 flex items-start justify-between">
             <h2 className="font-['Bebas_Neue',sans-serif] text-3xl font-bold text-[#000035]">
               Our Branches

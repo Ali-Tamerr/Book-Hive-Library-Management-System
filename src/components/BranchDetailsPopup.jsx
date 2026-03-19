@@ -5,7 +5,7 @@ const BranchDetailsPopup = ({ isOpen, onClose, branch }) => {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/10">
-      <div className="popup-typography w-[90%] max-w-[420px] rounded-lg bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.2)] dark:bg-[#121317] dark:text-[#E8E8E8]">
+      <div className="popup-typography h-full max-h-none w-full rounded-none bg-white p-5 shadow-[0_8px_24px_rgba(0,0,0,0.2)] dark:bg-[#121317] dark:text-[#E8E8E8] min-[769px]:h-auto min-[769px]:max-w-[420px] min-[769px]:rounded-lg max-[768px]:flex max-[768px]:flex-col max-[768px]:justify-center">
         <h2 className="mt-0 dark:text-[#E8E8E8]">Branch Details</h2>
 
         <p>

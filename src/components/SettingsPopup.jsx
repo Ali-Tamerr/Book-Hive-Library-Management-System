@@ -22,6 +22,7 @@ const SettingsPopup = ({ show, onClose }) => {
     confirmPassword: "",
   });
   const [selectedImageBase64, setSelectedImageBase64] = useState("");
+  const [selectedFileName, setSelectedFileName] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,6 +44,7 @@ const SettingsPopup = ({ show, onClose }) => {
   const handleSelectPhoto = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    setSelectedFileName(file.name);
     // Only allow PNG and JPEG/JPG
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {

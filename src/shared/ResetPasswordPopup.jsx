@@ -64,11 +64,11 @@ function ResetPasswordPopup({
       onClick={onClose}
     >
       <div
-        className={`relative h-full max-h-[87vh] w-[95%] max-w-[1420px] overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
+        className={`relative h-full max-h-none w-full overflow-hidden rounded-none shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] min-[769px]:h-auto min-[769px]:max-h-[87vh] min-[769px]:w-[95%] min-[769px]:max-w-[1420px] min-[769px]:rounded-2xl ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className={`flex h-full w-full max-[1080px]:flex-col ${isDarkMode ? "bg-[#121317]" : "bg-white"} overflow-hidden`}
+          className={`flex h-full w-full max-[1080px]:flex-col max-[768px]:justify-center ${isDarkMode ? "bg-[#121317]" : "bg-white"} overflow-hidden`}
         >
           <DarkBgSection
             message={

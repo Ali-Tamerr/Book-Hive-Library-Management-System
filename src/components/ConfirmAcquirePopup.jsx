@@ -151,7 +151,7 @@ function ConfirmAcquirePopup({
               </span>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col-reverse min-[769px]:flex-row gap-3">
             <FormButton type="button" onClick={onClose}>
               CANCEL
             </FormButton>
