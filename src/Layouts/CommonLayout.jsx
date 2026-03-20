@@ -55,9 +55,9 @@ const CommonLayout = ({
   }, [hasMore, onLoadMore, isLoading]);
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-5 p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
+    <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
       <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
-        <div className="flex items-center justify-between max-[856px]:gap-2">
+        <div className="flex items-center justify-between max-[856px]:flex-col-reverse max-[856px]:items-stretch max-[856px]:gap-4">
           {customTitle ? (
             customTitle
           ) : (
@@ -96,12 +96,12 @@ const CommonLayout = ({
         </div>
       </div>
 
-      <section className="flex min-h-0 flex-1 overflow-x-auto rounded-lg">
+      <section className="flex min-h-0 flex-1 overflow-hidden rounded-lg">
         <div
           ref={scrollContainerRef}
-          className="min-h-0 min-w-[800px] flex-1 overflow-y-auto rounded-lg pb-4"
+          className="flex-1 min-h-0 min-w-0 overflow-auto rounded-lg pb-4"
         >
-          <table className="w-full border-collapse text-left text-sm dark:text-[#E8E8E8]">
+          <table className="w-full min-w-[800px] border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead className="sticky top-0 z-10 bg-[#f0f0f1] transition-colors duration-300 dark:bg-[#121317]">
               <tr>
                 {columns.map((col) => (
