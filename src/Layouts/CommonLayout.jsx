@@ -57,11 +57,13 @@ const CommonLayout = ({
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5 ">
       <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
-        <div className="flex items-center justify-between max-[856px]:flex-col-reverse max-[856px]:items-stretch max-[856px]:gap-4">
+        <div
+          className={`flex items-center justify-between max-[856px]:items-stretch max-[856px]:gap-2 ${customTitle ? "max-[856px]:flex-col-reverse" : "max-[856px]:flex-col"}`}
+        >
           {customTitle ? (
             customTitle
           ) : (
-            <h2 className="whitespace-nowrap text-4xl font-semibold tracking-widest max-[856px]:text-sm dark:text-[#E8E8E8]">
+            <h2 className="whitespace-nowrap text-4xl font-semibold tracking-widest dark:text-[#E8E8E8] max-[856px]:mx-auto max-[856px]:w-[92%] max-[856px]:whitespace-normal max-[856px]:text-center max-[856]:text-[50px] max-[480px]:text-[25px]">
               {title}
             </h2>
           )}
