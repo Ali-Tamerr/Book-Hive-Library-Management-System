@@ -123,12 +123,12 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             )}
           </div>
           <div className="flex flex-col text-left">
-            <h3 className="text-xl font-semibold tracking-wider max-[480px]:text-sm max-[350px]:text-xs">
+            <h3 className="text-xl font-semibold tracking-wider max-[480px]:text-sm ">
               {currentUser
                 ? currentUser.first_name + " " + currentUser.last_name || "User"
                 : "Loading..."}
             </h3>
-            <p className="text-[12px] -mt-[4px] font-semibold max-[350px]:text-[10px]">
+            <p className="text-[12px] -mt-[4px] font-semibold ">
               {roleLabel}
             </p>
           </div>
