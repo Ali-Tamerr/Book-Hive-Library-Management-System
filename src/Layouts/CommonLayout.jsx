@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { FilePenLine, Trash2, ReceiptText } from "lucide-react";
 import SearchBar from "../components/SearchBar.jsx";
 import ButtonOne from "../components/ButtonOne.jsx";
@@ -55,7 +55,7 @@ const CommonLayout = ({
   }, [hasMore, onLoadMore, isLoading]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
+    <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5 ">
       <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
         <div className="flex items-center justify-between max-[856px]:flex-col-reverse max-[856px]:items-stretch max-[856px]:gap-4">
           {customTitle ? (
@@ -99,7 +99,7 @@ const CommonLayout = ({
       <section className="flex min-h-0 flex-1 overflow-hidden rounded-lg">
         <div
           ref={scrollContainerRef}
-          className="flex-1 min-h-0 min-w-0 overflow-auto rounded-lg pb-4"
+          className="min-h-0 min-w-0 flex-1 overflow-auto rounded-lg pb-4"
         >
           <table className="w-full min-w-[800px] border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead className="sticky top-0 z-10 bg-[#f0f0f1] transition-colors duration-300 dark:bg-[#121317]">
@@ -107,7 +107,7 @@ const CommonLayout = ({
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className={`py-3 px-4 text-center text-[22px] font-extrabold tracking-widest whitespace-nowrap`}
+                    className={`whitespace-nowrap px-4 py-3 text-center text-[22px] font-extrabold tracking-widest`}
                   >
                     {col.header}
                   </th>
@@ -122,10 +122,7 @@ const CommonLayout = ({
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="py-12 text-center"
-                  >
+                  <td colSpan={columns.length} className="py-12 text-center">
                     <div className="flex justify-center">
                       <LoadingSpinner size="sm" />
                     </div>
@@ -193,7 +190,7 @@ const CommonLayout = ({
                       return (
                         <td
                           key={col.accessor}
-                          className={`py-3 px-4 text-center whitespace-nowrap dark:text-white`}
+                          className={`whitespace-nowrap px-4 py-3 text-center dark:text-white`}
                         >
                           {cellContent}
                         </td>
