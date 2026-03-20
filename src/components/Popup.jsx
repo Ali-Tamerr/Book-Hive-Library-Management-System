@@ -36,8 +36,19 @@ const Popup = ({
       >
         {!hideHeader && (
           <div
-            className={`flex shrink-0 items-center justify-between pb-5 ${headerClassName || ""}`}
+            className={`flex shrink-0 max-[768px]:flex-col max-[768px]:gap-4 min-[769px]:flex-row-reverse min-[769px]:items-center min-[769px]:justify-between pb-5 ${headerClassName || ""}`}
           >
+            {/* Row 1 for Mobile / Right side for Desktop */}
+            <div className="flex justify-end">
+              <button
+                onClick={onClose}
+                className={`cursor-pointer rounded-md border border-[#000035] p-1 text-[#000035] transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7] min-[769px]:mr-13 ${closeButtonClassName || ""}`}
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            {/* Row 2 for Mobile / Left side for Desktop */}
             <div className="flex items-center gap-4">
               {icon && (
                 <div
@@ -52,12 +63,6 @@ const Popup = ({
                 {title}
               </h2>
             </div>
-            <button
-              onClick={onClose}
-              className={`mr-13 cursor-pointer rounded-md border border-[#000035] p-1 text-[#000035] transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7] ${closeButtonClassName || ""}`}
-            >
-              <X size={14} />
-            </button>
           </div>
         )}
         {!hideDivider && (
