@@ -183,7 +183,7 @@ function Layout({
           setSearchValue={setSearchValue}
           toggleSidebar={toggleSidebar}
         />
-        <div className="[1540px]:py-0 flex h-0 min-h-0 flex-1 flex-col overflow-auto">
+        <div className="[1540px]:py-0 flex h-0 min-h-0 flex-1 flex-col overflow-hidden">
           <Suspense fallback={<PageLoader />}>{children}</Suspense>
         </div>
       </main>
