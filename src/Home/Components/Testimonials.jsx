@@ -77,8 +77,8 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
   const hasFeedbacks = processedFeedbacks.length > 0;
 
   return (
-    <section className="py-18 pb-4" id="testimonial">
-      <h2 className="mb-14 text-center font-[family-name:var(--body-font)] text-[68px] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)]">
+    <section className="py-8 pb-0" id="testimonial">
+      <h2 className="mb-7 text-center font-[family-name:var(--body-font)] text-[46px] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)]">
         CUSTOMER OPINIONS
       </h2>
       <div className="mx-auto w-full max-w-[1600px] px-6" data-reveal>
@@ -94,18 +94,18 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                 Array.from({ length: safePerView }).map((_, idx) => (
                   <article
                     key={`skeleton-${idx}`}
-                    className="duration-400 shrink-0 rounded-[24px] bg-[#D7D7D7] px-12 py-10 pb-12 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"
+                    className="duration-400 shrink-0 rounded-[20px] bg-[#D7D7D7] px-6 py-5 pb-6 text-center transition-colors dark:border dark:border-[#b9bdc8] dark:bg-[#121317]"
                     style={{
-                      width: `calc(${100 / safePerView}% - 50px)`,
-                      margin: "0 25px",
+                      width: `calc(${100 / safePerView}% - 28px)`,
+                      margin: "0 14px",
                     }}
                   >
-                    <div className="mx-auto mb-8 flex h-[108px] w-[108px] items-center justify-center rounded-full bg-[#e6e7eb] dark:bg-[#171c29]">
+                    <div className="mx-auto mb-4 flex h-[74px] w-[74px] items-center justify-center rounded-full bg-[#e6e7eb] dark:bg-[#171c29]">
                       <LoadingSpinner size="lg" />
                     </div>
-                    <div className="mx-auto mb-5 h-7 w-36 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
-                    <div className="mx-auto mb-8 h-16 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
-                    <div className="text-[36px] text-[#000035] dark:text-[#d3d6de]">
+                    <div className="mx-auto mb-3 h-5 w-28 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
+                    <div className="mx-auto mb-4 h-12 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
+                    <div className="text-[24px] text-[#000035] dark:text-[#d3d6de]">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <i key={i} className="ri-star-line"></i>
                       ))}
@@ -121,30 +121,30 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                   return (
                     <article
                       key={`${fb.request_id ?? fb.feedback_id ?? fb.user_id}-${idx}`}
-                      className="duration-400 shrink-0 rounded-[24px] border border-[#000035] px-12 py-10 pb-12 text-center transition-colors dark:border-[#D7D7D7]"
+                      className="duration-400 shrink-0 rounded-[20px] border border-[#000035] px-6 py-5 pb-6 text-center transition-colors dark:border-[#D7D7D7]"
                       style={{
-                        width: `calc(${100 / safePerView}% - 50px)`,
-                        margin: "0 25px",
+                        width: `calc(${100 / safePerView}% - 28px)`,
+                        margin: "0 14px",
                       }}
                     >
                       {fb.user_image || fb.image || fb.user_image_url ? (
                         <LazyImage
                           src={getImageUrl(fb.user_image || fb.image || fb.user_image_url)}
                           alt={fb.user_name || fb.user_id || "Guest"}
-                          className="mx-auto mb-8 !h-[92px] !w-[92px] overflow-hidden rounded-full object-cover"
+                          className="mx-auto mb-4 !h-[64px] !w-[64px] overflow-hidden rounded-full object-cover"
                         />
                       ) : (
-                        <div className="mx-auto mb-8 flex h-[92px] w-[92px] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] dark:bg-[#171c29] dark:text-[#d3d6de]">
-                          <i className="ri-user-line text-[54px]"></i>
+                        <div className="mx-auto mb-4 flex h-[64px] w-[64px] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] dark:bg-[#171c29] dark:text-[#d3d6de]">
+                          <i className="ri-user-line text-[38px]"></i>
                         </div>
                       )}
-                      <h2 className="mb-5 font-[family-name:var(--body-font)] text-[42px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-[#d3d6de]">
+                      <h2 className="mb-3 font-[family-name:var(--body-font)] text-[28px] font-extrabold uppercase tracking-wide text-[#000035] dark:!text-[#d3d6de]">
                         {fb.user_name || fb.user_id || "Guest"}
                       </h2>
-                      <p className="mx-auto mb-8 max-w-[740px] font-[family-name:var(--second-font)] text-[24px] font-bold leading-relaxed text-[#000035] dark:!text-[#c3c7d1]">
+                      <p className="mx-auto mb-4 max-w-[540px] font-[family-name:var(--second-font)] text-[17px] font-bold leading-[1.45] text-[#000035] dark:!text-[#c3c7d1]">
                         {fb.feedback || fb.description || "Great experience!"}
                       </p>
-                      <div className="text-[36px] text-[#000035] dark:text-[#d3d6de]">
+                      <div className="text-[24px] text-[#000035] dark:text-[#d3d6de]">
                         {Array.from({ length: fullStars }, (_, i) => (
                           <i key={`full-${i}`} className="ri-star-fill"></i>
                         ))}
