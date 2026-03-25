@@ -135,8 +135,6 @@ export const login = async (email, password) => {
       throw new Error("Failed to fetch users. Please try again.");
     }
 
-    console.log("Total users fetched:", users.length);
-
     const normalizedEmail = String(email || "")
       .toLowerCase()
       .trim();
@@ -152,15 +150,11 @@ export const login = async (email, password) => {
       throw new Error("User not found. Please check your email address.");
     }
 
-    console.log("User found:", { email: user.email, role: user.role });
-
     const storedPassword = user.password_hash || user.password || "";
     if (storedPassword !== password) {
       console.error("Password mismatch for user:", email);
       throw new Error("Incorrect password. Please try again.");
     }
-
-    console.log("Password verified successfully");
 
     persistAuthSession(user);
 
@@ -186,17 +180,6 @@ export const signup = async (userData) => {
       throw new Error("This email is already linked to another account.");
     }
 
-    console.log("Creating user with data:", {
-      user_id: userData.user_id,
-      first_name: userData.first_name,
-      last_name: userData.last_name,
-
-      email: userData.email,
-      password_hash: userData.password,
-      role: "User",
-      status: "Active",
-    });
-
     const createdUser = await createUser({
       user_id: userData.user_id,
       first_name: userData.first_name,
@@ -208,14 +191,9 @@ export const signup = async (userData) => {
       status: "Active",
     });
 
-    console.log("API response after createUser:", createdUser);
-
     let user = createdUser;
 
     if (!createdUser || createdUser === "" || typeof createdUser === "string") {
-      console.log(
-        "API returned empty/invalid response, fetching user by email...",
-      );
       const allUsers = await getAllUsersForAuth();
       user = Array.isArray(allUsers)
         ? allUsers.find(
@@ -224,7 +202,6 @@ export const signup = async (userData) => {
               String(userData.email || "").trim(),
           )
         : null;
-      console.log("Found user after fetch:", user);
     }
 
     if (!user || !user.user_id) {
@@ -232,8 +209,6 @@ export const signup = async (userData) => {
     }
 
     persistAuthSession(user);
-
-    console.log("User saved to localStorage:", user);
 
     return user;
   } catch (error) {

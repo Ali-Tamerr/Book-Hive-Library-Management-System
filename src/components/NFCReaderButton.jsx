@@ -48,8 +48,6 @@ const NFCReaderButton = ({
     try {
       setIsActivating(true);
 
-      console.log("Calling startRegisterMode for", deviceId);
-
       // ننده Edge Function ونبعت device_id بس
       await startRegisterMode(deviceId);
 

@@ -92,31 +92,23 @@ export const NFCReaderProvider = ({ children }) => {
     }
 
     try {
-      console.log("Requesting serial port...");
       const port = await navigator.serial.requestPort();
-      console.log("Port selected:", port);
 
       portRef.current = port;
-      console.log("Opening port with baudRate 9600...");
       await port.open({ baudRate: 9600 });
-      console.log("Port opened successfully!");
 
       setIsConnected(true);
-      console.log("Connection state set to true");
 
       port.ondisconnect = () => {
-        console.log("Port disconnected");
         setIsConnected(false);
         portRef.current = null;
         readerRef.current = null;
       };
 
-      console.log("Setting up text decoder...");
       const textDecoder = new TextDecoderStream();
       const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
       const reader = textDecoder.readable.getReader();
       readerRef.current = reader;
-      console.log("Reader ready, waiting for data...");
 
       (async () => {
         let buffer = "";
@@ -127,12 +119,10 @@ export const NFCReaderProvider = ({ children }) => {
             const { value, done } = await reader.read();
 
             if (done) {
-              console.log("Reader done");
               break;
             }
 
             if (value) {
-              console.log("Raw data received:", value);
               buffer += value;
 
               // Clear any pending flush since we got new data
@@ -155,7 +145,6 @@ export const NFCReaderProvider = ({ children }) => {
                 parts.forEach((part) => {
                   const trimmed = part.trim();
                   if (trimmed) {
-                    console.log("✅ NFC Tag ID:", trimmed);
                     notifyCallbacks(trimmed);
                   }
                 });
@@ -169,7 +158,6 @@ export const NFCReaderProvider = ({ children }) => {
                 flushTimer = setTimeout(() => {
                   const trimmed = buffer.trim();
                   if (trimmed) {
-                    console.log("✅ NFC Tag ID (Timeout Flush):", trimmed);
                     notifyCallbacks(trimmed);
                     buffer = "";
                   }
@@ -180,7 +168,6 @@ export const NFCReaderProvider = ({ children }) => {
         } catch (error) {
           console.error("❌ Read loop error:", error);
         } finally {
-          console.log("Cleaning up reader...");
           reader.releaseLock();
           setIsConnected(false);
           if (portRef.current) {
@@ -199,7 +186,7 @@ export const NFCReaderProvider = ({ children }) => {
     } catch (error) {
       console.error("Connection error:", error);
       if (error.name === "NotFoundError") {
-        console.log("User cancelled port selection");
+        // User cancelled port selection
       } else if (error.name === "InvalidStateError") {
         alert("The port is already open. Please disconnect and try again.");
       } else {
@@ -241,7 +228,6 @@ export const NFCReaderProvider = ({ children }) => {
     let pollInterval;
 
     if (isWireless) {
-      console.log(`Starting Wireless Polling for Device: ${targetDeviceId}...`);
       pollInterval = setInterval(async () => {
         try {
           const data = await apiGet("/NfcScans");
@@ -261,7 +247,6 @@ export const NFCReaderProvider = ({ children }) => {
                 new Date(latestScan.created_at) >
                 new Date(lastProcessedScanTimeRef.current)
               ) {
-                console.log("New Wireless Scan (API):", latestScan.tag_id);
                 notifyCallbacks(latestScan.tag_id);
                 lastProcessedScanTimeRef.current = latestScan.created_at;
               }
