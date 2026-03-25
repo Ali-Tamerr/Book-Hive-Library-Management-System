@@ -55,25 +55,25 @@ const CommonLayout = ({
   }, [hasMore, onLoadMore, isLoading]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
-      <div className="flex flex-col gap-3 pr-7 max-[1080px]:px-5">
+    <div className="flex min-h-0 flex-1 flex-col gap-5 max-[1080px]:gap-2 overflow-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
+      <div className="flex flex-col gap-3 max-[1080px]:gap-2 pr-7 max-[1080px]:px-5">
         <div
-          className={`flex items-center justify-between max-[856px]:items-stretch max-[856px]:gap-2 ${customTitle ? "max-[856px]:flex-col-reverse" : "max-[856px]:flex-col"}`}
+          className={`flex items-center justify-between gap-12 max-[1000px]:items-stretch max-[1000px]:gap-2 ${customTitle ? "max-[1000px]:flex-col-reverse" : "max-[1000px]:flex-col"}`}
         >
           {customTitle ? (
             customTitle
           ) : (
-            <h2 className="max-[856px]:mx-auto max-[856px]:w-[92%] max-[856px]:whitespace-normal max-[856px]:text-center max-[856]:text-[50px] whitespace-nowrap text-4xl font-semibold tracking-widest max-[480px]:text-[25px] dark:text-[#E8E8E8]">
+            <h2 className="max-[1000px]:mx-auto max-[1000px]:w-[92%] max-[1000px]:whitespace-normal max-[1000px]:text-center max-[1000]:text-[50px] whitespace-nowrap text-4xl font-semibold tracking-widest max-[480px]:text-[25px] dark:text-[#E8E8E8]">
               {title}
             </h2>
           )}
-          <div className="max-[856px]:flex hidden h-10 flex-1">
+          <div className="max-[1000px]:flex hidden h-10 flex-1">
             <SearchBar
               searchValue={searchValue}
               setSearchValue={setSearchValue}
             />
           </div>
-          <div className="max-[856px]:hidden flex h-10 gap-2">
+          <div className="max-[1000px]:hidden flex h-10 gap-2">
             {secondaryButton}
             {buttonText && (
               <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />
@@ -84,18 +84,23 @@ const CommonLayout = ({
             />
           </div>
         </div>
-        <div className="max-[856px]:flex hidden h-10 gap-2">
-          {secondaryButton && (
-            <div className="flex-1 [&>button]:w-full [&>button]:justify-center">
-              {secondaryButton}
-            </div>
-          )}
-          {buttonText && (
-            <div className="flex-1">
-              <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />
-            </div>
-          )}
-        </div>
+        {(secondaryButton || buttonText) && (
+          <div className="max-[1000px]:flex hidden h-10 gap-2">
+            {secondaryButton && (
+              <div className="flex-1 [&>button]:w-full [&>button]:justify-center">
+                {secondaryButton}
+              </div>
+            )}
+            {buttonText && (
+              <div className="flex-1">
+                <ButtonOne
+                  buttonBehaviour={buttonBehaviour}
+                  text={buttonText}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <section className="flex min-h-0 flex-1 overflow-hidden rounded-lg">

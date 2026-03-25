@@ -8,13 +8,13 @@ function UserCatalog({ searchValue }) {
     const [localActiveTab, setLocalActiveTab] = useState('borrowed');
 
     const tabButtons = (
-        <div className="flex gap-4 max-[650px]:grid max-[650px]:grid-cols-1">
+        <div className="flex gap-4 max-[650px]:grid max-[650px]:grid-cols-1 max-[650px]:gap-2">
             <TabButton
                 label="Borrowed Books"
                 isActive={localActiveTab === 'borrowed'}
                 onClick={() => setLocalActiveTab('borrowed')}
                 position="first"
-                className="font-[family-name:var(--body-font)]"
+                className="!font-['Bebas_Neue',sans-serif]"
             />
             <TabButton
                 label="Returned Books"
@@ -26,7 +26,7 @@ function UserCatalog({ searchValue }) {
                 isActive={localActiveTab === 'overdue'}
                 onClick={() => setLocalActiveTab('overdue')}
                 position="last"
-                className="font-[family-name:var(--body-font)]"
+                className="!font-['Bebas_Neue',sans-serif]"
             />
         </div>
     );
