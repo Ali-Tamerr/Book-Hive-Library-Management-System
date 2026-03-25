@@ -103,13 +103,13 @@ const CommonLayout = ({
           ref={scrollContainerRef}
           className="min-h-0 min-w-0 flex-1 overflow-auto rounded-lg pb-4"
         >
-          <table className="w-full min-w-[800px] border-collapse text-left text-sm dark:text-[#E8E8E8]">
+          <table className="w-full min-w-[800px] table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead className="sticky top-0 z-10 bg-[#f0f0f1] transition-colors duration-300 dark:bg-[#121317]">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className={`whitespace-nowrap px-4 py-3 text-center text-[22px] font-extrabold tracking-widest`}
+                    className={`px-4 py-3 text-center text-[22px] font-extrabold tracking-widest`}
                   >
                     {col.header}
                   </th>
@@ -192,7 +192,7 @@ const CommonLayout = ({
                       return (
                         <td
                           key={col.accessor}
-                          className={`whitespace-nowrap px-4 py-3 text-center dark:text-white`}
+                          className={`px-4 py-3 text-center dark:text-white`}
                         >
                           {cellContent}
                         </td>

@@ -5,23 +5,22 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
   if (variant === "mobile") {
     return (
       <div
-        className={`max-[340px]:scale-90 hidden items-center gap-7 whitespace-nowrap rounded-md border border-[#000035] bg-transparent p-5 max-[1024px]:flex  dark:border-[rgba(185,189,200,0.78)] dark:bg-[#121317] dark:text-[#d3d6de] ${className || ""}`}
-        style={{ transform: `scale(clamp(0.75, calc((100vh - 200px) / 700px), 1))`, transformOrigin: "center center" }}
+        className={`max-[340px]:scale-90 hidden w-fit flex-col items-center justify-center gap-2 rounded-md border border-[#000035] bg-transparent px-3.5 py-3 dark:border-[rgba(185,189,200,0.78)] dark:bg-[#121317] dark:text-[#d3d6de] max-[1024px]:flex ${className || ""}`}
       >
-        <div className="flex flex-col gap-5">
-          <div className="flex items-center gap-1.5">
-            <svg width="14" height="14" viewBox="0 0 14 14">
-              <circle cx="7" cy="7" r="5" fill="var(--pie-returned-color)" />
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <svg width="12" height="12" viewBox="0 0 14 14">
+              <circle cx="7" cy="7" r="6" fill="var(--pie-returned-color)" />
             </svg>
-            <p className="text-xs font-medium text-[#000035] max-[340px]:whitespace-nowrap dark:text-[#d3d6de]">
+            <p className="text-sm font-medium text-[#000035] dark:text-[#d3d6de]">
               Total Borrowed Books
             </p>
           </div>
-          <div className="flex items-center gap-1.5">
-            <svg width="14" height="14" viewBox="0 0 14 14">
-              <circle cx="7" cy="7" r="5" fill="var(--pie-borrowed-color)" />
+          <div className="flex items-center gap-3">
+            <svg width="12" height="12" viewBox="0 0 14 14">
+              <circle cx="7" cy="7" r="6" fill="var(--pie-borrowed-color)" />
             </svg>
-            <p className="text-xs font-medium text-[#000035] max-[340px]:whitespace-nowrap dark:text-[#d3d6de]">
+            <p className="text-sm font-medium text-[#000035] dark:text-[#d3d6de]">
               Borrowed Limited Books
             </p>
           </div>
