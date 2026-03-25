@@ -55,7 +55,6 @@ export const startRegisterMode = async (deviceId) => {
       });
 
       if (error) throw error;
-      console.log("Successfully updated deviceregisterstate table");
     } catch (err) {
       console.warn("Direct table write failed:", err);
     }

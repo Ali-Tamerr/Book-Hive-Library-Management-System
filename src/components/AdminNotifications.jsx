@@ -171,14 +171,11 @@ const AdminNotifications = () => {
         created_by: currentUser?.user_id || null,
       };
 
-      console.log("Sending user data:", JSON.stringify(apiData, null, 2));
-
       await createUserMutation.mutateAsync(apiData);
 
       if (pendingRequestId) {
         try {
           await deleteRequestMutation.mutateAsync(pendingRequestId);
-          console.log("Request deleted successfully:", pendingRequestId);
         } catch (deleteError) {
           console.error("Failed to delete request:", deleteError);
         }
@@ -289,7 +286,6 @@ const AdminNotifications = () => {
         books={books}
         bookCopies={bookCopies}
         onApproveBook={async (request) => {
-          console.log("Admin approving borrow request:", request);
           try {
             const bookCopy = bookCopies.find(
               (bc) => bc.book_copy_id === request.book_id,

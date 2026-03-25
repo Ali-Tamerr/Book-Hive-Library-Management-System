@@ -71,14 +71,6 @@ function UserManagement({ searchValue, setSearchValue }) {
   // Infinite Scroll Handler
   const handleScroll = (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.target;
-    console.log("Scroll:", {
-      scrollTop,
-      clientHeight,
-      scrollHeight,
-      diff: scrollHeight - scrollTop - clientHeight,
-      hasNextPage,
-      isFetchingNextPage,
-    });
 
     // Trigger update when scrolled to bottom (within 50px)
     if (
@@ -86,23 +78,9 @@ function UserManagement({ searchValue, setSearchValue }) {
       hasNextPage &&
       !isFetchingNextPage
     ) {
-      console.log("Fetching next page...");
       fetchNextPage();
     }
   };
-
-  // Debugging logs
-  useEffect(() => {
-    if (users.length > 0 || isError) {
-      console.log("UserManagement Debug:", {
-        usersCount: users.length,
-        isError,
-        error: error?.message,
-        currentUserRole: currentUser?.role,
-        currentUserBranch: getUserBranchName(currentUser),
-      });
-    }
-  }, [users, isError, error, currentUser]);
 
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
@@ -134,7 +112,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         document.body.offsetHeight - 100
       ) {
         if (hasNextPage && !isFetchingNextPage) {
-          console.log("Window scroll bottom reached, fetching next page...");
           fetchNextPage();
         }
       }
@@ -173,8 +150,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         created_by: currentUser?.user_id || null,
         branch_id: formData.branch_id ? parseInt(formData.branch_id, 10) : null,
       };
-
-      console.log("Sending user data:", JSON.stringify(apiData, null, 2));
 
       if (editMode && formData.user_id) {
         const originalUser = users.find((u) => u.user_id === formData.user_id);
@@ -383,13 +358,6 @@ function UserManagement({ searchValue, setSearchValue }) {
     const baseDate = currentEnd > now ? currentEnd : now;
     const newEndDate = new Date(baseDate);
     newEndDate.setMonth(newEndDate.getMonth() + 1);
-
-    console.log(
-      "Renewing user:",
-      selectedRenewUser.user_id,
-      "New Date:",
-      newEndDate,
-    );
 
     try {
       // Exclude created_by to avoid issues if backend strictly checks joins/foreign keys on update
