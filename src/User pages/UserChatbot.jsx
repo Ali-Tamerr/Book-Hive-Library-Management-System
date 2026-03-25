@@ -3,15 +3,18 @@ import { useMutation } from "@tanstack/react-query";
 import {
   Bot,
   Loader2,
-  MessageSquareText,
   Search,
   SendHorizontal,
   Trash2,
   UserRound,
+  MessageSquareText,
+  Menu,
+  X,
 } from "lucide-react";
 import { apiDelete, apiGet, apiPost, getImageUrl } from "../services/api.config";
 import { getCurrentUser } from "../services/auth.api";
 import { useUser } from "../hooks/useUsers";
+import ChatSidebar from "../components/ChatSidebar";
 
 const quickActions = [
   {
@@ -100,6 +103,7 @@ function UserChatbot() {
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isChatSidebarOpen, setIsChatSidebarOpen] = useState(false);
   const messagesEndRef = useRef(null);
   const currentLoadingIdRef = useRef(null);
 
@@ -407,163 +411,52 @@ function UserChatbot() {
   };
 
   return (
-    <div className="flex h-full w-full">
-      <main className="flex h-full flex-1 flex-col gap-3 px-5 py-3">
-        <div className="flex items-center gap-3">
-          <MessageSquareText
-            className="text-[#000035] dark:text-[#D7D7D7]"
-            size={22}
-            strokeWidth={2}
-          />
-          <h1 className="text-3xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
-            Chatbot
-          </h1>
+    <div className="flex h-full w-full relative overflow-hidden">
+      <main className="flex h-full flex-1 flex-col gap-3 px-5 py-3 relative z-10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <MessageSquareText
+              className="text-[#000035] dark:text-[#D7D7D7]"
+              size={22}
+              strokeWidth={2}
+            />
+            <h1 className="text-3xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
+              Chatbot
+            </h1>
+          </div>
+          
+          {/* Scoped Sidebar Toggle - mobile only */}
+          <button
+            onClick={() => setIsChatSidebarOpen(!isChatSidebarOpen)}
+            className="flex min-[1000px]:hidden h-10 w-10 items-center justify-center rounded-lg border border-[#000035] text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] cursor-pointer"
+          >
+            {isChatSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
 
-        <section className="flex h-full gap-3 max-[980px]:flex-col">
-          <aside className="flex w-full max-w-[360px] flex-col gap-3 max-[980px]:max-w-none">
-            <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                  Conversation
-                </h2>
-                <span className="text-xs text-[#000035] opacity-70 dark:text-[#D7D7D7]">
-                  {sessions.length}
-                </span>
-              </div>
+        {/* New divider between page title and chatbot section */}
+        <div className="hidden max-[1000px]:block h-[1px] w-full bg-[#000035] dark:bg-[#D7D7D7] my-1"></div>
 
-              <div className="relative mt-4">
-                <Search
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Search conversations"
-                  className="w-full rounded-lg border border-[#000035] py-1.5 pl-10 pr-3.5 text-sm transition-colors placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7]"
-                />
-              </div>
+        <section className="flex h-full gap-3 overflow-hidden">
+          <ChatSidebar
+            isOpen={isChatSidebarOpen}
+            onClose={() => setIsChatSidebarOpen(false)}
+            sessions={sessions}
+            sessionId={sessionId}
+            loadSession={loadSession}
+            deleteSession={deleteSession}
+            handleNewChat={handleNewChat}
+            handleSendMessage={handleSendMessage}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            messages={messages}
+            chatMutation={chatMutation}
+            deleteSessionMutation={deleteSessionMutation}
+            quickActions={quickActions}
+          />
 
-              <div className="mt-4 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
-                {sessions.length === 0 ? (
-                  <div className="flex h-full flex-col items-center justify-center rounded-lg border border-dashed border-[#000035] px-6 text-center text-sm text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7]">
-                    No saved conversations yet.
-                  </div>
-                ) : (
-                  sessions
-                    .filter((s) =>
-                      String(s.title || "")
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()),
-                    )
-                    .map((session) => {
-                      const isActive = session.id === sessionId;
-
-                      return (
-                        <div
-                          key={session.id}
-                          onClick={() => loadSession(session.id)}
-                          onKeyDown={(event) => {
-                            if (event.target !== event.currentTarget) return;
-                            if (event.key === "Enter" || event.key === " ") {
-                              event.preventDefault();
-                              loadSession(session.id);
-                            }
-                          }}
-                          role="button"
-                          tabIndex={0}
-                          className={`flex items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors cursor-pointer ${
-                            isActive && messages.length > 1
-                              ? "border-[#000035] bg-white dark:border-[#D7D7D7] dark:bg-[#D7D7D7]"
-                              : "border-[#000035] bg-transparent hover:bg-white/70 dark:border-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
-                          }`}
-                        >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
-                            <Bot size={18} />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div
-                              className={`truncate text-sm font-semibold ${
-                                isActive && messages.length > 1
-                                  ? "text-[#000035] dark:text-[#121317]"
-                                  : "text-[#000035] dark:text-[#D7D7D7]"
-                              }`}
-                            >
-                              {session.title}
-                            </div>
-                            <div
-                              className={`mt-0.5 text-xs ${
-                                isActive && messages.length > 1
-                                  ? "text-[#000035] opacity-70 dark:text-[#121317]"
-                                  : "text-[#121317] opacity-70 dark:text-[#D7D7D7]"
-                              }`}
-                            >
-                              {session.messageCount ||
-                                (session.messages
-                                  ? session.messages.length
-                                  : 0)}{" "}
-                              messages
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={(event) =>
-                              deleteSession(event, session.id)
-                            }
-                            className={`shrink-0 cursor-pointer ${
-                              isActive && messages.length > 1
-                                ? "text-[#000035] dark:text-[#121317]"
-                                : "text-[#000035] dark:text-[#D7D7D7]"
-                            } opacity-70 transition-colors hover:text-red-600`}
-                            aria-label="Delete chat"
-                            disabled={deleteSessionMutation.isPending}
-                          >
-                            {deleteSessionMutation.isPending &&
-                            deleteSessionMutation.variables === session.id ? (
-                              <Loader2 size={16} className="animate-spin" />
-                            ) : (
-                              <Trash2 size={16} />
-                            )}
-                          </button>
-                        </div>
-                      );
-                    })
-                )}
-              </div>
-
-              <button
-                type="button"
-                onClick={handleNewChat}
-                className="mx-auto mt-4 min-w-[132px] rounded-xl border border-[#000035] bg-transparent px-5 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10 cursor-pointer"
-              >
-                New Chat
-              </button>
-            </section>
-
-            <section className="rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
-              <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
-                Quick Action
-              </h2>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                {quickActions.map((action) => (
-                  <button
-                    key={action.label}
-                    type="button"
-                    onClick={() => handleSendMessage(action.prompt)}
-                    disabled={chatMutation.isPending}
-                    className="rounded-xl cursor-pointer border border-[#000035] bg-transparent px-3 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
-                  >
-                    {action.label}
-                  </button>
-                ))}
-              </div>
-            </section>
-          </aside>
-
-          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
-            <div className="flex items-center justify-between border-b border-[#000035] pb-3 dark:border-[#D7D7D7]">
+          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7] max-[1000px]:border-none max-[1000px]:p-0">
+            <div className="flex items-center justify-between border-b border-[#000035] pb-3 dark:border-[#D7D7D7] max-[1000px]:mb-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
                   <Bot size={18} />
@@ -584,7 +477,7 @@ function UserChatbot() {
               </div>
             </div>
 
-            <div className="mt-4 flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
+            <div className="mt-4 flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7] max-[1000px]:mt-0 max-[1000px]:border-none max-[1000px]:p-0">
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1">
                 {messages.map((message) =>
                   message.sender === "bot" ? (

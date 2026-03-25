@@ -14,7 +14,7 @@ function UserCatalog({ searchValue }) {
                 isActive={localActiveTab === 'borrowed'}
                 onClick={() => setLocalActiveTab('borrowed')}
                 position="first"
-                className="!font-['Bebas_Neue',sans-serif]"
+                className="font-['Bebas_Neue',sans-serif]!"
             />
             <TabButton
                 label="Returned Books"
@@ -26,7 +26,7 @@ function UserCatalog({ searchValue }) {
                 isActive={localActiveTab === 'overdue'}
                 onClick={() => setLocalActiveTab('overdue')}
                 position="last"
-                className="!font-['Bebas_Neue',sans-serif]"
+                className="font-['Bebas_Neue',sans-serif]!"
             />
         </div>
     );
