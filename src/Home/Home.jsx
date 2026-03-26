@@ -52,6 +52,12 @@ const Home = () => {
   const [showScrollUp, setShowScrollUp] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [heroIndex, setHeroIndex] = useState(0);
+  const [isDesktopLayout, setIsDesktopLayout] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1150 : true,
+  );
+  const [isCompactDesktop, setIsCompactDesktop] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1400 : false,
+  );
   const heroIntervalRef = useRef(null);
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
@@ -263,6 +269,20 @@ const Home = () => {
   // Feedbacks are loaded via `useApprovedFeedbacks` (React Query).
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsDesktopLayout(window.innerWidth >= 1150);
+      setIsCompactDesktop(window.innerWidth >= 1400);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     const selectedTheme = localStorage.getItem("selected-theme");
 
     if (selectedTheme === "dark") {
@@ -331,10 +351,8 @@ const Home = () => {
     return () => clearInterval(heroIntervalRef.current);
   }, [heroBooks]);
 
-  const featuredPerView =
-    typeof window !== "undefined" && window.innerWidth >= 1150 ? 4 : 1;
-  const testimonialPerView =
-    typeof window !== "undefined" && window.innerWidth >= 1150 ? 3 : 1;
+  const featuredPerView = isDesktopLayout ? 4 : 1;
+  const testimonialPerView = isDesktopLayout ? 3 : 1;
 
   const isEverythingLoaded = pageLoaded && !isFeedbacksLoading;
 
@@ -389,7 +407,7 @@ const Home = () => {
         ref={homeRef}
         style={{
           visibility: isEverythingLoaded ? "visible" : "hidden",
-          zoom: 0.8,
+          zoom: isCompactDesktop ? 0.8 : 1,
         }}
       >
         <Header
