@@ -46,7 +46,7 @@ const DeleteConfirmationPopup = ({
       onClose={handleClose}
       title={title}
       icon={<Trash2 size={30} />}
-      maxWidthClass="max-w-[647px]"
+      maxWidthClass="max-w-[40.4375rem]"
     >
       <div className="flex flex-col items-center gap-4">
         <div className="flex w-full flex-col gap-4 px-5">

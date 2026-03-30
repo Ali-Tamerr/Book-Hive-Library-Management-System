@@ -68,7 +68,7 @@ const SettingsPopup = ({ show, onClose }) => {
             let width = img.width;
             let height = img.height;
 
-            // Scale down to a max of 512px to keep the PNG completely safe and lightweight
+            // Scale down to a max of 32rem to keep the PNG completely safe and lightweight
             const MAX_SIZE = 512;
             if (width > MAX_SIZE || height > MAX_SIZE) {
               if (width > height) {
@@ -224,7 +224,7 @@ const SettingsPopup = ({ show, onClose }) => {
       onClose={onClose}
       title="Change Credentials"
       icon={<Settings size={35} strokeWidth={2.3} />}
-      maxWidthClass="max-w-[700px]"
+      maxWidthClass="max-w-[43.75rem]"
     >
       <form
         onSubmit={handleSubmit}
@@ -232,7 +232,7 @@ const SettingsPopup = ({ show, onClose }) => {
       >
         <div className="space-y-6 px-10">
           <div className="flex flex-col items-center gap-4">
-            <div className="flex h-[100px] w-[100px] items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+            <div className="flex h-[6.25rem] w-[6.25rem] items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
               {displayImage ? (
                 <img
                   src={displayImage}
@@ -244,8 +244,8 @@ const SettingsPopup = ({ show, onClose }) => {
               )}
             </div>
 
-            <label className="flex h-[42px] w-[320px] cursor-pointer items-center justify-between rounded-lg border dark:border-[#D7D7D7] px-4 text-[30px] text-[#000035] border-[#000035] dark:text-[#E8E8E8]">
-              <span className="font-regular flex h-full items-center text-[19px]">
+            <label className="flex h-[2.625rem] w-[20rem] cursor-pointer items-center justify-between rounded-lg border dark:border-[#D7D7D7] px-4 text-[1.875rem] text-[#000035] border-[#000035] dark:text-[#E8E8E8]">
+              <span className="font-regular flex h-full items-center text-[1.1875rem]">
                 Add your photo
               </span>
               <ImagePlus className="h-7 w-7" />
@@ -259,7 +259,7 @@ const SettingsPopup = ({ show, onClose }) => {
           </div>
 
           <div className="flex items-center gap-6">
-            <label className="font-regular w-[180px] whitespace-nowrap text-left text-sm">
+            <label className="font-regular w-[11.25rem] whitespace-nowrap text-left text-sm">
               Enter Current Password
             </label>
             <FormInput
@@ -273,7 +273,7 @@ const SettingsPopup = ({ show, onClose }) => {
           </div>
 
           <div className="flex items-center gap-6">
-            <label className="font-regular w-[180px] whitespace-nowrap text-left text-sm">
+            <label className="font-regular w-[11.25rem] whitespace-nowrap text-left text-sm">
               Enter New Password
             </label>
             <FormInput
@@ -287,7 +287,7 @@ const SettingsPopup = ({ show, onClose }) => {
           </div>
 
           <div className="flex items-center gap-6">
-            <label className="font-regular w-[180px] whitespace-nowrap text-left text-sm">
+            <label className="font-regular w-[11.25rem] whitespace-nowrap text-left text-sm">
               Confirm New Password
             </label>
             <FormInput

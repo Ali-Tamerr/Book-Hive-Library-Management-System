@@ -40,7 +40,7 @@ const SearchBar = ({ searchValue, setSearchValue }) => {
         placeholder="Search by Name"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
-        className="pr-15 h-full w-full bg-transparent pl-3 text-[15px] text-[#000035] outline-none dark:text-[#D7D7D7] placeholder:text-[#000035] dark:placeholder:text-[#D7D7D7]"
+        className="pr-15 h-full w-full bg-transparent pl-3 text-[0.9375rem] text-[#000035] outline-none dark:text-[#D7D7D7] placeholder:text-[#000035] dark:placeholder:text-[#D7D7D7]"
       />
     </div>
   );

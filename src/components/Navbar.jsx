@@ -123,25 +123,25 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             )}
           </div>
           <div className="flex flex-col text-left">
-            <h3 className="text-xl font-semibold tracking-wider max-[480px]:text-sm ">
+            <h3 className="text-xl font-semibold tracking-wider max-[30rem]:text-sm ">
               {currentUser
                 ? currentUser.first_name + " " + currentUser.last_name || "User"
                 : "Loading..."}
             </h3>
-            <p className="text-[12px] -mt-[4px] font-semibold ">
+            <p className="text-[0.75rem] -mt-[0.25rem] font-semibold ">
               {roleLabel}
             </p>
           </div>
         </div>
         <div className="flex h-min flex-1 items-center justify-end gap-3">
-          <div className="flex flex-col text-right max-[1080px]:hidden">
+          <div className="flex flex-col text-right max-[67.5rem]:hidden">
             <span className="font-['Bebas_Neue'] text-xl font-bold leading-none">
               {new Date().toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
             </span>
-            <p className="mt-[1px] text-xs font-medium leading-none">
+            <p className="mt-[0.0625rem] text-xs font-medium leading-none">
               {new Date().toLocaleDateString(undefined, {
                 month: "short",
                 day: "2-digit",
@@ -149,7 +149,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
               })}
             </p>
           </div>
-          <div className="h-10 w-0.5 rounded-full bg-[#0b0b3b] max-[1080px]:hidden dark:bg-white"></div>
+          <div className="h-10 w-0.5 rounded-full bg-[#0b0b3b] max-[67.5rem]:hidden dark:bg-white"></div>
           {roleLabel === "Admin" ||
           roleLabel === "Super Admin" ||
           roleLabel === "Librarian" ||
@@ -158,7 +158,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             <AdminNotifications />
           ) : (
             <button
-              className="flex h-9 w-9 cursor-pointer items-center justify-center p-0.5 transition-colors hover:text-[#1e255e] max-[1080px]:hidden dark:hover:text-[#9CA3AF]"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center p-0.5 transition-colors hover:text-[#1e255e] max-[67.5rem]:hidden dark:hover:text-[#9CA3AF]"
               onClick={() => setShowFeedbackPopup(true)}
               title="Give Feedback"
             >
@@ -166,7 +166,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             </button>
           )}
           <button
-            className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[1080px]:hidden dark:hover:text-[#9CA3AF]"
+            className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[67.5rem]:hidden dark:hover:text-[#9CA3AF]"
             onClick={toggleTheme}
             title="Toggle Theme"
           >
@@ -177,7 +177,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             )}
           </button>
           <button
-            className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[1080px]:hidden dark:hover:text-[#9CA3AF]"
+            className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[67.5rem]:hidden dark:hover:text-[#9CA3AF]"
             onClick={() => setShowSettings(true)}
             title="Settings"
           >
@@ -185,7 +185,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           </button>
           <button
             onClick={toggleSidebar}
-            className="hidden cursor-pointer max-[1080px]:block"
+            className="hidden cursor-pointer max-[67.5rem]:block"
           >
             <Menu className="h-full w-full" />
           </button>

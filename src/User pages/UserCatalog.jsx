@@ -8,7 +8,7 @@ function UserCatalog({ searchValue }) {
     const [localActiveTab, setLocalActiveTab] = useState('borrowed');
 
     const tabButtons = (
-        <div className="flex gap-4 max-[650px]:grid max-[650px]:grid-cols-1 max-[650px]:gap-2">
+        <div className="flex gap-4 max-[40.625rem]:grid max-[40.625rem]:grid-cols-1 max-[40.625rem]:gap-2">
             <TabButton
                 label="Borrowed Books"
                 isActive={localActiveTab === 'borrowed'}

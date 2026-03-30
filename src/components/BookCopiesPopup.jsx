@@ -156,9 +156,9 @@ function BookCopiesPopup({
       onClose={onClose}
       title={editMode ? "Edit Book" : "Add Book"}
       icon={<BookCopy size={32} strokeWidth={2.2} />}
-      iconWrapperClassName="min-h-[70px] min-w-[70px]"
+      iconWrapperClassName="min-h-[4.375rem] min-w-[4.375rem]"
       titleClassName="!text-4xl"
-      maxWidthClass="max-w-[860px]"
+      maxWidthClass="max-w-[53.75rem]"
       contentClassName="px-4 py-6"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -172,7 +172,7 @@ function BookCopiesPopup({
             />
           </div>
 
-          <div className="flex flex-1 flex-col gap-5 max-h-[360px] overflow-y-auto pr-1">
+          <div className="flex flex-1 flex-col gap-5 max-h-[22.5rem] overflow-y-auto pr-1">
             {copies.map((copy, index) => (
               <div key={index} className="flex h-14 items-stretch overflow-hidden rounded-2xl border border-[#000035] dark:border-[#D7D7D7]">
                 <input
@@ -183,14 +183,14 @@ function BookCopiesPopup({
                   onFocus={() => handleInputFocus(index)}
                   placeholder="ID"
                   required
-                  className="w-[180px] shrink-0 bg-transparent px-5 py-4 text-[16px] font-semibold text-[#000035] outline-none placeholder:font-semibold placeholder:text-[#000035] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7]"
+                  className="w-[11.25rem] shrink-0 bg-transparent px-5 py-4 text-[1rem] font-semibold text-[#000035] outline-none placeholder:font-semibold placeholder:text-[#000035] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7]"
                 />
                 <div className="w-px h-[80%] self-center bg-[#000035] dark:bg-[#D7D7D7]" />
                 <select
                   value={copy.branch}
                   onChange={(e) => handleBranchChange(index, e.target.value)}
                   required
-                  className="flex-1 cursor-pointer appearance-none bg-transparent px-5 py-4 text-[16px] font-semibold text-[#000035] outline-none dark:text-[#D7D7D7]"
+                  className="flex-1 cursor-pointer appearance-none bg-transparent px-5 py-4 text-[1rem] font-semibold text-[#000035] outline-none dark:text-[#D7D7D7]"
                 >
                   <option value="" disabled>Branch</option>
                   {branches.map((branch) => (

@@ -423,8 +423,8 @@ const ViewRequestsPopup = ({
       onClose={onClose}
       title="Requests"
       icon={getTabIcon()}
-      maxWidthClass="w-[95vw] lg:w-[90vw] max-w-[1100px]"
-      panelClassName="h-[90vh] lg:max-h-[850px]"
+      maxWidthClass="w-[95vw] lg:w-[90vw] max-w-[68.75rem]"
+      panelClassName="h-[90vh] lg:max-h-[53.125rem]"
     >
       <div className="flex h-full flex-col gap-4">
         <div className="flex gap-2">
@@ -468,13 +468,13 @@ const ViewRequestsPopup = ({
               placeholder={getSearchPlaceholder()}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="h-[50px] w-[70%] rounded-xl border border-[#000035] py-3 pl-12 pr-4 text-[13px] placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:placeholder-[#D7D7D7]"
+              className="h-[3.125rem] w-[70%] rounded-xl border border-[#000035] py-3 pl-12 pr-4 text-[0.8125rem] placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-[#000035] dark:border-[#D7D7D7]">
-          <div className="min-w-[100px] flex-1 overflow-auto">
+        <div className="flex flex-1 flex-col overflow-hidden rounded-[0.625rem] border border-[#000035] dark:border-[#D7D7D7]">
+          <div className="min-w-[6.25rem] flex-1 overflow-auto">
             {currentLoading ? (
               <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">
                 Loading requests...

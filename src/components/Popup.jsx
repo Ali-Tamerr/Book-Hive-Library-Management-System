@@ -32,17 +32,17 @@ const Popup = ({
       <div className="absolute inset-0" onClick={onClose}></div>
 
       <div
-        className={`popup-typography relative flex h-full max-h-none w-full flex-col rounded-none border-[#000035] bg-[#F2F2F2] p-6 pb-0 shadow-xl min-[769px]:h-auto min-[769px]:max-h-[90vh] min-[769px]:rounded-xl min-[769px]:border sm:p-10 sm:pb-0 md:p-14 md:pb-0 dark:bg-[#121317] dark:min-[769px]:border-[#D7D7D7] ${maxWidthClass ? maxWidthClass : "min-[769px]:max-w-2xl"} ${panelClassName || ""}`}
+        className={`popup-typography relative flex h-full max-h-none w-full flex-col rounded-none border-[#000035] bg-[#F2F2F2] p-6 pb-0 shadow-xl min-[48.0625rem]:h-auto min-[48.0625rem]:max-h-[90vh] min-[48.0625rem]:rounded-xl min-[48.0625rem]:border sm:p-10 sm:pb-0 md:p-14 md:pb-0 dark:bg-[#121317] dark:min-[48.0625rem]:border-[#D7D7D7] ${maxWidthClass ? maxWidthClass : "min-[48.0625rem]:max-w-2xl"} ${panelClassName || ""}`}
       >
         {!hideHeader && (
           <div
-            className={`flex shrink-0 max-[768px]:flex-col max-[768px]:gap-4 min-[769px]:flex-row-reverse min-[769px]:items-center min-[769px]:justify-between pb-5 ${headerClassName || ""}`}
+            className={`flex shrink-0 max-[48rem]:flex-col max-[48rem]:gap-4 min-[48.0625rem]:flex-row-reverse min-[48.0625rem]:items-center min-[48.0625rem]:justify-between pb-5 ${headerClassName || ""}`}
           >
             {/* Row 1 for Mobile / Right side for Desktop */}
             <div className="flex justify-end">
               <button
                 onClick={onClose}
-                className={`cursor-pointer rounded-md border border-[#000035] p-1 text-[#000035] transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7] min-[769px]:mr-13 ${closeButtonClassName || ""}`}
+                className={`cursor-pointer rounded-md border border-[#000035] p-1 text-[#000035] transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7] min-[48.0625rem]:mr-13 ${closeButtonClassName || ""}`}
               >
                 <X size={14} />
               </button>
@@ -52,7 +52,7 @@ const Popup = ({
             <div className="flex items-center gap-4">
               {icon && (
                 <div
-                  className={`flex min-h-[60px] min-w-[60px] items-center justify-center rounded-lg border border-[#000035] dark:border-[#D7D7D7] ${iconWrapperClassName || ""}`}
+                  className={`flex min-h-[3.75rem] min-w-[3.75rem] items-center justify-center rounded-lg border border-[#000035] dark:border-[#D7D7D7] ${iconWrapperClassName || ""}`}
                 >
                   {icon}
                 </div>
@@ -67,13 +67,13 @@ const Popup = ({
         )}
         {!hideDivider && (
           <div
-            className={`mx-auto h-[1px] w-[100%] bg-[#000035] dark:bg-[#D7D7D7] ${dividerClassName || ""}`}
+            className={`mx-auto h-[0.0625rem] w-[100%] bg-[#000035] dark:bg-[#D7D7D7] ${dividerClassName || ""}`}
           ></div>
         )}
         <div
-          className={`flex-1 overflow-y-auto max-[768px]:flex max-[768px]:flex-col ${contentClassName || "px-4 py-8 max-[768px]:px-2"}`}
+          className={`flex-1 overflow-y-auto max-[48rem]:flex max-[48rem]:flex-col ${contentClassName || "px-4 py-8 max-[48rem]:px-2"}`}
         >
-          <div className="max-[768px]:my-auto max-[768px]:w-full">
+          <div className="max-[48rem]:my-auto max-[48rem]:w-full">
             {children}
           </div>
         </div>

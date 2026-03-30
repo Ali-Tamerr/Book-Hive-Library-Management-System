@@ -35,16 +35,16 @@
   --accent: #0a0b2b;
   --muted: #6f7390;
   --card-bg: #ffffff;
-  --card-radius: 14px;
+  --card-radius: 0.875rem;
   --card-border: #d6d9e6;
-  --card-shadow: 0 12px 22px rgba(10, 10, 35, 0.12);
-  --card-shadow-hover: 0 16px 26px rgba(10, 10, 35, 0.16);
+  --card-shadow: 0 0.75rem 1.375rem rgba(10, 10, 35, 0.12);
+  --card-shadow-hover: 0 1rem 1.625rem rgba(10, 10, 35, 0.16);
   --center-bg: #ffffff;
   --center-border: #0a0b2b;
   --pie-borrowed-color: #000035;
   --pie-returned-color: #3d3e3e;
-  --max-w: 1500px;
-  --gap: 32px;
+  --max-w: 93.75rem;
+  --gap: 2rem;
   --scrollbar-thumb: #000035;
   --scrollbar-thumb-hover: #000053;
 }
@@ -54,7 +54,7 @@
   --scrollbar-thumb-hover: #ffffff;
 }
 
-@media screen and (min-width: 1150px) {
+@media screen and (min-width: 71.875rem) {
   :root {
     --biggest-font-size: 3.5rem;
     --h1-font-size: 2.25rem;
@@ -107,7 +107,7 @@
 }
 [data-reveal] {
   opacity: 0;
-  transform: translateY(100px);
+  transform: translateY(6.25rem);
   transition:
     opacity 0.6s ease,
     transform 0.6s ease;
@@ -312,7 +312,7 @@ body.home-page-active {
 
 body.dark-theme .app-popup {
   background-color: #121317;
-  border: 1px solid #d7d7d7;
+  border: 0.0625rem solid #d7d7d7;
   color: #e8e8e8;
 }
 
@@ -390,13 +390,13 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
 }
 
 ::-webkit-scrollbar {
-  border-radius: 4px;
+  border-radius: 0.25rem;
   width: 0.6rem;
   background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 4px;
+  border-radius: 0.25rem;
   background-color: var(--scrollbar-thumb);
 }
 
@@ -409,7 +409,7 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
   will-change: width, transform, translate, padding, margin, opacity;
 }
 
-@media screen and (max-width: 1080px) {
+@media screen and (max-width: 67.5rem) {
   .sidebar-mobile-active {
     transform: translateX(0) !important;
     translate: none !important; /* Force reset translate property to avoid v4 conflict */

@@ -340,15 +340,15 @@ function Dashboard() {
       }}
     >
       <main
-        className="flex min-h-full flex-1 flex-col px-5 py-3 max-[640px]:h-auto max-[640px]:px-2"
-        style={{ gap: "clamp(4px, 1.5vh, 18px)" }}
+        className="flex min-h-full flex-1 flex-col px-5 py-3 max-[40rem]:h-auto max-[40rem]:px-2"
+        style={{ gap: "clamp(0.25rem, 1.5vh, 1.125rem)" }}
       >
         {showSubscriptionInfo && (
-          <div className="hidden w-full max-[640px]:block">
+          <div className="hidden w-full max-[40rem]:block">
             <div
               className="relative flex w-full items-start justify-between rounded-lg p-3"
               style={{
-                marginBottom: "clamp(8px, 1.5vh, 18px)",
+                marginBottom: "clamp(0.5rem, 1.5vh, 1.125rem)",
               }}
             >
               <div className="pr-8">
@@ -372,8 +372,8 @@ function Dashboard() {
             </div>
           </div>
         )}
-        <div className="flex w-full items-center gap-3.5 max-[640px]:flex-col">
-          <div className="relative flex-1 max-[640px]:w-full max-[640px]:min-w-0 max-[640px]:max-w-none">
+        <div className="flex w-full items-center gap-3.5 max-[40rem]:flex-col">
+          <div className="relative flex-1 max-[40rem]:w-full max-[40rem]:min-w-0 max-[40rem]:max-w-none">
             <Search
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
               size={16}
@@ -391,7 +391,7 @@ function Dashboard() {
               className="w-full rounded-lg border border-[#000035] py-1.5 pl-10 pr-3.5 text-sm transition-colors placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
-          <div className="mr-22 relative w-full min-w-[162px] max-w-[531px] flex-1 max-[640px]:mr-0 max-[640px]:min-w-0 max-[640px]:max-w-none">
+          <div className="mr-22 relative w-full min-w-[10.125rem] max-w-[33.1875rem] flex-1 max-[40rem]:mr-0 max-[40rem]:min-w-0 max-[40rem]:max-w-none">
             <select
               value={selectedCategory}
               onChange={(e) => {
@@ -418,23 +418,23 @@ function Dashboard() {
           </div>
         </div>
         <section
-          className="flex max-[640px]:flex-col"
+          className="flex max-[40rem]:flex-col"
           style={{
             height: "auto",
-            minHeight: "calc(100% - 60px)",
-            gap: "clamp(12px, 2vh, 18px)",
+            minHeight: "calc(100% - 3.75rem)",
+            gap: "clamp(0.75rem, 2vh, 1.125rem)",
           }}
         >
           <div
-            className={`flex flex-col items-center justify-center gap-3 overflow-hidden transition-all duration-500 ease-in-out max-[640px]:mx-auto max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full min-[1540px]:-ml-5 ${
+            className={`flex flex-col items-center justify-center gap-3 overflow-hidden transition-all duration-500 ease-in-out max-[40rem]:mx-auto max-[40rem]:flex-none min-[40rem]:order-last min-[40rem]:h-full min-[96.25rem]:-ml-5 ${
               searchValue || isSearchFocused
                 ? "invisible max-h-0 max-w-0 flex-[0.0001] -translate-y-2 scale-95 opacity-0"
-                : "flex-3 visible max-h-[800px] max-w-full translate-y-0 scale-100 opacity-100"
+                : "flex-3 visible max-h-[50rem] max-w-full translate-y-0 scale-100 opacity-100"
             }`}
           >
-            <div className="flex h-full w-full flex-col items-center justify-start rounded-md min-[1200px]:mb-6">
+            <div className="flex h-full w-full flex-col items-center justify-start rounded-md min-[75rem]:mb-6">
               <div className="flex h-full w-full flex-col items-center justify-between gap-6 overflow-hidden">
-                <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center overflow-hidden max-[640px]:min-h-[162px]">
+                <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center overflow-hidden max-[40rem]:min-h-[10.125rem]">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <PieChart
                       totalBorrowed={stats.totalBorrowed}
@@ -446,27 +446,27 @@ function Dashboard() {
                 </div>
                 <PieChartLegend
                   variant="mobile"
-                  className="max-[1540px]:!hidden max-[1080px]:!flex"
+                  className="max-[96.25rem]:!hidden max-[67.5rem]:!flex"
                 />
                 <PieChartLegend
                   variant="desktop"
-                  className="max-[1540px]:!flex max-[1080px]:!hidden"
+                  className="max-[96.25rem]:!flex max-[67.5rem]:!hidden"
                 />
               </div>
             </div>
           </div>
           <div
-            className="min-[640px]:flex-4 flex w-full flex-col min-[640px]:h-full"
-            style={{ gap: "clamp(2px, 1vh, 20px)" }}
+            className="min-[40rem]:flex-4 flex w-full flex-col min-[40rem]:h-full"
+            style={{ gap: "clamp(0.125rem, 1vh, 1.25rem)" }}
           >
-            <div className="flex items-center justify-between border-b border-[#000035] max-[640px]:flex-col-reverse max-[640px]:items-start max-[640px]:gap-2 dark:border-[#D7D7D7]">
-              <div className="flex gap-10 max-[640px]:w-full max-[640px]:justify-around max-[640px]:gap-2">
+            <div className="flex items-center justify-between border-b border-[#000035] max-[40rem]:flex-col-reverse max-[40rem]:items-start max-[40rem]:gap-2 dark:border-[#D7D7D7]">
+              <div className="flex gap-10 max-[40rem]:w-full max-[40rem]:justify-around max-[40rem]:gap-2">
                 <button
                   onClick={() => {
                     setActiveTab("recommended");
                     setCurrentPage(0);
                   }}
-                  className={`relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors max-[760px]:text-xl ${
+                  className={`relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors max-[47.5rem]:text-xl ${
                     activeTab === "recommended"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:text-[#D7D7D7]/40 dark:hover:text-gray-300"
@@ -479,7 +479,7 @@ function Dashboard() {
                     setActiveTab("recently");
                     setCurrentPage(0);
                   }}
-                  className={`relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors max-[760px]:text-xl ${
+                  className={`relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors max-[47.5rem]:text-xl ${
                     activeTab === "recently"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:text-[#D7D7D7]/40 dark:hover:text-gray-300"
@@ -488,7 +488,7 @@ function Dashboard() {
                   Recently added
                 </button>
               </div>
-              <div className="mr-10 max-[1000px]:mr-2 max-[1000px]:gap-1.5 flex items-center gap-3 pb-1.5 max-[640px]:mr-0 max-[640px]:hidden max-[640px]:w-full max-[640px]:justify-center">
+              <div className="mr-10 max-[62.5rem]:mr-2 max-[62.5rem]:gap-1.5 flex items-center gap-3 pb-1.5 max-[40rem]:mr-0 max-[40rem]:hidden max-[40rem]:w-full max-[40rem]:justify-center">
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage === 0}
@@ -504,11 +504,11 @@ function Dashboard() {
                     className="scale-x-150"
                   />
                 </button>
-                <div className="flex gap-4 max-[1000px]:gap-2">
+                <div className="flex gap-4 max-[62.5rem]:gap-2">
                   {Array.from({ length: 3 }).map((_, i) => (
                     <div
                       key={i}
-                      className={`h-[1.5px] w-[10px] rounded-full transition-colors ${
+                      className={`h-[0.0938rem] w-[0.625rem] rounded-full transition-colors ${
                         i === Math.min(currentPage, 2)
                           ? "bg-[#000035] dark:bg-[#D7D7D7]"
                           : "bg-[#000035]/10 dark:bg-[#D7D7D7]/10"
@@ -535,7 +535,7 @@ function Dashboard() {
             </div>
 
             <div
-              className="grid w-full place-items-center max-[870px]:grid-cols-2 min-[870px]:grid-cols-3 min-[1500px]:grid-cols-4"
+              className="grid w-full place-items-center max-[54.375rem]:grid-cols-2 min-[54.375rem]:grid-cols-3 min-[93.75rem]:grid-cols-4"
               style={{ rowGap: "calc(0.5rem * var(--card-scale, 1))" }}
             >
               {booksLoading && displayBooks.length === 0 ? (
@@ -568,7 +568,7 @@ function Dashboard() {
             </div>
             {showSubscriptionInfo && (
               <div
-                className="mt-auto flex w-full justify-start max-[640px]:hidden md:ml-10"
+                className="mt-auto flex w-full justify-start max-[40rem]:hidden md:ml-10"
                 style={{
                   marginTop: "calc(0.1rem * var(--card-scale, 1))",
                   marginBottom: "calc(0.25rem * var(--card-scale, 1))",
@@ -594,7 +594,7 @@ function Dashboard() {
                   </p>
                   <button
                     onClick={() => setShowSubscriptionInfo(false)}
-                    className="absolute right-2 top-2 hidden rounded-full p-1 transition-colors hover:bg-black/5 max-[640px]:block dark:hover:bg-white/5"
+                    className="absolute right-2 top-2 hidden rounded-full p-1 transition-colors hover:bg-black/5 max-[40rem]:block dark:hover:bg-white/5"
                   >
                     <X size={16} className="text-[#0b0c28] dark:text-white" />
                   </button>

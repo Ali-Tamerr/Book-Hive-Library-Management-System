@@ -14,9 +14,9 @@ const WhiteBgSection = ({
   isDarkMode = false,
 }) => {
   const visibilityClass = mobileOnly
-    ? "max-[1080px]:flex hidden max-[1080px]:w-full max-[1080px]:h-full"
+    ? "max-[67.5rem]:flex hidden max-[67.5rem]:w-full max-[67.5rem]:h-full"
     : desktopOnly
-      ? "max-[1080px]:hidden flex flex-1"
+      ? "max-[67.5rem]:hidden flex flex-1"
       : "flex flex-1";
 
   const bgClass = isDarkMode ? "bg-[#121317]" : "bg-white";
@@ -54,7 +54,7 @@ const WhiteBgSection = ({
       )}
 
       <div
-        className={`flex flex-col items-center justify-center gap-4 ${contentFontClass} ${mobileOnly ? "w-[85%] max-w-[650px] max-[1080px]:h-screen max-[1080px]:w-full" : "w-full"}`}
+        className={`flex flex-col items-center justify-center gap-4 ${contentFontClass} ${mobileOnly ? "w-[85%] max-w-[40.625rem] max-[67.5rem]:h-screen max-[67.5rem]:w-full" : "w-full"}`}
       >
         {logoWithTitle ? (
           <div className="flex items-center gap-6">
@@ -69,7 +69,7 @@ const WhiteBgSection = ({
           <>
             <img src={logoSrc} alt={logoAlt} className="mb-6 h-auto w-32" />
             <h2
-              className={`text-3xl font-semibold max-[1080px]:text-2xl ${headingFontClass} ${textClass} mb-4`}
+              className={`text-3xl font-semibold max-[67.5rem]:text-2xl ${headingFontClass} ${textClass} mb-4`}
             >
               {title}
             </h2>

@@ -16,8 +16,8 @@ const DarkBgSection = ({
 }) => {
   const roundedClass =
     position === "left"
-      ? "rounded-tr-[80px] rounded-br-[80px]"
-      : "rounded-tl-[80px] rounded-bl-[80px]";
+      ? "rounded-tr-[5rem] rounded-br-[5rem]"
+      : "rounded-tl-[5rem] rounded-bl-[5rem]";
 
   const bgColor = isDarkMode ? "bg-[#E8E8E8]" : "bg-[#000035]";
   const textColor = isDarkMode ? "text-[#121317]" : "text-white";
@@ -34,7 +34,7 @@ const DarkBgSection = ({
 
   return (
     <div
-      className={`w-1/2 max-[1080px]:hidden ${bgColor} ${textColor} flex flex-col items-center justify-center gap-12 p-16 ${roundedClass} relative ${className}`}
+      className={`w-1/2 max-[67.5rem]:hidden ${bgColor} ${textColor} flex flex-col items-center justify-center gap-12 p-16 ${roundedClass} relative ${className}`}
     >
       {backButton && (
         <button
@@ -48,17 +48,17 @@ const DarkBgSection = ({
         <img
           src={logoSrc}
           alt={logoAlt}
-          className={`-mb-10 h-auto w-[220px] ${logoClassName}`}
+          className={`-mb-10 h-auto w-[13.75rem] ${logoClassName}`}
           style={logoStyle}
         />
       )}
       <h1
-        className={`-mb-8 text-center text-[73px] ${headingFontClass} ${textColor}`}
+        className={`-mb-8 text-center text-[4.5625rem] ${headingFontClass} ${textColor}`}
       >
         BookHive
         <br />
         <span
-          className={`-mt-6 block ${headingFontClass} text-[50px] font-medium`}
+          className={`-mt-6 block ${headingFontClass} text-[3.125rem] font-medium`}
         >
           Library
         </span>
@@ -68,11 +68,11 @@ const DarkBgSection = ({
       >
         {message}
       </p>
-      <div className="flex w-full max-w-[300px] flex-col gap-4">
+      <div className="flex w-full max-w-[18.75rem] flex-col gap-4">
         {buttonText && onButtonClick && (
           <button
             onClick={onButtonClick}
-            className={`border-2 ${borderColor} ${contentFontClass} ${textColor} w-full rounded-[20px] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
+            className={`border-2 ${borderColor} ${contentFontClass} ${textColor} w-full rounded-[1.25rem] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
           >
             {buttonText}
           </button>
@@ -80,7 +80,7 @@ const DarkBgSection = ({
         {secondButtonText && onSecondButtonClick && (
           <button
             onClick={onSecondButtonClick}
-            className={`border-2 ${borderColor} ${contentFontClass} ${textColor} w-full rounded-[20px] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
+            className={`border-2 ${borderColor} ${contentFontClass} ${textColor} w-full rounded-[1.25rem] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
           >
             {secondButtonText}
           </button>

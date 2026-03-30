@@ -65,10 +65,10 @@ function ConfirmAcquirePopup({
       onClose={onClose}
       title="Confirm Acquisition"
       icon={<ShoppingCart size={24} />}
-      maxWidthClass="max-w-[700px]"
+      maxWidthClass="max-w-[43.75rem]"
     >
       <div className="flex flex-col gap-6">
-        <div className="max-h-[300px] overflow-y-auto">
+        <div className="max-h-[18.75rem] overflow-y-auto">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="sticky top-0 bg-white">
               <tr className="border-b border-gray-300">
@@ -151,7 +151,7 @@ function ConfirmAcquirePopup({
               </span>
             </div>
           </div>
-          <div className="flex flex-col-reverse min-[769px]:flex-row gap-3">
+          <div className="flex flex-col-reverse min-[48.0625rem]:flex-row gap-3">
             <FormButton type="button" onClick={onClose}>
               CANCEL
             </FormButton>

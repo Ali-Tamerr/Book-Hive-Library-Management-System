@@ -132,7 +132,7 @@ function GlobalSearchPopup({ show, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="popup-typography flex h-full max-h-none w-full flex-col rounded-none bg-white p-4 min-[769px]:h-auto min-[769px]:max-h-[80vh] min-[769px]:w-11/12 min-[769px]:max-w-[1000px] min-[769px]:p-8 min-[769px]:rounded-lg max-[768px]:justify-center">
+      <div className="popup-typography flex h-full max-h-none w-full flex-col rounded-none bg-white p-4 min-[48.0625rem]:h-auto min-[48.0625rem]:max-h-[80vh] min-[48.0625rem]:w-11/12 min-[48.0625rem]:max-w-[62.5rem] min-[48.0625rem]:p-8 min-[48.0625rem]:rounded-lg max-[48rem]:justify-center">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="rounded-lg bg-[#D7D7D7] p-4 text-[#0b0b3b]">
@@ -150,12 +150,12 @@ function GlobalSearchPopup({ show, onClose }) {
             <X
               size={24}
               strokeWidth={2.9}
-              className="rounded-[7px] border-[2px] p-1 text-[#000035]"
+              className="rounded-[0.4375rem] border-[0.125rem] p-1 text-[#000035]"
             />
           </button>
         </div>
 
-        <div className="mb-6 h-[1px] w-full bg-[#000035]"></div>
+        <div className="mb-6 h-[0.0625rem] w-full bg-[#000035]"></div>
 
         <div className="mb-6">
           <div className="relative">
@@ -168,14 +168,14 @@ function GlobalSearchPopup({ show, onClose }) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search books, users, branches, categories..."
-              className="h-[50px] w-full rounded-xl border border-[#D7D7D7] pl-12 pr-4 text-[14px] outline-none"
+              className="h-[3.125rem] w-full rounded-xl border border-[#D7D7D7] pl-12 pr-4 text-[0.875rem] outline-none"
               autoFocus
             />
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col overflow-hidden rounded-[10px] border border-[#8787A3]">
-          <div className="min-w-[100px] flex-1 overflow-auto">
+        <div className="flex flex-1 flex-col overflow-hidden rounded-[0.625rem] border border-[#8787A3]">
+          <div className="min-w-[6.25rem] flex-1 overflow-auto">
             {isLoading ? (
               <div className="p-8 text-center text-[#000035]">Loading...</div>
             ) : searchTerm === "" ? (

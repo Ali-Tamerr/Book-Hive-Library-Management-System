@@ -75,15 +75,15 @@ const Sidebar = ({
   return (
     <>
       <div
-        className={`fixed inset-0 z-40 bg-[#0000009a] bg-opacity-50 backdrop-blur-lg transition-opacity duration-[350ms] ease-[cubic-bezier(0.61,-0.01,0.34,0.99)] ${isSidebarOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} hidden max-[1080px]:block`}
+        className={`fixed inset-0 z-40 bg-[#0000009a] bg-opacity-50 backdrop-blur-lg transition-opacity duration-[350ms] ease-[cubic-bezier(0.61,-0.01,0.34,0.99)] ${isSidebarOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"} hidden max-[67.5rem]:block`}
         onClick={toggleSidebar}
       ></div>
       <aside
         onMouseEnter={() => setSidebarOpen(true)}
         onMouseLeave={() => window.innerWidth > 1080 && setSidebarOpen(false)}
-        className={`sidebar-stable-transition relative flex shrink-0 flex-col items-stretch justify-start overflow-hidden bg-[#000035] pb-3 pt-6 text-white dark:bg-[#D7D7D7] dark:text-black ${isExpanded ? "w-[256px]" : "w-[72px]"} max-[1080px]:fixed max-[1080px]:right-0 max-[1080px]:z-50 max-[1080px]:h-full max-[1080px]:w-64 ${isSidebarOpen ? "sidebar-mobile-active" : "sidebar-mobile-inactive"} shadow-lg`}
+        className={`sidebar-stable-transition relative flex shrink-0 flex-col items-stretch justify-start overflow-hidden bg-[#000035] pb-3 pt-6 text-white dark:bg-[#D7D7D7] dark:text-black ${isExpanded ? "w-[16rem]" : "w-[4.5rem]"} max-[67.5rem]:fixed max-[67.5rem]:right-0 max-[67.5rem]:z-50 max-[67.5rem]:h-full max-[67.5rem]:w-64 ${isSidebarOpen ? "sidebar-mobile-active" : "sidebar-mobile-inactive"} shadow-lg`}
       >
-        <div className="pointer-events-none absolute right-0 top-0 z-0 h-full w-[1px] bg-gray-200 dark:bg-gray-200 max-[1080px]:hidden" />
+        <div className="pointer-events-none absolute right-0 top-0 z-0 h-full w-[0.0625rem] bg-gray-200 dark:bg-gray-200 max-[67.5rem]:hidden" />
 
         <div className="relative z-10 flex h-40 flex-col items-center justify-start text-center">
           <ColorableLogo
@@ -91,7 +91,7 @@ const Sidebar = ({
           />
 
           <h2
-            className={`logo-stable-transition text-center text-3xl leading-none ${isExpanded ? "max-w-[200px] scale-100 opacity-100" : "max-w-0 scale-50 overflow-hidden opacity-0"} whitespace-nowrap max-[1080px]:mt-2 max-[1080px]:max-w-full max-[1080px]:scale-100 max-[1080px]:text-center max-[1080px]:opacity-100`}
+            className={`logo-stable-transition text-center text-3xl leading-none ${isExpanded ? "max-w-[12.5rem] scale-100 opacity-100" : "max-w-0 scale-50 overflow-hidden opacity-0"} whitespace-nowrap max-[67.5rem]:mt-2 max-[67.5rem]:max-w-full max-[67.5rem]:scale-100 max-[67.5rem]:text-center max-[67.5rem]:opacity-100`}
           >
             BookHive
             <span className="-mt-0.5 block text-center font-['Bebas_Neue',sans-serif] text-xl text-[#b5b8d1] dark:text-black">
@@ -135,7 +135,7 @@ const Sidebar = ({
                 toggleSidebar={toggleSidebar}
               />
             </nav>
-            <div className="pointer-events-none absolute bottom-0 left-0 -ml-[0.6px] h-20 w-full bg-gradient-to-t from-[#000035] to-transparent dark:from-[#D7D7D7]" />
+            <div className="pointer-events-none absolute bottom-0 left-0 -ml-[0.0375rem] h-20 w-full bg-gradient-to-t from-[#000035] to-transparent dark:from-[#D7D7D7]" />
           </div>
         )}
         {isAdmin && (
