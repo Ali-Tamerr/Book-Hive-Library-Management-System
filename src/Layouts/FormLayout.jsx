@@ -58,7 +58,7 @@ const FormLayout = ({
               return (
                 <div
                   key={rowIndex}
-                  className={`flex gap-4 ${row.justify === "center" ? "justify-center" : ""} max-[768px]:flex-col`}
+                  className={`flex gap-4 ${row.justify === "center" ? "justify-center" : ""} max-[48rem]:flex-col`}
                 >
                   {row.inputs.map((inputConfig) => {
                     const inputName =
@@ -93,7 +93,7 @@ const FormLayout = ({
             return (
               <div
                 key={rowIndex}
-                className={`grid gap-4 max-[768px]:!grid-cols-1`}
+                className={`grid gap-4 max-[48rem]:!grid-cols-1`}
                 style={{ gridTemplateColumns: `repeat(${row.columns}, 1fr)` }}
               >
                 {row.inputs.map((inputName) => {
@@ -111,7 +111,7 @@ const FormLayout = ({
       <div
         className={
           inputs.length > 6
-            ? "grid grid-cols-1 gap-4 min-[769px]:grid-cols-2"
+            ? "grid grid-cols-1 gap-4 min-[48.0625rem]:grid-cols-2"
             : "space-y-3"
         }
       >
@@ -127,7 +127,7 @@ const FormLayout = ({
           <LoadingSpinner size="md" />
         </div>
       )}
-      <form onSubmit={onSubmit} className="flex flex-col gap-14 max-[768px]:justify-center">
+      <form onSubmit={onSubmit} className="flex flex-col gap-14 max-[48rem]:justify-center">
         <div className="px-0 md:px-10">
           {renderFormContent()}
           {children}
@@ -138,7 +138,7 @@ const FormLayout = ({
           </div>
         )}
         <div
-          className={`px-0 md:px-10 flex flex-col-reverse min-[769px]:flex-row justify-between gap-3 ${inputs.length > 6 && !customLayout ? "col-span-2" : ""}`}
+          className={`px-0 md:px-10 flex flex-col-reverse min-[48.0625rem]:flex-row justify-between gap-3 ${inputs.length > 6 && !customLayout ? "col-span-2" : ""}`}
         >
           <FormButton
             onClick={onCancel}

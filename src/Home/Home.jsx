@@ -403,7 +403,7 @@ const Home = () => {
         <PageLoader className="!fixed !z-[9999] bg-[#E8E8E8] dark:bg-[#111214]" />
       )}
       <div
-        className="duration-400 m-0 mx-auto max-w-[1920px] scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
+        className="duration-400 m-0 mx-auto max-w-[120rem] scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
         ref={homeRef}
         style={{
           visibility: isEverythingLoaded ? "visible" : "hidden",
@@ -464,7 +464,7 @@ const Home = () => {
 
         {/* <a
           href="#"
-          className={`duration-400 fixed right-4 z-10 inline-flex bg-[var(--container-color)] p-1.5 text-xl text-[var(--title-color)] shadow-[0_2px_8px_hsla(0,0%,0%,0.1)] transition-[bottom,transform,background-color] hover:-translate-y-2 dark:shadow-[0_2px_8px_hsla(0,0%,0%,0.4)] ${showScrollUp ? "bottom-24 min-[1150px]:bottom-12" : "-bottom-1/2"}`}
+          className={`duration-400 fixed right-4 z-10 inline-flex bg-[var(--container-color)] p-1.5 text-xl text-[var(--title-color)] shadow-[0_0.125rem_0.5rem_hsla(0,0%,0%,0.1)] transition-[bottom,transform,background-color] hover:-translate-y-2 dark:shadow-[0_0.125rem_0.5rem_hsla(0,0%,0%,0.4)] ${showScrollUp ? "bottom-24 min-[71.875rem]:bottom-12" : "-bottom-1/2"}`}
           id="scroll-up"
         >
           <i className="ri-arrow-up-line"></i>

@@ -58,7 +58,7 @@ function BorrowBookPopup({
       onClose={onClose}
       title="Borrow Book"
       icon={<BookOpen size={24} />}
-      maxWidthClass="max-w-[500px]"
+      maxWidthClass="max-w-[31.25rem]"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="rounded-lg bg-[#f5f5f5] p-4">

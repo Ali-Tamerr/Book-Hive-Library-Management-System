@@ -9,7 +9,7 @@ const BookPopup = ({ isOpen, onClose, book }) => {
       onClick={onClose}
     >
       <div
-        className="popup-typography w-[800px] max-w-[95%] rounded-xl bg-white px-[30px] py-[20px]"
+        className="popup-typography w-[50rem] max-w-[95%] rounded-xl bg-white px-[1.875rem] py-[1.25rem]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -19,11 +19,11 @@ const BookPopup = ({ isOpen, onClose, book }) => {
           Back
         </button>
 
-        <div className="mt-[20px] flex items-center justify-between">
+        <div className="mt-[1.25rem] flex items-center justify-between">
           <img
             src={book.image}
             alt={book.name}
-            className="w-[150px] rounded-lg"
+            className="w-[9.375rem] rounded-lg"
           />
 
           <div className="flex flex-col gap-3">
@@ -47,7 +47,7 @@ const BookPopup = ({ isOpen, onClose, book }) => {
               <strong>Branch:</strong> {book.branch}
             </p>
 
-            <button className="cursor-pointer rounded-lg border-none bg-[#0a0f5c] px-[16px] py-[10px] text-white">
+            <button className="cursor-pointer rounded-lg border-none bg-[#0a0f5c] px-[1rem] py-[0.625rem] text-white">
               Explore Now
             </button>
           </div>

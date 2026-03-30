@@ -77,7 +77,7 @@ function BorrowedBooksContent({ searchValue, customTitle }) {
 
   const titleNode =
     customTitle || (
-      <h2 className="whitespace-nowrap text-xl font-semibold max-[856px]:text-sm">
+      <h2 className="whitespace-nowrap text-xl font-semibold max-[53.5rem]:text-sm">
         My Borrowed Books
       </h2>
     );

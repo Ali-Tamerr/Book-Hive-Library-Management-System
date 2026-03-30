@@ -1,9 +1,9 @@
 /* ===== Table ===== */
 .tableContainer {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   padding: 1.2rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.05);
 }
 
 .table {
@@ -14,7 +14,7 @@
 
 .th, .td {
   padding: 0.7rem 0.5rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 0.0625rem solid #ddd;
   text-align: center;
 }
 
@@ -31,10 +31,10 @@
   background: #000a3d;
   color: #fff;
   border: none;
-  padding: 6px 12px;
-  border-radius: 5px;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.3125rem;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .viewBtn:hover {

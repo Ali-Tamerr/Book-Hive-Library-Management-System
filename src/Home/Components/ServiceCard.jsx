@@ -14,10 +14,10 @@ const ServiceCard = ({ iconSrc, iconAlt, title, description, delay }) => {
           className="block max-h-full w-auto object-contain dark:brightness-0 dark:invert-[84%]"
         />
       </div>
-      <h3 className="tracking-md mb-[0.7rem] font-[family-name:var(--body-font)] text-[28px] font-semibold text-[var(--first-color)] dark:!text-[#D7D7D7]">
+      <h3 className="tracking-md mb-[0.7rem] font-[family-name:var(--body-font)] text-[1.75rem] font-semibold text-[var(--first-color)] dark:!text-[#D7D7D7]">
         {title}
       </h3>
-      <p className="font-[family-name:var(--second-font)] text-[20px] font-semibold text-[#000035] dark:!text-[#D7D7D7]">
+      <p className="font-[family-name:var(--second-font)] text-[1.25rem] font-semibold text-[#000035] dark:!text-[#D7D7D7]">
         {description}
       </p>
     </article>

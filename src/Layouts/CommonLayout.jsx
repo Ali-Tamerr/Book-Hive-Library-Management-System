@@ -55,25 +55,25 @@ const CommonLayout = ({
   }, [hasMore, onLoadMore, isLoading]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-5 max-[1080px]:gap-2 overflow-hidden p-7 pb-0 pr-0 max-[1080px]:p-0 max-[1080px]:pt-5">
-      <div className="flex flex-col gap-3 max-[1080px]:gap-2 pr-7 max-[1080px]:px-5">
+    <div className="flex min-h-0 flex-1 flex-col gap-5 max-[67.5rem]:gap-2 overflow-hidden p-7 pb-0 pr-0 max-[67.5rem]:p-0 max-[67.5rem]:pt-5">
+      <div className="flex flex-col gap-3 max-[67.5rem]:gap-2 pr-7 max-[67.5rem]:px-5">
         <div
-          className={`flex items-center justify-between gap-12 max-[1000px]:items-stretch max-[1000px]:gap-2 ${customTitle ? "max-[1000px]:flex-col-reverse" : "max-[1000px]:flex-col"}`}
+          className={`flex items-center justify-between gap-12 max-[62.5rem]:items-stretch max-[62.5rem]:gap-2 ${customTitle ? "max-[62.5rem]:flex-col-reverse" : "max-[62.5rem]:flex-col"}`}
         >
           {customTitle ? (
             customTitle
           ) : (
-            <h2 className="max-[1000px]:mx-auto max-[1000px]:w-[92%] max-[1000px]:whitespace-normal max-[1000px]:text-center max-[1000]:text-[50px] whitespace-nowrap text-4xl font-semibold tracking-widest max-[480px]:text-[25px] dark:text-[#E8E8E8]">
+            <h2 className="max-[62.5rem]:mx-auto max-[62.5rem]:w-[92%] max-[62.5rem]:whitespace-normal max-[62.5rem]:text-center max-[1000]:text-[3.125rem] whitespace-nowrap text-4xl font-semibold tracking-widest max-[30rem]:text-[1.5625rem] dark:text-[#E8E8E8]">
               {title}
             </h2>
           )}
-          <div className="max-[1000px]:flex hidden h-10 flex-1">
+          <div className="max-[62.5rem]:flex hidden h-10 flex-1">
             <SearchBar
               searchValue={searchValue}
               setSearchValue={setSearchValue}
             />
           </div>
-          <div className="max-[1000px]:hidden flex h-10 gap-2">
+          <div className="max-[62.5rem]:hidden flex h-10 gap-2">
             {secondaryButton}
             {buttonText && (
               <ButtonOne buttonBehaviour={buttonBehaviour} text={buttonText} />
@@ -85,7 +85,7 @@ const CommonLayout = ({
           </div>
         </div>
         {(secondaryButton || buttonText) && (
-          <div className="max-[1000px]:flex hidden h-10 gap-2">
+          <div className="max-[62.5rem]:flex hidden h-10 gap-2">
             {secondaryButton && (
               <div className="flex-1 [&>button]:w-full [&>button]:justify-center">
                 {secondaryButton}
@@ -108,13 +108,13 @@ const CommonLayout = ({
           ref={scrollContainerRef}
           className="min-h-0 min-w-0 flex-1 overflow-auto rounded-lg pb-4"
         >
-          <table className="w-full min-w-[800px] table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
+          <table className="w-full min-w-[50rem] table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead className="sticky top-0 z-10 bg-[#f0f0f1] transition-colors duration-300 dark:bg-[#121317]">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    className={`px-4 py-3 text-center text-[22px] font-extrabold tracking-widest`}
+                    className={`px-4 py-3 text-center text-[1.375rem] font-extrabold tracking-widest`}
                   >
                     {col.header}
                   </th>
@@ -146,7 +146,7 @@ const CommonLayout = ({
                 </tr>
               ) : (
                 data.map((item, index) => (
-                  <tr key={index} className="h-[68px] font-medium">
+                  <tr key={index} className="h-[4.25rem] font-medium">
                     {columns.map((col) => {
                       let cellContent;
                       if (col.accessor === "action") {

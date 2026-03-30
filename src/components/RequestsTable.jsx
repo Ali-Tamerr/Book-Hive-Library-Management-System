@@ -8,7 +8,7 @@ const RequestsTable = ({ columns, data, keyExtractor }) => {
           {columns.map((col, idx) => (
             <th
               key={idx}
-              className={`sticky top-0 z-10 bg-[#F2F2F2] p-4 text-center font-['Bebas_Neue',sans-serif] text-xl uppercase tracking-wider text-[#000035] shadow-[inset_0_-1px_0_0_#000035] dark:bg-[#121317] dark:text-[#D7D7D7] dark:shadow-[inset_0_-1px_0_0_#D7D7D7] ${col.headerClassName || ""}`}
+              className={`sticky top-0 z-10 bg-[#F2F2F2] p-4 text-center font-['Bebas_Neue',sans-serif] text-xl uppercase tracking-wider text-[#000035] shadow-[inset_0_-0.0625rem_0_0_#000035] dark:bg-[#121317] dark:text-[#D7D7D7] dark:shadow-[inset_0_-0.0625rem_0_0_#D7D7D7] ${col.headerClassName || ""}`}
             >
               {col.header}
             </th>

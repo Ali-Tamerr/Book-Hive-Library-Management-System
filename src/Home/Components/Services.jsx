@@ -5,7 +5,7 @@ const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
   return (
     <section className="services pb-28" data-reveal>
       <div
-        className="services__container grid max-w-[1688px] px-5"
+        className="services__container grid max-w-[105.5rem] px-5"
         style={{
           gridTemplateColumns: "repeat(3, 1fr)",
           columnGap: 0,

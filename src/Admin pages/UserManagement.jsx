@@ -72,7 +72,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const handleScroll = (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.target;
 
-    // Trigger update when scrolled to bottom (within 50px)
+    // Trigger update when scrolled to bottom (within 3.125rem)
     if (
       scrollHeight - scrollTop - clientHeight < 50 &&
       hasNextPage &&
@@ -686,7 +686,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         title="View User"
         imageUrl={selectedUser ? getImageUrl(selectedUser.image_url) : null}
         variant="user"
-        maxWidthClassOverride="max-w-[1100px]"
+        maxWidthClassOverride="max-w-[68.75rem]"
         data={
           selectedUser
             ? {

@@ -24,7 +24,7 @@ const ChatSidebar = ({
     <>
       {/* Sidebar Backdrop - mobile only, scoped to chatbot */}
       <div
-        className={`absolute inset-0 z-40 bg-transparent transition-all duration-300 min-[1000px]:hidden ${
+        className={`absolute inset-0 z-40 bg-transparent transition-all duration-300 min-[62.5rem]:hidden ${
           isOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
@@ -33,13 +33,13 @@ const ChatSidebar = ({
       ></div>
 
       <aside
-        className={`flex w-full max-w-[360px] flex-col gap-3 transition-all duration-300 max-[1000px]:absolute max-[1000px]:right-0 max-[1000px]:top-0 max-[1000px]:z-60 max-[1000px]:h-full max-[1000px]:max-w-[320px] max-[1000px]:bg-[#F2F2F2] dark:max-[1000px]:bg-[#121317] max-[1000px]:p-5 max-[1000px]:shadow-2xl ${
+        className={`flex w-full max-w-[22.5rem] flex-col gap-3 transition-all duration-300 max-[62.5rem]:absolute max-[62.5rem]:right-0 max-[62.5rem]:top-0 max-[62.5rem]:z-60 max-[62.5rem]:h-full max-[62.5rem]:max-w-[20rem] max-[62.5rem]:bg-[#F2F2F2] dark:max-[62.5rem]:bg-[#121317] max-[62.5rem]:p-5 max-[62.5rem]:shadow-2xl ${
           isOpen
-            ? "max-[1000px]:translate-x-0"
-            : "max-[1000px]:translate-x-full"
-        } min-[1000px]:relative min-[1000px]:translate-x-0`}
+            ? "max-[62.5rem]:translate-x-0"
+            : "max-[62.5rem]:translate-x-full"
+        } min-[62.5rem]:relative min-[62.5rem]:translate-x-0`}
       >
-        <div className="mb-2 flex items-center justify-between min-[1000px]:hidden">
+        <div className="mb-2 flex items-center justify-between min-[62.5rem]:hidden">
           <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
             Chat Options
           </h2>
@@ -162,7 +162,7 @@ const ChatSidebar = ({
             type="button"
             onClick={onClose} // Auto-close on "New Chat" on mobile
             onMouseUp={handleNewChat}
-            className="mx-auto mt-4 min-w-[132px] cursor-pointer rounded-xl border border-[#000035] bg-transparent px-5 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
+            className="mx-auto mt-4 min-w-[8.25rem] cursor-pointer rounded-xl border border-[#000035] bg-transparent px-5 py-2 text-sm font-bold text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
           >
             New Chat
           </button>
@@ -172,7 +172,7 @@ const ChatSidebar = ({
           <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
             Quick Action
           </h2>
-          <div className="mt-4 grid grid-cols-2 gap-3 max-[1150px]:grid-cols-1">
+          <div className="mt-4 grid grid-cols-2 gap-3 max-[71.875rem]:grid-cols-1">
             {quickActions.map((action) => (
               <button
                 key={action.label}

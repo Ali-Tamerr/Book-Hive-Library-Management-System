@@ -71,7 +71,7 @@ function BookFormPopup({
       name: "file_info",
       type: "custom",
       render: () => (
-        <span className=" block text-end text-[11px] -mb-2.5 font-medium text-[#000035]  dark:text-[#D7D7D7]">
+        <span className=" block text-end text-[0.6875rem] -mb-2.5 font-medium text-[#000035]  dark:text-[#D7D7D7]">
           {fileName}
         </span>
       ),

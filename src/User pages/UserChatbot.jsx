@@ -428,14 +428,14 @@ function UserChatbot() {
           {/* Scoped Sidebar Toggle - mobile only */}
           <button
             onClick={() => setIsChatSidebarOpen(!isChatSidebarOpen)}
-            className="flex min-[1000px]:hidden h-10 w-10 items-center justify-center rounded-lg border border-[#000035] text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] cursor-pointer"
+            className="flex min-[62.5rem]:hidden h-10 w-10 items-center justify-center rounded-lg border border-[#000035] text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] cursor-pointer"
           >
             {isChatSidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
         {/* New divider between page title and chatbot section */}
-        <div className="hidden max-[1000px]:block h-[1px] w-full bg-[#000035] dark:bg-[#D7D7D7] my-1"></div>
+        <div className="hidden max-[62.5rem]:block h-[0.0625rem] w-full bg-[#000035] dark:bg-[#D7D7D7] my-1"></div>
 
         <section className="flex h-full gap-3 overflow-hidden">
           <ChatSidebar
@@ -455,8 +455,8 @@ function UserChatbot() {
             quickActions={quickActions}
           />
 
-          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7] max-[1000px]:border-none max-[1000px]:p-0">
-            <div className="flex items-center justify-between border-b border-[#000035] pb-3 dark:border-[#D7D7D7] max-[1000px]:mb-4">
+          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7] max-[62.5rem]:border-none max-[62.5rem]:p-0">
+            <div className="flex items-center justify-between border-b border-[#000035] pb-3 dark:border-[#D7D7D7] max-[62.5rem]:mb-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
                   <Bot size={18} />
@@ -477,7 +477,7 @@ function UserChatbot() {
               </div>
             </div>
 
-            <div className="mt-4 flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7] max-[1000px]:mt-0 max-[1000px]:border-none max-[1000px]:p-0">
+            <div className="mt-4 flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7] max-[62.5rem]:mt-0 max-[62.5rem]:border-none max-[62.5rem]:p-0">
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1">
                 {messages.map((message) =>
                   message.sender === "bot" ? (

@@ -26,10 +26,10 @@ const SearchOverlay = ({ isOpen, onClose, onBookClick, setIsLoginOpen }) => {
         isOpen ? "pointer-events-auto translate-y-0" : "pointer-events-none -translate-y-full"
       }`}
     >
-      <div className="container relative mx-auto flex h-full max-w-[1150px] flex-col px-6">
+      <div className="container relative mx-auto flex h-full max-w-[71.875rem] flex-col px-6">
         {/* Close Button */}
         <i
-          className="ri-close-line absolute -top-24 left-1/2 -translate-x-1/2 cursor-pointer text-[48px] text-[#000035] transition-transform hover:scale-110 dark:text-[#D7D7D7]"
+          className="ri-close-line absolute -top-24 left-1/2 -translate-x-1/2 cursor-pointer text-[3rem] text-[#000035] transition-transform hover:scale-110 dark:text-[#D7D7D7]"
           onClick={() => {
             onClose();
             setSearchTerm("");
@@ -38,14 +38,14 @@ const SearchOverlay = ({ isOpen, onClose, onBookClick, setIsLoginOpen }) => {
 
         <div className="flex h-full flex-col items-center gap-y-12 overflow-hidden">
           {/* Search Input Container */}
-          <div className="relative w-full max-w-[800px] shrink-0 overflow-hidden rounded-2xl border border-[#000035]  transition-all focus-within:border-[#000053] dark:border-[#D7D7D7]  dark:focus-within:border-white">
-            <i className="ri-search-line absolute left-8 top-1/2 -translate-y-1/2 text-[32px] text-[#000035] dark:text-[#D7D7D7]"></i>
+          <div className="relative w-full max-w-[50rem] shrink-0 overflow-hidden rounded-2xl border border-[#000035]  transition-all focus-within:border-[#000053] dark:border-[#D7D7D7]  dark:focus-within:border-white">
+            <i className="ri-search-line absolute left-8 top-1/2 -translate-y-1/2 text-[2rem] text-[#000035] dark:text-[#D7D7D7]"></i>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="What are you looking for ?"
-              className="w-full bg-transparent py-8 pl-20 pr-10 font-[family-name:var(--title-font)] text-[26px] text-[#000035] outline-none placeholder:text-[#000035] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7] [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none"
+              className="w-full bg-transparent py-8 pl-20 pr-10 font-[family-name:var(--title-font)] text-[1.625rem] text-[#000035] outline-none placeholder:text-[#000035] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7] [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none [&::-webkit-search-results-button]:appearance-none [&::-webkit-search-results-decoration]:appearance-none"
               autoFocus={isOpen}
             />
           </div>
