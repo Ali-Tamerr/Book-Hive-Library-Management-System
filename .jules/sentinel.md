@@ -1,0 +1,4 @@
+## 2024-05-24 - [Fix User Enumeration Vulnerability in Login]
+**Vulnerability:** The client-side simulated login function exposed different error messages ("User not found" vs "Incorrect password") and logged the user's email on authentication failure. This allows an attacker to enumerate which emails are registered in the system.
+**Learning:** The authentication is being simulated by fetching all users to the client side. When simulating authentication, even on the client side, it's crucial not to leak information about the existence of accounts through distinct error states or console logging.
+**Prevention:** Always use generic error messages like "Invalid email or password" for both user-not-found and invalid-password conditions, and ensure that authentication failure logs do not expose sensitive PII.

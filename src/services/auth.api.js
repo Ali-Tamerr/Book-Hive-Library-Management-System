@@ -146,14 +146,12 @@ export const login = async (email, password) => {
     );
 
     if (!user) {
-      console.error("User not found for email:", email);
-      throw new Error("User not found. Please check your email address.");
+      throw new Error("Invalid email or password.");
     }
 
     const storedPassword = user.password_hash || user.password || "";
     if (storedPassword !== password) {
-      console.error("Password mismatch for user:", email);
-      throw new Error("Incorrect password. Please try again.");
+      throw new Error("Invalid email or password.");
     }
 
     persistAuthSession(user);
