@@ -109,7 +109,12 @@ const getAllUsersForAuth = async () => {
 };
 
 const persistAuthSession = (user) => {
-  localStorage.setItem("currentUser", JSON.stringify(user));
+  // Sentinel: Security enhancement to prevent storing sensitive data in plaintext
+  const safeUser = { ...user };
+  delete safeUser.password;
+  delete safeUser.password_hash;
+
+  localStorage.setItem("currentUser", JSON.stringify(safeUser));
 
   const token =
     typeof user?.token === "string"
