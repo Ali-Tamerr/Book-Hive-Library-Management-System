@@ -32,3 +32,8 @@ export const updateUser = async (id, userData) => {
 export const deleteUser = async (id) => {
   return await apiDelete(`${BASE_ENDPOINT}/${encodeURIComponent(id)}`);
 };
+
+export const loginUser = async (credentials) => {
+  return await apiPost(`${BASE_ENDPOINT}/login`, credentials);
+};
+
