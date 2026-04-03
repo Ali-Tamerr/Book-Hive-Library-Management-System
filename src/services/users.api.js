@@ -12,12 +12,12 @@ export const getLibrarians = async () => {
 
 // Get user by ID
 export const getUserById = async (id) => {
-  return await apiGet(`${BASE_ENDPOINT}/byid/${id}`);
+  return await apiGet(`${BASE_ENDPOINT}/byid/${encodeURIComponent(id)}`);
 };
 
 // Get user by name
 export const getUserByName = async (name) => {
-  return await apiGet(`${BASE_ENDPOINT}/${name}`);
+  return await apiGet(`${BASE_ENDPOINT}/${encodeURIComponent(name)}`);
 };
 
 // Create new user
