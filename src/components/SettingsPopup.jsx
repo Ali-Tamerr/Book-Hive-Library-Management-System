@@ -5,7 +5,7 @@ import FormButton from "./FormButton.jsx";
 import { ImagePlus, Settings, UserRound } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "../services/auth.api";
-import { updateUser } from "../services/users.api";
+import { updateUser, loginUser } from "../services/users.api";
 import { getImageUrl } from "../services/api.config";
 
 import FormInput from "./FormInput.jsx";
@@ -22,7 +22,6 @@ const SettingsPopup = ({ show, onClose }) => {
     confirmPassword: "",
   });
   const [selectedImageBase64, setSelectedImageBase64] = useState("");
-  const [selectedFileName, setSelectedFileName] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,7 +43,6 @@ const SettingsPopup = ({ show, onClose }) => {
   const handleSelectPhoto = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    setSelectedFileName(file.name);
     // Only allow PNG and JPEG/JPG
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!allowedTypes.includes(file.type)) {
@@ -127,10 +125,6 @@ const SettingsPopup = ({ show, onClose }) => {
         setError("Not logged in");
         return;
       }
-      if (formData.currentPassword !== currentUser.password_hash) {
-        setError("Current password is incorrect");
-        return;
-      }
     }
 
     // Only allow update if at least one field is changed
@@ -143,6 +137,19 @@ const SettingsPopup = ({ show, onClose }) => {
 
     setLoading(true);
     try {
+      if (wantsPasswordChange) {
+        try {
+          await loginUser({
+            email: currentUser.email,
+            password: formData.currentPassword,
+          });
+        } catch {
+          setError("Current password is incorrect");
+          setLoading(false);
+          return;
+        }
+      }
+
       const userData = {
         user_id: currentUser.user_id,
         first_name: currentUser.first_name,
