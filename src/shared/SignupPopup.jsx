@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
   createUserRequest,
-  getAllUserRequests,
 } from "../services/userRequests.api";
-import { getAllUsers } from "../services/users.api";
 import { useBranches } from "../hooks/useBranches";
 import AuthInput from "../components/AuthInput";
 import PrimaryButton from "../components/PrimaryButton";
@@ -27,8 +25,6 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [existingUsers, setExistingUsers] = useState([]);
-  const [existingRequests, setExistingRequests] = useState([]);
 
   const { data: branches = [] } = useBranches();
 
@@ -45,37 +41,6 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const fetchExistingData = async () => {
-      try {
-        const [users, requests] = await Promise.all([
-          getAllUsers(),
-          getAllUserRequests(),
-        ]);
-
-        let usersArray = [];
-        if (Array.isArray(users)) usersArray = users;
-        else if (users && Array.isArray(users.data)) usersArray = users.data;
-        else if (users && Array.isArray(users.users)) usersArray = users.users;
-
-        let requestsArray = [];
-        if (Array.isArray(requests)) requestsArray = requests;
-        else if (requests && Array.isArray(requests.data))
-          requestsArray = requests.data;
-        else if (requests && Array.isArray(requests.requests))
-          requestsArray = requests.requests;
-
-        setExistingUsers(usersArray);
-        setExistingRequests(requestsArray);
-      } catch (err) {
-        console.error("Failed to fetch existing data:", err);
-      }
-    };
-    if (isOpen) {
-      fetchExistingData();
-    }
-  }, [isOpen]);
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -84,39 +49,9 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
     setError("");
   };
 
-  const validateUniqueFields = () => {
-    const emailLower = formData.email.toLowerCase().trim();
-
-    const emailExistsInUsers = existingUsers.some(
-      (user) => user.email?.toLowerCase() === emailLower,
-    );
-    if (emailExistsInUsers) {
-      setError(
-        "This email is already registered. Please use a different email or sign in.",
-      );
-      return false;
-    }
-
-    const emailExistsInRequests = existingRequests.some(
-      (request) =>
-        request.email?.toLowerCase() === emailLower &&
-        request.status === "Pending",
-    );
-    if (emailExistsInRequests) {
-      setError("A registration request with this email is already pending.");
-      return false;
-    }
-
-    return true;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    if (!validateUniqueFields()) {
-      return;
-    }
 
     setLoading(true);
 

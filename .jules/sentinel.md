@@ -1,0 +1,4 @@
+## 2024-05-18 - [CRITICAL] Removed data exposure in SignupPopup
+**Vulnerability:** The `SignupPopup.jsx` component was fetching all users (`getAllUsers()`) and all user requests (`getAllUserRequests()`) on the client side to validate if an email was already taken. This exposed PII (Personally Identifiable Information) of all users to any unauthenticated client who opened the signup popup.
+**Learning:** Client-side validation for uniqueness constraints (like email) should never involve fetching the entire dataset. It exposes sensitive data and scales poorly.
+**Prevention:** Always handle uniqueness constraints and data validation on the server side. The server should process the registration request and return an appropriate error message (e.g., "Email already registered") which the client can catch and display.
