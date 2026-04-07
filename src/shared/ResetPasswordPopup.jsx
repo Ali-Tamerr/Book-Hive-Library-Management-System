@@ -94,7 +94,7 @@ function ResetPasswordPopup({
           >
             <form
               onSubmit={handleSubmit}
-              className="flex w-full flex-col items-center gap-6"
+              className="flex w-full flex-col items-center gap-4"
             >
               <AuthInput
                 type="password"
