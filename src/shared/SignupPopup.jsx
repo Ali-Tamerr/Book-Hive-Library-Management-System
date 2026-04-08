@@ -9,7 +9,7 @@ import DarkBgSection from "../components/DarkBgSection";
 import WhiteBgSection from "../components/WhiteBgSection";
 import FormSelect from "../components/FormSelect";
 
-function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
+function SignupPopup({ isOpen, onClose, onLogin, onShowOTP, slideFromTop = false }) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [formData, setFormData] = useState({
@@ -58,6 +58,7 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
 
     try {
       await createUserRequest(formData);
+      const emailForOTP = formData.email;
       setSuccess(true);
       setFormData({
         first_name: "",
@@ -70,6 +71,7 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
       setTimeout(() => {
         onClose?.();
         setSuccess(false);
+        onShowOTP?.(emailForOTP);
       }, 3000);
     } catch (err) {
       const errorMessage =

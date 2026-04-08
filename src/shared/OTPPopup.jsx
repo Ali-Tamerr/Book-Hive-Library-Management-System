@@ -4,17 +4,23 @@ import AuthInput from "../components/AuthInput";
 import PrimaryButton from "../components/PrimaryButton";
 import DarkBgSection from "../components/DarkBgSection";
 import WhiteBgSection from "../components/WhiteBgSection";
+import { verifyUserRequestOtp } from "../services/userRequests.api";
 
 function OTPPopup({
   isOpen,
   onClose,
   onResetPassword,
   onBack,
+  email,
+  isSignupVerification = false,
   slideFromTop = false,
 }) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -30,10 +36,34 @@ function OTPPopup({
     return () => observer.disconnect();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onClose?.();
-    onResetPassword?.();
+    setError("");
+    
+    if (isSignupVerification) {
+      if (!email) {
+        setError("Email is missing. Please try again.");
+        return;
+      }
+      setLoading(true);
+      try {
+        await verifyUserRequestOtp(email, otp);
+        setSuccess(true);
+        setTimeout(() => {
+          onClose?.();
+          setSuccess(false);
+          setOtp("");
+        }, 2000);
+      } catch (err) {
+        setError(err?.response?.data?.message || "Verification failed. Please check your code.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Default behavior for Forgot Password flow
+      onClose?.();
+      onResetPassword?.();
+    }
   };
 
   const handleBack = () => {
@@ -50,6 +80,9 @@ function OTPPopup({
       setIsAnimating(false);
       const timer = setTimeout(() => {
         setShouldRender(false);
+        setError("");
+        setSuccess(false);
+        setOtp("");
       }, 500);
       return () => clearTimeout(timer);
     }
@@ -70,27 +103,38 @@ function OTPPopup({
           className={`flex h-full w-full max-[67.5rem]:flex-col max-[48rem]:justify-center ${isDarkMode ? "bg-[#121317]" : "bg-white"} overflow-hidden`}
         >
           <WhiteBgSection
-            title="Check your Mailbox"
-            subtitle="Please enter the OTP to proceed"
-            backButton={{ text: "BACK", onClick: handleBack, position: "left" }}
+            title={success ? "Success!" : "Check your Mailbox"}
+            subtitle={success ? "Your email has been verified. Our librarian will review your request." : `Please enter the 6-digit code sent to ${email || "your email"}`}
+            backButton={!success ? { text: "BACK", onClick: handleBack, position: "left" } : null}
             isDarkMode={isDarkMode}
           >
-            <form
-              onSubmit={handleSubmit}
-              className="flex w-full flex-col items-center gap-4"
-            >
-              <AuthInput
-                type="text"
-                placeholder="OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-                isDarkMode={isDarkMode}
-              />
-              <PrimaryButton type="submit" isDarkMode={isDarkMode}>
-                VERIFY
-              </PrimaryButton>
-            </form>
+            {success ? (
+               <div className="flex flex-col items-center py-6">
+                  <i className="ri-checkbox-circle-fill text-6xl text-green-500 mb-4 animate-bounce"></i>
+                  <p className={`text-center ${isDarkMode ? "text-[#D7D7D7]" : "text-[#000035]"}`}>
+                    Verification complete!
+                  </p>
+               </div>
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                className="flex w-full flex-col items-center gap-4"
+              >
+                <AuthInput
+                  type="text"
+                  placeholder="6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  maxLength={6}
+                  required
+                  isDarkMode={isDarkMode}
+                />
+                {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                <PrimaryButton type="submit" disabled={loading} isDarkMode={isDarkMode}>
+                  {loading ? "VERIFYING..." : "VERIFY"}
+                </PrimaryButton>
+              </form>
+            )}
           </WhiteBgSection>
 
           <DarkBgSection
