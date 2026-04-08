@@ -2,20 +2,7 @@ import { createUser, loginUser } from "./users.api";
 
 const persistAuthSession = (user) => {
   localStorage.setItem("currentUser", JSON.stringify(user));
-
-  const token =
-    typeof user?.token === "string"
-      ? user.token
-      : typeof user?.accessToken === "string"
-        ? user.accessToken
-        : null;
-
-  if (token) {
-    localStorage.setItem("authToken", token);
-  } else {
-    localStorage.removeItem("authToken");
-  }
-
+  // authToken is now stored in an HttpOnly cookie by the server
   window.dispatchEvent(new Event("userUpdated"));
 };
 
@@ -70,7 +57,13 @@ export const signup = async (userData) => {
   }
 };
 
-export const logout = () => {
+export const logout = async () => {
+  try {
+    const { apiPost } = await import("./api.config");
+    await apiPost("/Users/logout");
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
   localStorage.removeItem("authToken");
   localStorage.removeItem("currentUser");
   window.dispatchEvent(new Event("userUpdated"));
@@ -86,5 +79,27 @@ export const setCurrentUser = (user) => {
 };
 
 export const isAuthenticated = () => {
-  return !!localStorage.getItem("currentUser");
+  const user = getCurrentUser();
+  // Basic check: we have a user object
+  if (!user) return false;
+
+  // In a real app, we should also verify the token is still valid.
+  // This is usually done on app mount or route change.
+  return true;
+};
+
+export const verifySession = async () => {
+  try {
+    const { apiGet } = await import("./api.config");
+    const user = await apiGet("/Users/me");
+    if (user) {
+      persistAuthSession(user);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.warn("Session verification failed:", error);
+    logout();
+    return false;
+  }
 };
