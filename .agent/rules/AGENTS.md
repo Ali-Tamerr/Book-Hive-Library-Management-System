@@ -113,3 +113,17 @@ Appendix: quick checklist for common issues
 - React Query v4 errors: ensure `queryKey` usage is always an Array or use the object style for client methods (e.g., `fetchQuery({ queryKey, queryFn })`).
 
 End of rules file.
+
+General Superpower Skills
+-------------------------
+These core engineering skills are globally available and should be used for complex tasks:
+- Path: `C:\Users\Administrator\.gemini\extensions\superpowers\skills`
+- Included Skills:
+  - `subagent-driven-development`: Decompose large tasks for autonomous sub-agents.
+  - `systematic-debugging`: Structured isolation and fixing of complex bugs.
+  - `test-driven-development`: Writing tests before code for maximum reliability.
+  - `writing-plans` & `executing-plans`: Step-by-step implementation for complex features.
+  - `verification-before-completion`: Rigorous final check-lists to prevent regressions.
+  - `brainstorming`: Divergent thinking to explore multiple technical solutions.
+- **Rule**: When starting a major feature or hard-to-reproduce bug, refer to the relevant `SKILL.md` in the paths above immediately after reading this main rules file.
+

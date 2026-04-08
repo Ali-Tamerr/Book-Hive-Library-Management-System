@@ -164,35 +164,24 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
 // Request interceptor - Add auth token to all requests
 axiosInstance.interceptors.request.use(
   (config) => {
+    // We are now using cookies (HttpOnly). 
+    // The browser handles sending the authToken cookie automatically.
+    // If we still need to support Bearer token for some reason (e.g. mobile), 
+    // we can keep this, but for web it's safer to rely on cookies.
+    
+    // For now, let's keep it as a fallback if the token exists in localStorage
+    // (during the migration phase)
     const token = localStorage.getItem("authToken");
-    if (!token) {
-      return config;
-    }
-
-    let actualToken = null;
-
-    try {
-      const tokenData = JSON.parse(token);
-      if (typeof tokenData === "string") {
-        actualToken = tokenData;
-      } else if (tokenData && typeof tokenData === "object") {
-        if (typeof tokenData.token === "string") {
-          actualToken = tokenData.token;
-        } else if (typeof tokenData.accessToken === "string") {
-          actualToken = tokenData.accessToken;
-        }
-      }
-    } catch {
-      actualToken = token;
-    }
-
-    if (typeof actualToken === "string" && actualToken.trim().length > 0) {
-      config.headers.Authorization = `Bearer ${actualToken.trim()}`;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -206,8 +195,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Log the full error for debugging
-    console.error("Full error object:", error);
+    // Log the full error for debugging only in development
+    if (import.meta.env.DEV) {
+      console.error("Full error object:", error);
+    }
 
     if (error.response) {
       // Server responded with error
@@ -218,11 +209,13 @@ axiosInstance.interceptors.response.use(
           : error.response.data?.errors) ||
         error.message ||
         `Server error: ${error.response.status}`;
-      console.error(
-        "API Error Response:",
-        error.response.status,
-        error.response.data,
-      );
+      if (import.meta.env.DEV) {
+        console.error(
+          "API Error Response:",
+          error.response.status,
+          error.response.data,
+        );
+      }
 
       // Preserve the full error object
       const errorWithDetails = new Error(message);

@@ -15,4 +15,13 @@ export default defineConfig({
     }),
   ],
   base: process.env.VITE_BASE || "/",
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:5186",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });
