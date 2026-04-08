@@ -4,7 +4,7 @@ import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
 import { ImagePlus, Settings, UserRound } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getCurrentUser } from "../services/auth.api";
+import { getCurrentUser, login } from "../services/auth.api";
 import { updateUser } from "../services/users.api";
 import { getImageUrl } from "../services/api.config";
 
@@ -99,7 +99,7 @@ const SettingsPopup = ({ show, onClose }) => {
       setSelectedImageBase64(String(base64));
       setError("");
       setSuccess("");
-    } catch {
+    } catch (err) {
       setError("Failed to load image. Please try another file.");
     }
   };
@@ -127,7 +127,9 @@ const SettingsPopup = ({ show, onClose }) => {
         setError("Not logged in");
         return;
       }
-      if (formData.currentPassword !== currentUser.password_hash) {
+      try {
+        await login(currentUser.email, formData.currentPassword);
+      } catch (err) {
         setError("Current password is incorrect");
         return;
       }
