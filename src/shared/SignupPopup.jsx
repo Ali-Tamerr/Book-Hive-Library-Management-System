@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { createUserRequest } from "../services/userRequests.api";
+import { createUserRequest, sendOtpToEmail } from "../services/userRequests.api";
 
 import { useBranches } from "../hooks/useBranches";
 import AuthInput from "../components/AuthInput";
@@ -57,27 +57,14 @@ function SignupPopup({ isOpen, onClose, onLogin, onShowOTP, slideFromTop = false
     setLoading(true);
 
     try {
-      await createUserRequest(formData);
-      const emailForOTP = formData.email;
-      setSuccess(true);
-      setFormData({
-        first_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        branch_id: "",
-        plan: "",
-      });
-      setTimeout(() => {
-        onClose?.();
-        setSuccess(false);
-        onShowOTP?.(emailForOTP);
-      }, 3000);
+      await sendOtpToEmail(formData.email);
+      onClose?.();
+      onShowOTP?.(formData.email, formData);
     } catch (err) {
       const errorMessage =
         err?.response?.data?.message ||
         err?.message ||
-        "Request submission failed. Please try again.";
+        "Failed to send verification email. Please try again.";
       setError(errorMessage);
     } finally {
       setLoading(false);

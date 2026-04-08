@@ -4,7 +4,7 @@ import AuthInput from "../components/AuthInput";
 import PrimaryButton from "../components/PrimaryButton";
 import DarkBgSection from "../components/DarkBgSection";
 import WhiteBgSection from "../components/WhiteBgSection";
-import { verifyUserRequestOtp } from "../services/userRequests.api";
+import { createUserRequest } from "../services/userRequests.api";
 
 function OTPPopup({
   isOpen,
@@ -12,6 +12,7 @@ function OTPPopup({
   onResetPassword,
   onBack,
   email,
+  signupData, // Captured form data from SignupPopup
   isSignupVerification = false,
   slideFromTop = false,
 }) {
@@ -41,19 +42,20 @@ function OTPPopup({
     setError("");
     
     if (isSignupVerification) {
-      if (!email) {
-        setError("Email is missing. Please try again.");
+      if (!email || !signupData) {
+        setError("Session data is missing. Please try signing up again.");
         return;
       }
       setLoading(true);
       try {
-        await verifyUserRequestOtp(email, otp);
+        // Finalize registration by sending both data and OTP
+        await createUserRequest(signupData, otp);
         setSuccess(true);
         setTimeout(() => {
           onClose?.();
           setSuccess(false);
           setOtp("");
-        }, 2000);
+        }, 3000);
       } catch (err) {
         setError(err?.response?.data?.message || "Verification failed. Please check your code.");
       } finally {
@@ -103,16 +105,16 @@ function OTPPopup({
           className={`flex h-full w-full max-[67.5rem]:flex-col max-[48rem]:justify-center ${isDarkMode ? "bg-[#121317]" : "bg-white"} overflow-hidden`}
         >
           <WhiteBgSection
-            title={success ? "Success!" : "Check your Mailbox"}
-            subtitle={success ? "Your email has been verified. Our librarian will review your request." : `Please enter the 6-digit code sent to ${email || "your email"}`}
+            title={success ? "Request Submitted!" : "Check your Mailbox"}
+            subtitle={success ? "Your email is verified and your request has been sent to our librarian." : `Please enter the 6-digit code sent to ${email || "your email"}`}
             backButton={!success ? { text: "BACK", onClick: handleBack, position: "left" } : null}
             isDarkMode={isDarkMode}
           >
             {success ? (
                <div className="flex flex-col items-center py-6">
                   <i className="ri-checkbox-circle-fill text-6xl text-green-500 mb-4 animate-bounce"></i>
-                  <p className={`text-center ${isDarkMode ? "text-[#D7D7D7]" : "text-[#000035]"}`}>
-                    Verification complete!
+                  <p className={`text-center ${isDarkMode ? "text-[#D7D7D7]" : "text-[#000035]"} max-w-sm px-4`}>
+                    Great! We will review your application and notify you once your account is ready.
                   </p>
                </div>
             ) : (
