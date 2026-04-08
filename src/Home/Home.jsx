@@ -60,6 +60,7 @@ const Home = () => {
   );
   const [verificationEmail, setVerificationEmail] = useState("");
   const [isSignupOTP, setIsSignupOTP] = useState(false);
+  const [signupData, setSignupData] = useState(null);
   const heroIntervalRef = useRef(null);
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
@@ -484,8 +485,9 @@ const Home = () => {
           isOpen={isSignupOpen}
           onClose={() => setIsSignupOpen(false)}
           onLogin={() => setIsLoginOpen(true)}
-          onShowOTP={(email) => {
+          onShowOTP={(email, data) => {
             setVerificationEmail(email);
+            setSignupData(data);
             setIsSignupOTP(true);
             setIsOTPOpen(true);
           }}
@@ -505,6 +507,7 @@ const Home = () => {
           onClose={() => {
             setIsOTPOpen(false);
             setIsSignupOTP(false);
+            setSignupData(null);
           }}
           onResetPassword={() => setIsResetPasswordOpen(true)}
           onBack={() => {
@@ -512,6 +515,7 @@ const Home = () => {
             else setIsForgotPasswordOpen(true);
           }}
           email={verificationEmail}
+          signupData={signupData}
           isSignupVerification={isSignupOTP}
           slideFromTop={true}
         />

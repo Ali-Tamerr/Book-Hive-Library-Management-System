@@ -10,8 +10,8 @@ export const getUserRequestById = async (id) => {
   return await apiGet(`${BASE_ENDPOINT}/${id}`);
 };
 
-export const createUserRequest = async (requestData) => {
-  return await apiPost(BASE_ENDPOINT, requestData);
+export const createUserRequest = async (requestData, otp) => {
+  return await apiPost(BASE_ENDPOINT, { UserRequest: requestData, Otp: otp });
 };
 
 export const updateUserRequest = async (id, requestData) => {
@@ -32,4 +32,8 @@ export const rejectUserRequest = async (id) => {
 
 export const verifyUserRequestOtp = async (email, otp) => {
   return await apiPost(`${BASE_ENDPOINT}/verify-otp`, { email, otp });
+};
+
+export const sendOtpToEmail = async (email) => {
+  return await apiPost(`${BASE_ENDPOINT}/send-otp`, { email });
 };
