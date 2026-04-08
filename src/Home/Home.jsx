@@ -58,6 +58,8 @@ const Home = () => {
   const [isCompactDesktop, setIsCompactDesktop] = useState(
     typeof window !== "undefined" ? window.innerWidth >= 1400 : false,
   );
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [isSignupOTP, setIsSignupOTP] = useState(false);
   const heroIntervalRef = useRef(null);
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
@@ -482,6 +484,11 @@ const Home = () => {
           isOpen={isSignupOpen}
           onClose={() => setIsSignupOpen(false)}
           onLogin={() => setIsLoginOpen(true)}
+          onShowOTP={(email) => {
+            setVerificationEmail(email);
+            setIsSignupOTP(true);
+            setIsOTPOpen(true);
+          }}
           slideFromTop={true}
         />
 
@@ -495,9 +502,17 @@ const Home = () => {
 
         <OTPPopup
           isOpen={isOTPOpen}
-          onClose={() => setIsOTPOpen(false)}
+          onClose={() => {
+            setIsOTPOpen(false);
+            setIsSignupOTP(false);
+          }}
           onResetPassword={() => setIsResetPasswordOpen(true)}
-          onBack={() => setIsForgotPasswordOpen(true)}
+          onBack={() => {
+            if (isSignupOTP) setIsSignupOpen(true);
+            else setIsForgotPasswordOpen(true);
+          }}
+          email={verificationEmail}
+          isSignupVerification={isSignupOTP}
           slideFromTop={true}
         />
 

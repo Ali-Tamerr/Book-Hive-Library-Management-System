@@ -29,3 +29,7 @@ export const approveUserRequest = async (id) => {
 export const rejectUserRequest = async (id) => {
   return await apiPut(`${BASE_ENDPOINT}/${id}`, { status: 'Rejected' });
 };
+
+export const verifyUserRequestOtp = async (email, otp) => {
+  return await apiPost(`${BASE_ENDPOINT}/verify-otp`, { email, otp });
+};
