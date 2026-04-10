@@ -25,7 +25,7 @@ export const userKeys = {
   detail: (id) => [...userKeys.details(), id],
 };
 
-export const useUsers = () => {
+export const useUsers = (options = {}) => {
   return useInfiniteQuery({
     queryKey: userKeys.infinite(),
     queryFn: ({ pageParam = 1 }) => getAllUsers({ page: pageParam, limit: 12 }),
@@ -55,14 +55,16 @@ export const useUsers = () => {
       return undefined;
     },
     ...adminQueryOptions,
+    ...options,
   });
 };
 
-export const useLibrarians = () => {
+export const useLibrarians = (options = {}) => {
   return useQuery({
     queryKey: userKeys.librarians(),
     queryFn: getLibrarians,
     ...adminQueryOptions,
+    ...options,
   });
 };
 

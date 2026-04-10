@@ -10,7 +10,7 @@ import {
   Building,
   FolderOpen,
 } from "lucide-react";
-import { useBooks } from "../hooks/useBooks";
+import { useBookCovers } from "../hooks/useBooks";
 import { useUsers } from "../hooks/useUsers";
 import { useBranches } from "../hooks/useBranches";
 import { useCategories } from "../hooks/useCategories";
@@ -20,14 +20,21 @@ function GlobalSearchPopup({ show, onClose }) {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  const { data: books = [], isLoading: loadingBooks } = useBooks();
-  const { data: usersData, isLoading: loadingUsers } = useUsers();
+  const { data: books = [], isLoading: loadingBooks } = useBookCovers({
+    enabled: show,
+  });
+  const { data: usersData, isLoading: loadingUsers } = useUsers({
+    enabled: show,
+  });
   const users = usersData
     ? usersData.pages.flatMap((page) => page.data || [])
     : [];
-  const { data: branches = [], isLoading: loadingBranches } = useBranches();
-  const { data: categories = [], isLoading: loadingCategories } =
-    useCategories();
+  const { data: branches = [], isLoading: loadingBranches } = useBranches({
+    enabled: show,
+  });
+  const { data: categories = [], isLoading: loadingCategories } = useCategories(
+    { enabled: show },
+  );
 
   const isLoading =
     loadingBooks || loadingUsers || loadingBranches || loadingCategories;

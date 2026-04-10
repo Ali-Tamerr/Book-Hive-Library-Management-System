@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { useBooks } from "../hooks/useBooks";
+import { useBookCovers } from "../hooks/useBooks";
 import LazyImage from "./LazyImage";
 import BookCard from "./BookCard";
 import { getImageUrl } from "../services/api.config";
 
 const SearchOverlay = ({ isOpen, onClose, onBookClick, setIsLoginOpen }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { data: booksSource } = useBooks();
+  const { data: booksSource } = useBookCovers({ enabled: isOpen });
 
   const books = useMemo(() => {
     return Array.isArray(booksSource) ? booksSource : booksSource?.data || [];
