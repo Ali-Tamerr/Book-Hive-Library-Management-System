@@ -14,11 +14,12 @@ export const branchKeys = {
     management: () => [...branchKeys.all, 'management'],
 };
 
-export const useBranches = () => {
+export const useBranches = (options = {}) => {
     return useQuery({
         queryKey: branchKeys.lists(),
         queryFn: getBranches,
         ...adminQueryOptions,
+        ...options,
     });
 };
 

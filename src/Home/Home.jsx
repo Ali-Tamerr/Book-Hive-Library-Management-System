@@ -16,9 +16,8 @@ import chatbotIcon from "../assets/chatbot.png";
 
 import { apiGet, getImageUrl } from "../services/api.config";
 import { useQueryClient } from "@tanstack/react-query";
-import { useBooks, bookKeys } from "../hooks/useBooks";
+import { useBookCovers, bookKeys } from "../hooks/useBooks";
 import { useApprovedFeedbacks } from "../hooks/useFeedbacks";
-import { getAllBooks } from "../services/books.api";
 import Header from "./Components/Header";
 import Hero from "./Components/Hero";
 import Services from "./Components/Services";
@@ -42,7 +41,7 @@ const Home = () => {
   const [aboutBooks, setAboutBooks] = useState([]);
   const [categories, setCategories] = useState({});
   const queryClient = useQueryClient();
-  const { data: booksSource, isLoading: booksLoading } = useBooks();
+  const { data: booksSource, isLoading: booksLoading } = useBookCovers();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
   const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } =
     useApprovedFeedbacks();
@@ -92,37 +91,20 @@ const Home = () => {
             : 0;
         }
 
-        // If stats endpoint didn't yield useful numbers, fetch branches/categories
-        // individually and derive books from the prefetched books response.
-        if (!branches && !categories) {
+        // If stats endpoint didn't yield useful numbers, fetch branches individually
+        if (!branches) {
           try {
-            const [branchData, catData] = await Promise.all([
-              apiGet("/Branches").catch(() => null),
-              apiGet("/Categories").catch(() => null),
-            ]);
-            
+            const branchData = await apiGet("/Branches").catch(() => null);
             branches = Array.isArray(branchData)
               ? branchData.length
               : branchData?.data?.length || 0;
-            
-            const catsArray = Array.isArray(catData) ? catData : catData?.data || [];
-            categories = catsArray.length;
-            
-            const catMap = {};
-            catsArray.forEach(c => {
-              if (c.category_id && c.category_name) {
-                catMap[c.category_id] = c.category_name;
-              }
-            });
-            setCategories(catMap);
-            
           } catch (e) {
             // ignore
           }
         }
 
         // No longer waiting for all books data here for faster loading.
-        // Book count will be updated from the useBooks hook results when available.
+        // Book count will be updated from the useBookCovers hook results when available.
         if (
           maybeStats &&
           typeof maybeStats === "object" &&
@@ -153,7 +135,7 @@ const Home = () => {
     if (!pageLoaded) return;
 
     try {
-      const raw = localStorage.getItem("homeBooksCache.v1");
+      const raw = localStorage.getItem("homeBooksCache.v2");
       if (!raw) return;
       const cached = JSON.parse(raw);
 
@@ -171,7 +153,7 @@ const Home = () => {
     }
   }, [pageLoaded]);
 
-  // 2b/2c. Derive hero/about/featured books from React Query's `useBooks`.
+  // 2b/2c. Derive hero/about/featured books from React Query's `useBookCovers`.
   useEffect(() => {
     const rawArray = Array.isArray(booksSource)
       ? booksSource
@@ -194,13 +176,6 @@ const Home = () => {
     const toViewModel = (book) => ({
       book_id: book.book_id,
       name: book.name,
-      category_id: book.category_id,
-      category: categories[book.category_id] || "Various",
-      quantity: book.quantity,
-      availability: book.quantity > 0 ? "Available" : "Not Available",
-      language: "English", // Default language per scope 
-      branch: "Multiple Branches", // Specific individual branch isn't resolvable
-      created_at: book.created_at,
       image: getImageUrl(book.image_url) || "",
     });
 
@@ -247,7 +222,7 @@ const Home = () => {
     if (rawArray.length > 0 && stats.books === 0) {
       setStats((prev) => ({ ...prev, books: rawArray.length }));
     }
-  }, [pageLoaded, booksSource, categories]);
+  }, [pageLoaded, booksSource]);
 
   // 2d. Persist processed home book covers in local storage for faster reloads
   useEffect(() => {
@@ -261,7 +236,7 @@ const Home = () => {
         aboutBooks,
         featuredBooks,
       };
-      localStorage.setItem("homeBooksCache.v1", JSON.stringify(payload));
+      localStorage.setItem("homeBooksCache.v2", JSON.stringify(payload));
     } catch (error) {
       console.error("Failed to cache home books:", error);
     }

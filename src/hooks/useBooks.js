@@ -40,19 +40,21 @@ export const useBookManagement = () => {
   });
 };
 
-export const useBookCovers = () => {
+export const useBookCovers = (options = {}) => {
   return useQuery({
     queryKey: bookKeys.covers(),
     queryFn: getBookCovers,
     ...adminQueryOptions,
+    ...options,
   });
 };
 
-export const useDashboardBooks = () => {
+export const useDashboardBooks = (options = {}) => {
   return useQuery({
     queryKey: bookKeys.dashboard(),
     queryFn: getDashboardBooks,
     ...adminQueryOptions,
+    ...options,
   });
 };
 
