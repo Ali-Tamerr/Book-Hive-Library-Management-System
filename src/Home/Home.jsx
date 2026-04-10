@@ -64,15 +64,30 @@ const Home = () => {
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
 
-  // 1. Stats (numbers) must load before loading screen disappears
+  // 1. Stats (numbers) should load before loading screen disappears.
+  //    We race the fetch against a hard timeout so the page always
+  //    appears within a few seconds, even on slow cold-starts.
   useEffect(() => {
     console.debug("Home: mount - fetching stats (numbers) for loading gate");
+    let done = false;
+
+    const showPage = (statsData) => {
+      if (done) return;
+      done = true;
+      if (statsData) setStats(statsData);
+      requestAnimationFrame(() => {
+        setTimeout(() => setPageLoaded(true), 50);
+      });
+    };
+
+    // Hard timeout — never block more than 5 seconds
+    const maxTimeout = setTimeout(() => {
+      console.warn("Home: stats fetch timed out — showing page anyway");
+      showPage(null);
+    }, 5000);
+
     const fetchStats = async () => {
       try {
-        // Try fetching lightweight stats first; if the endpoint fails
-        // fallback to fetching branches/categories and deriving book count
-        // from the prefetched books. Use non-throwing fetches so one
-        // failure doesn't block the other.
         const maybeStats = await apiGet("/Stats").catch(() => null);
 
         let branches = 0;
@@ -91,43 +106,16 @@ const Home = () => {
             : 0;
         }
 
-        // If stats endpoint didn't yield useful numbers, fetch branches individually
-        if (!branches) {
-          try {
-            const branchData = await apiGet("/Branches").catch(() => null);
-            branches = Array.isArray(branchData)
-              ? branchData.length
-              : branchData?.data?.length || 0;
-          } catch (e) {
-            // ignore
-          }
-        }
-
-        // No longer waiting for all books data here for faster loading.
-        // Book count will be updated from the useBookCovers hook results when available.
-        if (
-          maybeStats &&
-          typeof maybeStats === "object" &&
-          Number.isFinite(+maybeStats.books)
-        ) {
-          booksCount = +maybeStats.books;
-        }
-
-        setStats({ branches, categories, books: booksCount });
-
-        // Numbers loaded — hide loading screen
-        requestAnimationFrame(() => {
-          setTimeout(() => setPageLoaded(true), 50);
-        });
+        showPage({ branches, categories, books: booksCount });
       } catch (error) {
         console.error("Failed to fetch stats:", error);
-        // Still hide loading screen on error to avoid infinite loader
-        requestAnimationFrame(() => {
-          setTimeout(() => setPageLoaded(true), 50);
-        });
+        showPage(null);
       }
     };
+
     fetchStats();
+
+    return () => clearTimeout(maxTimeout);
   }, []);
 
   // 2a. Restore cached home book covers (if any) after loading screen disappears
@@ -332,7 +320,7 @@ const Home = () => {
   const featuredPerView = isDesktopLayout ? 4 : 1;
   const testimonialPerView = isDesktopLayout ? 3 : 1;
 
-  const isEverythingLoaded = pageLoaded && !isFeedbacksLoading;
+  const isEverythingLoaded = pageLoaded;
 
   useEffect(() => {
     if (!isEverythingLoaded) return;
