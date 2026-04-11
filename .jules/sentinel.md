@@ -1,0 +1,4 @@
+## 2024-03-24 - [CRITICAL] Authentication Token Overwrite and Password Exposure
+**Vulnerability:** In `SettingsPopup.jsx`, updating user credentials overwrote the `authToken` item in `localStorage` with a stringified JSON representation of the user (`sessionUser`), which also contained the user's plaintext password/hash.
+**Learning:** This caused both an authorization bypass/breakage (subsequent requests would have an invalid `Authorization` header token) and a critical data exposure issue where plaintext passwords or password hashes were being written to both `localStorage` and sent over the wire in headers (because the interceptor uses the value of `authToken`).
+**Prevention:** Avoid overwriting token keys (`authToken`) with complex user objects, and ensure sensitive fields like `password_hash` and `password` are always removed/deleted from memory representations of users before being persisted to state/local storage.
