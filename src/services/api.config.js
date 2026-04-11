@@ -172,13 +172,10 @@ const axiosInstance = axios.create({
 // Request interceptor - Add auth token to all requests
 axiosInstance.interceptors.request.use(
   (config) => {
-    // We are now using cookies (HttpOnly). 
-    // The browser handles sending the authToken cookie automatically.
-    // If we still need to support Bearer token for some reason (e.g. mobile), 
-    // we can keep this, but for web it's safer to rely on cookies.
-    
-    // For now, let's keep it as a fallback if the token exists in localStorage
-    // (during the migration phase)
+    // Primary auth: Bearer token from localStorage.
+    // The server also sets an HttpOnly cookie as a secondary mechanism,
+    // but for cross-origin deployments (e.g. Vercel → Azure),
+    // the Authorization header is the reliable method.
     const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -207,8 +204,7 @@ axiosInstance.interceptors.response.use(
         (typeof error.response.data?.errors === "object"
           ? JSON.stringify(error.response.data.errors)
           : error.response.data?.errors) ||
-        error.message ||
-        `Server error: ${error.response.status}`;
+        `Request failed with status code ${error.response.status}`;
       if (import.meta.env.DEV) {
         console.error(
           "API Error Response:",
@@ -223,8 +219,10 @@ axiosInstance.interceptors.response.use(
       errorWithDetails.status = error.response.status;
       return Promise.reject(errorWithDetails);
     } else if (error.request) {
-      // Request made but no response
-      console.error("Network Error - No response received:", error.message);
+      // Request made but no response — don't log the URL
+      if (import.meta.env.DEV) {
+        console.error("Network Error - No response received:", error.message);
+      }
       const networkError = new Error(
         "Network error. Please check your connection.",
       );
@@ -232,7 +230,9 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(networkError);
     } else {
       // Something else happened
-      console.error("Error:", error.message);
+      if (import.meta.env.DEV) {
+        console.error("Error:", error.message);
+      }
       return Promise.reject(error);
     }
   },
