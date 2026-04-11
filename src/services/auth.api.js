@@ -1,8 +1,13 @@
 import { createUser, loginUser } from "./users.api";
 
 const persistAuthSession = (user) => {
-  localStorage.setItem("currentUser", JSON.stringify(user));
-  // authToken is now stored in an HttpOnly cookie by the server
+  // Store the JWT token separately for the Authorization header
+  if (user.token) {
+    localStorage.setItem("authToken", user.token);
+  }
+  // Store user data without the token (no need to keep it in the user object)
+  const { token, ...userData } = user;
+  localStorage.setItem("currentUser", JSON.stringify(userData));
   window.dispatchEvent(new Event("userUpdated"));
 };
 
@@ -20,7 +25,7 @@ export const login = async (email, password) => {
   } catch (error) {
     // If the error message is from the backend, it will be in error.message
     // (thanks to the axios interceptor in api.config.js)
-    console.error("Login error:", error);
+    console.error("Login error:", error?.message || "Login failed");
     throw error;
   }
 };
@@ -46,7 +51,7 @@ export const signup = async (userData) => {
     // to get the sanitized user object from the server.
     return await login(userData.email, userData.password);
   } catch (error) {
-    console.error("Signup error:", error);
+    console.error("Signup error:", error?.message || "Signup failed");
     
     // Handle unique constraint violation (User already exists)
     if (error.message?.includes("duplicate key") || error.message?.includes("already exists") || error.status === 409) {
@@ -62,7 +67,7 @@ export const logout = async () => {
     const { apiPost } = await import("./api.config");
     await apiPost("/Users/logout");
   } catch (error) {
-    console.error("Logout error:", error);
+    // Silently handle logout errors
   }
   localStorage.removeItem("authToken");
   localStorage.removeItem("currentUser");
@@ -98,7 +103,7 @@ export const verifySession = async () => {
     }
     return false;
   } catch (error) {
-    console.warn("Session verification failed:", error);
+    console.warn("Session verification failed:", error?.message || "Unauthorized");
     logout();
     return false;
   }
