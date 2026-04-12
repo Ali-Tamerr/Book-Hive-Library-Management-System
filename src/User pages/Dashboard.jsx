@@ -214,15 +214,6 @@ function Dashboard() {
     );
   }).length;
 
-  const stats = {
-    totalUsers: generalStats.users || users?.length || 0,
-    totalBooks: generalStats.books || displayBooks?.length || 0,
-    branchCount: generalStats.branches || branches?.length || 0,
-    totalBorrowed: borrowLimit, // Total pie size
-    currentlyBorrowed: Math.max(0, borrowLimit - monthlyBorrowedCount), // Grey empty limit left
-    returnedBooks: monthlyBorrowedCount, // Navy Blue filled part
-  };
-
   const subscriptionExpirationRaw =
     currentUserFromList?.subscription_end_date ||
     currentUserFromList?.subscription_expiration_date ||
@@ -235,6 +226,23 @@ function Dashboard() {
     currentUser?.plan_expiration_date ||
     currentUser?.expiration_date ||
     null;
+
+  const isExpired = useMemo(() => {
+    if (!subscriptionExpirationRaw) return false;
+    const expirationDate = new Date(subscriptionExpirationRaw);
+    return expirationDate < new Date();
+  }, [subscriptionExpirationRaw]);
+
+  const stats = {
+    totalUsers: generalStats.users || users?.length || 0,
+    totalBooks: generalStats.books || displayBooks?.length || 0,
+    branchCount: generalStats.branches || branches?.length || 0,
+    totalBorrowed: isExpired ? 0 : borrowLimit, // Total pie size
+    currentlyBorrowed: isExpired
+      ? 0
+      : Math.max(0, borrowLimit - monthlyBorrowedCount), // Grey empty limit left
+    returnedBooks: isExpired ? 0 : monthlyBorrowedCount, // Navy Blue filled part
+  };
 
   const subscriptionExpirationLabel = useMemo(() => {
     if (!subscriptionExpirationRaw) return "N/A";
@@ -353,11 +361,17 @@ function Dashboard() {
             >
               <div className="pr-8">
                 <p className="text-sm font-medium text-[#0b0c28] dark:text-white">
-                  Dear {currentUserDisplayName}, your subscription will expire
-                  on{" "}
-                  <span className="font-bold">
-                    {subscriptionExpirationLabel}.
-                  </span>
+                  {isExpired ? (
+                    `Dear ${currentUserDisplayName}, your subscription has expired.`
+                  ) : (
+                    <>
+                      Dear {currentUserDisplayName}, your subscription will
+                      expire on{" "}
+                      <span className="font-bold">
+                        {subscriptionExpirationLabel}.
+                      </span>
+                    </>
+                  )}
                 </p>
                 <p className="mt-0.5 text-xs text-[#0b0c28]/70 dark:text-white/70">
                   To renew your subscription, kindly visit the nearest branch.
@@ -583,11 +597,17 @@ function Dashboard() {
                   }}
                 >
                   <p className="text-[#0b0c28] dark:text-white">
-                    Dear {currentUserDisplayName}, please note that your
-                    subscription will expire on{" "}
-                    <span className="block font-bold">
-                      {subscriptionExpirationLabel}.
-                    </span>
+                    {isExpired ? (
+                      `Dear ${currentUserDisplayName}, please note that your subscription has expired.`
+                    ) : (
+                      <>
+                        Dear {currentUserDisplayName}, please note that your
+                        subscription will expire on{" "}
+                        <span className="block font-bold">
+                          {subscriptionExpirationLabel}.
+                        </span>
+                      </>
+                    )}
                   </p>
                   <p className="mt-1 text-[#0b0c28] dark:text-white">
                     To renew your subscription, kindly visit the nearest branch.
