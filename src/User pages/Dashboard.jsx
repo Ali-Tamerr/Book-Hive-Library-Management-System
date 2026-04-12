@@ -211,8 +211,9 @@ function Dashboard() {
     null;
 
   const isExpired = useMemo(() => {
-    if (!subscriptionExpirationRaw) return false;
+    if (!subscriptionExpirationRaw) return true;
     const expirationDate = new Date(subscriptionExpirationRaw);
+    if (Number.isNaN(expirationDate.getTime())) return true;
     return expirationDate < new Date();
   }, [subscriptionExpirationRaw]);
 
@@ -345,7 +346,10 @@ function Dashboard() {
               <div className="pr-8">
                 <p className="text-sm font-medium text-[#0b0c28] dark:text-white">
                   {isExpired ? (
-                    `Dear ${currentUserDisplayName}, your subscription has expired.`
+                    <>
+                      Dear {currentUserDisplayName} please note that your subscription has expired
+                      <br className="max-[40rem]:hidden" />
+                    </>
                   ) : (
                     <>
                       Dear {currentUserDisplayName}, your subscription will
@@ -581,7 +585,7 @@ function Dashboard() {
                 >
                   <p className="text-[#0b0c28] dark:text-white">
                     {isExpired ? (
-                      `Dear ${currentUserDisplayName}, please note that your subscription has expired.`
+                      `Dear ${currentUserDisplayName} please note that your subscription has expired`
                     ) : (
                       <>
                         Dear {currentUserDisplayName}, please note that your
