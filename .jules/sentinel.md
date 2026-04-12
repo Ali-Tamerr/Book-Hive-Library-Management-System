@@ -1,0 +1,4 @@
+## 2026-04-12 - [CRITICAL] Prevent sensitive password data leakage to localStorage
+**Vulnerability:** Client-side cache `localStorage` was improperly storing sensitive user credentials (`password`, `password_hash`) and potentially overwriting the `authToken` with a serialized JSON object due to a bug in `SettingsPopup.jsx` and missing filtering in `persistAuthSession`.
+**Learning:** `localStorage` is accessible to any script running on the origin (XSS vulnerability risk). Even if it is not immediately compromised, persisting plaintext passwords or password hashes increases the attack surface if the device or session is accessed.
+**Prevention:** Destructure and explicitly exclude all sensitive fields (e.g., `password`, `password_hash`, `token`) from any user objects before saving them to client-side storage mechanisms like `localStorage`. Use `const { password, password_hash, token, ...safeData } = user;`.
