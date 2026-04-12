@@ -6,7 +6,8 @@ const persistAuthSession = (user) => {
     localStorage.setItem("authToken", user.token);
   }
   // Store user data without the token (no need to keep it in the user object)
-  const { token, ...userData } = user;
+  // Strip sensitive fields before storing
+  const { token: _token, password: _password, password_hash: _password_hash, ...userData } = user;
   localStorage.setItem("currentUser", JSON.stringify(userData));
   window.dispatchEvent(new Event("userUpdated"));
 };

@@ -173,9 +173,9 @@ const SettingsPopup = ({ show, onClose }) => {
       };
 
       // Store the updated user in localStorage (KEEP image_url for fast UI update)
-      const sessionUser = { ...updatedUser };
+      // Strip sensitive fields before storing
+      const { password: _password, password_hash: _password_hash, token: _token, ...sessionUser } = { ...updatedUser };
       // Note: We keep image_url now to allow immediate preview in Navbar even if refetch is slow
-      localStorage.setItem("authToken", JSON.stringify(sessionUser));
       localStorage.setItem("currentUser", JSON.stringify(sessionUser));
 
       // Optimistically update the React Query cache for the specific user detail
