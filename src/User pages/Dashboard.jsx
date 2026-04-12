@@ -6,7 +6,6 @@ import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
 import BookCard from "../components/BookCard";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import { useUsers } from "../hooks/useUsers";
 import { useBooks, useDashboardBooks, useBook } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
 import { useReservations } from "../hooks/useReservations";
@@ -24,10 +23,7 @@ function Dashboard() {
     `${currentUser?.first_name || ""} ${currentUser?.last_name || ""}`.trim() ||
     currentUser?.user_id ||
     "User";
-  const { data: usersData, isLoading: usersLoading } = useUsers();
-  const users = usersData
-    ? usersData.pages.flatMap((page) => page.data || [])
-    : [];
+
   const [displayBooks, setDisplayBooks] = useState([]);
   const [generalStats, setGeneralStats] = useState({
     branches: 0,
@@ -86,7 +82,7 @@ function Dashboard() {
           setGeneralStats({
             branches: +maybeStats.branches || 0,
             books: +maybeStats.books || 0,
-            users: +maybeStats.users || users.length || 0,
+            users: +maybeStats.users || 0,
           });
         }
       } catch (error) {
@@ -94,7 +90,7 @@ function Dashboard() {
       }
     };
     fetchStats();
-  }, [users.length]);
+  }, []);
 
   // 2. Load cached books on mount
   useEffect(() => {
@@ -172,7 +168,6 @@ function Dashboard() {
   }, [isMobile]);
 
   const loading =
-    usersLoading ||
     booksLoading ||
     reservationsLoading ||
     branchesLoading ||
@@ -180,18 +175,11 @@ function Dashboard() {
     categoriesLoading ||
     transactionsLoading;
 
-  const currentUserFromList = useMemo(() => {
-    if (!currentUser?.user_id) return null;
-    return (
-      users.find(
-        (u) => String(u.user_id ?? u.id ?? "") === String(currentUser.user_id),
-      ) || null
-    );
-  }, [users, currentUser?.user_id]);
+
 
   // Calculate current month's limits
   const userPlanId =
-    currentUserFromList?.plan || currentUser?.plan || "Discover";
+    currentUser?.plan || "Discover";
   const userPlan = plansData?.find((p) => p.id === userPlanId);
   const borrowLimit = userPlan?.borrow_limit || 3;
 
@@ -215,11 +203,6 @@ function Dashboard() {
   }).length;
 
   const subscriptionExpirationRaw =
-    currentUserFromList?.subscription_end_date ||
-    currentUserFromList?.subscription_expiration_date ||
-    currentUserFromList?.subscription_expiry_date ||
-    currentUserFromList?.plan_expiration_date ||
-    currentUserFromList?.expiration_date ||
     currentUser?.subscription_end_date ||
     currentUser?.subscription_expiration_date ||
     currentUser?.subscription_expiry_date ||
@@ -234,7 +217,7 @@ function Dashboard() {
   }, [subscriptionExpirationRaw]);
 
   const stats = {
-    totalUsers: generalStats.users || users?.length || 0,
+    totalUsers: generalStats.users || 0,
     totalBooks: generalStats.books || displayBooks?.length || 0,
     branchCount: generalStats.branches || branches?.length || 0,
     totalBorrowed: isExpired ? 0 : borrowLimit, // Total pie size
