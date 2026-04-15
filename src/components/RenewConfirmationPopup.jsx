@@ -43,12 +43,12 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
         </span>
       }
       icon={<RotateCcw size={26} />}
-      maxWidthClass="max-w-[900px]"
+      maxWidthClass="max-w-[56.25rem]"
       closeButtonClassName="border-[#000035] text-[#000035] dark:border-[#d7d7d7] dark:text-[#d7d7d7]"
       dividerClassName="bg-[#d1d5db] dark:bg-[#D7D7D7]"
     >
       <div className="flex flex-col items-center gap-6 text-[#000035]">
-        <div className="flex w-full gap-8 max-[650px]:flex-col">
+        <div className="flex w-full gap-8 max-[40.625rem]:flex-col">
           <input
             type="text"
             readOnly
@@ -58,12 +58,12 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
               ""
             }
             placeholder="Name"
-            className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[13px] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
+            className="h-[3.125rem] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[0.8125rem] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
           />
           <select
             value={selectedPlan}
             onChange={(e) => setSelectedPlan(e.target.value)}
-            className="h-[50px] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[13px] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
+            className="h-[3.125rem] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[0.8125rem] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
           >
             {plans.map((p) => (
               <option
@@ -77,7 +77,7 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
           </select>
         </div>
 
-        <p className="max-w-[420px] text-lg leading-relaxed text-[#000035] dark:text-gray-300">
+        <p className="max-w-[26.25rem] text-lg leading-relaxed text-[#000035] dark:text-gray-300">
           Are you certain you wish to proceed with the renew of the selected
           entry?
         </p>

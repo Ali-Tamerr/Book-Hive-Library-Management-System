@@ -16,9 +16,8 @@ import chatbotIcon from "../assets/chatbot.png";
 
 import { apiGet, getImageUrl } from "../services/api.config";
 import { useQueryClient } from "@tanstack/react-query";
-import { useBooks, bookKeys } from "../hooks/useBooks";
+import { useBookCovers, bookKeys } from "../hooks/useBooks";
 import { useApprovedFeedbacks } from "../hooks/useFeedbacks";
-import { getAllBooks } from "../services/books.api";
 import Header from "./Components/Header";
 import Hero from "./Components/Hero";
 import Services from "./Components/Services";
@@ -42,7 +41,7 @@ const Home = () => {
   const [aboutBooks, setAboutBooks] = useState([]);
   const [categories, setCategories] = useState({});
   const queryClient = useQueryClient();
-  const { data: booksSource, isLoading: booksLoading } = useBooks();
+  const { data: booksSource, isLoading: booksLoading } = useBookCovers();
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
   const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } =
     useApprovedFeedbacks();
@@ -52,19 +51,43 @@ const Home = () => {
   const [showScrollUp, setShowScrollUp] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [heroIndex, setHeroIndex] = useState(0);
+  const [isDesktopLayout, setIsDesktopLayout] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1150 : true,
+  );
+  const [isCompactDesktop, setIsCompactDesktop] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1400 : false,
+  );
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [isSignupOTP, setIsSignupOTP] = useState(false);
+  const [signupData, setSignupData] = useState(null);
   const heroIntervalRef = useRef(null);
   const homeRef = useRef(null);
   const heroContainerRef = useRef(null);
 
-  // 1. Stats (numbers) must load before loading screen disappears
+  // 1. Stats (numbers) should load before loading screen disappears.
+  //    We race the fetch against a hard timeout so the page always
+  //    appears within a few seconds, even on slow cold-starts.
   useEffect(() => {
     console.debug("Home: mount - fetching stats (numbers) for loading gate");
+    let done = false;
+
+    const showPage = (statsData) => {
+      if (done) return;
+      done = true;
+      if (statsData) setStats(statsData);
+      requestAnimationFrame(() => {
+        setTimeout(() => setPageLoaded(true), 50);
+      });
+    };
+
+    // Hard timeout — never block more than 5 seconds
+    const maxTimeout = setTimeout(() => {
+      console.warn("Home: stats fetch timed out — showing page anyway");
+      showPage(null);
+    }, 5000);
+
     const fetchStats = async () => {
       try {
-        // Try fetching lightweight stats first; if the endpoint fails
-        // fallback to fetching branches/categories and deriving book count
-        // from the prefetched books. Use non-throwing fetches so one
-        // failure doesn't block the other.
         const maybeStats = await apiGet("/Stats").catch(() => null);
 
         let branches = 0;
@@ -83,60 +106,16 @@ const Home = () => {
             : 0;
         }
 
-        // If stats endpoint didn't yield useful numbers, fetch branches/categories
-        // individually and derive books from the prefetched books response.
-        if (!branches && !categories) {
-          try {
-            const [branchData, catData] = await Promise.all([
-              apiGet("/Branches").catch(() => null),
-              apiGet("/Categories").catch(() => null),
-            ]);
-            
-            branches = Array.isArray(branchData)
-              ? branchData.length
-              : branchData?.data?.length || 0;
-            
-            const catsArray = Array.isArray(catData) ? catData : catData?.data || [];
-            categories = catsArray.length;
-            
-            const catMap = {};
-            catsArray.forEach(c => {
-              if (c.category_id && c.category_name) {
-                catMap[c.category_id] = c.category_name;
-              }
-            });
-            setCategories(catMap);
-            
-          } catch (e) {
-            // ignore
-          }
-        }
-
-        // No longer waiting for all books data here for faster loading.
-        // Book count will be updated from the useBooks hook results when available.
-        if (
-          maybeStats &&
-          typeof maybeStats === "object" &&
-          Number.isFinite(+maybeStats.books)
-        ) {
-          booksCount = +maybeStats.books;
-        }
-
-        setStats({ branches, categories, books: booksCount });
-
-        // Numbers loaded — hide loading screen
-        requestAnimationFrame(() => {
-          setTimeout(() => setPageLoaded(true), 50);
-        });
+        showPage({ branches, categories, books: booksCount });
       } catch (error) {
         console.error("Failed to fetch stats:", error);
-        // Still hide loading screen on error to avoid infinite loader
-        requestAnimationFrame(() => {
-          setTimeout(() => setPageLoaded(true), 50);
-        });
+        showPage(null);
       }
     };
+
     fetchStats();
+
+    return () => clearTimeout(maxTimeout);
   }, []);
 
   // 2a. Restore cached home book covers (if any) after loading screen disappears
@@ -144,7 +123,7 @@ const Home = () => {
     if (!pageLoaded) return;
 
     try {
-      const raw = localStorage.getItem("homeBooksCache.v1");
+      const raw = localStorage.getItem("homeBooksCache.v2");
       if (!raw) return;
       const cached = JSON.parse(raw);
 
@@ -162,7 +141,7 @@ const Home = () => {
     }
   }, [pageLoaded]);
 
-  // 2b/2c. Derive hero/about/featured books from React Query's `useBooks`.
+  // 2b/2c. Derive hero/about/featured books from React Query's `useBookCovers`.
   useEffect(() => {
     const rawArray = Array.isArray(booksSource)
       ? booksSource
@@ -185,13 +164,6 @@ const Home = () => {
     const toViewModel = (book) => ({
       book_id: book.book_id,
       name: book.name,
-      category_id: book.category_id,
-      category: categories[book.category_id] || "Various",
-      quantity: book.quantity,
-      availability: book.quantity > 0 ? "Available" : "Not Available",
-      language: "English", // Default language per scope 
-      branch: "Multiple Branches", // Specific individual branch isn't resolvable
-      created_at: book.created_at,
       image: getImageUrl(book.image_url) || "",
     });
 
@@ -238,7 +210,7 @@ const Home = () => {
     if (rawArray.length > 0 && stats.books === 0) {
       setStats((prev) => ({ ...prev, books: rawArray.length }));
     }
-  }, [pageLoaded, booksSource, categories]);
+  }, [pageLoaded, booksSource]);
 
   // 2d. Persist processed home book covers in local storage for faster reloads
   useEffect(() => {
@@ -252,7 +224,7 @@ const Home = () => {
         aboutBooks,
         featuredBooks,
       };
-      localStorage.setItem("homeBooksCache.v1", JSON.stringify(payload));
+      localStorage.setItem("homeBooksCache.v2", JSON.stringify(payload));
     } catch (error) {
       console.error("Failed to cache home books:", error);
     }
@@ -261,6 +233,20 @@ const Home = () => {
   // books count is populated during initial `fetchStats` prefetch.
 
   // Feedbacks are loaded via `useApprovedFeedbacks` (React Query).
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktopLayout(window.innerWidth >= 1150);
+      setIsCompactDesktop(window.innerWidth >= 1400);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const selectedTheme = localStorage.getItem("selected-theme");
@@ -331,12 +317,10 @@ const Home = () => {
     return () => clearInterval(heroIntervalRef.current);
   }, [heroBooks]);
 
-  const featuredPerView =
-    typeof window !== "undefined" && window.innerWidth >= 1150 ? 4 : 1;
-  const testimonialPerView =
-    typeof window !== "undefined" && window.innerWidth >= 1150 ? 3 : 1;
+  const featuredPerView = isDesktopLayout ? 4 : 1;
+  const testimonialPerView = isDesktopLayout ? 3 : 1;
 
-  const isEverythingLoaded = pageLoaded && !isFeedbacksLoading;
+  const isEverythingLoaded = pageLoaded;
 
   useEffect(() => {
     if (!isEverythingLoaded) return;
@@ -385,11 +369,11 @@ const Home = () => {
         <PageLoader className="!fixed !z-[9999] bg-[#E8E8E8] dark:bg-[#111214]" />
       )}
       <div
-        className="duration-400 m-0 mx-auto max-w-[1920px] scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
+        className="duration-400 m-0 mx-auto max-w-[120rem] scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
         ref={homeRef}
         style={{
           visibility: isEverythingLoaded ? "visible" : "hidden",
-          zoom: 0.8,
+          zoom: isCompactDesktop ? 0.8 : 1,
         }}
       >
         <Header
@@ -446,7 +430,7 @@ const Home = () => {
 
         {/* <a
           href="#"
-          className={`duration-400 fixed right-4 z-10 inline-flex bg-[var(--container-color)] p-1.5 text-xl text-[var(--title-color)] shadow-[0_2px_8px_hsla(0,0%,0%,0.1)] transition-[bottom,transform,background-color] hover:-translate-y-2 dark:shadow-[0_2px_8px_hsla(0,0%,0%,0.4)] ${showScrollUp ? "bottom-24 min-[1150px]:bottom-12" : "-bottom-1/2"}`}
+          className={`duration-400 fixed right-4 z-10 inline-flex bg-[var(--container-color)] p-1.5 text-xl text-[var(--title-color)] shadow-[0_0.125rem_0.5rem_hsla(0,0%,0%,0.1)] transition-[bottom,transform,background-color] hover:-translate-y-2 dark:shadow-[0_0.125rem_0.5rem_hsla(0,0%,0%,0.4)] ${showScrollUp ? "bottom-24 min-[71.875rem]:bottom-12" : "-bottom-1/2"}`}
           id="scroll-up"
         >
           <i className="ri-arrow-up-line"></i>
@@ -464,6 +448,12 @@ const Home = () => {
           isOpen={isSignupOpen}
           onClose={() => setIsSignupOpen(false)}
           onLogin={() => setIsLoginOpen(true)}
+          onShowOTP={(email, data) => {
+            setVerificationEmail(email);
+            setSignupData(data);
+            setIsSignupOTP(true);
+            setIsOTPOpen(true);
+          }}
           slideFromTop={true}
         />
 
@@ -477,9 +467,19 @@ const Home = () => {
 
         <OTPPopup
           isOpen={isOTPOpen}
-          onClose={() => setIsOTPOpen(false)}
+          onClose={() => {
+            setIsOTPOpen(false);
+            setIsSignupOTP(false);
+            setSignupData(null);
+          }}
           onResetPassword={() => setIsResetPasswordOpen(true)}
-          onBack={() => setIsForgotPasswordOpen(true)}
+          onBack={() => {
+            if (isSignupOTP) setIsSignupOpen(true);
+            else setIsForgotPasswordOpen(true);
+          }}
+          email={verificationEmail}
+          signupData={signupData}
+          isSignupVerification={isSignupOTP}
           slideFromTop={true}
         />
 

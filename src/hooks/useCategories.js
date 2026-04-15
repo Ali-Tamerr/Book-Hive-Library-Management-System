@@ -18,11 +18,12 @@ export const categoryKeys = {
   detail: (id) => [...categoryKeys.details(), id],
 };
 
-export const useCategories = () => {
+export const useCategories = (options = {}) => {
   return useQuery({
     queryKey: categoryKeys.lists(),
     queryFn: getAllCategories,
     ...adminQueryOptions,
+    ...options,
   });
 };
 

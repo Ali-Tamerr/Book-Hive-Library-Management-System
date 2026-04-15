@@ -3,7 +3,6 @@ import axios from "axios";
 const rawApiUrl =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 export const API_BASE_URL = rawApiUrl.replace(/^['"]|['"]$/g, "");
-console.log("API_BASE_URL configured as:", API_BASE_URL);
 
 const inferMimeFromBytes = (bytes) => {
   if (!bytes || bytes.length < 4) return "image/jpeg";
@@ -165,35 +164,21 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
 // Request interceptor - Add auth token to all requests
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Primary auth: Bearer token from localStorage.
+    // The server also sets an HttpOnly cookie as a secondary mechanism,
+    // but for cross-origin deployments (e.g. Vercel → Azure),
+    // the Authorization header is the reliable method.
     const token = localStorage.getItem("authToken");
-    if (!token) {
-      return config;
-    }
-
-    let actualToken = null;
-
-    try {
-      const tokenData = JSON.parse(token);
-      if (typeof tokenData === "string") {
-        actualToken = tokenData;
-      } else if (tokenData && typeof tokenData === "object") {
-        if (typeof tokenData.token === "string") {
-          actualToken = tokenData.token;
-        } else if (typeof tokenData.accessToken === "string") {
-          actualToken = tokenData.accessToken;
-        }
-      }
-    } catch {
-      actualToken = token;
-    }
-
-    if (typeof actualToken === "string" && actualToken.trim().length > 0) {
-      config.headers.Authorization = `Bearer ${actualToken.trim()}`;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -207,23 +192,27 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Log the full error for debugging
-    console.error("Full error object:", error);
+    // Log the full error for debugging only in development
+    if (import.meta.env.DEV) {
+      console.error("Full error object:", error);
+    }
 
     if (error.response) {
       // Server responded with error
       const message =
         error.response.data?.message ||
+        error.response.data?.error ||
         (typeof error.response.data?.errors === "object"
           ? JSON.stringify(error.response.data.errors)
           : error.response.data?.errors) ||
-        error.message ||
-        `Server error: ${error.response.status}`;
-      console.error(
-        "API Error Response:",
-        error.response.status,
-        error.response.data,
-      );
+        `Request failed with status code ${error.response.status}`;
+      if (import.meta.env.DEV) {
+        console.error(
+          "API Error Response:",
+          error.response.status,
+          error.response.data,
+        );
+      }
 
       // Preserve the full error object
       const errorWithDetails = new Error(message);
@@ -231,8 +220,10 @@ axiosInstance.interceptors.response.use(
       errorWithDetails.status = error.response.status;
       return Promise.reject(errorWithDetails);
     } else if (error.request) {
-      // Request made but no response
-      console.error("Network Error - No response received:", error.message);
+      // Request made but no response — don't log the URL
+      if (import.meta.env.DEV) {
+        console.error("Network Error - No response received:", error.message);
+      }
       const networkError = new Error(
         "Network error. Please check your connection.",
       );
@@ -240,7 +231,9 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(networkError);
     } else {
       // Something else happened
-      console.error("Error:", error.message);
+      if (import.meta.env.DEV) {
+        console.error("Error:", error.message);
+      }
       return Promise.reject(error);
     }
   },

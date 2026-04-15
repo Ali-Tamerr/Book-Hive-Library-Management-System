@@ -32,7 +32,7 @@ const BranchesModal = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="popup-typography relative h-full max-h-none w-full rounded-none bg-white px-4 py-8 dark:bg-[#121317] dark:text-[#E8E8E8] min-[769px]:h-auto min-[769px]:min-h-[500px] min-[769px]:w-[90%] min-[769px]:max-w-[1200px] min-[769px]:px-10 min-[769px]:rounded-[14px] max-[768px]:flex max-[768px]:flex-col max-[768px]:justify-center"
+        className="popup-typography relative h-full max-h-none w-full rounded-none bg-white px-4 py-8 dark:bg-[#121317] dark:text-[#E8E8E8] min-[48.0625rem]:h-auto min-[48.0625rem]:min-h-[31.25rem] min-[48.0625rem]:w-[90%] min-[48.0625rem]:max-w-[75rem] min-[48.0625rem]:px-10 min-[48.0625rem]:rounded-[0.875rem] max-[48rem]:flex max-[48rem]:flex-col max-[48rem]:justify-center"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -43,13 +43,13 @@ const BranchesModal = ({ isOpen, onClose }) => {
         </button>
 
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="m-0 text-[32px] font-extrabold text-[#0a0f5c] dark:text-[#E8E8E8]">
+          <h2 className="m-0 text-[2rem] font-extrabold text-[#0a0f5c] dark:text-[#E8E8E8]">
             Our Branches
           </h2>
           <img
             src={new URL("../assets/logo.svg", import.meta.url).href}
             alt="BookHive Logo"
-            className="h-[10px] w-[60px]"
+            className="h-[0.625rem] w-[3.75rem]"
           />
         </div>
 

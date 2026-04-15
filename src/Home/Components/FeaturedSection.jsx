@@ -61,14 +61,14 @@ const FeaturedSection = ({
     : "none";
 
   return (
-    <section className="featured overflow-hidden py-20 pb-4" id="featured">
-      <h2 className="mb-16 text-center font-[family-name:var(--body-font)] text-[72px] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)]">
+    <section className="featured overflow-hidden py-16 pb-4 max-[42.5rem]:py-10" id="featured">
+      <h2 className="mb-16 text-center font-[family-name:var(--body-font)] text-[4.5rem] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)] max-[42.5rem]:mb-8 max-[42.5rem]:text-[2.75rem] max-[32.5rem]:text-[2.25rem]">
         FEATURED BOOKS
       </h2>
 
       <div
-        // Changed from max-w-[1250px] to max-w-[1500px] to give cards breathing room when 4 fit
-        className="featured__container mx-auto w-full max-w-[1500px]"
+        // Changed from max-w-[78.125rem] to max-w-[93.75rem] to give cards breathing room when 4 fit
+        className="featured__container mx-auto w-full max-w-[93.75rem]"
         data-reveal
       >
         <div className="overflow-hidden">
@@ -85,25 +85,25 @@ const FeaturedSection = ({
             {displayBooks.map((book, index) => (
               <article
                 key={`${book.book_id}-${index}`}
-                className="duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[24px] border border-[#000035] p-[22px_26px] text-center transition-[box-shadow,background-color,border-color] dark:border-[#D7D7D7]"
+                className="duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[#000035] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[#D7D7D7]"
                 style={{
-                  width: `calc(${100 / safePerView}% - 40px)`,
-                  margin: "0 20px", // mx-[20px] equals 40px total margin per card
+                  width: `calc(${100 / safePerView}% - 2.5rem)`,
+                  margin: "0 1.25rem", // mx-[1.25rem] equals 2.5rem total margin per card
                   height: "unset", // Keep natural or responsive sizing
-                  minHeight: "580px", // ensure steady height
+                  minHeight: window.innerWidth < 680 ? "28.75rem" : "36.25rem", // ensure steady height
                 }}
               >
                 <LazyImage
                   src={book.image}
                   alt={book.name}
-                  className="mx-auto mb-6 h-[380px] !w-full !max-w-none rounded-[14px] object-cover"
+                  className="mx-auto mb-6 h-[23.75rem] !w-full !max-w-none rounded-[0.875rem] object-cover max-[42.5rem]:h-[16.875rem]"
                   priority
                 />
-                <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[26px] font-bold leading-tight text-[#03030f] dark:!text-[#d3d6de]">
+                <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[1.625rem] font-bold leading-tight text-[#03030f] max-[42.5rem]:text-[1.25rem] dark:!text-[#d3d6de]">
                   {book.name}
                 </h2>
                 <HomeButton
-                  className="px-[40px] py-[18px]"
+                  className="px-[2.5rem] py-[1.125rem] max-[42.5rem]:px-[1.5rem] max-[42.5rem]:py-[0.75rem]"
                   onClick={() => onExplore()}
                 >
                   Explore Now

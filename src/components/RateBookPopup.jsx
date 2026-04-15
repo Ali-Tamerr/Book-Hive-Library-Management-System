@@ -121,13 +121,13 @@ const RateBookPopup = ({
       onClose={handleCancel}
       title={isReply ? "COMMENT REPLY" : "RATE BOOK"}
       icon={<MessageSquareText size={24} />}
-      maxWidthClass="max-w-[700px]"
+      maxWidthClass="max-w-[43.75rem]"
     >
       <div className="flex w-full flex-col gap-6 px-4 pb-4">
         <div className="flex w-full items-center justify-center">
           <FormInput
             type="textarea"
-            className="h-[180px] w-full resize-none border-[#A3A3A3] text-[18px] dark:border-[#000035] dark:bg-[#1E1E1E]"
+            className="h-[11.25rem] w-full resize-none border-[#A3A3A3] text-[1.125rem] dark:border-[#000035] dark:bg-[#1E1E1E]"
             placeholder={isReply ? "Write your reply..." : "Share your opinion"}
             value={reviewText}
             onChange={(e) => setReviewText(e.target.value)}
@@ -169,12 +169,12 @@ const RateBookPopup = ({
                       <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
                         <Star
                           size={38}
-                          className="min-w-[38px] fill-[#00004f] text-[#00004f] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                          className="min-w-[2.375rem] fill-[#00004f] text-[#00004f] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                           strokeWidth={1.5}
                           style={{
-                            width: "38px",
-                            height: "38px",
-                            minWidth: "38px",
+                            width: "2.375rem",
+                            height: "2.375rem",
+                            minWidth: "2.375rem",
                           }}
                         />
                       </div>

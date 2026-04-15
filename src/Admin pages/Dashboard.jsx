@@ -144,7 +144,7 @@ function Dashboard() {
         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full">
           <User className="h-full w-full text-[#000035] dark:text-[#d3d6de]" />
         </div>
-        <div className="h-full w-[1.8px] rounded-full bg-[#000035] dark:bg-[rgba(185,189,200,0.78)]"></div>
+        <div className="h-full w-[0.1125rem] rounded-full bg-[#000035] dark:bg-[rgba(185,189,200,0.78)]"></div>
         <div className="flex-1 overflow-hidden">
           <p className="truncate text-sm font-medium text-[#000035] dark:text-[#d3d6de]">
             {item.userName}
@@ -181,7 +181,7 @@ function Dashboard() {
     : null;
 
   const compactCardClass =
-    "!flex-none !w-[320px] !min-w-[320px] !h-full !min-h-[250px] max-[900px]:!w-full max-[900px]:max-w-[420px]";
+    "!flex-none !w-[20rem] !min-w-[20rem] !h-full !min-h-[15.625rem] max-[56.25rem]:!w-full max-[56.25rem]:max-w-[26.25rem]";
 
   const handleCarouselScroll = () => {
     if (!carouselRef.current) return;
@@ -202,13 +202,13 @@ function Dashboard() {
   }, [activeDotIndex]);
 
   return (
-    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[1024px]:py-4 max-[1024px]:px-11 max-[430px]:w-dvw max-[430px]:px-4">
-      <div className="flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto max-[1024px]:flex-col max-[1024px]:gap-0 max-[1024px]:overflow-x-hidden max-[650px]:overflow-hidden">
-        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[1024px]:mx-0 max-[1024px]:h-fit max-[1024px]:flex-none max-[650px]:shrink">
-          <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[1024px]:h-fit">
-            <div className="[430px]:px-0 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[1024px]:my-0 max-[1024px]:h-fit max-[1024px]:max-w-full max-[1024px]:flex-row max-[1024px]:justify-center max-[1024px]:overflow-hidden max-[650px]:h-auto max-[650px]:flex-col-reverse max-[650px]:gap-4">
+    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[64rem]:py-4 max-[64rem]:px-11 max-[26.875rem]:w-dvw max-[26.875rem]:px-4">
+      <div className="flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto max-[64rem]:flex-col max-[64rem]:gap-0 max-[64rem]:overflow-x-hidden max-[40.625rem]:overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[64rem]:mx-0 max-[64rem]:h-fit max-[64rem]:flex-none max-[40.625rem]:shrink">
+          <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[64rem]:h-fit">
+            <div className="[26.875rem]:px-0 [26.875rem]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[64rem]:my-0 max-[64rem]:h-fit max-[64rem]:max-w-full max-[64rem]:flex-row max-[64rem]:justify-center max-[64rem]:overflow-hidden max-[40.625rem]:h-auto max-[40.625rem]:flex-col-reverse max-[40.625rem]:gap-4">
               <PieChartLegend variant="mobile" />
-              <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[1024px]:min-h-[162px] max-[1024px]:min-w-0 max-[1024px]:max-w-[250px] max-[1024px]:pb-0 max-[1024px]:max-w-[180px] max-[650px]:mb-0 max-[650px]:w-[50vw] max-[650px]:max-w-none">
+              <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[64rem]:min-h-[10.125rem] max-[64rem]:min-w-0 max-[64rem]:max-w-[15.625rem] max-[64rem]:pb-0 max-[64rem]:max-w-[11.25rem] max-[40.625rem]:mb-0 max-[40.625rem]:w-[50vw] max-[40.625rem]:max-w-none">
                 <PieChart
                   totalBorrowed={stats.totalBorrowed}
                   currentlyBorrowed={stats.currentlyBorrowed}
@@ -220,11 +220,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="flex min-h-0 w-full flex-1 max-[1540px]:flex-2 flex-col gap-6 max-[1024px]:mt-6">
+        <div className="flex min-h-0 w-full flex-1 max-[96.25rem]:flex-2 flex-col gap-6 max-[64rem]:mt-6">
           {isSuperAdmin ? (
             <>
               {/* Desktop Grid */}
-              <div className="grid h-full w-full auto-rows-fr grid-cols-2 gap-6 max-[650px]:hidden">
+              <div className="grid h-full w-full auto-rows-fr grid-cols-2 gap-6 max-[40.625rem]:hidden">
                 <DashboardCard title="Borrowed Books">
                   {renderTransactionList(borrowedItems, "No borrowed books")}
                 </DashboardCard>
@@ -245,7 +245,7 @@ function Dashboard() {
               </div>
 
               {/* Mobile Carousel */}
-              <div className="hidden h-full w-full flex-col gap-4 max-[650px]:flex">
+              <div className="hidden h-full w-full flex-col gap-4 max-[40.625rem]:flex">
                 <div
                   ref={carouselRef}
                   className="flex h-full w-full snap-x snap-mandatory flex-row gap-6 overflow-x-auto pb-2 scrollbar-none"
@@ -303,8 +303,8 @@ function Dashboard() {
               </div>
             </>
           ) : (
-            <div className="mx-auto mt-2 flex h-full min-h-0 w-full max-w-[700px] flex-col gap-5">
-              <div className="flex min-h-0 flex-1 justify-center max-[900px]:block max-[900px]:w-full max-[900px]:max-w-[420px] max-[900px]:self-center">
+            <div className="mx-auto mt-2 flex h-full min-h-0 w-full max-w-[43.75rem] flex-col gap-5">
+              <div className="flex min-h-0 flex-1 justify-center max-[56.25rem]:block max-[56.25rem]:w-full max-[56.25rem]:max-w-[26.25rem] max-[56.25rem]:self-center">
                 <DashboardCard
                   title="Borrowed Books"
                   className={compactCardClass}
@@ -314,7 +314,7 @@ function Dashboard() {
                 </DashboardCard>
               </div>
 
-              <div className="grid min-h-0 w-full flex-1 auto-rows-fr grid-cols-2 place-items-stretch gap-6 max-[900px]:grid-cols-1">
+              <div className="grid min-h-0 w-full flex-1 auto-rows-fr grid-cols-2 place-items-stretch gap-6 max-[56.25rem]:grid-cols-1">
                 <DashboardCard
                   title="Overdue Borrowers"
                   className={compactCardClass}

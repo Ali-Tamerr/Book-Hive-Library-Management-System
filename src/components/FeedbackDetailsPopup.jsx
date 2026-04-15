@@ -40,9 +40,9 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
             <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
               <Star
                 size={24}
-                className="min-w-[24px] fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                className="min-w-[1.5rem] fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                 strokeWidth={1.5}
-                style={{ width: "24px", height: "24px", minWidth: "24px" }}
+                style={{ width: "1.5rem", height: "1.5rem", minWidth: "1.5rem" }}
               />
             </div>
           )}
@@ -57,7 +57,7 @@ const FeedbackDetailsPopup = ({ show, onClose, feedback, user }) => {
       onClose={onClose}
       title="Feedback Details"
       icon={<MessageSquare size={24} />}
-      maxWidthClass="max-w-[700px]"
+      maxWidthClass="max-w-[43.75rem]"
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-1">

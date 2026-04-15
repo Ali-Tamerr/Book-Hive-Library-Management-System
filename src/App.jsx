@@ -44,7 +44,7 @@ const UserChatbot = lazy(loadUserChatbot);
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import { NFCReaderProvider } from "./contexts/NFCReaderContext";
-import { getCurrentUser } from "./services/auth.api";
+import { getCurrentUser, verifySession } from "./services/auth.api";
 
 function Layout({
   children,
@@ -183,7 +183,7 @@ function Layout({
           setSearchValue={setSearchValue}
           toggleSidebar={toggleSidebar}
         />
-        <div className="[1540px]:py-0 flex h-0 min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="[96.25rem]:py-0 flex h-0 min-h-0 flex-1 flex-col overflow-hidden">
           <Suspense fallback={<PageLoader />}>{children}</Suspense>
         </div>
       </main>
@@ -195,9 +195,26 @@ function App() {
   const [activeTab, setActiveTab] = React.useState("");
   const [isSidebarOpen, setSidebarOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
+  const [isVerifying, setIsVerifying] = React.useState(true);
+
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
   };
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const user = getCurrentUser();
+      if (user) {
+        await verifySession();
+      }
+      setIsVerifying(false);
+    };
+    checkSession();
+  }, []);
+
+  if (isVerifying) {
+    return <PageLoader />;
+  }
 
   return (
     <NFCReaderProvider>

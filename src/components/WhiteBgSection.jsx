@@ -1,5 +1,5 @@
-import logoDark from "../assets/logo.svg";
-import logoLight from "../assets/bookhive_icon_only-removebg-preview 2.svg";
+import ColorableLogo from "./ColorableLogo";
+
 
 const WhiteBgSection = ({
   title,
@@ -14,22 +14,21 @@ const WhiteBgSection = ({
   isDarkMode = false,
 }) => {
   const visibilityClass = mobileOnly
-    ? "max-[1080px]:flex hidden max-[1080px]:w-full max-[1080px]:h-full"
+    ? "max-[67.5rem]:flex hidden max-[67.5rem]:w-full max-[67.5rem]:h-full"
     : desktopOnly
-      ? "max-[1080px]:hidden flex flex-1"
+      ? "max-[67.5rem]:hidden flex flex-1"
       : "flex flex-1";
 
   const bgClass = isDarkMode ? "bg-[#121317]" : "bg-white";
   const textClass = isDarkMode ? "text-white" : "text-[#000035]";
   const headingFontClass = "font-['Bebas_Neue',sans-serif]";
   const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
-  const logoSrc = isDarkMode ? logoLight : logoDark;
-  const logoAlt = "BookHive Logo";
+
 
   if (customLayout) {
     return (
       <div
-        className={`${visibilityClass} ${bgClass} w-full flex-col items-center justify-center p-16 ${!mobileOnly && !desktopOnly ? "relative" : ""}`}
+        className={`${visibilityClass} ${bgClass} w-full flex-col items-center justify-center p-8 max-[48rem]:p-4 ${!mobileOnly && !desktopOnly ? "relative" : ""}`}
       >
         {children}
       </div>
@@ -38,7 +37,7 @@ const WhiteBgSection = ({
 
   return (
     <div
-      className={`${visibilityClass} ${bgClass} w-full flex-col items-center justify-center gap-4 p-8 ${!mobileOnly && !desktopOnly ? "relative" : ""}`}
+      className={`${visibilityClass} ${bgClass} w-full flex-col items-center justify-center max-[48rem]:justify-center gap-2 px-6 py-8 max-[48rem]:px-4 max-[48rem]:py-6 ${!mobileOnly && !desktopOnly ? "relative" : ""}`}
     >
       {backButton && (
         <button
@@ -54,22 +53,26 @@ const WhiteBgSection = ({
       )}
 
       <div
-        className={`flex flex-col items-center justify-center gap-4 ${contentFontClass} ${mobileOnly ? "w-[85%] max-w-[650px] max-[1080px]:h-screen max-[1080px]:w-full" : "w-full"}`}
+        className={`flex flex-col items-center justify-center gap-2 ${contentFontClass} ${mobileOnly ? "w-[85%] max-w-[40.625rem] max-[67.5rem]:min-h-[100svh] max-[67.5rem]:w-full" : "w-full"}`}
       >
         {logoWithTitle ? (
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 max-[48rem]:gap-2">
             <h2
-              className={`inline text-4xl font-semibold ${headingFontClass} ${textClass}`}
+              className={`inline text-4xl font-semibold max-[48rem]:text-2xl ${headingFontClass} ${textClass}`}
             >
               {title}
             </h2>
-            <img src={logoSrc} alt={logoAlt} className="h-auto w-36" />
+            <ColorableLogo 
+              className={`h-12 w-12 max-[48rem]:h-10 max-[48rem]:w-10 ${isDarkMode ? "text-[#F2F2F2]" : "text-[#000035]"}`} 
+            />
           </div>
         ) : (
           <>
-            <img src={logoSrc} alt={logoAlt} className="mb-6 h-auto w-32" />
+            <ColorableLogo 
+              className={`mb-2 h-20 w-20 max-[48rem]:h-16 max-[48rem]:w-16 ${isDarkMode ? "text-[#F2F2F2]" : "text-[#000035]"}`} 
+            />
             <h2
-              className={`text-3xl font-semibold max-[1080px]:text-2xl ${headingFontClass} ${textClass} mb-4`}
+              className={`text-3xl font-semibold max-[67.5rem]:text-2xl max-[48rem]:text-xl ${headingFontClass} ${textClass} mb-2`}
             >
               {title}
             </h2>
@@ -77,7 +80,7 @@ const WhiteBgSection = ({
         )}
 
         <p
-          className={`${textClass} ${isDarkMode ? "opacity-70" : ""} mb-8 text-center text-lg`}
+          className={`${textClass} ${isDarkMode ? "opacity-70" : ""} mb-4 text-center text-lg max-[48rem]:text-base`}
         >
           {subtitle}
         </p>

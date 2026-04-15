@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { apiGet } from "../services/api.config";
+import { createClient } from "@supabase/supabase-js";
 
 const NFCReaderContext = createContext();
 
@@ -92,31 +93,23 @@ export const NFCReaderProvider = ({ children }) => {
     }
 
     try {
-      console.log("Requesting serial port...");
       const port = await navigator.serial.requestPort();
-      console.log("Port selected:", port);
 
       portRef.current = port;
-      console.log("Opening port with baudRate 9600...");
       await port.open({ baudRate: 9600 });
-      console.log("Port opened successfully!");
 
       setIsConnected(true);
-      console.log("Connection state set to true");
 
       port.ondisconnect = () => {
-        console.log("Port disconnected");
         setIsConnected(false);
         portRef.current = null;
         readerRef.current = null;
       };
 
-      console.log("Setting up text decoder...");
       const textDecoder = new TextDecoderStream();
       const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
       const reader = textDecoder.readable.getReader();
       readerRef.current = reader;
-      console.log("Reader ready, waiting for data...");
 
       (async () => {
         let buffer = "";
@@ -127,12 +120,10 @@ export const NFCReaderProvider = ({ children }) => {
             const { value, done } = await reader.read();
 
             if (done) {
-              console.log("Reader done");
               break;
             }
 
             if (value) {
-              console.log("Raw data received:", value);
               buffer += value;
 
               // Clear any pending flush since we got new data
@@ -155,7 +146,6 @@ export const NFCReaderProvider = ({ children }) => {
                 parts.forEach((part) => {
                   const trimmed = part.trim();
                   if (trimmed) {
-                    console.log("✅ NFC Tag ID:", trimmed);
                     notifyCallbacks(trimmed);
                   }
                 });
@@ -169,7 +159,6 @@ export const NFCReaderProvider = ({ children }) => {
                 flushTimer = setTimeout(() => {
                   const trimmed = buffer.trim();
                   if (trimmed) {
-                    console.log("✅ NFC Tag ID (Timeout Flush):", trimmed);
                     notifyCallbacks(trimmed);
                     buffer = "";
                   }
@@ -180,7 +169,6 @@ export const NFCReaderProvider = ({ children }) => {
         } catch (error) {
           console.error("❌ Read loop error:", error);
         } finally {
-          console.log("Cleaning up reader...");
           reader.releaseLock();
           setIsConnected(false);
           if (portRef.current) {
@@ -199,7 +187,7 @@ export const NFCReaderProvider = ({ children }) => {
     } catch (error) {
       console.error("Connection error:", error);
       if (error.name === "NotFoundError") {
-        console.log("User cancelled port selection");
+        // User cancelled port selection
       } else if (error.name === "InvalidStateError") {
         alert("The port is already open. Please disconnect and try again.");
       } else {
@@ -238,43 +226,45 @@ export const NFCReaderProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    let pollInterval;
+    if (!isWireless) return;
 
-    if (isWireless) {
-      console.log(`Starting Wireless Polling for Device: ${targetDeviceId}...`);
-      pollInterval = setInterval(async () => {
-        try {
-          const data = await apiGet("/NfcScans");
-
-          if (data && Array.isArray(data) && data.length > 0) {
-            // Filter by our specific Device ID locally
-            const myScans = data.filter(
-              (s) =>
-                s.device_id === targetDeviceId ||
-                (!s.device_id && targetDeviceId === "esp8266"),
-            );
-
-            if (myScans.length > 0) {
-              const latestScan = myScans[0];
-
-              if (
-                new Date(latestScan.created_at) >
-                new Date(lastProcessedScanTimeRef.current)
-              ) {
-                console.log("New Wireless Scan (API):", latestScan.tag_id);
-                notifyCallbacks(latestScan.tag_id);
-                lastProcessedScanTimeRef.current = latestScan.created_at;
-              }
-            }
-          }
-        } catch (err) {
-          console.error("Wireless Poll API Error:", err);
-        }
-      }, 1000);
+    let supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    let supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseKey) {
+      console.error("Missing Supabase credentials for Realtime NFC Reader");
+      return;
     }
+    
+    // Use the globally imported createClient
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const filterString = targetDeviceId === "esp8266" ? "" : `device_id=eq.${targetDeviceId}`;
+    
+    const channel = supabase
+      .channel("nfc-reader-global-scans")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "scanned_book_uids",
+          filter: filterString || undefined,
+        },
+        (payload) => {
+          const latestScan = payload.new;
+          if (latestScan && latestScan.uid) {
+             const scanTime = latestScan.created_at || latestScan.scanned_at || new Date().toISOString();
+             if (new Date(scanTime) > new Date(lastProcessedScanTimeRef.current)) {
+                notifyCallbacks(latestScan.uid);
+                lastProcessedScanTimeRef.current = scanTime;
+             }
+          }
+        }
+      )
+      .subscribe();
 
     return () => {
-      if (pollInterval) clearInterval(pollInterval);
+      supabase.removeChannel(channel);
     };
   }, [isWireless, targetDeviceId]);
 

@@ -22,7 +22,7 @@ function BookDetailsPopup({
       onClose={onClose}
       title="Book Details"
       icon={<BookOpen size={24} />}
-      maxWidthClass="max-w-[700px]"
+      maxWidthClass="max-w-[43.75rem]"
     >
       <div className="flex flex-col items-center gap-8">
         {book.image_url ? (
@@ -44,7 +44,7 @@ function BookDetailsPopup({
                 <span className="font-medium">Name : </span>
                 {book.name}
               </span>
-              <div className="h-[1px] w-full bg-gray-300"></div>
+              <div className="h-[0.0625rem] w-full bg-gray-300"></div>
             </div>
 
             <div className="flex flex-col gap-1">
@@ -52,7 +52,7 @@ function BookDetailsPopup({
                 <span className="font-medium">Category : </span>
                 {category || "N/A"}
               </span>
-              <div className="h-[1px] w-full bg-gray-300"></div>
+              <div className="h-[0.0625rem] w-full bg-gray-300"></div>
             </div>
 
             <div className="flex flex-col gap-1">
@@ -63,11 +63,11 @@ function BookDetailsPopup({
                   : book.quantity}{" "}
                 / {book.quantity}
               </span>
-              <div className="h-[1px] w-full bg-gray-300"></div>
+              <div className="h-[0.0625rem] w-full bg-gray-300"></div>
             </div>
           </div>
 
-          <div className="w-[1px] self-stretch bg-gray-300"></div>
+          <div className="w-[0.0625rem] self-stretch bg-gray-300"></div>
 
           <div className="flex flex-1 flex-col">
             <div className="flex flex-col gap-1">
@@ -79,7 +79,7 @@ function BookDetailsPopup({
                     ? "Available"
                     : "Borrowed"}
               </span>
-              <div className="h-[1px] w-full bg-gray-300"></div>
+              <div className="h-[0.0625rem] w-full bg-gray-300"></div>
             </div>
 
             <div className="flex flex-col gap-1">
@@ -87,7 +87,7 @@ function BookDetailsPopup({
                 <span className="font-medium">Sale Price : </span>
                 {book.sale_price ? `$${book.sale_price}` : "N/A"}
               </span>
-              <div className="h-[1px] w-full bg-gray-300"></div>
+              <div className="h-[0.0625rem] w-full bg-gray-300"></div>
             </div>
 
             <div className="flex justify-end pt-2">

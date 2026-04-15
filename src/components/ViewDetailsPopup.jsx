@@ -213,9 +213,9 @@ const ViewDetailsPopup = ({
         title={title}
         icon={null}
         maxWidthClass={
-          maxWidthClassOverride || (isBookVariant ? "max-w-[1200px]" : "w-min")
+          maxWidthClassOverride || (isBookVariant ? "max-w-[75rem]" : "w-min")
         }
-        panelClassName={`!p-0 ${isBookVariant ? "h-full max-h-[700px]" : "h-auto"} overflow-hidden rounded-[14px] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_24px_70px_rgba(0,0,0,0.45)] dark:border-[#D7D7D7] dark:bg-[#121317]`}
+        panelClassName={`!p-0 ${isBookVariant ? "h-full max-h-[43.75rem]" : "h-auto"} overflow-hidden rounded-[0.875rem] border border-[#cfcfcf] bg-[#ebebeb] shadow-[0_1.5rem_4.375rem_rgba(0,0,0,0.45)] dark:border-[#D7D7D7] dark:bg-[#121317]`}
         contentClassName={`${isBookVariant ? "h-full overflow-y-auto" : "h-auto overflow-hidden"} p-0 overflow-x-hidden`}
         hideHeader
         hideDivider
@@ -224,10 +224,10 @@ const ViewDetailsPopup = ({
         <div
           className={`grid ${
             isBookVariant
-              ? "h-full grid-cols-1 lg:grid-cols-[440px_1px_1fr]"
+              ? "h-full grid-cols-1 lg:grid-cols-[27.5rem_0.0625rem_1fr]"
               : isUserVariant
-                ? "h-auto grid-cols-1 lg:grid-cols-[320px_1px_minmax(0,1fr)]"
-                : "h-auto grid-cols-1 lg:grid-cols-[auto_1px_auto]"
+                ? "h-auto grid-cols-1 lg:grid-cols-[20rem_0.0625rem_minmax(0,1fr)]"
+                : "h-auto grid-cols-1 lg:grid-cols-[auto_0.0625rem_auto]"
           }`}
         >
           <div
@@ -239,15 +239,15 @@ const ViewDetailsPopup = ({
                   <img
                     src={imageUrl}
                     alt={imageAlt || String(headingText || "Details")}
-                    className="h-[600px] w-[470px] max-w-full border border-[#cecece] object-cover"
+                    className="h-[37.5rem] w-[29.375rem] max-w-full border border-[#cecece] object-cover"
                   />
                 ) : (
-                  <div className="flex h-[600px] w-[400px] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#000035] to-[#192261]">
+                  <div className="flex h-[37.5rem] w-[25rem] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#000035] to-[#192261]">
                     <Book size={48} className="text-[#F2F2F2]" />
                   </div>
                 )
               ) : (
-                <div className="relative flex aspect-square h-[200px] w-[200px] items-center justify-center p-2">
+                <div className="relative flex aspect-square h-[12.5rem] w-[12.5rem] items-center justify-center p-2">
                   {imageUrl ? (
                     <div className="-mt-4 h-full w-full overflow-hidden rounded-full">
                       <img
@@ -269,7 +269,7 @@ const ViewDetailsPopup = ({
             </div>
             {variant === "details" && savedBy && (
               <div className="mt-4 self-start">
-                <p className="text-[10px] text-[#000035]/50 dark:text-[#D7D7D7]/50">
+                <p className="text-[0.625rem] text-[#000035]/50 dark:text-[#D7D7D7]/50">
                   Added by: {savedBy.name}
                 </p>
               </div>
@@ -277,7 +277,7 @@ const ViewDetailsPopup = ({
           </div>
 
           <div
-            className={`${isBookVariant ? "my-6" : "my-3 h-auto min-h-[140px]"} mx-auto hidden w-px bg-[#000035]/50 lg:block dark:bg-[#D7D7D7]/50`}
+            className={`${isBookVariant ? "my-6" : "my-3 h-auto min-h-[8.75rem]"} mx-auto hidden w-px bg-[#000035]/50 lg:block dark:bg-[#D7D7D7]/50`}
           />
 
           <div
@@ -293,7 +293,7 @@ const ViewDetailsPopup = ({
             <div className="shrink-0">
               <div className="flex flex-col items-start">
                 <h3
-                  className={`truncate font-bold uppercase leading-[1.1] tracking-[0.5px] text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-4xl font-bold sm:text-5xl lg:text-[56px]" : "text-4xl font-bold sm:text-5xl lg:text-[56px]"}`}
+                  className={`truncate font-bold uppercase leading-[1.1] tracking-[0.0313rem] text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-4xl font-bold sm:text-5xl lg:text-[3.5rem]" : "text-4xl font-bold sm:text-5xl lg:text-[3.5rem]"}`}
                   style={{
                     fontFamily:
                       isBookVariant
@@ -315,7 +315,7 @@ const ViewDetailsPopup = ({
               </div>
               {subtitleText && (
                 <p
-                  className={`font-medium text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-xl sm:text-[28px]" : "mb-6 text-2xl sm:text-[32px]"}`}
+                  className={`font-medium text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-xl sm:text-[1.75rem]" : "mb-6 text-2xl sm:text-[2rem]"}`}
                 >
                   {subtitleText}
                 </p>
@@ -330,7 +330,7 @@ const ViewDetailsPopup = ({
                 {visibleDetailsEntries.map(([key, value]) => (
                   <p
                     key={key}
-                    className={`whitespace-nowrap text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-xl sm:text-[28px]" : "text-base font-medium sm:text-[20px]"}`}
+                    className={`whitespace-nowrap text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-xl sm:text-[1.75rem]" : "text-base font-medium sm:text-[1.25rem]"}`}
                   >
                     {key} :{" "}
                     <span className="font-normal">{toDisplayValue(value)}</span>
@@ -339,7 +339,7 @@ const ViewDetailsPopup = ({
               </div>
 
               {isBookVariant && (
-                <div className="my-6 h-px w-full max-w-[280px] bg-[#000035] dark:bg-[#D7D7D7]" />
+                <div className="my-6 h-px w-full max-w-[17.5rem] bg-[#000035] dark:bg-[#D7D7D7]" />
               )}
             </div>
 
@@ -350,7 +350,7 @@ const ViewDetailsPopup = ({
               <div className="flex min-h-0 flex-1 flex-col gap-5">
                 <div className="shrink-0">
                   <h4
-                    className="mb-2 text-4xl text-[#000035] sm:text-[48px] dark:text-[#D7D7D7]"
+                    className="mb-2 text-4xl text-[#000035] sm:text-[3rem] dark:text-[#D7D7D7]"
                     style={{
                       fontFamily:
                         "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
@@ -378,10 +378,10 @@ const ViewDetailsPopup = ({
                     bookReviews.map((review) => {
                       const hasReplies = review.replies && review.replies.length > 0;
                       return (
-                        <div key={review.review_id} className="rounded-[12px] border border-[#000035] bg-transparent dark:border-[#D7D7D7]">
+                        <div key={review.review_id} className="rounded-[0.75rem] border border-[#000035] bg-transparent dark:border-[#D7D7D7]">
                           {/* PARENT ROW */}
                           <div className={`flex px-3 pr-4 ${hasReplies ? "items-stretch pt-2.5 pb-0" : "items-center py-2.5"}`}>
-                            <div className="flex w-14 min-w-[56px] shrink-0 flex-col items-center">
+                            <div className="flex w-14 min-w-[3.5rem] shrink-0 flex-col items-center">
                               <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
                                 {review.user_image_url ? (
                                   <img src={`data:image/png;base64,${review.user_image_url}`} alt={review.user_name} className="h-full w-full object-cover" />
@@ -389,18 +389,18 @@ const ViewDetailsPopup = ({
                                   <UserRound className="h-14 w-14 text-[#0b0c28] dark:text-[#121317]" />
                                 )}
                               </div>
-                              {hasReplies && <div className="flex-1 border-l-[1.5px] border-[#000035] dark:border-[#D7D7D7]"></div>}
+                              {hasReplies && <div className="flex-1 border-l-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]"></div>}
                             </div>
                             <div className="flex min-w-0 flex-1 items-center justify-between gap-4 pl-3">
                               <div className="min-w-0 pt-0.5">
                                 <div className="flex items-center gap-2">
-                                  <span className="truncate text-[16px] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">{review.user_name?.toUpperCase() || "GUEST"}</span>
+                                  <span className="truncate text-[1rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">{review.user_name?.toUpperCase() || "GUEST"}</span>
                                   <div className="flex gap-0.5">{renderStars(review.rating || review.rate, 12)}</div>
                                 </div>
-                                {(review.review || review.review_text) && <p className="mt-1 text-[13px] text-[#000035] dark:text-[#D7D7D7]">{review.review || review.review_text}</p>}
+                                {(review.review || review.review_text) && <p className="mt-1 text-[0.8125rem] text-[#000035] dark:text-[#D7D7D7]">{review.review || review.review_text}</p>}
                                 <p className="mt-1 text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">{timeSince(review.created_at)}</p>
                               </div>
-                              <FormButton isPrimary fullWidth={false} onClick={() => handleActionRequiringLogin(() => { setReplyingTo(review.review_id); setShowRatePopup(true); })} className="h-9 w-[150px] shrink-0 !p-0 text-sm">
+                              <FormButton isPrimary fullWidth={false} onClick={() => handleActionRequiringLogin(() => { setReplyingTo(review.review_id); setShowRatePopup(true); })} className="h-9 w-[9.375rem] shrink-0 !p-0 text-sm">
                                 Reply
                               </FormButton>
                             </div>
@@ -411,18 +411,18 @@ const ViewDetailsPopup = ({
                             const isLast = idx === review.replies.length - 1;
                             return (
                               <div key={reply.reply_id} className={`flex gap-0 px-3 pr-4 ${isLast ? "pb-2.5" : "pb-0"}`}>
-                                {/* Left col: L-shaped connector (same width 56px keeps alignment) */}
-                                <div className="flex w-14 min-w-[56px] shrink-0 flex-col">
+                                {/* Left col: L-shaped connector (same width 3.5rem keeps alignment) */}
+                                <div className="flex w-14 min-w-[3.5rem] shrink-0 flex-col">
                                   {/* L curve: border-l (vertical) + border-b (horizontal) + rounded-bl (curve) */}
                                   <div
-                                    className="shrink-0 border-l-[1.5px] border-b-[1.5px] border-[#000035] dark:border-[#D7D7D7]  rounded-bl-[12px]"
-                                    style={{ height: "28px", width: "28px", marginLeft: "28px" }}
+                                    className="shrink-0 border-l-[0.0938rem] border-b-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]  rounded-bl-[0.75rem]"
+                                    style={{ height: "1.75rem", width: "1.75rem", marginLeft: "1.75rem" }}
                                   />
-                                  {!isLast && <div className="flex-1 border-l-[1.5px] border-[#000035] dark:border-[#D7D7D7]" style={{ marginLeft: "28px" }}></div>}
+                                  {!isLast && <div className="flex-1 border-l-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]" style={{ marginLeft: "1.75rem" }}></div>}
                                 </div>
                                 {/* Reply avatar + content, shifted down so avatar center = L bottom */}
-                                <div className="flex min-w-0 flex-1 items-start gap-3 mt-[8px]">
-                                  <div className="flex h-10 w-10 min-w-[40px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+                                <div className="flex min-w-0 flex-1 items-start gap-3 mt-[0.5rem]">
+                                  <div className="flex h-10 w-10 min-w-[2.5rem] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
                                     {reply.user_image_url ? (
                                       <img src={`data:image/png;base64,${reply.user_image_url}`} alt={reply.user_name} className="h-full w-full object-cover" />
                                     ) : (
@@ -430,8 +430,8 @@ const ViewDetailsPopup = ({
                                     )}
                                   </div>
                                   <div className="min-w-0 pt-0.5">
-                                    <span className="block truncate text-[14px] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">{reply.user_name?.toUpperCase() || "GUEST"}</span>
-                                    <p className="mt-1 text-[13px] text-[#000035] dark:text-[#D7D7D7]">{reply.reply_text}</p>
+                                    <span className="block truncate text-[0.875rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">{reply.user_name?.toUpperCase() || "GUEST"}</span>
+                                    <p className="mt-1 text-[0.8125rem] text-[#000035] dark:text-[#D7D7D7]">{reply.reply_text}</p>
                                     <p className="mt-1 text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">{timeSince(reply.created_at)}</p>
                                   </div>
                                 </div>
@@ -450,7 +450,7 @@ const ViewDetailsPopup = ({
                       isPrimary
                       fullWidth={false}
                       onClick={() => setShowCopiesPopup(true)}
-                      className={`h-[54px] w-[190px] cursor-pointer rounded-[10px] !p-0 text-[18px] transition-colors`}
+                      className={`h-[3.375rem] w-[11.875rem] cursor-pointer rounded-[0.625rem] !p-0 text-[1.125rem] transition-colors`}
                     >
                       Show IDs
                     </FormButton>
@@ -462,7 +462,7 @@ const ViewDetailsPopup = ({
                       setReplyingTo(null);
                       setShowRatePopup(true);
                     })}
-                    className={`h-[54px] w-[190px] cursor-pointer rounded-[10px] !p-0 text-[18px] transition-colors`}
+                    className={`h-[3.375rem] w-[11.875rem] cursor-pointer rounded-[0.625rem] !p-0 text-[1.125rem] transition-colors`}
                   >
                     Comment
                   </FormButton>

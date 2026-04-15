@@ -83,21 +83,21 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
   }, [localIndex, originalLength, heroContainerRef, isReady]);
 
   return (
-    <section className="home py-20 pb-4" id="home" data-reveal>
-      <div className="home__container min-[1150px]:pt-35 mx-auto grid w-full max-w-[1688px] gap-x-9 gap-y-14 px-6 pt-20 max-[1150px]:grid-cols-1 max-[1150px]:text-center min-[1150px]:grid-cols-[612px_1044px] min-[1150px]:items-center min-[1150px]:pb-7">
-        <div className="text-center min-[1150px]:text-left">
-          <h1 className="mb-4 font-[family-name:var(--body-font)] text-[5.375rem] font-extrabold leading-[1.1] text-[var(--title-color)] min-[1150px]:text-[5.0625rem] dark:!text-[#c7c9cf]">
+    <section className="home py-16 pb-4 max-[42.5rem]:py-12" id="home" data-reveal>
+      <div className="home__container min-[71.875rem]:pt-35 mx-auto grid w-full max-w-[105.5rem] gap-x-9 gap-y-10 px-6 pt-16 max-[42.5rem]:px-4 max-[71.875rem]:grid-cols-1 max-[71.875rem]:text-center min-[71.875rem]:grid-cols-[38.25rem_65.25rem] min-[71.875rem]:items-center min-[71.875rem]:pb-7">
+        <div className="text-center min-[71.875rem]:text-left">
+          <h1 className="mb-4 font-[family-name:var(--body-font)] text-[2.7rem] font-extrabold leading-[1.1] text-[var(--title-color)] max-[32.5rem]:text-[2.15rem] min-[71.875rem]:text-[5.0625rem] dark:!text-[#c7c9cf]">
             One Library, <br />
             Infinite Stories
           </h1>
-          <p className="min-[1150px]:mb-22 mb-8 font-[family-name:var(--second-font)] text-[25px] font-medium text-[var(--title-color)] dark:!text-[#b9bbc1]">
+          <p className="min-[71.875rem]:mb-22 mb-8 font-[family-name:var(--second-font)] text-[1.125rem] font-medium leading-[1.5] text-[var(--title-color)] max-[32.5rem]:text-[1rem] dark:!text-[#b9bbc1] min-[71.875rem]:text-[1.5625rem]">
             With Bookhive, every book has a place and every reader has a path:
             search, borrow, and renew in a few clicks, while librarians track
             everything effortlessly.
           </p>
           <HomeButton
             href="#featured"
-            className="px-9 py-5 max-[1150px]:mt-10"
+            className="px-9 py-5 max-[71.875rem]:mt-10 max-[42.5rem]:px-7 max-[42.5rem]:py-3.5"
             onClick={(e) => scrollToSection(e, "featured")}
           >
             Explore Now
@@ -126,9 +126,9 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
                     style={{
                       width:
                         window.innerWidth >= 1150
-                          ? "340px"
-                          : "min(250px, 80vw)",
-                      marginRight: "20px",
+                          ? "21.25rem"
+                          : "min(15.625rem, 80vw)",
+                      marginRight: "1.25rem",
                       opacity: 1,
                       scale: isCurrent ? "1" : "0.85",
                     }}
@@ -136,7 +136,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
                     <LazyImage
                       src={book.image}
                       alt={book.name}
-                      className="h-[470px] w-full rounded-lg object-cover"
+                      className="h-[29.375rem] w-full rounded-lg object-cover max-[42.5rem]:h-[22.5rem] max-[32.5rem]:h-[18.75rem]"
                       priority
                     />
                   </article>

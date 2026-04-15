@@ -1,12 +1,11 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { Search, ChevronDown, ArrowLeft, ArrowRight } from "lucide-react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import { Search, ChevronDown, ArrowLeft, ArrowRight, X } from "lucide-react";
 import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
 import BookCard from "../components/BookCard";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import { useUsers } from "../hooks/useUsers";
 import { useBooks, useDashboardBooks, useBook } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
 import { useReservations } from "../hooks/useReservations";
@@ -24,10 +23,7 @@ function Dashboard() {
     `${currentUser?.first_name || ""} ${currentUser?.last_name || ""}`.trim() ||
     currentUser?.user_id ||
     "User";
-  const { data: usersData, isLoading: usersLoading } = useUsers();
-  const users = usersData
-    ? usersData.pages.flatMap((page) => page.data || [])
-    : [];
+
   const [displayBooks, setDisplayBooks] = useState([]);
   const [generalStats, setGeneralStats] = useState({
     branches: 0,
@@ -66,6 +62,11 @@ function Dashboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [isViewLoading, setIsViewLoading] = useState(false);
+  const [showSubscriptionInfo, setShowSubscriptionInfo] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [cardScale, setCardScale] = useState(1);
+  const observerTarget = useRef(null);
   const {
     data: selectedBookDetail,
     isLoading: selectedBookLoading,
@@ -81,7 +82,7 @@ function Dashboard() {
           setGeneralStats({
             branches: +maybeStats.branches || 0,
             books: +maybeStats.books || 0,
-            users: +maybeStats.users || users.length || 0,
+            users: +maybeStats.users || 0,
           });
         }
       } catch (error) {
@@ -89,7 +90,7 @@ function Dashboard() {
       }
     };
     fetchStats();
-  }, [users.length]);
+  }, []);
 
   // 2. Load cached books on mount
   useEffect(() => {
@@ -133,6 +134,17 @@ function Dashboard() {
   React.useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
+      const height = window.innerHeight;
+      setIsMobile(width < 640);
+
+      // Height based scale
+      const hScale = Math.max(0.4, Math.min(1, (height - 260) / 700));
+      // Width based scale
+      const widthTarget = width < 640 ? 360 : 1300;
+      const wScale = Math.max(0.4, Math.min(1, (width - 60) / widthTarget));
+      
+      setCardScale(Math.min(hScale, wScale));
+
       if (width < 1300) {
         setBooksPerPage(4); // 2 cols * 2 rows
       } else if (width < 1400) {
@@ -147,8 +159,15 @@ function Dashboard() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+
+
+  useEffect(() => {
+    if (!isMobile) {
+      setCurrentPage(0);
+    }
+  }, [isMobile]);
+
   const loading =
-    usersLoading ||
     booksLoading ||
     reservationsLoading ||
     branchesLoading ||
@@ -156,18 +175,11 @@ function Dashboard() {
     categoriesLoading ||
     transactionsLoading;
 
-  const currentUserFromList = useMemo(() => {
-    if (!currentUser?.user_id) return null;
-    return (
-      users.find(
-        (u) => String(u.user_id ?? u.id ?? "") === String(currentUser.user_id),
-      ) || null
-    );
-  }, [users, currentUser?.user_id]);
+
 
   // Calculate current month's limits
   const userPlanId =
-    currentUserFromList?.plan || currentUser?.plan || "Discover";
+    currentUser?.plan || "Discover";
   const userPlan = plansData?.find((p) => p.id === userPlanId);
   const borrowLimit = userPlan?.borrow_limit || 3;
 
@@ -190,27 +202,31 @@ function Dashboard() {
     );
   }).length;
 
-  const stats = {
-    totalUsers: generalStats.users || users?.length || 0,
-    totalBooks: generalStats.books || displayBooks?.length || 0,
-    branchCount: generalStats.branches || branches?.length || 0,
-    totalBorrowed: borrowLimit, // Total pie size
-    currentlyBorrowed: Math.max(0, borrowLimit - monthlyBorrowedCount), // Grey empty limit left
-    returnedBooks: monthlyBorrowedCount, // Navy Blue filled part
-  };
-
   const subscriptionExpirationRaw =
-    currentUserFromList?.subscription_end_date ||
-    currentUserFromList?.subscription_expiration_date ||
-    currentUserFromList?.subscription_expiry_date ||
-    currentUserFromList?.plan_expiration_date ||
-    currentUserFromList?.expiration_date ||
     currentUser?.subscription_end_date ||
     currentUser?.subscription_expiration_date ||
     currentUser?.subscription_expiry_date ||
     currentUser?.plan_expiration_date ||
     currentUser?.expiration_date ||
     null;
+
+  const isExpired = useMemo(() => {
+    if (!subscriptionExpirationRaw) return true;
+    const expirationDate = new Date(subscriptionExpirationRaw);
+    if (Number.isNaN(expirationDate.getTime())) return true;
+    return expirationDate < new Date();
+  }, [subscriptionExpirationRaw]);
+
+  const stats = {
+    totalUsers: generalStats.users || 0,
+    totalBooks: generalStats.books || displayBooks?.length || 0,
+    branchCount: generalStats.branches || branches?.length || 0,
+    totalBorrowed: isExpired ? 0 : borrowLimit, // Total pie size
+    currentlyBorrowed: isExpired
+      ? 0
+      : Math.max(0, borrowLimit - monthlyBorrowedCount), // Grey empty limit left
+    returnedBooks: isExpired ? 0 : monthlyBorrowedCount, // Navy Blue filled part
+  };
 
   const subscriptionExpirationLabel = useMemo(() => {
     if (!subscriptionExpirationRaw) return "N/A";
@@ -273,10 +289,32 @@ function Dashboard() {
   }, [displayBooks, searchValue, selectedCategory, activeTab, bookPopularity]);
 
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage) || 1;
-  const paginatedBooks = filteredBooks.slice(
-    currentPage * booksPerPage,
-    (currentPage + 1) * booksPerPage,
-  );
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && currentPage < totalPages - 1) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 0.1, rootMargin: "200px" },
+    );
+
+    const target = observerTarget.current;
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) observer.unobserve(target);
+    };
+  }, [isMobile, currentPage, totalPages]);
+
+  const paginatedBooks = isMobile
+    ? filteredBooks.slice(0, (currentPage + 1) * booksPerPage)
+    : filteredBooks.slice(currentPage * booksPerPage, (currentPage + 1) * booksPerPage);
 
   const handlePrevPage = () => {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
@@ -287,15 +325,56 @@ function Dashboard() {
   };
 
   return (
-    <div 
-      className="flex h-full w-full"
+    <div
+      className="flex min-h-full w-full overflow-y-auto"
       style={{
-        "--card-scale": "clamp(0.35, calc((100vh - 280px) / 620px), 1)",
+        "--card-scale": cardScale,
       }}
     >
-      <main className="flex h-full flex-1 flex-col px-5 py-3" style={{ gap: "clamp(4px, 1.5vh, 18px)" }}>
-        <div className="flex w-full items-center gap-3.5">
-          <div className="relative flex-1">
+      <main
+        className="flex min-h-full flex-1 flex-col px-5 py-3 max-[40rem]:h-auto max-[40rem]:px-2"
+        style={{ gap: "clamp(0.25rem, 1.5vh, 1.125rem)" }}
+      >
+        {showSubscriptionInfo && (
+          <div className="hidden w-full max-[40rem]:block">
+            <div
+              className="relative flex w-full items-start justify-between rounded-lg p-3"
+              style={{
+                marginBottom: "clamp(0.5rem, 1.5vh, 1.125rem)",
+              }}
+            >
+              <div className="pr-8">
+                <p className="text-sm font-medium text-[#0b0c28] dark:text-white">
+                  {isExpired ? (
+                    <>
+                      Dear {currentUserDisplayName} please note that your subscription has expired
+                      <br className="max-[40rem]:hidden" />
+                    </>
+                  ) : (
+                    <>
+                      Dear {currentUserDisplayName}, your subscription will
+                      expire on{" "}
+                      <span className="font-bold">
+                        {subscriptionExpirationLabel}.
+                      </span>
+                    </>
+                  )}
+                </p>
+                <p className="mt-0.5 text-xs text-[#0b0c28]/70 dark:text-white/70">
+                  To renew your subscription, kindly visit the nearest branch.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowSubscriptionInfo(false)}
+                className="absolute right-2 top-2 rounded-full p-1 transition-colors hover:bg-black/10 dark:hover:bg-white/10"
+              >
+                <X size={16} className="text-[#0b0c28] dark:text-white" />
+              </button>
+            </div>
+          </div>
+        )}
+        <div className="flex w-full items-center gap-3.5 max-[40rem]:flex-col">
+          <div className="relative flex-1 max-[40rem]:w-full max-[40rem]:min-w-0 max-[40rem]:max-w-none">
             <Search
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
               size={16}
@@ -304,6 +383,8 @@ function Dashboard() {
               type="text"
               placeholder="Search for book"
               value={searchValue}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
               onChange={(e) => {
                 setSearchValue(e.target.value);
                 setCurrentPage(0);
@@ -311,7 +392,7 @@ function Dashboard() {
               className="w-full rounded-lg border border-[#000035] py-1.5 pl-10 pr-3.5 text-sm transition-colors placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
-          <div className="mr-22 relative w-full min-w-[162px] max-w-[531px] flex-1">
+          <div className="mr-22 relative w-full min-w-[10.125rem] max-w-[33.1875rem] flex-1 max-[40rem]:mr-0 max-[40rem]:min-w-0 max-[40rem]:max-w-none">
             <select
               value={selectedCategory}
               onChange={(e) => {
@@ -337,19 +418,24 @@ function Dashboard() {
             />
           </div>
         </div>
-        <section 
-          className="flex max-[640px]:flex-col"
-          style={{ 
-            height: "calc(100% - 60px)",
-            gap: "clamp(12px, 2vh, 18px)" 
+        <section
+          className="flex max-[40rem]:flex-col"
+          style={{
+            height: "auto",
+            minHeight: "calc(100% - 3.75rem)",
+            gap: "clamp(0.75rem, 2vh, 1.125rem)",
           }}
         >
           <div
-            className={`flex-3 flex w-full flex-col items-center justify-center gap-3 max-[640px]:mx-auto max-[640px]:max-w-[300px] max-[640px]:flex-none min-[640px]:order-last min-[640px]:h-full min-[1540px]:-ml-5`}
+            className={`flex flex-col items-center justify-center gap-3 overflow-hidden transition-all duration-500 ease-in-out max-[40rem]:mx-auto max-[40rem]:flex-none min-[40rem]:order-last min-[40rem]:h-full min-[96.25rem]:-ml-5 ${
+              searchValue || isSearchFocused
+                ? "invisible max-h-0 max-w-0 flex-[0.0001] -translate-y-2 scale-95 opacity-0"
+                : "flex-3 visible max-h-[50rem] max-w-full translate-y-0 scale-100 opacity-100"
+            }`}
           >
-            <div className="flex h-full w-full flex-col items-center justify-start rounded-md min-[1200px]:mb-6">
-              <div className="max-3xl:items-start max-[430px]:scale-80 [430px]:mx-0 flex h-full w-full flex-col items-center justify-between gap-6 overflow-hidden max-[380px]:w-[110%]">
-                <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center overflow-hidden max-[640px]:min-h-[162px] max-[340px]:-ml-9">
+            <div className="flex h-full w-full flex-col items-center justify-start rounded-md min-[75rem]:mb-6">
+              <div className="flex h-full w-full flex-col items-center justify-between gap-6 overflow-hidden">
+                <div className="relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center overflow-hidden max-[40rem]:min-h-[10.125rem]">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <PieChart
                       totalBorrowed={stats.totalBorrowed}
@@ -361,27 +447,27 @@ function Dashboard() {
                 </div>
                 <PieChartLegend
                   variant="mobile"
-                  className="scale-125 max-[1540px]:!hidden max-[1080px]:!flex"
+                  className="max-[96.25rem]:!hidden max-[67.5rem]:!flex"
                 />
                 <PieChartLegend
                   variant="desktop"
-                  className="max-[1540px]:!flex max-[1080px]:!hidden"
+                  className="max-[96.25rem]:!flex max-[67.5rem]:!hidden"
                 />
               </div>
             </div>
           </div>
-          <div 
-            className="min-[640px]:flex-4 flex w-full flex-col min-[640px]:h-full"
-            style={{ gap: "clamp(2px, 1vh, 20px)" }}
+          <div
+            className="min-[40rem]:flex-4 flex w-full flex-col min-[40rem]:h-full"
+            style={{ gap: "clamp(0.125rem, 1vh, 1.25rem)" }}
           >
-            <div className="flex items-center justify-between border-b border-[#000035] dark:border-[#D7D7D7]">
-              <div className="flex gap-16">
+            <div className="flex items-center justify-between border-b border-[#000035] max-[40rem]:flex-col-reverse max-[40rem]:items-start max-[40rem]:gap-2 dark:border-[#D7D7D7]">
+              <div className="flex gap-10 max-[40rem]:w-full max-[40rem]:justify-around max-[40rem]:gap-2">
                 <button
                   onClick={() => {
                     setActiveTab("recommended");
                     setCurrentPage(0);
                   }}
-                  className={`w-45 relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors ${
+                  className={`relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors max-[47.5rem]:text-xl ${
                     activeTab === "recommended"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:text-[#D7D7D7]/40 dark:hover:text-gray-300"
@@ -394,7 +480,7 @@ function Dashboard() {
                     setActiveTab("recently");
                     setCurrentPage(0);
                   }}
-                  className={`w-45 relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors ${
+                  className={`relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors max-[47.5rem]:text-xl ${
                     activeTab === "recently"
                       ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:text-[#D7D7D7]/40 dark:hover:text-gray-300"
@@ -403,7 +489,7 @@ function Dashboard() {
                   Recently added
                 </button>
               </div>
-              <div className="mr-10 flex items-center gap-3 pb-1.5">
+              <div className="mr-10 max-[62.5rem]:mr-2 max-[62.5rem]:gap-1.5 flex items-center gap-3 pb-1.5 max-[40rem]:mr-0 max-[40rem]:hidden max-[40rem]:w-full max-[40rem]:justify-center">
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage === 0}
@@ -419,11 +505,11 @@ function Dashboard() {
                     className="scale-x-150"
                   />
                 </button>
-                <div className="flex gap-4">
+                <div className="flex gap-4 max-[62.5rem]:gap-2">
                   {Array.from({ length: 3 }).map((_, i) => (
                     <div
                       key={i}
-                      className={`h-[1.5px] w-[10px] rounded-full transition-colors ${
+                      className={`h-[0.0938rem] w-[0.625rem] rounded-full transition-colors ${
                         i === Math.min(currentPage, 2)
                           ? "bg-[#000035] dark:bg-[#D7D7D7]"
                           : "bg-[#000035]/10 dark:bg-[#D7D7D7]/10"
@@ -449,8 +535,8 @@ function Dashboard() {
               </div>
             </div>
 
-            <div 
-              className="grid w-full grid-cols-4 place-items-center max-[1400px]:grid-cols-3 max-[1300px]:grid-cols-2"
+            <div
+              className="grid w-full place-items-center max-[54.375rem]:grid-cols-2 min-[54.375rem]:grid-cols-3 min-[93.75rem]:grid-cols-4"
               style={{ rowGap: "calc(0.5rem * var(--card-scale, 1))" }}
             >
               {booksLoading && displayBooks.length === 0 ? (
@@ -470,38 +556,58 @@ function Dashboard() {
                       setSelectedBookId(book.book_id);
                       setIsViewLoading(true);
                     }}
-                    scale={1} // You can use a variable here if you want it to scale dynamically
+                    scale={cardScale}
                   />
                 ))
               )}
+              {isMobile && currentPage < totalPages - 1 && (
+                <div
+                  ref={observerTarget}
+                  className="col-span-full h-10 w-full"
+                />
+              )}
             </div>
-            <div 
-              className="mt-auto flex w-full justify-start md:ml-10"
-              style={{ 
-                marginTop: "calc(0.1rem * var(--card-scale, 1))",
-                marginBottom: "calc(0.25rem * var(--card-scale, 1))" 
-              }}
-            >
-              <div 
-                className="w-fit rounded-md transition-all duration-300"
-                style={{ 
-                  fontSize: "calc(1.2rem * var(--card-scale, 1))",
-                  padding: "calc(0.2rem * var(--card-scale, 1))",
-                  paddingRight: "1.5rem"
+            {showSubscriptionInfo && (
+              <div
+                className="mt-auto flex w-full justify-start max-[40rem]:hidden md:ml-10"
+                style={{
+                  marginTop: "calc(0.1rem * var(--card-scale, 1))",
+                  marginBottom: "calc(0.25rem * var(--card-scale, 1))",
                 }}
               >
-                <p className="text-[#0b0c28] dark:text-white">
-                  Dear {currentUserDisplayName}, please note that your
-                  subscription will expire on{" "}
-                  <span className="block font-bold">
-                    {subscriptionExpirationLabel}.
-                  </span>
-                </p>
-                <p className="mt-1 text-[#0b0c28] dark:text-white">
-                  To renew your subscription, kindly visit the nearest branch.
-                </p>
+                <div
+                  className="relative w-fit rounded-md transition-all duration-300"
+                  style={{
+                    fontSize: "calc(1.2rem * var(--card-scale, 1))",
+                    padding: "calc(0.2rem * var(--card-scale, 1))",
+                    paddingRight: "2.5rem",
+                  }}
+                >
+                  <p className="text-[#0b0c28] dark:text-white">
+                    {isExpired ? (
+                      `Dear ${currentUserDisplayName} please note that your subscription has expired`
+                    ) : (
+                      <>
+                        Dear {currentUserDisplayName}, please note that your
+                        subscription will expire on{" "}
+                        <span className="block font-bold">
+                          {subscriptionExpirationLabel}.
+                        </span>
+                      </>
+                    )}
+                  </p>
+                  <p className="mt-1 text-[#0b0c28] dark:text-white">
+                    To renew your subscription, kindly visit the nearest branch.
+                  </p>
+                  <button
+                    onClick={() => setShowSubscriptionInfo(false)}
+                    className="absolute right-2 top-2 hidden rounded-full p-1 transition-colors hover:bg-black/5 max-[40rem]:block dark:hover:bg-white/5"
+                  >
+                    <X size={16} className="text-[#0b0c28] dark:text-white" />
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
         {selectedBookId && (

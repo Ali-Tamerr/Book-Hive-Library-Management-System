@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import {
-  createUserRequest,
-  getAllUserRequests,
-} from "../services/userRequests.api";
-import { getAllUsers } from "../services/users.api";
+import { createUserRequest, sendOtpToEmail } from "../services/userRequests.api";
+
 import { useBranches } from "../hooks/useBranches";
 import AuthInput from "../components/AuthInput";
 import PrimaryButton from "../components/PrimaryButton";
@@ -12,7 +9,7 @@ import DarkBgSection from "../components/DarkBgSection";
 import WhiteBgSection from "../components/WhiteBgSection";
 import FormSelect from "../components/FormSelect";
 
-function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
+function SignupPopup({ isOpen, onClose, onLogin, onShowOTP, slideFromTop = false }) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [formData, setFormData] = useState({
@@ -27,8 +24,7 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [existingUsers, setExistingUsers] = useState([]);
-  const [existingRequests, setExistingRequests] = useState([]);
+
 
   const { data: branches = [] } = useBranches();
 
@@ -45,36 +41,7 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const fetchExistingData = async () => {
-      try {
-        const [users, requests] = await Promise.all([
-          getAllUsers(),
-          getAllUserRequests(),
-        ]);
 
-        let usersArray = [];
-        if (Array.isArray(users)) usersArray = users;
-        else if (users && Array.isArray(users.data)) usersArray = users.data;
-        else if (users && Array.isArray(users.users)) usersArray = users.users;
-
-        let requestsArray = [];
-        if (Array.isArray(requests)) requestsArray = requests;
-        else if (requests && Array.isArray(requests.data))
-          requestsArray = requests.data;
-        else if (requests && Array.isArray(requests.requests))
-          requestsArray = requests.requests;
-
-        setExistingUsers(usersArray);
-        setExistingRequests(requestsArray);
-      } catch (err) {
-        console.error("Failed to fetch existing data:", err);
-      }
-    };
-    if (isOpen) {
-      fetchExistingData();
-    }
-  }, [isOpen]);
 
   const handleChange = (e) => {
     setFormData({
@@ -84,62 +51,20 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
     setError("");
   };
 
-  const validateUniqueFields = () => {
-    const emailLower = formData.email.toLowerCase().trim();
-
-    const emailExistsInUsers = existingUsers.some(
-      (user) => user.email?.toLowerCase() === emailLower,
-    );
-    if (emailExistsInUsers) {
-      setError(
-        "This email is already registered. Please use a different email or sign in.",
-      );
-      return false;
-    }
-
-    const emailExistsInRequests = existingRequests.some(
-      (request) =>
-        request.email?.toLowerCase() === emailLower &&
-        request.status === "Pending",
-    );
-    if (emailExistsInRequests) {
-      setError("A registration request with this email is already pending.");
-      return false;
-    }
-
-    return true;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    if (!validateUniqueFields()) {
-      return;
-    }
-
     setLoading(true);
 
     try {
-      await createUserRequest(formData);
-      setSuccess(true);
-      setFormData({
-        first_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        branch_id: "",
-        plan: "",
-      });
-      setTimeout(() => {
-        onClose?.();
-        setSuccess(false);
-      }, 3000);
+      await sendOtpToEmail(formData.email);
+      onClose?.();
+      onShowOTP?.(formData.email, formData);
     } catch (err) {
       const errorMessage =
         err?.response?.data?.message ||
         err?.message ||
-        "Request submission failed. Please try again.";
+        "Failed to send verification email. Please try again.";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -173,11 +98,11 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
       onClick={onClose}
     >
       <div
-        className={`relative h-full max-h-none w-full overflow-hidden rounded-none shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] min-[769px]:h-auto min-[769px]:max-h-[87vh] min-[769px]:w-[95%] min-[769px]:max-w-[1420px] min-[769px]:rounded-2xl ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
+        className={`relative h-full max-h-none w-full overflow-y-auto min-[48.0625rem]:overflow-hidden rounded-none shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] min-[48.0625rem]:h-auto min-[48.0625rem]:max-h-[87vh] min-[48.0625rem]:w-[95%] min-[48.0625rem]:max-w-[88.75rem] min-[48.0625rem]:rounded-2xl ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className={`flex h-full w-full max-[1080px]:flex-col max-[768px]:justify-center ${isDarkMode ? "bg-[#121317]" : "bg-white"} overflow-hidden`}
+          className={`flex min-h-full w-full max-[67.5rem]:flex-col ${isDarkMode ? "bg-[#121317]" : "bg-white"}`}
         >
           <DarkBgSection
             message={"Already have account ?\nSign in now !"}
@@ -213,7 +138,7 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
             ) : (
               <form
                 onSubmit={handleSubmit}
-                className="flex w-full flex-col items-center gap-6"
+                className="flex w-full flex-col items-center gap-4"
               >
                 <div className="flex w-full gap-4">
                   <AuthInput
@@ -298,15 +223,18 @@ function SignupPopup({ isOpen, onClose, onLogin, slideFromTop = false }) {
                 </PrimaryButton>
               </form>
             )}
-            <div className="hidden w-full flex-col items-center gap-3 max-[1080px]:flex">
+            <div className="hidden w-full flex-row items-center justify-center gap-2 max-[67.5rem]:flex max-[48rem]:flex-row max-[48rem]:flex-wrap">
               <p
-                className={`text-center text-lg ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
+                className={`text-center text-lg max-[48rem]:text-sm ${isDarkMode ? "text-white" : "text-[#000035]"}`}
               >
                 Already have Account?
               </p>
-              <PrimaryButton onClick={handleLogin} isDarkMode={isDarkMode}>
+              <button 
+                onClick={handleLogin} 
+                className={`text-lg max-[48rem]:text-sm font-bold underline ${isDarkMode ? "text-white" : "text-[#000035]"}`}
+              >
                 Sign In now.
-              </PrimaryButton>
+              </button>
             </div>
           </WhiteBgSection>
         </div>

@@ -78,13 +78,13 @@ const FeedbackPopup = ({ show, onClose }) => {
       onClose={handleCancel}
       title="Rate your experience"
       icon={<ThumbsUp size={24} />}
-      maxWidthClass="max-w-[600px]"
+      maxWidthClass="max-w-[37.5rem]"
     >
       <div className="flex w-full flex-col gap-6">
         <div className="flex w-full items-center justify-center">
           <FormInput
             type="textarea"
-            className="h-[150px] w-full max-w-[400px] resize-none"
+            className="h-[9.375rem] w-full max-w-[25rem] resize-none"
             placeholder="Share your experience"
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
@@ -125,12 +125,12 @@ const FeedbackPopup = ({ show, onClose }) => {
                     <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
                       <Star
                         size={34}
-                        className="min-w-[34px] fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                        className="min-w-[2.125rem] fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                         strokeWidth={1.5}
                         style={{
-                          width: "34px",
-                          height: "34px",
-                          minWidth: "34px",
+                          width: "2.125rem",
+                          height: "2.125rem",
+                          minWidth: "2.125rem",
                         }}
                       />
                     </div>

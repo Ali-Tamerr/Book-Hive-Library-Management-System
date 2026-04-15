@@ -17,16 +17,16 @@ const Header = ({
   return (
     <>
       <header
-        className={`duration-400 transition-alldark:border-b fixed left-0 right-0 top-0 z-[100] mx-auto w-full bg-[var(--body-color)] dark:border-[rgba(255,255,255,0.06)] ${showShadowHeader ? "shadow-[0_2px_16px_hsla(0,0%,0%,0.1)] dark:shadow-[0_2px_16px_hsla(0,0%,0%,0.4)]" : ""}`}
+        className={`duration-400 fixed left-0 right-0 top-0 z-[100] mx-auto w-full bg-[var(--body-color)] transition-all dark:border-b dark:border-[rgba(255,255,255,0.06)] ${showShadowHeader ? "shadow-[0_0.125rem_1rem_hsla(0,0%,0%,0.1)] dark:shadow-[0_0.125rem_1rem_hsla(0,0%,0%,0.4)]" : ""}`}
         id="header"
       >
-        <nav className="flex h-[72px] items-center justify-between px-6 xl:pr-12">
+        <nav className="flex h-[4.5rem] items-center justify-between px-4 max-[42.5rem]:h-[4.125rem] max-[42.5rem]:px-3 xl:pr-12">
           <a
             href="#"
             className="inline-flex items-center gap-x-2 font-medium text-[var(--first-color)]"
           >
             <div
-              className="h-[42px] w-[48px] bg-[#000035] dark:bg-[#D7D7D7]"
+              className="h-[2.625rem] w-[3rem] bg-[#000035] dark:bg-[#D7D7D7]"
               style={{
                 mask: `url(${logoIcon}) no-repeat center`,
                 WebkitMask: `url(${logoIcon}) no-repeat center`,
@@ -36,8 +36,8 @@ const Header = ({
             />
           </a>
 
-          <div className="max-[1150px]:shadow-[0_-8px_32px_hsla(0,0%,0%,0.1) max-[1150px]:fixed max-[1150px]:inset-x-0 max-[1150px]:bottom-0 max-[1150px]:w-full max-[1150px]:px-16 max-[1150px]:py-5 min-[1150px]:mx-auto min-[1150px]:flex min-[1150px]:flex-1 min-[1150px]:justify-center max-[1150px]:bg-[var(--container-color)] dark:shadow-[0_-8px_32px_hsla(0,0%,0%,0.4)] dark:max-[1150px]:shadow-none">
-            <ul className="min-[1150px]:px-12 flex w-full items-center justify-around">
+          <div className="max-[71.875rem]:fixed max-[71.875rem]:inset-x-0 max-[71.875rem]:bottom-0 max-[71.875rem]:w-full max-[71.875rem]:bg-[var(--container-color)] max-[71.875rem]:px-5 max-[71.875rem]:py-4 max-[42.5rem]:px-3 max-[42.5rem]:py-3 max-[71.875rem]:shadow-[0_-0.5rem_2rem_hsla(0,0%,0%,0.1)] min-[71.875rem]:mx-auto min-[71.875rem]:flex min-[71.875rem]:flex-1 min-[71.875rem]:justify-center dark:max-[71.875rem]:shadow-[0_-0.5rem_2rem_hsla(0,0%,0%,0.4)]">
+            <ul className="flex w-full items-center justify-between min-[71.875rem]:justify-around min-[71.875rem]:px-12">
               <NavLink
                 href="#home"
                 sectionId="home"
@@ -81,19 +81,19 @@ const Header = ({
             </ul>
           </div>
 
-          <div className="nav__actions flex items-center gap-x-4">
+          <div className="nav__actions flex items-center gap-x-3">
             <i
-              className="ri-search-line duration-400 cursor-pointer text-[22px] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]"
+              className="ri-search-line duration-400 cursor-pointer text-[1.375rem] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]"
               onClick={() => setIsSearchOpen(true)}
             ></i>
             <i
-              className="ri-user-line login-button duration-400 cursor-pointer text-[22px] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]"
+              className="ri-user-line login-button duration-400 cursor-pointer text-[1.375rem] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]"
               id="login-button"
               onClick={() => setIsLoginOpen(true)}
               style={{ cursor: "pointer" }}
             ></i>
             <i
-              className={`${themeIcon} change-theme duration-400 cursor-pointer text-[22px] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]`}
+              className={`${themeIcon} change-theme duration-400 cursor-pointer text-[1.375rem] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]`}
               onClick={toggleTheme}
               style={{ cursor: "pointer" }}
             ></i>

@@ -171,14 +171,11 @@ const AdminNotifications = () => {
         created_by: currentUser?.user_id || null,
       };
 
-      console.log("Sending user data:", JSON.stringify(apiData, null, 2));
-
       await createUserMutation.mutateAsync(apiData);
 
       if (pendingRequestId) {
         try {
           await deleteRequestMutation.mutateAsync(pendingRequestId);
-          console.log("Request deleted successfully:", pendingRequestId);
         } catch (deleteError) {
           console.error("Failed to delete request:", deleteError);
         }
@@ -219,7 +216,7 @@ const AdminNotifications = () => {
   return (
     <>
       <button
-        className="relative h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[1080px]:hidden dark:hover:text-[#9CA3AF]"
+        className="relative h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[67.5rem]:hidden dark:hover:text-[#9CA3AF]"
         title="Notifications"
         onClick={() => setShowRequestsPopup(true)}
       >
@@ -289,7 +286,6 @@ const AdminNotifications = () => {
         books={books}
         bookCopies={bookCopies}
         onApproveBook={async (request) => {
-          console.log("Admin approving borrow request:", request);
           try {
             const bookCopy = bookCopies.find(
               (bc) => bc.book_copy_id === request.book_id,

@@ -44,7 +44,7 @@ const AdminDashboardCard = ({
             key={admin.id}
             onMouseEnter={(e) => handleMouseEnter(e, admin)}
             onMouseLeave={handleMouseLeave}
-            className="group relative flex cursor-default items-center gap-3 rounded-[16px] border border-[#000035] bg-transparent p-3 py-2.5 dark:border-[#D7D7D7]"
+            className="group relative flex cursor-default items-center gap-3 rounded-[1rem] border border-[#000035] bg-transparent p-3 py-2.5 dark:border-[#D7D7D7]"
           >
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
               <svg
@@ -61,18 +61,18 @@ const AdminDashboardCard = ({
               <User className="relative z-10 h-5 w-5 text-[#F2F2F2] dark:text-[#121317]" />
             </div>
 
-            <div className="h-10 w-[2px] rounded-full bg-[#000035] dark:bg-[#D7D7D7]"></div>
+            <div className="h-10 w-[0.125rem] rounded-full bg-[#000035] dark:bg-[#D7D7D7]"></div>
 
             <div className="flex-1 overflow-hidden">
               <p className="truncate text-lg font-bold leading-tight text-[#000035] dark:text-[#D7D7D7]">
                 {admin.name}
               </p>
-              <p className="truncate text-[13px] font-medium leading-tight text-[#000035] dark:text-[#D7D7D7]">
+              <p className="truncate text-[0.8125rem] font-medium leading-tight text-[#000035] dark:text-[#D7D7D7]">
                 {admin.subtitle || `Unknown Branch`}
               </p>
             </div>
 
-            <div className="max-[1300px]: flex flex-col items-center justify-center gap-1 self-stretch max-[1300px]:-ml-2 max-[1300px]:w-20">
+            <div className="max-[81.25rem]: flex flex-col items-center justify-center gap-1 self-stretch max-[81.25rem]:-ml-2 max-[81.25rem]:w-20">
               <RefreshCw
                 onClick={() => handleRefreshAdmins(admin.id)}
                 className={`h-8 w-8 cursor-pointer text-[#000035] transition-transform dark:text-[#D7D7D7] ${loadingAdmins[admin.id] ? "animate-spin" : ""}`}
@@ -82,7 +82,7 @@ const AdminDashboardCard = ({
                   className={`h-2 w-2 rounded-full ${admin.isOnline ? "bg-[#000035] dark:bg-[#D7D7D7]" : "bg-[#3d3e3e] dark:bg-[#3d3e3e]"}`}
                 ></div>
                 <p
-                  className={`text-[12px] font-bold text-[#000035] dark:text-[#D7D7D7]`}
+                  className={`text-[0.75rem] font-bold text-[#000035] dark:text-[#D7D7D7]`}
                 >
                   {admin.isOnline ? "Active" : "Not Active"}
                 </p>
@@ -99,7 +99,7 @@ const AdminDashboardCard = ({
       {/* Tooltip rendered outside the scrollable area to avoid clipping */}
       {hoveredAdmin && (
         <div
-          className="animate-in fade-in zoom-in pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-[calc(100%+12px)] rounded-lg border-2 border-[#000035] bg-[#F2F2F2] px-4 py-3 shadow-lg duration-200 dark:border-[#D7D7D7] dark:bg-[#121317]"
+          className="animate-in fade-in zoom-in pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-[calc(100%+0.75rem)] rounded-lg border-2 border-[#000035] bg-[#F2F2F2] px-4 py-3 shadow-lg duration-200 dark:border-[#D7D7D7] dark:bg-[#121317]"
           style={{
             left: tooltipPos.x,
             top: tooltipPos.y,

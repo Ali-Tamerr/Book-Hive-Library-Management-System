@@ -98,11 +98,11 @@ function LoginPopup({
     >
 
       <div
-        className={`relative h-full max-h-none w-full overflow-hidden rounded-none shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] min-[769px]:h-auto min-[769px]:max-h-[87vh] min-[769px]:w-[95%] min-[769px]:max-w-[1420px] min-[769px]:rounded-2xl ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
+        className={`relative h-full max-h-none w-full overflow-y-auto min-[48.0625rem]:overflow-hidden rounded-none shadow-2xl transition-all duration-500 ease-in-out will-change-[transform,opacity] min-[48.0625rem]:h-auto min-[48.0625rem]:max-h-[87vh] min-[48.0625rem]:w-[95%] min-[48.0625rem]:max-w-[88.75rem] min-[48.0625rem]:rounded-2xl max-[67.5rem]:h-[100svh] ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className={`flex h-full w-full justify-stretch max-[1080px]:flex-col max-[768px]:justify-center ${isDarkMode ? "bg-[#121317]" : "bg-white"} overflow-hidden`}
+          className={`flex min-h-full w-full justify-stretch max-[67.5rem]:flex-col ${isDarkMode ? "bg-[#121317]" : "bg-white"}`}
         >
           <WhiteBgSection
             title="Welcome Back !!"
@@ -117,7 +117,7 @@ function LoginPopup({
           >
             <form
               onSubmit={handleSubmit}
-              className="flex w-full flex-col items-center gap-6 px-[100px] max-[856px]:px-[5%]"
+              className="flex w-full flex-col items-center gap-4 px-[6.25rem] max-[53.5rem]:px-[5%]"
             >
               <AuthInput
                 type="email"
@@ -141,7 +141,7 @@ function LoginPopup({
               <a
                 href="#"
                 onClick={handleForgotPassword}
-                className={`block self-start text-lg font-medium ${isDarkMode ? "text-white" : "text-[#000035]"} mb-6 hover:underline`}
+                className={`block self-start text-lg max-[48rem]:text-base font-medium ${isDarkMode ? "text-white" : "text-[#000035]"} mb-3 hover:underline`}
               >
                 Forgot password?
               </a>
@@ -153,15 +153,18 @@ function LoginPopup({
                 {loading ? "SIGNING IN..." : "SIGN IN"}
               </PrimaryButton>
             </form>
-            <div className="mb-8 hidden flex-col items-center gap-3 max-[1080px]:flex">
+            <div className="mb-4 hidden flex-row items-center justify-center gap-2 max-[67.5rem]:flex max-[48rem]:flex-row max-[48rem]:flex-wrap">
               <p
-                className={`text-center text-lg ${isDarkMode ? "text-[#000035]" : "text-[#000035]"}`}
+                className={`text-center text-lg max-[48rem]:text-sm ${isDarkMode ? "text-white" : "text-[#000035]"}`}
               >
                 New to our platform?
               </p>
-              <PrimaryButton onClick={handleSignup} isDarkMode={isDarkMode}>
+              <button 
+                onClick={handleSignup} 
+                className={`text-lg max-[48rem]:text-sm font-bold underline ${isDarkMode ? "text-white" : "text-[#000035]"}`}
+              >
                 Sign Up now.
-              </PrimaryButton>
+              </button>
             </div>
           </WhiteBgSection>
 
