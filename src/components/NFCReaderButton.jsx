@@ -62,7 +62,7 @@ const NFCReaderButton = ({
         }, 300);
       }
     } catch (err) {
-      console.error("Activation failed:", err);
+      console.error("Activation failed:", err.message || err);
     } finally {
       setIsActivating(false);
     }

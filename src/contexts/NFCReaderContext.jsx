@@ -6,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { apiGet } from "../services/api.config";
+import { createClient } from "@supabase/supabase-js";
 
 const NFCReaderContext = createContext();
 
@@ -225,41 +226,45 @@ export const NFCReaderProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    let pollInterval;
+    if (!isWireless) return;
 
-    if (isWireless) {
-      pollInterval = setInterval(async () => {
-        try {
-          const data = await apiGet("/NfcScans");
-
-          if (data && Array.isArray(data) && data.length > 0) {
-            // Filter by our specific Device ID locally
-            const myScans = data.filter(
-              (s) =>
-                s.device_id === targetDeviceId ||
-                (!s.device_id && targetDeviceId === "esp8266"),
-            );
-
-            if (myScans.length > 0) {
-              const latestScan = myScans[0];
-
-              if (
-                new Date(latestScan.created_at) >
-                new Date(lastProcessedScanTimeRef.current)
-              ) {
-                notifyCallbacks(latestScan.tag_id);
-                lastProcessedScanTimeRef.current = latestScan.created_at;
-              }
-            }
-          }
-        } catch (err) {
-          console.error("Wireless Poll API Error:", err);
-        }
-      }, 1000);
+    let supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    let supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseKey) {
+      console.error("Missing Supabase credentials for Realtime NFC Reader");
+      return;
     }
+    
+    // Use the globally imported createClient
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const filterString = targetDeviceId === "esp8266" ? "" : `device_id=eq.${targetDeviceId}`;
+    
+    const channel = supabase
+      .channel("nfc-reader-global-scans")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "scanned_book_uids",
+          filter: filterString || undefined,
+        },
+        (payload) => {
+          const latestScan = payload.new;
+          if (latestScan && latestScan.uid) {
+             const scanTime = latestScan.created_at || latestScan.scanned_at || new Date().toISOString();
+             if (new Date(scanTime) > new Date(lastProcessedScanTimeRef.current)) {
+                notifyCallbacks(latestScan.uid);
+                lastProcessedScanTimeRef.current = scanTime;
+             }
+          }
+        }
+      )
+      .subscribe();
 
     return () => {
-      if (pollInterval) clearInterval(pollInterval);
+      supabase.removeChannel(channel);
     };
   }, [isWireless, targetDeviceId]);
 
