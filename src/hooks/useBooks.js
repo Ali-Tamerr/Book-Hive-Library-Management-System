@@ -9,6 +9,7 @@ import {
   createBook,
   updateBook,
   deleteBook,
+  getAIRecommendations,
 } from "../services/books.api";
 import { adminQueryOptions } from "./queryConfig";
 import { bookCopyKeys } from "./useBookCopies";
@@ -22,6 +23,7 @@ export const bookKeys = {
   dashboard: () => [...bookKeys.all, "dashboard"],
   details: () => [...bookKeys.all, "detail"],
   detail: (id) => [...bookKeys.details(), id],
+  recommendations: (userId) => [...bookKeys.all, "ai-recommendations", userId],
 };
 
 export const useBooks = () => {
@@ -120,5 +122,14 @@ export const useDeleteBook = () => {
       queryClient.invalidateQueries({ queryKey: bookKeys.management() });
       queryClient.invalidateQueries({ queryKey: bookCopyKeys.lists() });
     },
+  });
+};
+
+export const useAIRecommendations = (userId) => {
+  return useQuery({
+    queryKey: bookKeys.recommendations(userId),
+    queryFn: () => getAIRecommendations(userId),
+    enabled: !!userId,
+    staleTime: 30 * 60 * 1000,
   });
 };

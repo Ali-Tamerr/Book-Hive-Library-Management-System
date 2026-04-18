@@ -64,3 +64,22 @@ export const updateBook = async (id, bookData) => {
 export const deleteBook = async (id) => {
   return await apiDelete(`${BASE_ENDPOINT}/${id}`);
 };
+
+/**
+ * Fetch AI-powered recommendations for a specific user
+ * from the deployed Hugging Face Space.
+ */
+export const getAIRecommendations = async (userId) => {
+  if (!userId) return { status: "error", data: [] };
+  
+  const HF_SPACE_URL = "https://alitaamrr-book-hive.hf.space";
+  
+  try {
+    const response = await fetch(`${HF_SPACE_URL}/api/recommendations/${userId}`);
+    if (!response.ok) throw new Error("HF Space response was not ok");
+    return await response.json();
+  } catch (error) {
+    console.error("AI Recommendation Error:", error);
+    return { status: "error", data: [], message: error.message };
+  }
+};

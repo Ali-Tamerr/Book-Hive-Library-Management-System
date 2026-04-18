@@ -6,7 +6,7 @@ import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
 import BookCard from "../components/BookCard";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import { useBooks, useDashboardBooks, useBook } from "../hooks/useBooks";
+import { useBooks, useDashboardBooks, useBook, useAIRecommendations } from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
 import { useReservations } from "../hooks/useReservations";
 import { useBranches } from "../hooks/useBranches";
@@ -55,6 +55,13 @@ function Dashboard() {
     useBookTransactions();
   const { data: bookCopies = [] } = useBookCopies();
   const { data: plansData } = usePlans();
+  const { data: aiResponse, isLoading: aiLoading } = useAIRecommendations(currentUser?.user_id);
+  const aiRecommendations = useMemo(() => {
+    if (aiResponse?.status === "success" && Array.isArray(aiResponse.data)) {
+      return aiResponse.data;
+    }
+    return [];
+  }, [aiResponse]);
 
   const [searchValue, setSearchValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -173,7 +180,8 @@ function Dashboard() {
     branchesLoading ||
     overdueLoading ||
     categoriesLoading ||
-    transactionsLoading;
+    transactionsLoading ||
+    aiLoading;
 
 
 
@@ -277,6 +285,31 @@ function Dashboard() {
         return dateB - dateA || b.book_id - a.book_id;
       });
     } else if (activeTab === "recommended") {
+      // If we have AI recommendations, prioritize them
+      if (aiRecommendations.length > 0 && !searchValue && !selectedCategory) {
+        // Map AI results to ensure they have the same structure (e.g., 'image' prop)
+        const aiMapped = aiRecommendations.map(aiBook => {
+          const originalBook = displayBooks.find(b => String(b.book_id) === String(aiBook.id));
+          return originalBook || {
+            ...aiBook,
+            book_id: aiBook.id,
+            image: getImageUrl(aiBook.image_url)
+          };
+        });
+        
+        // Add other popular books that aren't in the AI recommendation to fill the list
+        const otherBooks = result
+          .filter(b => !aiRecommendations.some(ai => String(ai.id) === String(b.book_id)))
+          .sort((a, b) => {
+            const popA = bookPopularity[a.book_id] || 0;
+            const popB = bookPopularity[b.book_id] || 0;
+            return popB - popA;
+          });
+          
+        return [...aiMapped, ...otherBooks];
+      }
+
+      // Default sorting by popularity if AI recommendations aren't available
       result = result.sort((a, b) => {
         const popA = bookPopularity[a.book_id] || 0;
         const popB = bookPopularity[b.book_id] || 0;
@@ -286,7 +319,7 @@ function Dashboard() {
     }
 
     return result;
-  }, [displayBooks, searchValue, selectedCategory, activeTab, bookPopularity]);
+  }, [displayBooks, searchValue, selectedCategory, activeTab, bookPopularity, aiRecommendations]);
 
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage) || 1;
 
