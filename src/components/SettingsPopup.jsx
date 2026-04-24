@@ -110,9 +110,8 @@ const SettingsPopup = ({ show, onClose }) => {
     setSuccess("");
 
     const wantsPasswordChange =
-      formData.newPassword ||
-      formData.confirmPassword ||
-      formData.currentPassword;
+      formData.newPassword.length > 0 ||
+      formData.confirmPassword.length > 0;
 
     if (wantsPasswordChange) {
       if (formData.newPassword !== formData.confirmPassword) {
@@ -127,8 +126,9 @@ const SettingsPopup = ({ show, onClose }) => {
         setError("Not logged in");
         return;
       }
-      if (formData.currentPassword !== currentUser.password_hash) {
-        setError("Current password is incorrect");
+      // The backend now handles password verification securely
+      if (wantsPasswordChange && !formData.currentPassword) {
+        setError("Please enter your current password to make changes");
         return;
       }
     }
@@ -153,7 +153,8 @@ const SettingsPopup = ({ show, onClose }) => {
         plan: currentUser.plan || null,
         password_hash: wantsPasswordChange
           ? formData.newPassword
-          : currentUser.password_hash,
+          : null,
+        current_password: wantsPasswordChange ? formData.currentPassword : null,
         created_by: currentUser.created_by || null,
         branch_id: currentUser.branch_id ?? null,
         subscription_end_date: currentUser.subscription_end_date || null,
@@ -204,7 +205,8 @@ const SettingsPopup = ({ show, onClose }) => {
       }, 3000);
     } catch (err) {
       console.error("Failed to update credentials:", err);
-      setError("Failed to update credentials. Please try again.");
+      const errorMessage = err.response?.data?.message || err.message || "Failed to update credentials.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
