@@ -201,6 +201,7 @@ axiosInstance.interceptors.response.use(
       // Server responded with error
       const message =
         error.response.data?.message ||
+        error.response.data?.Message ||
         error.response.data?.error ||
         (typeof error.response.data?.errors === "object"
           ? JSON.stringify(error.response.data.errors)
