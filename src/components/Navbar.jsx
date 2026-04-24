@@ -10,6 +10,7 @@ import {
   Sun,
   Moon,
   Bell,
+  ChevronDown,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { getCurrentUser } from "../services/auth.api";
@@ -24,6 +25,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [, setForceUpdate] = useState(0);
   const location = useLocation();
@@ -107,11 +109,31 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const isDashboard = location.pathname === "/dashboard";
   const showSearchInput = !isDashboard;
 
+  const notificationOrFeedbackItem = (roleLabel === "Admin" ||
+    roleLabel === "Super Admin" ||
+    roleLabel === "Librarian" ||
+    currentUser?.role?.toLowerCase() === "admin" ||
+    currentUser?.role?.toLowerCase() === "super admin") ? (
+      <AdminNotifications />
+    ) : (
+      <button
+        className="flex h-9 w-9 cursor-pointer items-center justify-center p-0.5 transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+        onClick={() => setShowFeedbackPopup(true)}
+        title="Give Feedback"
+      >
+        <FeedbackIcon className="h-full w-full" />
+      </button>
+    );
+
   return (
     <>
       <header className="flex h-min w-full items-center justify-between px-4 py-4 text-[#000035] dark:text-[#E8E8E8]">
-        <div className="flex-2 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+        {/* LEFT SIDE: Profile Section */}
+        <div className="flex-2 flex items-center gap-3 relative">
+          <div 
+            className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7] cursor-pointer"
+            onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
+          >
             {currentUser?.image_url ? (
               <img
                 src={getImageUrl(currentUser.image_url)}
@@ -122,8 +144,14 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
               <UserRound className="h-12 w-12 dark:text-[#121317]" />
             )}
           </div>
-          <div className="flex flex-col text-left">
-            <h3 className="text-xl font-semibold tracking-wider max-[30rem]:text-sm ">
+          
+          <ChevronDown 
+            className="hidden max-[67.5rem]:block h-5 w-5 cursor-pointer hover:opacity-80"
+            onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
+          />
+
+          <div className="flex flex-col text-left max-[67.5rem]:hidden">
+            <h3 className="text-xl font-semibold tracking-wider max-[30rem]:text-sm">
               {currentUser
                 ? currentUser.first_name + " " + currentUser.last_name || "User"
                 : "Loading..."}
@@ -132,9 +160,46 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
               {roleLabel}
             </p>
           </div>
+
+          {/* MOBILE DROPDOWN */}
+          {isMobileDropdownOpen && (
+            <div className="absolute top-14 left-0 w-48 rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-[#121317] z-50 hidden max-[67.5rem]:flex flex-col gap-3">
+              <div className="flex flex-col border-b pb-3 dark:border-gray-700 text-left">
+                <h3 className="font-semibold text-[#000035] dark:text-[#E8E8E8] text-base truncate">
+                  {currentUser
+                    ? currentUser.first_name + " " + currentUser.last_name || "User"
+                    : "Loading..."}
+                </h3>
+                <p className="text-xs text-[#000035] dark:text-[#E8E8E8] opacity-80 mt-1">
+                  {roleLabel}
+                </p>
+              </div>
+              
+              <div className="flex items-center justify-between gap-2 pt-1">
+                {notificationOrFeedbackItem}
+                <button
+                  className="h-7 w-7 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+                  onClick={toggleTheme}
+                  title="Toggle Theme"
+                >
+                  {isDarkMode ? <Sun className="h-full w-full" /> : <Moon className="h-full w-full" />}
+                </button>
+                <button
+                  className="h-7 w-7 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+                  onClick={() => setShowSettings(true)}
+                  title="Settings"
+                >
+                  <Settings className="h-full w-full" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* RIGHT SIDE: Time, Icons, Hamburger */}
         <div className="flex h-min flex-1 items-center justify-end gap-3">
-          <div className="flex flex-col text-right max-[67.5rem]:hidden">
+          {/* Always visible Time & Date (Including mobile) */}
+          <div className="flex flex-col text-right">
             <span className="font-['Bebas_Neue'] text-xl font-bold leading-none">
               {new Date().toLocaleTimeString([], {
                 hour: "2-digit",
@@ -149,45 +214,36 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
               })}
             </p>
           </div>
+
           <div className="h-10 w-0.5 rounded-full bg-[#0b0b3b] max-[67.5rem]:hidden dark:bg-white"></div>
-          {roleLabel === "Admin" ||
-          roleLabel === "Super Admin" ||
-          roleLabel === "Librarian" ||
-          currentUser?.role?.toLowerCase() === "admin" ||
-          currentUser?.role?.toLowerCase() === "super admin" ? (
-            <AdminNotifications />
-          ) : (
+          
+          <div className="flex items-center gap-3 max-[67.5rem]:hidden">
+            {notificationOrFeedbackItem}
             <button
-              className="flex h-9 w-9 cursor-pointer items-center justify-center p-0.5 transition-colors hover:text-[#1e255e] max-[67.5rem]:hidden dark:hover:text-[#9CA3AF]"
-              onClick={() => setShowFeedbackPopup(true)}
-              title="Give Feedback"
+              className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+              onClick={toggleTheme}
+              title="Toggle Theme"
             >
-              <FeedbackIcon className="h-full w-full" />
+              {isDarkMode ? (
+                <Sun className="h-full w-full" />
+              ) : (
+                <Moon className="h-full w-full" />
+              )}
             </button>
-          )}
-          <button
-            className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[67.5rem]:hidden dark:hover:text-[#9CA3AF]"
-            onClick={toggleTheme}
-            title="Toggle Theme"
-          >
-            {isDarkMode ? (
-              <Sun className="h-full w-full" />
-            ) : (
-              <Moon className="h-full w-full" />
-            )}
-          </button>
-          <button
-            className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[67.5rem]:hidden dark:hover:text-[#9CA3AF]"
-            onClick={() => setShowSettings(true)}
-            title="Settings"
-          >
-            <Settings className="h-full w-full" />
-          </button>
+            <button
+              className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+              onClick={() => setShowSettings(true)}
+              title="Settings"
+            >
+              <Settings className="h-full w-full" />
+            </button>
+          </div>
+
           <button
             onClick={toggleSidebar}
-            className="hidden cursor-pointer max-[67.5rem]:block"
+            className="hidden cursor-pointer max-[67.5rem]:block ml-2"
           >
-            <Menu className="h-full w-full" />
+            <Menu className="h-8 w-8" />
           </button>
         </div>
       </header>

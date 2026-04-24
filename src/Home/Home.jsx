@@ -80,11 +80,11 @@ const Home = () => {
       });
     };
 
-    // Hard timeout — never block more than 5 seconds
+    // Hard timeout — never block more than 10 seconds
     const maxTimeout = setTimeout(() => {
       console.warn("Home: stats fetch timed out — showing page anyway");
       showPage(null);
-    }, 5000);
+    }, 10000);
 
     const fetchStats = async () => {
       try {
