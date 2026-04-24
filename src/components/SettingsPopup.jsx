@@ -137,7 +137,6 @@ const SettingsPopup = ({ show, onClose }) => {
     const imageChanged =
       !!selectedImageBase64 && selectedImageBase64 !== currentUser?.image_url;
     if (!wantsPasswordChange && !imageChanged) {
-      setError("No changes to update.");
       return;
     }
 
