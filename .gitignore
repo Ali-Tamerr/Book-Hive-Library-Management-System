@@ -29,3 +29,10 @@ ESP8266_SMART_ID.ino
 .vercel
 
 hf_space_deployment
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -55,7 +55,7 @@ const Home = () => {
     typeof window !== "undefined" ? window.innerWidth >= 1150 : true,
   );
   const [isCompactDesktop, setIsCompactDesktop] = useState(
-    typeof window !== "undefined" ? window.innerWidth >= 1400 : false,
+    typeof window !== "undefined" ? window.innerWidth >= 1150 : false,
   );
   const [verificationEmail, setVerificationEmail] = useState("");
   const [isSignupOTP, setIsSignupOTP] = useState(false);
@@ -237,7 +237,7 @@ const Home = () => {
   useEffect(() => {
     const handleResize = () => {
       setIsDesktopLayout(window.innerWidth >= 1150);
-      setIsCompactDesktop(window.innerWidth >= 1400);
+      setIsCompactDesktop(window.innerWidth >= 1150);
     };
 
     handleResize();
