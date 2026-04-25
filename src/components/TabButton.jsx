@@ -8,9 +8,9 @@ const TabButton = ({
   className = "",
 }) => {
   const activeClasses =
-    "bg-[#0b0b3b] border-[#0b0b3b] dark:bg-[#D7D7D7] dark:border-[#D7D7D7] text-white dark:text-black";
+    "bg-[#000035] border-[#000035] dark:bg-[#F2F2F2] dark:border-[#F2F2F2] text-[#F2F2F2] dark:text-[#121317]";
   const inactiveClasses =
-    "bg-transparent text-[#0b1730] dark:text-white border-[#0b1730] dark:border-white";
+    "bg-transparent text-[#000035] dark:text-[#F2F2F2] border-[#000035] dark:border-[#F2F2F2]";
 
   // Prevent text from shifting by always keeping a 0.0625rem border
   const baseBorder = `border`;
@@ -28,7 +28,7 @@ const TabButton = ({
   return (
     <button
       onClick={onClick}
-      className={`h-12 min-[62.5rem]:h-10 w-full min-[62.5rem]:w-auto cursor-pointer whitespace-nowrap px-4 max-[87.5rem]:min-[62.5rem]:px-8 min-[87.5rem]:px-16 font-['Bebas_Neue',sans-serif]! text-xl font-semibold uppercase tracking-widest ${borderClasses} ${isActive ? activeClasses : inactiveClasses} ${className}`}
+      className={`min-[62.5rem]:h-10 min-[62.5rem]:w-auto max-[87.5rem]:min-[62.5rem]:px-8 min-[87.5rem]:px-16 font-['Bebas_Neue',sans-serif]! h-12 w-full cursor-pointer whitespace-nowrap px-4 text-xl font-semibold uppercase tracking-widest ${borderClasses} ${isActive ? activeClasses : inactiveClasses} ${className}`}
     >
       {label}
     </button>
