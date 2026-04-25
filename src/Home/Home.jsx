@@ -45,6 +45,7 @@ const Home = () => {
   const [stats, setStats] = useState({ branches: 0, books: 0, categories: 0 });
   const { data: approvedFeedbacks = [], isLoading: isFeedbacksLoading } =
     useApprovedFeedbacks();
+  const [pageLoaded, setPageLoaded] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showShadowHeader, setShowShadowHeader] = useState(false);
   const [showScrollUp, setShowScrollUp] = useState(false);
@@ -371,6 +372,7 @@ const Home = () => {
       {!isEverythingLoaded && (
         <PageLoader className="!fixed !z-[9999] bg-[#E8E8E8] dark:bg-[#111214]" />
       )}
+
       <div
         className="duration-400 m-0 mx-auto max-w-[120rem] scroll-smooth bg-[var(--body-color)] font-[family-name:Montserrat,system-ui,Arial,sans-serif] text-[var(--text-color)] antialiased transition-[background-color]"
         ref={homeRef}

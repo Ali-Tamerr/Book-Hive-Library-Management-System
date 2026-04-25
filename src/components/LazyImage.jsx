@@ -12,6 +12,7 @@ const LazyImage = ({
 }) => {
   const imgRef = useRef(null);
   const imgElRef = useRef(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
