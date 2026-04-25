@@ -1,7 +1,12 @@
 import React from "react";
 import ColorableLogo from "./ColorableLogo";
 
-const PieChartLegend = ({ variant = "mobile", className }) => {
+const PieChartLegend = ({
+  variant = "mobile",
+  className,
+  label1 = "Total Borrowed Books",
+  label2 = "Borrowed Limited Books",
+}) => {
   if (variant === "mobile") {
     return (
       <div
@@ -13,7 +18,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
               <circle cx="7" cy="7" r="6" fill="var(--pie-returned-color)" />
             </svg>
             <p className="text-sm font-medium text-[#000035] dark:text-[#d3d6de]">
-              Total Borrowed Books
+              {label1}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -21,7 +26,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
               <circle cx="7" cy="7" r="6" fill="var(--pie-borrowed-color)" />
             </svg>
             <p className="text-sm font-medium text-[#000035] dark:text-[#d3d6de]">
-              Borrowed Limited Books
+              {label2}
             </p>
           </div>
         </div>
@@ -44,7 +49,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
             <circle cx="9" cy="9" r="9" fill="var(--pie-returned-color)" />
           </svg>
           <p className="text-lg font-medium text-[#000035] dark:text-[#d3d6de]">
-            Total Borrowed Books
+            {label1}
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -52,7 +57,7 @@ const PieChartLegend = ({ variant = "mobile", className }) => {
             <circle cx="9" cy="9" r="9" fill="var(--pie-borrowed-color)" />
           </svg>
           <p className="text-lg font-medium text-[#000035] dark:text-[#d3d6de]">
-            Borrowed Limited Books
+            {label2}
           </p>
         </div>
       </div>

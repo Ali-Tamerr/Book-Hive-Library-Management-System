@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { User } from "lucide-react";
 import { useLibrarians } from "../hooks/useUsers";
-import { useDashboardTransactions } from "../hooks/useBookTransactions";
+import { useDashboardTransactions, useBookTransactions } from "../hooks/useBookTransactions";
+import { useBookCopies } from "../hooks/useBookCopies";
 import { getCurrentUser } from "../services/auth.api";
 import DashboardCard from "../components/DashboardCard";
 import { useUserActivity } from "../hooks/useUserActivity";
@@ -57,6 +58,8 @@ function Dashboard() {
 
   const { data: dashboardTransactions, isLoading: transactionsLoading } =
     useDashboardTransactions();
+  const { data: rawTransactions = [], isLoading: rawTransactionsLoading } = useBookTransactions();
+  const { data: bookCopies = [], isLoading: copiesLoading } = useBookCopies();
 
   const handleRefreshAdmins = (adminId) => {
     setLoadingAdmins((prev) => ({ ...prev, [adminId]: true }));
@@ -65,13 +68,52 @@ function Dashboard() {
     });
   };
 
-  const transactionsLoadingState = transactionsLoading;
+  const transactionsLoadingState = transactionsLoading || rawTransactionsLoading || copiesLoading;
 
-  const stats = {
+  const getUserBranchId = (u) => {
+    if (!u) return null;
+    return u.branch_id || u.branchId || u.branch?.branch_id || u.branch?.id;
+  };
+  const currentUserBranchId = getUserBranchId(currentUser);
+
+  // Derive stats logic:
+  // Super Admin uses backend aggregated stats.
+  // Librarian uses branch-scoped computation from raw transactions.
+  let derivedStats = {
     totalBorrowed: dashboardTransactions?.total_borrowed || 0,
     currentlyBorrowed: dashboardTransactions?.currently_borrowed || 0,
     returnedBooks: dashboardTransactions?.returned_count || 0,
   };
+
+  if (!isSuperAdmin) {
+    // Collect all copy IDs that belong to this librarian's branch
+    const branchCopyIds = new Set(
+      bookCopies
+        .filter((c) => String(c.branch_id) === String(currentUserBranchId))
+        .map((c) => String(c.book_copy_id || c.id))
+    );
+
+    // Filter raw transactions to those on books from this branch
+    const branchTransactions = rawTransactions.filter(
+      (t) => t.transaction_type === "Check-Out" && t.status !== "Pending" && branchCopyIds.has(String(t.book_id))
+    );
+
+    const totalBorrowedCount = branchTransactions.length;
+    const returnedCount = branchTransactions.filter(
+      (t) => t.status === "Returned" || t.return_date != null
+    ).length;
+    const currentlyBorrowedCount = branchTransactions.filter(
+      (t) => (t.status === "Completed" || t.status === "Overdue") && t.return_date == null
+    ).length;
+
+    derivedStats = {
+      totalBorrowed: totalBorrowedCount,
+      currentlyBorrowed: currentlyBorrowedCount,
+      returnedBooks: returnedCount,
+    };
+  }
+
+  const stats = derivedStats;
 
   const buildTransactionItem = (transaction, sourceCard) => ({
     id: transaction.transaction_id || `tx-${Math.random()}`,
@@ -207,7 +249,7 @@ function Dashboard() {
         <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[64rem]:mx-0 max-[64rem]:h-fit max-[64rem]:flex-none max-[40.625rem]:shrink">
           <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[64rem]:h-fit">
             <div className="[26.875rem]:px-0 [26.875rem]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[64rem]:my-0 max-[64rem]:h-fit max-[64rem]:max-w-full max-[64rem]:flex-row max-[64rem]:justify-center max-[64rem]:overflow-hidden max-[40.625rem]:h-auto max-[40.625rem]:flex-col-reverse max-[40.625rem]:gap-4">
-              <PieChartLegend variant="mobile" />
+              <PieChartLegend variant="mobile" label2="Total Returned Books" />
               <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[64rem]:min-h-[10.125rem] max-[64rem]:min-w-0 max-[64rem]:max-w-[15.625rem] max-[64rem]:pb-0 max-[64rem]:max-w-[11.25rem] max-[40.625rem]:mb-0 max-[40.625rem]:w-[50vw] max-[40.625rem]:max-w-none">
                 <PieChart
                   totalBorrowed={stats.totalBorrowed}
@@ -215,7 +257,7 @@ function Dashboard() {
                   returnedBooks={stats.returnedBooks}
                 />
               </div>
-              <PieChartLegend variant="desktop" />
+              <PieChartLegend variant="desktop" label2="Total Returned Books" />
             </div>
           </div>
         </div>
