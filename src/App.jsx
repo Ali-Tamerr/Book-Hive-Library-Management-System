@@ -212,9 +212,9 @@ function App() {
     checkSession();
   }, []);
 
-  // We no longer block the entire app with a global loader for verification.
-  // Content inside Protected routes will be handled by the Layout logic.
-
+  if (isVerifying) {
+    return <PageLoader />;
+  }
 
   return (
     <NFCReaderProvider>
