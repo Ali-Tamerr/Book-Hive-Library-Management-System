@@ -57,6 +57,9 @@ const Home = () => {
   const [isCompactDesktop, setIsCompactDesktop] = useState(
     typeof window !== "undefined" ? window.innerWidth >= 1150 : false,
   );
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1200,
+  );
   const [verificationEmail, setVerificationEmail] = useState("");
   const [isSignupOTP, setIsSignupOTP] = useState(false);
   const [signupData, setSignupData] = useState(null);
@@ -238,6 +241,7 @@ const Home = () => {
     const handleResize = () => {
       setIsDesktopLayout(window.innerWidth >= 1150);
       setIsCompactDesktop(window.innerWidth >= 1150);
+      setWindowWidth(window.innerWidth);
     };
 
     handleResize();
@@ -317,8 +321,8 @@ const Home = () => {
     return () => clearInterval(heroIntervalRef.current);
   }, [heroBooks]);
 
-  const featuredPerView = isDesktopLayout ? 4 : 1;
-  const testimonialPerView = isDesktopLayout ? 3 : 1;
+  const featuredPerView = windowWidth >= 1150 ? 4 : windowWidth >= 850 ? 3 : windowWidth >= 600 ? 2 : 1;
+  const testimonialPerView = windowWidth >= 1150 ? 3 : windowWidth >= 768 ? 2 : 1;
 
   const isEverythingLoaded = pageLoaded;
 
