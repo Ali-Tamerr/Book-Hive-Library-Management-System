@@ -36,3 +36,4 @@ hf_space_deployment
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+rls_policies.sql

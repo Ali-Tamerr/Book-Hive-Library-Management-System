@@ -145,10 +145,10 @@ function Dashboard() {
       setIsMobile(width < 640);
 
       // Height based scale
-      const hScale = Math.max(0.4, Math.min(1, (height - 260) / 700));
+      const hScale = Math.max(0.6, Math.min(1, (height - 260) / 700));
       // Width based scale
-      const widthTarget = width < 640 ? 360 : 1300;
-      const wScale = Math.max(0.4, Math.min(1, (width - 60) / widthTarget));
+      const widthTarget = width < 640 ? 360 : width < 1150 ? 800 : 1300;
+      const wScale = Math.max(0.6, Math.min(1, (width - 60) / widthTarget));
       
       setCardScale(Math.min(hScale, wScale));
 
