@@ -11,6 +11,8 @@ import RateBookPopup from "./RateBookPopup.jsx";
 import FormButton from "./FormButton.jsx";
 import { getCurrentUser } from "../services/auth.api";
 import BookCopiesViewPopup from "./BookCopiesViewPopup.jsx";
+import { useBranches } from "../hooks/useBranches.js";
+import BookBranchesPopup from "./BookBranchesPopup.jsx";
 
 const ViewDetailsPopup = ({
   show,
@@ -29,7 +31,10 @@ const ViewDetailsPopup = ({
 }) => {
   const [showRatePopup, setShowRatePopup] = useState(false);
   const [showCopiesPopup, setShowCopiesPopup] = useState(false);
+  const [showBranchesPopup, setShowBranchesPopup] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
+
+  const { data: branchesData = [] } = useBranches();
 
   const isBookVariant = variant === "book";
   const isUserVariant = variant === "user";
@@ -115,7 +120,55 @@ const ViewDetailsPopup = ({
   const headingText = headingEntry ? toDisplayValue(headingEntry[1]) : title;
   const subtitleText = authorEntry ? toDisplayValue(authorEntry[1]) : null;
   const detailsEntries = [];
-  if (branchEntry) detailsEntries.push(branchEntry);
+
+  let branchElement = branchEntry ? toDisplayValue(branchEntry[1]) : "N/A";
+  let popupBranches = [];
+
+  if (isBookVariant && bookCopiesData && bookCopiesData.length > 0 && branchesData.length > 0) {
+    const branchMap = {};
+    bookCopiesData.forEach((copy) => {
+      const bId = String(copy.branch_id);
+      if (bId !== "undefined" && bId !== "null") {
+        if (!branchMap[bId]) branchMap[bId] = 0;
+        branchMap[bId]++;
+      }
+    });
+
+    const uniqueBranchIds = Object.keys(branchMap);
+    
+    if (uniqueBranchIds.length > 0) {
+      popupBranches = uniqueBranchIds.map((id) => {
+        const found = branchesData.find((b) => String(b.branch_id || b.id) === String(id));
+        return {
+          branch_id: id,
+          name: found?.name || `Branch ${id}`,
+          location: found?.location || "N/A",
+          count: branchMap[id]
+        };
+      });
+
+      if (uniqueBranchIds.length <= 2) {
+        branchElement = popupBranches.map(b => b.name).join(", ");
+      } else {
+        const firstTwo = popupBranches.slice(0, 2).map(b => b.name).join(", ");
+        branchElement = (
+          <span>
+            {firstTwo},{" "}
+            <button 
+              onClick={() => setShowBranchesPopup(true)} 
+              className="text-[#000035]/70 hover:text-[#000035] dark:text-[#D7D7D7]/70 dark:hover:text-[#D7D7D7] underline font-medium cursor-pointer"
+            >
+              ...See more
+            </button>
+          </span>
+        );
+      }
+    }
+  }
+
+  if (branchEntry || (isBookVariant && popupBranches.length > 0)) {
+    detailsEntries.push(["Branch", branchElement]);
+  }
   if (categoryEntry) detailsEntries.push(categoryEntry);
   if (detailsEntries.length < 2) {
     remainingEntries.forEach((entry) => {
@@ -542,8 +595,14 @@ const ViewDetailsPopup = ({
       <BookCopiesViewPopup
         show={showCopiesPopup}
         onClose={() => setShowCopiesPopup(false)}
-        bookName={data?.["Name"]}
+        bookName={data?.["Name"] || data?.["Book Name"]}
         copies={bookCopiesData}
+      />
+      <BookBranchesPopup
+        show={showBranchesPopup}
+        onClose={() => setShowBranchesPopup(false)}
+        bookName={data?.["Name"] || data?.["Book Name"]}
+        branches={popupBranches}
       />
     </>
   );
