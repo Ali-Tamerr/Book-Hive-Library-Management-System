@@ -272,7 +272,7 @@ const ViewDetailsPopup = ({
         heightClass={isBookVariant ? "px-1 py-1 sm:px-4 sm:py-4" : "p-0"}
       >
         <div
-          className={`grid ${
+          className={`relative grid ${
             isBookVariant
               ? "h-full grid-cols-1 lg:grid-cols-[27.5rem_0.0625rem_1fr]"
               : isUserVariant
@@ -280,6 +280,12 @@ const ViewDetailsPopup = ({
                 : "h-auto grid-cols-1 lg:grid-cols-[auto_0.0625rem_auto]"
           }`}
         >
+          <button
+            onClick={onClose}
+            className="lg:hidden absolute left-0 top-4 z-10 cursor-pointer rounded-r-full border-y border-r border-[#000035] bg-[#ebebeb] px-4 py-1 font-['Noto_Sans_Georgian',sans-serif] text-xs font-medium text-[#000035] transition-colors hover:bg-[#000035] hover:text-white dark:border-white dark:bg-[#121317] dark:text-white dark:hover:bg-white dark:hover:text-[#121317]"
+          >
+            BACK
+          </button>
           <div
             className={`flex flex-col items-center justify-center ${isBookVariant ? "px-10 pb-10 pt-10" : "p-10"}`}
           >
