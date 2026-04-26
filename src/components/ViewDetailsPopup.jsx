@@ -1,15 +1,12 @@
 import React, { useState } from "react";
 import Popup from "./Popup.jsx";
-import {
-  ReceiptText,
-  Star,
-  StarHalf,
-  UserRound,
-  Book,
-} from "lucide-react";
+import { ReceiptText, Star, StarHalf, UserRound, Book } from "lucide-react";
 import LoadingSpinner from "./LoadingSpinner.jsx";
 import reviewerAvatar from "../assets/img/testimonial-perfil-1.png";
-import { useBookReviews, useCreateBookReviewReply } from "../hooks/useBookReviews.js";
+import {
+  useBookReviews,
+  useCreateBookReviewReply,
+} from "../hooks/useBookReviews.js";
 import RateBookPopup from "./RateBookPopup.jsx";
 import FormButton from "./FormButton.jsx";
 import { getCurrentUser } from "../services/auth.api";
@@ -295,10 +292,9 @@ const ViewDetailsPopup = ({
                 <h3
                   className={`truncate font-bold uppercase leading-[1.1] tracking-[0.0313rem] text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-4xl font-bold sm:text-5xl lg:text-[3.5rem]" : "text-4xl font-bold sm:text-5xl lg:text-[3.5rem]"}`}
                   style={{
-                    fontFamily:
-                      isBookVariant
-                        ? "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif"
-                        : "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
+                    fontFamily: isBookVariant
+                      ? "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif"
+                      : "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
                   }}
                   title={String(headingText || "N/A")}
                 >
@@ -376,68 +372,127 @@ const ViewDetailsPopup = ({
                     </p>
                   ) : (
                     bookReviews.map((review) => {
-                      const hasReplies = review.replies && review.replies.length > 0;
+                      const hasReplies =
+                        review.replies && review.replies.length > 0;
                       return (
-                        <div key={review.review_id} className="rounded-[0.75rem] border border-[#000035] bg-transparent dark:border-[#D7D7D7]">
+                        <div
+                          key={review.review_id}
+                          className="rounded-[0.75rem] border border-[#000035] bg-transparent dark:border-[#D7D7D7]"
+                        >
                           {/* PARENT ROW */}
-                          <div className={`flex px-3 pr-4 ${hasReplies ? "items-stretch pt-2.5 pb-0" : "items-center py-2.5"}`}>
+                          <div
+                            className={`flex px-3 pr-4 ${hasReplies ? "items-stretch pb-0 pt-2.5" : "items-center py-2.5"}`}
+                          >
                             <div className="flex w-14 min-w-[3.5rem] shrink-0 flex-col items-center">
                               <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
                                 {review.user_image_url ? (
-                                  <img src={`data:image/png;base64,${review.user_image_url}`} alt={review.user_name} className="h-full w-full object-cover" />
+                                  <img
+                                    src={`data:image/png;base64,${review.user_image_url}`}
+                                    alt={review.user_name}
+                                    className="h-full w-full object-cover"
+                                  />
                                 ) : (
-                                  <UserRound className="h-14 w-14 text-[#0b0c28] dark:text-[#121317]" />
+                                  <UserRound className="h-14 w-14 text-[#000035] dark:text-[#121317]" />
                                 )}
                               </div>
-                              {hasReplies && <div className="flex-1 border-l-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]"></div>}
+                              {hasReplies && (
+                                <div className="flex-1 border-l-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]"></div>
+                              )}
                             </div>
                             <div className="flex min-w-0 flex-1 items-center justify-between gap-4 pl-3">
                               <div className="min-w-0 pt-0.5">
                                 <div className="flex items-center gap-2">
-                                  <span className="truncate text-[1rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">{review.user_name?.toUpperCase() || "GUEST"}</span>
-                                  <div className="flex gap-0.5">{renderStars(review.rating || review.rate, 12)}</div>
+                                  <span className="truncate text-[1rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">
+                                    {review.user_name?.toUpperCase() || "GUEST"}
+                                  </span>
+                                  <div className="flex gap-0.5">
+                                    {renderStars(
+                                      review.rating || review.rate,
+                                      12,
+                                    )}
+                                  </div>
                                 </div>
-                                {(review.review || review.review_text) && <p className="mt-1 text-[0.8125rem] text-[#000035] dark:text-[#D7D7D7]">{review.review || review.review_text}</p>}
-                                <p className="mt-1 text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">{timeSince(review.created_at)}</p>
+                                {(review.review || review.review_text) && (
+                                  <p className="mt-1 text-[0.8125rem] text-[#000035] dark:text-[#D7D7D7]">
+                                    {review.review || review.review_text}
+                                  </p>
+                                )}
+                                <p className="mt-1 text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">
+                                  {timeSince(review.created_at)}
+                                </p>
                               </div>
-                              <FormButton isPrimary fullWidth={false} onClick={() => handleActionRequiringLogin(() => { setReplyingTo(review.review_id); setShowRatePopup(true); })} className="h-9 w-[9.375rem] shrink-0 !p-0 text-sm">
+                              <FormButton
+                                isPrimary
+                                fullWidth={false}
+                                onClick={() =>
+                                  handleActionRequiringLogin(() => {
+                                    setReplyingTo(review.review_id);
+                                    setShowRatePopup(true);
+                                  })
+                                }
+                                className="h-9 w-[9.375rem] shrink-0 !p-0 text-sm"
+                              >
                                 Reply
                               </FormButton>
                             </div>
                           </div>
 
                           {/* REPLY ROWS — each reply is its own sibling row */}
-                          {hasReplies && review.replies.map((reply, idx) => {
-                            const isLast = idx === review.replies.length - 1;
-                            return (
-                              <div key={reply.reply_id} className={`flex gap-0 px-3 pr-4 ${isLast ? "pb-2.5" : "pb-0"}`}>
-                                {/* Left col: L-shaped connector (same width 3.5rem keeps alignment) */}
-                                <div className="flex w-14 min-w-[3.5rem] shrink-0 flex-col">
-                                  {/* L curve: border-l (vertical) + border-b (horizontal) + rounded-bl (curve) */}
-                                  <div
-                                    className="shrink-0 border-l-[0.0938rem] border-b-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]  rounded-bl-[0.75rem]"
-                                    style={{ height: "1.75rem", width: "1.75rem", marginLeft: "1.75rem" }}
-                                  />
-                                  {!isLast && <div className="flex-1 border-l-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]" style={{ marginLeft: "1.75rem" }}></div>}
-                                </div>
-                                {/* Reply avatar + content, shifted down so avatar center = L bottom */}
-                                <div className="flex min-w-0 flex-1 items-start gap-3 mt-[0.5rem]">
-                                  <div className="flex h-10 w-10 min-w-[2.5rem] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
-                                    {reply.user_image_url ? (
-                                      <img src={`data:image/png;base64,${reply.user_image_url}`} alt={reply.user_name} className="h-full w-full object-cover" />
-                                    ) : (
-                                      <UserRound className="h-10 w-10 text-[#0b0c28] dark:text-[#121317]" />
+                          {hasReplies &&
+                            review.replies.map((reply, idx) => {
+                              const isLast = idx === review.replies.length - 1;
+                              return (
+                                <div
+                                  key={reply.reply_id}
+                                  className={`flex gap-0 px-3 pr-4 ${isLast ? "pb-2.5" : "pb-0"}`}
+                                >
+                                  {/* Left col: L-shaped connector (same width 3.5rem keeps alignment) */}
+                                  <div className="flex w-14 min-w-[3.5rem] shrink-0 flex-col">
+                                    {/* L curve: border-l (vertical) + border-b (horizontal) + rounded-bl (curve) */}
+                                    <div
+                                      className="shrink-0 rounded-bl-[0.75rem] border-b-[0.0938rem] border-l-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]"
+                                      style={{
+                                        height: "1.75rem",
+                                        width: "1.75rem",
+                                        marginLeft: "1.75rem",
+                                      }}
+                                    />
+                                    {!isLast && (
+                                      <div
+                                        className="flex-1 border-l-[0.0938rem] border-[#000035] dark:border-[#D7D7D7]"
+                                        style={{ marginLeft: "1.75rem" }}
+                                      ></div>
                                     )}
                                   </div>
-                                  <div className="min-w-0 pt-0.5">
-                                    <span className="block truncate text-[0.875rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">{reply.user_name?.toUpperCase() || "GUEST"}</span>
-                                    <p className="mt-1 text-[0.8125rem] text-[#000035] dark:text-[#D7D7D7]">{reply.reply_text}</p>
-                                    <p className="mt-1 text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">{timeSince(reply.created_at)}</p>
+                                  {/* Reply avatar + content, shifted down so avatar center = L bottom */}
+                                  <div className="mt-[0.5rem] flex min-w-0 flex-1 items-start gap-3">
+                                    <div className="flex h-10 w-10 min-w-[2.5rem] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
+                                      {reply.user_image_url ? (
+                                        <img
+                                          src={`data:image/png;base64,${reply.user_image_url}`}
+                                          alt={reply.user_name}
+                                          className="h-full w-full object-cover"
+                                        />
+                                      ) : (
+                                        <UserRound className="h-10 w-10 text-[#000035] dark:text-[#121317]" />
+                                      )}
+                                    </div>
+                                    <div className="min-w-0 pt-0.5">
+                                      <span className="block truncate text-[0.875rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">
+                                        {reply.user_name?.toUpperCase() ||
+                                          "GUEST"}
+                                      </span>
+                                      <p className="mt-1 text-[0.8125rem] text-[#000035] dark:text-[#D7D7D7]">
+                                        {reply.reply_text}
+                                      </p>
+                                      <p className="mt-1 text-xs text-[#8c8c8c] dark:text-[#A3A3A3]">
+                                        {timeSince(reply.created_at)}
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
                         </div>
                       );
                     })
@@ -458,10 +513,12 @@ const ViewDetailsPopup = ({
                   <FormButton
                     isPrimary
                     fullWidth={false}
-                    onClick={() => handleActionRequiringLogin(() => {
-                      setReplyingTo(null);
-                      setShowRatePopup(true);
-                    })}
+                    onClick={() =>
+                      handleActionRequiringLogin(() => {
+                        setReplyingTo(null);
+                        setShowRatePopup(true);
+                      })
+                    }
                     className={`h-[3.375rem] w-[11.875rem] cursor-pointer rounded-[0.625rem] !p-0 text-[1.125rem] transition-colors`}
                   >
                     Comment

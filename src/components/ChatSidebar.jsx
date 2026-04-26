@@ -24,7 +24,7 @@ const ChatSidebar = ({
     <>
       {/* Sidebar Backdrop - mobile only, scoped to chatbot */}
       <div
-        className={`absolute inset-0 z-40 bg-transparent transition-all duration-300 min-[62.5rem]:hidden ${
+        className={`min-[62.5rem]:hidden absolute inset-0 z-40 bg-transparent transition-all duration-300 ${
           isOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
@@ -33,13 +33,13 @@ const ChatSidebar = ({
       ></div>
 
       <aside
-        className={`flex w-full max-w-[22.5rem] flex-col gap-3 transition-all duration-300 max-[62.5rem]:absolute max-[62.5rem]:right-0 max-[62.5rem]:top-0 max-[62.5rem]:z-60 max-[62.5rem]:h-full max-[62.5rem]:max-w-[20rem] max-[62.5rem]:bg-[#F2F2F2] dark:max-[62.5rem]:bg-[#121317] max-[62.5rem]:p-5 max-[62.5rem]:shadow-2xl ${
+        className={`max-[62.5rem]:absolute max-[62.5rem]:right-0 max-[62.5rem]:top-0 max-[62.5rem]:z-60 max-[62.5rem]:h-full max-[62.5rem]:max-w-[20rem] max-[62.5rem]:bg-[#F2F2F2] dark:max-[62.5rem]:bg-[#121317] max-[62.5rem]:p-5 max-[62.5rem]:shadow-2xl flex w-full max-w-[22.5rem] flex-col gap-3 transition-all duration-300 ${
           isOpen
             ? "max-[62.5rem]:translate-x-0"
             : "max-[62.5rem]:translate-x-full"
         } min-[62.5rem]:relative min-[62.5rem]:translate-x-0`}
       >
-        <div className="mb-2 flex items-center justify-between min-[62.5rem]:hidden">
+        <div className="min-[62.5rem]:hidden mb-2 flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
             Chat Options
           </h2>
@@ -103,13 +103,13 @@ const ChatSidebar = ({
                       }}
                       role="button"
                       tabIndex={0}
-                      className={`cursor-pointer flex items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors ${
+                      className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-3 text-left transition-colors ${
                         isActive && messages.length > 1
                           ? "border-[#000035] bg-white dark:border-[#D7D7D7] dark:bg-[#D7D7D7]"
                           : "border-[#000035] bg-transparent hover:bg-white/70 dark:border-[#D7D7D7] dark:hover:bg-[#D7D7D7]/10"
                       }`}
                     >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#000035] text-white dark:bg-[#D7D7D7] dark:text-black">
                         <Bot size={18} />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -130,7 +130,9 @@ const ChatSidebar = ({
                           }`}
                         >
                           {session.messageCount ||
-                            (session.messages ? session.messages.length : 0)}{" "}
+                            (session.messages
+                              ? session.messages.length
+                              : 0)}{" "}
                           messages
                         </div>
                       </div>
@@ -172,7 +174,7 @@ const ChatSidebar = ({
           <h2 className="text-2xl font-semibold text-[#000035] dark:text-[#D7D7D7]">
             Quick Action
           </h2>
-          <div className="mt-4 grid grid-cols-2 gap-3 max-[71.875rem]:grid-cols-1">
+          <div className="max-[71.875rem]:grid-cols-1 mt-4 grid grid-cols-2 gap-3">
             {quickActions.map((action) => (
               <button
                 key={action.label}

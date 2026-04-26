@@ -11,7 +11,12 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { apiDelete, apiGet, apiPost, getImageUrl } from "../services/api.config";
+import {
+  apiDelete,
+  apiGet,
+  apiPost,
+  getImageUrl,
+} from "../services/api.config";
 import { getCurrentUser } from "../services/auth.api";
 import { useUser } from "../hooks/useUsers";
 import ChatSidebar from "../components/ChatSidebar";
@@ -135,7 +140,7 @@ function UserChatbot() {
           id: String(s.sessionId),
           title: s.title,
           createdAt: s.createdAt,
-          messageCount: s.messageCount || 0
+          messageCount: s.messageCount || 0,
         }));
       } catch (error) {
         console.error("Failed to fetch chat history:", error);
@@ -146,7 +151,7 @@ function UserChatbot() {
     const initializeChat = async () => {
       // 1. Load from DB
       const dbHistory = await fetchHistory();
-      
+
       // 2. Load from LocalStorage to find potential unsynced/local chats
       let localHistory = [];
       try {
@@ -156,19 +161,22 @@ function UserChatbot() {
 
       // 3. Merge: Database is source of truth, but keep local ones not yet in DB
       const merged = [...dbHistory];
-      localHistory.forEach(local => {
-        if (!merged.some(db => String(db.id) === String(local.id))) {
+      localHistory.forEach((local) => {
+        if (!merged.some((db) => String(db.id) === String(local.id))) {
           merged.push(local);
         }
       });
 
       // Sort by creation or update? Let's unshift new ones
       setSessions(merged);
-      
+
       const activeSessionKey = getActiveChatSessionKey(activeUserId);
       const savedActiveId = localStorage.getItem(activeSessionKey);
 
-      if (savedActiveId && merged.some((s) => String(s.id) === String(savedActiveId))) {
+      if (
+        savedActiveId &&
+        merged.some((s) => String(s.id) === String(savedActiveId))
+      ) {
         loadSession(String(savedActiveId));
       } else if (merged.length > 0) {
         loadSession(String(merged[0].id));
@@ -195,9 +203,10 @@ function UserChatbot() {
         const existingIndex = prev.findIndex((s) => String(s.id) === sidStr);
 
         let newSessions = [...prev];
-        const updatedTitle = userMsg.text.length > 30 
-          ? userMsg.text.substring(0, 30) + "..." 
-          : userMsg.text;
+        const updatedTitle =
+          userMsg.text.length > 30
+            ? userMsg.text.substring(0, 30) + "..."
+            : userMsg.text;
 
         if (existingIndex >= 0) {
           // Verify it's not a race condition (checking if title actually needs update)
@@ -267,36 +276,43 @@ function UserChatbot() {
       if (activeUserId && variables.sessionId) {
         const messagesKey = `chatSessionMessages:${activeUserId}:${variables.sessionId}`;
         const savedMessages = localStorage.getItem(messagesKey);
-        const currentMsgs = savedMessages ? JSON.parse(savedMessages) : messages;
-        localStorage.setItem(messagesKey, JSON.stringify([...currentMsgs, botMsg]));
+        const currentMsgs = savedMessages
+          ? JSON.parse(savedMessages)
+          : messages;
+        localStorage.setItem(
+          messagesKey,
+          JSON.stringify([...currentMsgs, botMsg]),
+        );
       }
 
       // 2. Only update UI if the user is still looking at that same session
       if (String(sessionId) === String(variables.sessionId)) {
         setMessages((prev) => [...prev, botMsg]);
       }
-      
+
       // Refresh sidebar list to show new session title from server
       if (activeUserId) {
-        apiGet("/chat/sessions", getChatRequestConfig(activeUserId)).then((dbSessions) => {
-          setSessions(prev => {
-            const serverSessions = dbSessions.map(s => ({
-              id: String(s.sessionId),
-              title: s.title,
-              createdAt: s.createdAt,
-              messageCount: s.messageCount || 0
-            }));
-            
-            // Merge again: Keep local ones that might have just been added
-            const merged = [...serverSessions];
-            prev.forEach(local => {
-              if (!merged.some(db => String(db.id) === String(local.id))) {
-                merged.push(local);
-              }
+        apiGet("/chat/sessions", getChatRequestConfig(activeUserId)).then(
+          (dbSessions) => {
+            setSessions((prev) => {
+              const serverSessions = dbSessions.map((s) => ({
+                id: String(s.sessionId),
+                title: s.title,
+                createdAt: s.createdAt,
+                messageCount: s.messageCount || 0,
+              }));
+
+              // Merge again: Keep local ones that might have just been added
+              const merged = [...serverSessions];
+              prev.forEach((local) => {
+                if (!merged.some((db) => String(db.id) === String(local.id))) {
+                  merged.push(local);
+                }
+              });
+              return merged;
             });
-            return merged;
-          });
-        });
+          },
+        );
       }
     },
     onError: (error, variables) => {
@@ -315,7 +331,10 @@ function UserChatbot() {
 
   const deleteSessionMutation = useMutation({
     mutationFn: async (id) => {
-      return apiDelete(`/chat/session/${id}`, getChatRequestConfig(activeUserId));
+      return apiDelete(
+        `/chat/session/${id}`,
+        getChatRequestConfig(activeUserId),
+      );
     },
   });
 
@@ -411,8 +430,8 @@ function UserChatbot() {
   };
 
   return (
-    <div className="flex h-full w-full relative overflow-hidden">
-      <main className="flex h-full flex-1 flex-col gap-3 px-5 py-3 relative z-10">
+    <div className="relative flex h-full w-full overflow-hidden">
+      <main className="relative z-10 flex h-full flex-1 flex-col gap-3 px-5 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <MessageSquareText
@@ -424,18 +443,18 @@ function UserChatbot() {
               Chatbot
             </h1>
           </div>
-          
+
           {/* Scoped Sidebar Toggle - mobile only */}
           <button
             onClick={() => setIsChatSidebarOpen(!isChatSidebarOpen)}
-            className="flex min-[62.5rem]:hidden h-10 w-10 items-center justify-center rounded-lg border border-[#000035] text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7] cursor-pointer"
+            className="min-[62.5rem]:hidden flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-[#000035] text-[#000035] transition-colors hover:bg-[#000035]/5 dark:border-[#D7D7D7] dark:text-[#D7D7D7]"
           >
             {isChatSidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
         {/* New divider between page title and chatbot section */}
-        <div className="hidden max-[62.5rem]:block h-[0.0625rem] w-full bg-[#000035] dark:bg-[#D7D7D7] my-1"></div>
+        <div className="max-[62.5rem]:block my-1 hidden h-[0.0625rem] w-full bg-[#000035] dark:bg-[#D7D7D7]"></div>
 
         <section className="flex h-full gap-3 overflow-hidden">
           <ChatSidebar
@@ -455,10 +474,10 @@ function UserChatbot() {
             quickActions={quickActions}
           />
 
-          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7] max-[62.5rem]:border-none max-[62.5rem]:p-0">
-            <div className="flex items-center justify-between border-b border-[#000035] pb-3 dark:border-[#D7D7D7] max-[62.5rem]:mb-4">
+          <section className="max-[62.5rem]:border-none max-[62.5rem]:p-0 flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
+            <div className="max-[62.5rem]:mb-4 flex items-center justify-between border-b border-[#000035] pb-3 dark:border-[#D7D7D7]">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#000035] text-white dark:bg-[#D7D7D7] dark:text-black">
                   <Bot size={18} />
                 </div>
                 <div>
@@ -477,12 +496,12 @@ function UserChatbot() {
               </div>
             </div>
 
-            <div className="mt-4 flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7] max-[62.5rem]:mt-0 max-[62.5rem]:border-none max-[62.5rem]:p-0">
+            <div className="max-[62.5rem]:mt-0 max-[62.5rem]:border-none max-[62.5rem]:p-0 mt-4 flex min-h-0 flex-1 flex-col rounded-lg border border-[#000035] p-4 dark:border-[#D7D7D7]">
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pr-1">
                 {messages.map((message) =>
                   message.sender === "bot" ? (
                     <div key={message.id} className="flex items-end gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#000035] text-white dark:bg-[#D7D7D7] dark:text-black">
                         <Bot size={18} />
                       </div>
                       <div
@@ -497,7 +516,7 @@ function UserChatbot() {
                     <div key={message.id} className="flex justify-end">
                       <div className="flex max-w-[70%] items-end gap-3">
                         <div
-                          className="rounded-2xl rounded-br-md bg-[#0b0c28] px-4 py-3 text-sm text-white dark:bg-[#D7D7D7] dark:text-black"
+                          className="rounded-2xl rounded-br-md bg-[#000035] px-4 py-3 text-sm text-white dark:bg-[#D7D7D7] dark:text-black"
                           dir="auto"
                           style={{ unicodeBidi: "plaintext" }}
                         >
@@ -521,7 +540,7 @@ function UserChatbot() {
 
                 {chatMutation.isPending && (
                   <div className="flex items-end gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b0c28] text-white dark:bg-[#D7D7D7] dark:text-black">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#000035] text-white dark:bg-[#D7D7D7] dark:text-black">
                       <Bot size={18} className="animate-pulse" />
                     </div>
                     <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-white px-4 py-3 dark:border dark:border-[#D7D7D7]/30 dark:bg-transparent">
@@ -561,7 +580,7 @@ function UserChatbot() {
                 <button
                   type="submit"
                   disabled={!inputValue.trim() || chatMutation.isPending}
-                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center text-[#000035] transition-colors hover:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 dark:text-[#D7D7D7] cursor-pointer dark:hover:text-white"
+                  className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center text-[#000035] transition-colors hover:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 dark:text-[#D7D7D7] dark:hover:text-white"
                   aria-label="Send message"
                 >
                   <SendHorizontal size={16} />
