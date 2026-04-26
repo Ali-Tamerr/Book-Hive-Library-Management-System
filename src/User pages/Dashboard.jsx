@@ -598,6 +598,11 @@ function Dashboard() {
                 <div className="col-span-full py-9 text-center text-[#000035]">
                   Loading books...
                 </div>
+              ) : activeTab === "recommended" && aiLoading ? (
+                <div className="col-span-full py-9 text-center text-[#000035] dark:text-[#D7D7D7] flex flex-col items-center justify-center gap-3">
+                  <LoadingSpinner size="md" />
+                  <span className="font-medium text-lg font-['Noto_Sans_Georgian',sans-serif]">Loading Personalized Recommendations...</span>
+                </div>
               ) : displayBooks.length === 0 ? (
                 <div className="col-span-full py-9 text-center text-[#000035]">
                   No books found
