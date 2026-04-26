@@ -709,6 +709,7 @@ function Dashboard() {
                       "No description available.",
                   }
             }
+            bookCopiesData={bookCopies.filter((c) => String(c.book_id) === String(selectedBookId))}
           >
             {(selectedBookLoading || isViewLoading) && (
               <div className="flex h-40 w-full items-center justify-center">

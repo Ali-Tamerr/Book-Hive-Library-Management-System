@@ -524,6 +524,7 @@ const Home = () => {
                 }
               : null
           }
+          bookCopiesData={selectedFeaturedBook?.bookCopies || []}
         />
       </div>
     </>
