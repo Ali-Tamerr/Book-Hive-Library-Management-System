@@ -6,7 +6,12 @@ import ViewDetailsPopup from "../components/ViewDetailsPopup";
 import LazyImage from "../components/LazyImage";
 import BookCard from "../components/BookCard";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
-import { useBooks, useDashboardBooks, useBook, useAIRecommendations } from "../hooks/useBooks";
+import {
+  useBooks,
+  useDashboardBooks,
+  useBook,
+  useAIRecommendations,
+} from "../hooks/useBooks";
 import { useCategories } from "../hooks/useCategories";
 import { useReservations } from "../hooks/useReservations";
 import { useBranches } from "../hooks/useBranches";
@@ -55,7 +60,9 @@ function Dashboard() {
     useBookTransactions();
   const { data: bookCopies = [] } = useBookCopies();
   const { data: plansData } = usePlans();
-  const { data: aiResponse, isLoading: aiLoading } = useAIRecommendations(currentUser?.user_id);
+  const { data: aiResponse, isLoading: aiLoading } = useAIRecommendations(
+    currentUser?.user_id,
+  );
   const aiRecommendations = useMemo(() => {
     if (aiResponse?.status === "success" && Array.isArray(aiResponse.data)) {
       return aiResponse.data;
@@ -149,7 +156,7 @@ function Dashboard() {
       // Width based scale
       const widthTarget = width < 640 ? 360 : width < 1150 ? 800 : 1300;
       const wScale = Math.max(0.6, Math.min(1, (width - 60) / widthTarget));
-      
+
       setCardScale(Math.min(hScale, wScale));
 
       if (width < 1300) {
@@ -166,8 +173,6 @@ function Dashboard() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-
   useEffect(() => {
     if (!isMobile) {
       setCurrentPage(0);
@@ -183,11 +188,8 @@ function Dashboard() {
     transactionsLoading ||
     aiLoading;
 
-
-
   // Calculate current month's limits
-  const userPlanId =
-    currentUser?.plan || "Discover";
+  const userPlanId = currentUser?.plan || "Discover";
   const userPlan = plansData?.find((p) => p.id === userPlanId);
   const borrowLimit = userPlan?.borrow_limit || 3;
 
@@ -288,24 +290,33 @@ function Dashboard() {
       // If we have AI recommendations, prioritize them
       if (aiRecommendations.length > 0 && !searchValue && !selectedCategory) {
         // Map AI results to ensure they have the same structure (e.g., 'image' prop)
-        const aiMapped = aiRecommendations.map(aiBook => {
-          const originalBook = displayBooks.find(b => String(b.book_id) === String(aiBook.id));
-          return originalBook || {
-            ...aiBook,
-            book_id: aiBook.id,
-            image: getImageUrl(aiBook.image_url)
-          };
+        const aiMapped = aiRecommendations.map((aiBook) => {
+          const originalBook = displayBooks.find(
+            (b) => String(b.book_id) === String(aiBook.id),
+          );
+          return (
+            originalBook || {
+              ...aiBook,
+              book_id: aiBook.id,
+              image: getImageUrl(aiBook.image_url),
+            }
+          );
         });
-        
+
         // Add other popular books that aren't in the AI recommendation to fill the list
         const otherBooks = result
-          .filter(b => !aiRecommendations.some(ai => String(ai.id) === String(b.book_id)))
+          .filter(
+            (b) =>
+              !aiRecommendations.some(
+                (ai) => String(ai.id) === String(b.book_id),
+              ),
+          )
           .sort((a, b) => {
             const popA = bookPopularity[a.book_id] || 0;
             const popB = bookPopularity[b.book_id] || 0;
             return popB - popA;
           });
-          
+
         return [...aiMapped, ...otherBooks];
       }
 
@@ -319,7 +330,14 @@ function Dashboard() {
     }
 
     return result;
-  }, [displayBooks, searchValue, selectedCategory, activeTab, bookPopularity, aiRecommendations]);
+  }, [
+    displayBooks,
+    searchValue,
+    selectedCategory,
+    activeTab,
+    bookPopularity,
+    aiRecommendations,
+  ]);
 
   const totalPages = Math.ceil(filteredBooks.length / booksPerPage) || 1;
 
@@ -347,7 +365,10 @@ function Dashboard() {
 
   const paginatedBooks = isMobile
     ? filteredBooks.slice(0, (currentPage + 1) * booksPerPage)
-    : filteredBooks.slice(currentPage * booksPerPage, (currentPage + 1) * booksPerPage);
+    : filteredBooks.slice(
+        currentPage * booksPerPage,
+        (currentPage + 1) * booksPerPage,
+      );
 
   const handlePrevPage = () => {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
@@ -377,7 +398,7 @@ function Dashboard() {
               }}
             >
               <div className="pr-8">
-                <p className="text-sm font-medium text-[#0b0c28] dark:text-white">
+                <p className="text-sm font-medium text-[#000035] dark:text-white">
                   {isExpired ? (
                     <>
                       Dear {currentUserDisplayName} please note that your
@@ -394,7 +415,7 @@ function Dashboard() {
                     </>
                   )}
                 </p>
-                <p className="mt-0.5 text-xs text-[#0b0c28]/70 dark:text-white/70">
+                <p className="mt-0.5 text-xs text-[#000035]/70 dark:text-white/70">
                   To renew your subscription, kindly visit the nearest branch.
                 </p>
               </div>
@@ -402,7 +423,7 @@ function Dashboard() {
                 onClick={() => setShowSubscriptionInfo(false)}
                 className="absolute right-2 top-2 rounded-full p-1 transition-colors hover:bg-black/10 dark:hover:bg-white/10"
               >
-                <X size={16} className="text-[#0b0c28] dark:text-white" />
+                <X size={16} className="text-[#000035] dark:text-white" />
               </button>
             </div>
           </div>
@@ -516,7 +537,7 @@ function Dashboard() {
                   }}
                   className={`max-[47.5rem]:text-xl relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors ${
                     activeTab === "recently"
-                      ? "text-[#0b0c28] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#0b0c28] dark:text-[#D7D7D7] dark:after:bg-white"
+                      ? "text-[#000035] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#000035] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:text-[#D7D7D7]/40 dark:hover:text-gray-300"
                   }`}
                 >
@@ -617,7 +638,7 @@ function Dashboard() {
                     paddingRight: "2.5rem",
                   }}
                 >
-                  <p className="text-[#0b0c28] dark:text-white">
+                  <p className="text-[#000035] dark:text-white">
                     {isExpired ? (
                       `Dear ${currentUserDisplayName} please note that your subscription has expired`
                     ) : (
@@ -630,14 +651,14 @@ function Dashboard() {
                       </>
                     )}
                   </p>
-                  <p className="mt-1 text-[#0b0c28] dark:text-white">
+                  <p className="mt-1 text-[#000035] dark:text-white">
                     To renew your subscription, kindly visit the nearest branch.
                   </p>
                   <button
                     onClick={() => setShowSubscriptionInfo(false)}
                     className="max-[40rem]:block absolute right-2 top-2 hidden rounded-full p-1 transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                   >
-                    <X size={16} className="text-[#0b0c28] dark:text-white" />
+                    <X size={16} className="text-[#000035] dark:text-white" />
                   </button>
                 </div>
               </div>
