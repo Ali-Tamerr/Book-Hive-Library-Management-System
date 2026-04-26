@@ -485,7 +485,7 @@ function Dashboard() {
             className={`max-[40rem]:mx-auto max-[40rem]:flex-none min-[40rem]:order-last min-[40rem]:h-full min-[96.25rem]:-ml-5 flex flex-col items-center justify-center gap-3 overflow-hidden transition-all duration-500 ease-in-out ${
               searchValue || isSearchFocused
                 ? "invisible max-h-0 max-w-0 flex-[0.0001] -translate-y-2 scale-95 opacity-0"
-                : "flex-3 visible max-h-[50rem] max-w-full translate-y-0 scale-100 opacity-100"
+                : "flex-3 scaleden0 visible max-h-[50rem] max-w-full translate-y-0 opacity-100"
             }`}
           >
             <div className="min-[75rem]:mb-6 flex h-full w-full flex-col items-center justify-start rounded-md">
