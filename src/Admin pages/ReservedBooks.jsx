@@ -181,15 +181,14 @@ function ReservedBooks({
     : mappedReservations;
 
   const columns = [
-    { header: "Reservation ID", accessor: "reservation_id", width: "12%" },
-    { header: "Book Title", accessor: "book_title", width: "18%" },
-    { header: "User Name", accessor: "user_name", width: "15%" },
-    { header: "Reservation Date", accessor: "reservation_date", width: "15%" },
-    { header: "Expiration Date", accessor: "expiration_date", width: "15%" },
+    { header: "Reservation ID", accessor: "reservation_id" },
+    { header: "Book Title", accessor: "book_title" },
+    { header: "User Name", accessor: "user_name" },
+    { header: "Reservation Date", accessor: "reservation_date" },
+    { header: "Expiration Date", accessor: "expiration_date" },
     {
       header: "Expiration Status",
       accessor: "expiration_status",
-      width: "10%",
       render: (reservation) => {
         if (!reservation.expiration_date) {
           return (
@@ -201,7 +200,7 @@ function ReservedBooks({
         const now = new Date();
         const expirationDate = new Date(reservation.expiration_date);
         const isExpired = now > expirationDate;
- 
+
         return (
           <span
             className={`rounded-full px-3 py-1 text-sm font-medium ${
@@ -215,8 +214,8 @@ function ReservedBooks({
         );
       },
     },
-    { header: "Status", accessor: "status", width: "10%" },
-    { header: "Action", accessor: "action", width: "5%" },
+    { header: "Status", accessor: "status" },
+    { header: "Action", accessor: "action" },
   ];
 
   const formPopupComponent = (

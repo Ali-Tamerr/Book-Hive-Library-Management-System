@@ -340,11 +340,10 @@ function Books({ searchValue, setSearchValue }) {
   const buttonText = isSuperAdmin ? "Add Book" : null;
   const columns = [
     // { header: "ID", accessor: "book_id" },
-    { header: "Name", accessor: "name", width: "40%" },
+    { header: "Name", accessor: "name" },
     {
       header: "Category",
       accessor: "category_id",
-      width: "20%",
       render: (book) =>
         categories.find((cat) => cat.category_id === book.category_id)
           ?.category_name || "N/A",
@@ -352,13 +351,11 @@ function Books({ searchValue, setSearchValue }) {
     {
       header: "Quantity",
       accessor: "quantity",
-      width: "15%",
       render: (book) => getAvailableCopiesCount(book.book_id),
     },
     {
       header: "Availability",
       accessor: "availability",
-      width: "15%",
       render: (book) => {
         const availableCount = getAvailableCopiesCount(book.book_id);
         // Consolidate "Reference Only" and "Borrowed" into "Not Available"
@@ -371,7 +368,7 @@ function Books({ searchValue, setSearchValue }) {
         return "Available";
       },
     },
-    ...(isSuperAdmin ? [{ header: "Action", accessor: "action", width: "10%" }] : []),
+    ...(isSuperAdmin ? [{ header: "Action", accessor: "action" }] : []),
   ];
 
   const formPopup = (

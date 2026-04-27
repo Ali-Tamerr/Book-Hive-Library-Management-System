@@ -332,16 +332,15 @@ function BorrowedBooks({
   }));
 
   const columns = [
-    { header: "User Name", accessor: "user_name_display", width: "20%" },
-    { header: "Book Name", accessor: "book_name", width: "25%" },
-    ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_name", width: "15%" }] : []),
+    { header: "User Name", accessor: "user_name_display" },
+    { header: "Book Name", accessor: "book_name" },
+    ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_name" }] : []),
     {
       header: showReturned ? "Return Date" : "Due Date",
       accessor: showReturned ? "return_date_formatted" : "due_date_formatted",
-      width: "15%"
     },
-    { header: "Date & Time", accessor: "borrowed_on_formatted", width: "15%" },
-    ...(isSuperAdmin ? [{ header: "Action", accessor: "action", width: "10%" }] : []),
+    { header: "Date & Time", accessor: "borrowed_on_formatted" },
+    ...(isSuperAdmin ? [{ header: "Action", accessor: "action" }] : []),
   ];
 
   const formPopupComponent = (
