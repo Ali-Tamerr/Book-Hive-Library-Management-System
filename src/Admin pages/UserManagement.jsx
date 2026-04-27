@@ -515,14 +515,14 @@ function UserManagement({ searchValue, setSearchValue }) {
   const title = "User Management";
   const buttonText = isSuperAdmin ? "Add User" : null;
   const columns = [
-    { header: "User ID", accessor: "user_id" },
-    { header: "Name", accessor: "name" },
+    { header: "User ID", accessor: "user_id", width: "15%" },
+    { header: "Name", accessor: "name", width: "15%" },
 
-    { header: "Email", accessor: "email" },
-    ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display" }] : []),
-    { header: "Plan", accessor: "plan_display" },
-    { header: "Exp Date", accessor: "formatted_exp_date" },
-    { header: "Action", accessor: "action" },
+    { header: "Email", accessor: "email", width: "25%" },
+    ...(isSuperAdmin ? [{ header: "Branch", accessor: "branch_display", width: "15%" }] : []),
+    { header: "Plan", accessor: "plan_display", width: "10%" },
+    { header: "Exp Date", accessor: "formatted_exp_date", width: "10%" },
+    { header: "Action", accessor: "action", width: "10%" },
   ];
 
   const customActionRenderer = (user) => {
