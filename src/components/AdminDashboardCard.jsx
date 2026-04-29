@@ -44,7 +44,7 @@ const AdminDashboardCard = ({
             key={admin.id}
             onMouseEnter={(e) => handleMouseEnter(e, admin)}
             onMouseLeave={handleMouseLeave}
-            className="group relative flex cursor-default items-center gap-3 rounded-[1rem] border border-[#000035] bg-transparent p-3 py-2.5 dark:border-[#D7D7D7]"
+            className="group relative flex cursor-default items-center gap-3 rounded-2xl border border-[#000035] bg-transparent p-3 py-2.5 dark:border-[#D7D7D7]"
           >
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
               <svg
@@ -61,7 +61,7 @@ const AdminDashboardCard = ({
               <User className="relative z-10 h-5 w-5 text-[#F2F2F2] dark:text-[#121317]" />
             </div>
 
-            <div className="h-10 w-[0.125rem] rounded-full bg-[#000035] dark:bg-[#D7D7D7]"></div>
+            <div className="h-10 w-0.5 rounded-full bg-[#000035] dark:bg-[#D7D7D7]"></div>
 
             <div className="flex-1 overflow-hidden">
               <p className="truncate text-lg font-bold leading-tight text-[#000035] dark:text-[#D7D7D7]">
@@ -99,7 +99,7 @@ const AdminDashboardCard = ({
       {/* Tooltip rendered outside the scrollable area to avoid clipping */}
       {hoveredAdmin && (
         <div
-          className="animate-in fade-in zoom-in pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-[calc(100%+0.75rem)] rounded-lg border-2 border-[#000035] bg-[#F2F2F2] px-4 py-3 shadow-lg duration-200 dark:border-[#D7D7D7] dark:bg-[#121317]"
+          className="animate-in fade-in zoom-in pointer-events-none fixed z-9999 -translate-x-1/2 -translate-y-[calc(100%+0.75rem)] rounded-lg border-2 border-[#000035] bg-[#F2F2F2] px-4 py-3 shadow-lg duration-200 dark:border-[#D7D7D7] dark:bg-[#121317]"
           style={{
             left: tooltipPos.x,
             top: tooltipPos.y,

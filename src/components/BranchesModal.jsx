@@ -28,11 +28,11 @@ const BranchesModal = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/45"
+      className="fixed inset-0 z-9999 flex items-center justify-center bg-black/45"
       onClick={onClose}
     >
       <div
-        className="popup-typography relative h-full max-h-none w-full rounded-none bg-white px-4 py-8 dark:bg-[#121317] dark:text-[#E8E8E8] min-[48.0625rem]:h-auto min-[48.0625rem]:min-h-[31.25rem] min-[48.0625rem]:w-[90%] min-[48.0625rem]:max-w-[75rem] min-[48.0625rem]:px-10 min-[48.0625rem]:rounded-[0.875rem] max-[48rem]:flex max-[48rem]:flex-col max-[48rem]:justify-center"
+        className="popup-typography relative h-full max-h-none w-full rounded-none bg-white px-4 py-8 dark:bg-[#121317] dark:text-[#E8E8E8] min-[48.0625rem]:h-auto min-[48.0625rem]:min-h-125 min-[48.0625rem]:w-[90%] min-[48.0625rem]:max-w-300 min-[48.0625rem]:px-10 min-[48.0625rem]:rounded-[0.875rem] max-[48rem]:flex max-[48rem]:flex-col max-[48rem]:justify-center"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -49,7 +49,7 @@ const BranchesModal = ({ isOpen, onClose }) => {
           <img
             src={new URL("../assets/logo.svg", import.meta.url).href}
             alt="BookHive Logo"
-            className="h-[0.625rem] w-[3.75rem]"
+            className="h-2.5 w-15"
           />
         </div>
 

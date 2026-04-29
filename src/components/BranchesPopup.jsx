@@ -9,11 +9,11 @@ function BranchesPopup({ isOpen, onClose }) {
 
   const popupContent = (
     <div
-      className="fixed inset-0 z-[1001] flex items-center justify-center bg-black/10 backdrop-blur-sm"
+      className="fixed inset-0 z-1001 flex items-center justify-center bg-black/10 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="popup-typography relative h-full max-h-none w-full overflow-hidden rounded-none bg-white shadow-2xl min-[48.0625rem]:h-auto min-[48.0625rem]:max-h-[90vh] min-[48.0625rem]:w-[95%] min-[48.0625rem]:max-w-[56.25rem] min-[48.0625rem]:rounded-2xl max-[48rem]:flex max-[48rem]:flex-col max-[48rem]:justify-center"
+        className="popup-typography relative h-full max-h-none w-full overflow-hidden rounded-none bg-white shadow-2xl min-[48.0625rem]:h-auto min-[48.0625rem]:max-h-[90vh] min-[48.0625rem]:w-[95%] min-[48.0625rem]:max-w-225 min-[48.0625rem]:rounded-2xl max-[48rem]:flex max-[48rem]:flex-col max-[48rem]:justify-center"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4 min-[48.0625rem]:p-8">

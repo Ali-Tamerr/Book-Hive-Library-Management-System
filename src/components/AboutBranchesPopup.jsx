@@ -58,11 +58,11 @@ const AboutBranchesPopup = ({ isOpen, onClose, slideFromTop = false }) => {
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-[1001] flex items-center justify-center bg-[rgba(140,140,140,0.7)] backdrop-blur-sm transition-all duration-500 dark:bg-[rgba(10,10,12,0.7)] min-[48.0625rem]:p-8 ${slideFromTop ? (isAnimating ? "translate-y-0" : "-translate-y-full") : (isAnimating ? "opacity-100" : "opacity-0")}`}
+      className={`fixed inset-0 z-1001 flex items-center justify-center bg-[rgba(140,140,140,0.7)] backdrop-blur-sm transition-all duration-500 dark:bg-[rgba(10,10,12,0.7)] min-[48.0625rem]:p-8 ${slideFromTop ? (isAnimating ? "translate-y-0" : "-translate-y-full") : (isAnimating ? "opacity-100" : "opacity-0")}`}
       onClick={onClose}
     >
       <div
-        className={`branches-popup popup-typography flex h-full max-h-none w-full flex-col gap-4 overflow-hidden rounded-none bg-[#F2F2F2] px-4 pb-14 pt-8 shadow-[0_1.25rem_3.125rem_rgba(10,10,35,0.25)] transition-all duration-500 max-[43.75rem]:gap-2 max-[43.75rem]:pb-8 dark:bg-[#121317] min-[48.0625rem]:h-auto min-[48.0625rem]:max-h-[92vh] min-[48.0625rem]:w-[min(68.75rem,96vw)] min-[48.0625rem]:px-[3.75rem] min-[48.0625rem]:rounded-[1.5625rem] max-[48rem]:justify-center ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
+        className={`branches-popup popup-typography flex h-full max-h-none w-full flex-col gap-4 overflow-hidden rounded-none bg-[#F2F2F2] px-4 pb-14 pt-8 shadow-[0_1.25rem_3.125rem_rgba(10,10,35,0.25)] transition-all duration-500 max-[43.75rem]:gap-2 max-[43.75rem]:pb-8 dark:bg-[#121317] min-[48.0625rem]:h-auto min-[48.0625rem]:max-h-[92vh] min-[48.0625rem]:w-[min(68.75rem,96vw)] min-[48.0625rem]:px-15 min-[48.0625rem]:rounded-[1.5625rem] max-[48rem]:justify-center ${!slideFromTop ? (isAnimating ? "scale-100 opacity-100" : "scale-95 opacity-0") : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="branches-popup-title"
@@ -78,7 +78,7 @@ const AboutBranchesPopup = ({ isOpen, onClose, slideFromTop = false }) => {
           </button>
           <div className="flex items-center gap-4">
             <div
-              className="h-[3.75rem] w-[4.6875rem] bg-[#000035] dark:bg-[#D7D7D7]"
+              className="h-15 w-18.75 bg-[#000035] dark:bg-[#D7D7D7]"
               style={{
                 mask: `url(${new URL("../assets/logo.svg", import.meta.url).href}) no-repeat center`,
                 WebkitMask: `url(${new URL("../assets/logo.svg", import.meta.url).href}) no-repeat center`,
@@ -87,10 +87,10 @@ const AboutBranchesPopup = ({ isOpen, onClose, slideFromTop = false }) => {
               }}
             />
             <div>
-              <span className="font-[family-name:var(--body-font)] text-[2rem] uppercase leading-none tracking-wider text-[#000035] dark:text-[#f1f2f6]">
+              <span className="font-(family-name:--body-font) text-[2rem] uppercase leading-none tracking-wider text-[#000035] dark:text-[#f1f2f6]">
                 BookHive
               </span>
-              <span className="-mt-1 block text-right font-[family-name:var(--second-font)] text-[1rem] font-normal text-[#000035] dark:text-[#f1f2f6]">
+              <span className="-mt-1 block text-right font-(family-name:--second-font) text-[1rem] font-normal text-[#000035] dark:text-[#f1f2f6]">
                 Library
               </span>
             </div>
@@ -99,15 +99,15 @@ const AboutBranchesPopup = ({ isOpen, onClose, slideFromTop = false }) => {
 
         <h3
           id="branches-popup-title"
-          className="mt-6 font-[family-name:var(--body-font)] text-[3.5rem] font-extrabold uppercase tracking-wide text-[#000035] max-[43.75rem]:text-[2.25rem] dark:text-[#f1f2f6]"
+          className="mt-6 font-(family-name:--body-font) text-[3.5rem] font-extrabold uppercase tracking-wide text-[#000035] max-[43.75rem]:text-[2.25rem] dark:text-[#f1f2f6]"
         >
           OUR BRANCHES
         </h3>
 
         <div className="mt-2.5 overflow-auto pt-2.5">
-          <table className="w-full min-w-[38.75rem] table-fixed border-collapse max-[43.75rem]:min-w-[32.5rem]">
+          <table className="w-full min-w-155 table-fixed border-collapse max-[43.75rem]:min-w-130">
             <thead>
-              <tr className="*:border-b-2 *:border-[#000035] *:p-6 *:text-center *:font-[family-name:var(--body-font)] *:text-[1.75rem] *:font-normal *:uppercase *:tracking-wider *:text-[#000035] dark:*:border-[#f1f2f6] dark:*:text-[#f1f2f6]">
+              <tr className="*:border-b-2 *:border-[#000035] *:p-6 *:text-center *:font-(family-name:--body-font) *:text-[1.75rem] *:font-normal *:uppercase *:tracking-wider *:text-[#000035] dark:*:border-[#f1f2f6] dark:*:text-[#f1f2f6]">
                 <th className="w-1/4">NAME</th>
                 <th className="w-1/4">CONTACT NO</th>
                 <th className="w-1/4">LOCATION</th>
@@ -157,7 +157,7 @@ const AboutBranchesPopup = ({ isOpen, onClose, slideFromTop = false }) => {
                   return (
                     <tr
                       key={branchId}
-                      className="*:p-6 *:py-10 *:text-center *:font-[family-name:var(--second-font)] *:text-[1.25rem] *:font-bold *:text-[#000035] dark:*:text-[#d8dbe6]"
+                      className="*:p-6 *:py-10 *:text-center *:font-(family-name:--second-font) *:text-[1.25rem] *:font-bold *:text-[#000035] dark:*:text-[#d8dbe6]"
                     >
                       <td>{branch?.name || "N/A"}</td>
                       <td>{branch?.contact_number || "N/A"}</td>
