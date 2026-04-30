@@ -427,7 +427,7 @@ const ViewRequestsPopup = ({
       panelClassName="h-[90vh] lg:max-h-[53.125rem]"
     >
       <div className="flex h-full flex-col gap-4">
-        <div className="flex gap-2 max-[40.625rem]:grid max-[40.625rem]:grid-cols-1 max-[40.625rem]:gap-2">
+        <div className="flex items-center gap-2 max-[40.625rem]:grid max-[40.625rem]:grid-cols-1 max-[40.625rem]:gap-2">
           <TabButton
             label="User Requests"
             isActive={activeTab === "users"}
@@ -436,6 +436,7 @@ const ViewRequestsPopup = ({
               setShowRejected(false);
             }}
             position="first"
+            className="flex-1"
           />
           <TabButton
             label="Borrow Requests"
@@ -445,6 +446,7 @@ const ViewRequestsPopup = ({
               setShowRejected(false);
             }}
             position="middle"
+            className="flex-1"
           />
           <TabButton
             label="Feedback Requests"
@@ -454,6 +456,7 @@ const ViewRequestsPopup = ({
               setShowRejected(false);
             }}
             position="last"
+            className="flex-1"
           />
         </div>
 
@@ -473,7 +476,7 @@ const ViewRequestsPopup = ({
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col overflow-hidden rounded-[0.625rem] border border-[#000035] dark:border-[#D7D7D7]">
+        <div className="flex flex-1 flex-col justify-center overflow-hidden rounded-[0.625rem] border border-[#000035] dark:border-[#D7D7D7]">
           <div className="min-w-[6.25rem] flex-1 overflow-auto">
             {currentLoading ? (
               <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">

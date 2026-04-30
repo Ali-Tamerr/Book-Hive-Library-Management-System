@@ -8,24 +8,27 @@ function Catalog({ searchValue, setSearchValue }) {
   const [localActiveTab, setLocalActiveTab] = useState("borrowed");
 
   const tabButtons = (
-    <div className="flex gap-4 max-[40.625rem]:grid max-[40.625rem]:grid-cols-1 max-[40.625rem]:gap-2">
+    <div className="flex items-center gap-4 max-[40.625rem]:grid max-[40.625rem]:grid-cols-1 max-[40.625rem]:gap-2">
       <TabButton
         label="Borrowed Books"
         isActive={localActiveTab === "borrowed"}
         onClick={() => setLocalActiveTab("borrowed")}
         position="first"
+        className="flex-1"
       />
 
       <TabButton
         label="Returned Books"
         isActive={localActiveTab === "returned"}
         onClick={() => setLocalActiveTab("returned")}
+        className="flex-1"
       />
       <TabButton
         label="Overdue Borrowers"
         isActive={localActiveTab === "overdue"}
         onClick={() => setLocalActiveTab("overdue")}
         position="last"
+        className="flex-1"
       />
     </div>
   );

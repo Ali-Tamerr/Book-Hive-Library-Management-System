@@ -73,7 +73,7 @@ const Popup = ({
         <div
           className={`flex-1 overflow-y-auto max-[48rem]:flex max-[48rem]:flex-col ${contentClassName || "px-4 py-8 max-[48rem]:px-2"}`}
         >
-          <div className="max-[48rem]:my-auto max-[48rem]:w-full">
+          <div className="max-[48rem]:flex max-[48rem]:flex-1 max-[48rem]:flex-col max-[48rem]:w-full">
             {children}
           </div>
         </div>
