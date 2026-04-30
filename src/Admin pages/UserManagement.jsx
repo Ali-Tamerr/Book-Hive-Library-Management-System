@@ -603,9 +603,21 @@ function UserManagement({ searchValue, setSearchValue }) {
           <ReceiptText size={20} />
         </button>
         <button
-          onClick={() => handleRenew(user)}
-          className="ml-2 cursor-pointer text-lg transition-transform hover:scale-125"
-          title="Renew"
+          onClick={() => {
+            const isLibrarian = user.role?.toLowerCase().includes("librarian");
+            if (isLibrarian) return;
+            handleRenew(user);
+          }}
+          className={`ml-2 text-lg transition-transform ${
+            user.role?.toLowerCase().includes("librarian")
+              ? "cursor-not-allowed text-gray-400 opacity-50 dark:text-gray-600"
+              : "cursor-pointer text-[#000035] hover:scale-125 dark:text-white"
+          }`}
+          title={
+            user.role?.toLowerCase().includes("librarian")
+              ? "cannot add plans to an librarian"
+              : "Renew"
+          }
         >
           <RotateCcw size={20} />
         </button>
