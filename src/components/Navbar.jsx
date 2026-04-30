@@ -163,41 +163,48 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
 
           {/* MOBILE DROPDOWN */}
           {isMobileDropdownOpen && (
-            <div className="max-[67.5rem]:flex absolute left-0 top-14 z-50 hidden w-48 flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-[#121317]">
-              <div className="flex flex-col border-b pb-3 text-left dark:border-gray-700">
-                <h3 className="truncate text-base font-semibold text-[#000035] dark:text-[#E8E8E8]">
-                  {currentUser
-                    ? currentUser.first_name + " " + currentUser.last_name ||
-                      "User"
-                    : "Loading..."}
-                </h3>
-                <p className="mt-1 text-xs text-[#000035] opacity-80 dark:text-[#E8E8E8]">
-                  {roleLabel}
-                </p>
-              </div>
+            <>
+              {/* Invisible overlay to catch clicks outside */}
+              <div
+                className="fixed inset-0 z-40 bg-transparent"
+                onClick={() => setIsMobileDropdownOpen(false)}
+              ></div>
+              <div className="max-[67.5rem]:flex absolute left-0 top-14 z-50 hidden w-48 flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-[#121317]">
+                <div className="flex flex-col border-b pb-3 text-left dark:border-gray-700">
+                  <h3 className="truncate text-base font-semibold text-[#000035] dark:text-[#E8E8E8]">
+                    {currentUser
+                      ? currentUser.first_name + " " + currentUser.last_name ||
+                        "User"
+                      : "Loading..."}
+                  </h3>
+                  <p className="mt-1 text-xs text-[#000035] opacity-80 dark:text-[#E8E8E8]">
+                    {roleLabel}
+                  </p>
+                </div>
 
-              <div className="flex items-center justify-between gap-2 pt-1">
-                {notificationOrFeedbackItem}
-                <button
-                  className="h-7 w-7 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
-                  onClick={toggleTheme}
-                  title="Toggle Theme"
-                >
-                  {isDarkMode ? (
-                    <Sun className="h-full w-full" />
-                  ) : (
-                    <Moon className="h-full w-full" />
-                  )}
-                </button>
-                <button
-                  className="h-7 w-7 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
-                  onClick={() => setShowSettings(true)}
-                  title="Settings"
-                >
-                  <Settings className="h-full w-full" />
-                </button>
+                <div className="flex items-center justify-between gap-2 pt-1">
+                  {notificationOrFeedbackItem}
+                  <button
+                    className="h-7 w-7 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+                    onClick={toggleTheme}
+                    title="Toggle Theme"
+                  >
+                    {isDarkMode ? (
+                      <Sun className="h-full w-full" />
+                    ) : (
+                      <Moon className="h-full w-full" />
+                    )}
+                  </button>
+                  <button
+                    className="h-7 w-7 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+                    onClick={() => setShowSettings(true)}
+                    title="Settings"
+                  >
+                    <Settings className="h-full w-full" />
+                  </button>
+                </div>
               </div>
-            </div>
+            </>
           )}
         </div>
 
@@ -245,8 +252,9 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           </div>
 
           <button
-            onClick={toggleSidebar}
-            className="max-[67.5rem]:block ml-2 hidden cursor-pointer"
+            onClick={isMobileDropdownOpen ? undefined : toggleSidebar}
+            className={`max-[67.5rem]:block ml-2 hidden cursor-pointer transition-opacity ${isMobileDropdownOpen ? "opacity-30 cursor-default" : ""}`}
+            disabled={isMobileDropdownOpen}
           >
             <Menu className="h-8 w-8" />
           </button>
