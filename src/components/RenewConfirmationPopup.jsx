@@ -19,12 +19,8 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
 
   const calculateNewDate = () => {
     if (!user) return "";
-    const currentEnd = user.subscription_end_date
-      ? new Date(user.subscription_end_date)
-      : new Date();
     const now = new Date();
-    const baseDate = currentEnd > now ? currentEnd : now;
-    const newEndDate = new Date(baseDate);
+    const newEndDate = new Date(now);
     newEndDate.setMonth(newEndDate.getMonth() + 1);
     return newEndDate.toLocaleDateString("en-US", {
       year: "numeric",
@@ -77,10 +73,13 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
           </select>
         </div>
 
-        <p className="max-w-[26.25rem] text-lg leading-relaxed text-[#000035] dark:text-gray-300">
-          Are you certain you wish to proceed with the renew of the selected
-          entry?
-        </p>
+        <div className="flex flex-col items-center gap-2 text-center">
+          <p className="max-w-[26.25rem] text-lg leading-relaxed text-[#000035] dark:text-gray-300">
+            Are you certain you wish to proceed with the renew of the selected
+            entry?
+          </p>
+          
+        </div>
 
         <div className="flex w-full justify-center pt-2">
           <FormButton

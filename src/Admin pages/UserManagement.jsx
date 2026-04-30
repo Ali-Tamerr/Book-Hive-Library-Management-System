@@ -348,29 +348,31 @@ function UserManagement({ searchValue, setSearchValue }) {
   const handleConfirmRenew = async (selectedPlan) => {
     if (!selectedRenewUser) return;
 
-    // Calculate new expiration date
-    const currentEnd = selectedRenewUser.subscription_end_date
-      ? new Date(selectedRenewUser.subscription_end_date)
-      : new Date();
+    // Calculate new expiration date: 1 month from the moment of confirmation
     const now = new Date();
-
-    // If active, extend from end date. If expired/null, extend from now.
-    const baseDate = currentEnd > now ? currentEnd : now;
-    const newEndDate = new Date(baseDate);
+    const newEndDate = new Date(now);
     newEndDate.setMonth(newEndDate.getMonth() + 1);
 
     try {
-      // Exclude created_by to avoid issues if backend strictly checks joins/foreign keys on update
-      // (though usually fine, consistent with handleAddUser)
-      const { created_by, ...userData } = selectedRenewUser;
+      // Clean the payload to send only necessary fields to the backend
+      // We explicitly exclude UI-only fields like 'name', 'formatted_exp_date', etc.
+      const apiData = {
+        user_id: selectedRenewUser.user_id,
+        first_name: selectedRenewUser.first_name,
+        last_name: selectedRenewUser.last_name,
+        email: selectedRenewUser.email,
+        role: selectedRenewUser.role,
+        plan: selectedPlan || selectedRenewUser.plan || null,
+        status: selectedRenewUser.status,
+        password_hash: selectedRenewUser.password_hash,
+        branch_id: selectedRenewUser.branch_id ? parseInt(selectedRenewUser.branch_id, 10) : null,
+        image_url: selectedRenewUser.image_url || null,
+        subscription_end_date: newEndDate.toISOString(),
+      };
 
       await updateUserMutation.mutateAsync({
         id: selectedRenewUser.user_id,
-        data: {
-          ...userData,
-          plan: selectedPlan || selectedRenewUser.plan || null,
-          subscription_end_date: newEndDate.toISOString(),
-        },
+        data: apiData,
       });
       setShowRenewPopup(false);
       setSelectedRenewUser(null);
