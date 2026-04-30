@@ -108,23 +108,18 @@ const CommonLayout = ({
           ref={scrollContainerRef}
           className="min-h-0 min-w-0 flex-1 overflow-auto rounded-lg pb-4"
         >
-          <table className="w-full min-w-[62.5rem] max-[48rem]:min-w-[42rem] table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
+          <table className="w-full min-w-[62.5rem] max-[48rem]:min-w-[42rem] table-auto border-collapse text-left text-sm dark:text-[#E8E8E8]">
             <thead className="sticky top-0 z-10 bg-[#f0f0f1] transition-colors duration-300 dark:bg-[#121317]">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.accessor}
-                    style={{ width: col.width || 'auto' }}
-                    className={`px-4 py-3 max-[48rem]:px-3 max-[48rem]:py-2 text-center text-[1.375rem] max-[48rem]:text-[1.125rem] font-extrabold tracking-widest`}
+                    style={{ width: col.width || "auto" }}
+                    className={`px-4 py-3 text-center text-[1.375rem] font-extrabold tracking-widest max-[48rem]:px-3 max-[48rem]:py-2 max-[48rem]:text-[1.125rem] shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]`}
                   >
                     {col.header}
                   </th>
                 ))}
-              </tr>
-              <tr>
-                <th colSpan={columns.length} className="p-0">
-                  <div className="mx-auto w-full border-b border-gray-600 dark:border-[#D7D7D7]"></div>
-                </th>
               </tr>
             </thead>
             <tbody>
