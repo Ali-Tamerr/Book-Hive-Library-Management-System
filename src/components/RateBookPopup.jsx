@@ -127,7 +127,7 @@ const RateBookPopup = ({
         <div className="flex w-full items-center justify-center">
           <FormInput
             type="textarea"
-            className="h-[11.25rem] w-full resize-none border-[#A3A3A3] text-[1.125rem] dark:border-[#000035] dark:bg-[#1E1E1E]"
+            className="h-[11.25rem] w-full resize-none text-[#000035] placeholder:text-[#000035] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7] border-[#000035] dark:border-[#D7D7D7] text-[1.125rem] "
             placeholder={isReply ? "Write your reply..." : "Share your opinion"}
             value={reviewText}
             onChange={(e) => setReviewText(e.target.value)}
@@ -155,13 +155,13 @@ const RateBookPopup = ({
                   <div className="relative">
                     <Star
                       size={38}
-                      className="text-[#00004f] dark:text-[#D7D7D7]"
+                      className="text-[#000035] dark:text-[#D7D7D7]"
                       strokeWidth={1.5}
                     />
                     {isFull && (
                       <Star
                         size={38}
-                        className="absolute left-0 top-0 fill-[#00004f] text-[#00004f] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                        className="absolute left-0 top-0 fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                         strokeWidth={1.5}
                       />
                     )}
@@ -169,7 +169,7 @@ const RateBookPopup = ({
                       <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
                         <Star
                           size={38}
-                          className="min-w-[2.375rem] fill-[#00004f] text-[#00004f] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                          className="min-w-[2.375rem] fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                           strokeWidth={1.5}
                           style={{
                             width: "2.375rem",

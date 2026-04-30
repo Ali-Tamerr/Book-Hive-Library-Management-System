@@ -460,8 +460,8 @@ const ViewDetailsPopup = ({
                             </div>
                             <div className="flex min-w-0 flex-1 items-center justify-between gap-4 pl-3">
                               <div className="min-w-0 pt-0.5">
-                                <div className="flex items-center gap-2">
-                                  <span className="truncate text-[1rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">
+                                <div className="flex flex-col items-start min-[48rem]:flex-row min-[48rem]:items-center gap-0 min-[48rem]:gap-2">
+                                  <span className="truncate text-[1rem] max-[48rem]:text-[0.875rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">
                                     {review.user_name?.toUpperCase() || "GUEST"}
                                   </span>
                                   <div className="flex gap-0.5">
@@ -489,7 +489,7 @@ const ViewDetailsPopup = ({
                                     setShowRatePopup(true);
                                   })
                                 }
-                                className="h-9 w-[9.375rem] shrink-0 !p-0 text-sm"
+                                className="h-9 w-[9.375rem] shrink-0 !p-0 text-sm max-[48rem]:hidden"
                               >
                                 Reply
                               </FormButton>
@@ -537,7 +537,7 @@ const ViewDetailsPopup = ({
                                       )}
                                     </div>
                                     <div className="min-w-0 pt-0.5">
-                                      <span className="block truncate text-[0.875rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">
+                                      <span className="block truncate text-[0.875rem] max-[48rem]:text-[0.75rem] font-semibold leading-tight text-[#000035] dark:text-[#D7D7D7]">
                                         {reply.user_name?.toUpperCase() ||
                                           "GUEST"}
                                       </span>
@@ -552,6 +552,23 @@ const ViewDetailsPopup = ({
                                 </div>
                               );
                             })}
+                          
+                          {/* MOBILE REPLY BUTTON */}
+                          <div className="max-[48rem]:flex hidden px-3 pb-2.5 justify-end">
+                            <FormButton
+                              isPrimary
+                              fullWidth={false}
+                              onClick={() =>
+                                handleActionRequiringLogin(() => {
+                                  setReplyingTo(review.review_id);
+                                  setShowRatePopup(true);
+                                })
+                              }
+                              className="h-9 w-full shrink-0 !p-0 text-sm"
+                            >
+                              Reply
+                            </FormButton>
+                          </div>
                         </div>
                       );
                     })
