@@ -216,7 +216,7 @@ const AdminNotifications = () => {
   return (
     <>
       <button
-        className="relative h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] max-[67.5rem]:hidden dark:hover:text-[#9CA3AF]"
+        className="relative h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
         title="Notifications"
         onClick={() => setShowRequestsPopup(true)}
       >
