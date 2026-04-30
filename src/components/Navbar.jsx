@@ -129,9 +129,9 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
     <>
       <header className="flex h-min w-full items-center justify-between px-4 py-4 text-[#000035] dark:text-[#E8E8E8]">
         {/* LEFT SIDE: Profile Section */}
-        <div className="flex-2 flex items-center gap-3 relative">
-          <div 
-            className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7] cursor-pointer"
+        <div className="flex-2 relative flex items-center gap-3">
+          <div
+            className="flex h-12 w-12 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]"
             onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
           >
             {currentUser?.image_url ? (
@@ -144,37 +144,38 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
               <UserRound className="h-12 w-12 dark:text-[#121317]" />
             )}
           </div>
-          
-          <ChevronDown 
-            className="hidden max-[67.5rem]:block h-5 w-5 cursor-pointer hover:opacity-80"
+
+          <ChevronDown
+            className="max-[67.5rem]:block hidden h-5 w-5 cursor-pointer hover:opacity-80"
             onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
           />
 
-          <div className="flex flex-col text-left max-[67.5rem]:hidden">
-            <h3 className="text-xl font-semibold tracking-wider max-[30rem]:text-sm">
+          <div className="max-[67.5rem]:hidden flex flex-col text-left">
+            <h3 className="max-[30rem]:text-sm text-xl font-semibold tracking-wider">
               {currentUser
                 ? currentUser.first_name + " " + currentUser.last_name || "User"
                 : "Loading..."}
             </h3>
-            <p className="text-[0.75rem] -mt-[0.25rem] font-semibold ">
+            <p className="-mt-[0.25rem] text-[0.75rem] font-semibold">
               {roleLabel}
             </p>
           </div>
 
           {/* MOBILE DROPDOWN */}
           {isMobileDropdownOpen && (
-            <div className="absolute top-14 left-0 w-48 rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-[#121317] z-50 hidden max-[67.5rem]:flex flex-col gap-3">
-              <div className="flex flex-col border-b pb-3 dark:border-gray-700 text-left">
-                <h3 className="font-semibold text-[#000035] dark:text-[#E8E8E8] text-base truncate">
+            <div className="max-[67.5rem]:flex absolute left-0 top-14 z-50 hidden w-48 flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-[#121317]">
+              <div className="flex flex-col border-b pb-3 text-left dark:border-gray-700">
+                <h3 className="truncate text-base font-semibold text-[#000035] dark:text-[#E8E8E8]">
                   {currentUser
-                    ? currentUser.first_name + " " + currentUser.last_name || "User"
+                    ? currentUser.first_name + " " + currentUser.last_name ||
+                      "User"
                     : "Loading..."}
                 </h3>
-                <p className="text-xs text-[#000035] dark:text-[#E8E8E8] opacity-80 mt-1">
+                <p className="mt-1 text-xs text-[#000035] opacity-80 dark:text-[#E8E8E8]">
                   {roleLabel}
                 </p>
               </div>
-              
+
               <div className="flex items-center justify-between gap-2 pt-1">
                 {notificationOrFeedbackItem}
                 <button
@@ -182,7 +183,11 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
                   onClick={toggleTheme}
                   title="Toggle Theme"
                 >
-                  {isDarkMode ? <Sun className="h-full w-full" /> : <Moon className="h-full w-full" />}
+                  {isDarkMode ? (
+                    <Sun className="h-full w-full" />
+                  ) : (
+                    <Moon className="h-full w-full" />
+                  )}
                 </button>
                 <button
                   className="h-7 w-7 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
@@ -200,13 +205,13 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
         <div className="flex h-min flex-1 items-center justify-end gap-3">
           {/* Always visible Time & Date (Including mobile) */}
           <div className="flex flex-col text-right">
-            <span className="font-['Bebas_Neue'] text-xl font-bold leading-none">
+            <span className="whitespace-nowrap font-['Bebas_Neue'] text-xl font-bold leading-none">
               {new Date().toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
             </span>
-            <p className="mt-[0.0625rem] text-xs font-medium leading-none">
+            <p className="whitespace-nowrap leading-none mt-[0.0625rem] text-xs font-medium">
               {new Date().toLocaleDateString(undefined, {
                 month: "short",
                 day: "2-digit",
@@ -215,9 +220,9 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
             </p>
           </div>
 
-          <div className="h-10 w-0.5 rounded-full bg-[#0b0b3b] max-[67.5rem]:hidden dark:bg-white"></div>
-          
-          <div className="flex items-center gap-3 max-[67.5rem]:hidden">
+          <div className="max-[67.5rem]:hidden h-10 w-0.5 rounded-full bg-[#0b0b3b] dark:bg-white"></div>
+
+          <div className="max-[67.5rem]:hidden flex items-center gap-3">
             {notificationOrFeedbackItem}
             <button
               className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
@@ -241,7 +246,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
 
           <button
             onClick={toggleSidebar}
-            className="hidden cursor-pointer max-[67.5rem]:block ml-2"
+            className="max-[67.5rem]:block ml-2 hidden cursor-pointer"
           >
             <Menu className="h-8 w-8" />
           </button>
