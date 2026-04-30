@@ -287,7 +287,7 @@ const ViewDetailsPopup = ({
             BACK
           </button>
           <div
-            className={`flex flex-col items-center justify-center ${isBookVariant ? "px-10 pb-10 pt-10" : "p-10"}`}
+            className={`flex flex-col items-center justify-center ${isBookVariant ? "px-10 pb-10 pt-10 max-[1024px]:pt-16 max-[1024px]:pb-4" : "p-10"}`}
           >
             <div className="flex items-center justify-center">
               {isBookVariant ? (
@@ -295,10 +295,10 @@ const ViewDetailsPopup = ({
                   <img
                     src={imageUrl}
                     alt={imageAlt || String(headingText || "Details")}
-                    className="h-[37.5rem] w-[29.375rem] max-w-full border border-[#cecece] object-cover"
+                    className="h-[37.5rem] w-[29.375rem] max-[1024px]:h-[22rem] max-[1024px]:w-[16rem] max-w-full border border-[#cecece] object-cover"
                   />
                 ) : (
-                  <div className="flex h-[37.5rem] w-[25rem] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#000035] to-[#192261]">
+                  <div className="flex h-[37.5rem] w-[25rem] max-[1024px]:h-[22rem] max-[1024px]:w-[16rem] max-w-full items-center justify-center border border-[#cecece] bg-gradient-to-br from-[#000035] to-[#192261]">
                     <Book size={48} className="text-[#F2F2F2]" />
                   </div>
                 )
@@ -339,7 +339,7 @@ const ViewDetailsPopup = ({
           <div
             className={`flex min-h-0 flex-1 flex-col justify-center ${
               isBookVariant
-                ? "px-12 py-12"
+                ? "px-12 py-12 max-[1024px]:px-8 max-[1024px]:py-4"
                 : isUserVariant
                   ? "px-8 py-6"
                   : "py-3 pl-4 pr-6"
@@ -349,7 +349,7 @@ const ViewDetailsPopup = ({
             <div className="shrink-0">
               <div className="flex flex-col items-start">
                 <h3
-                  className={`truncate font-bold uppercase leading-[1.1] tracking-[0.0313rem] text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-4xl font-bold sm:text-5xl lg:text-[3.5rem]" : "text-4xl font-bold sm:text-5xl lg:text-[3.5rem]"}`}
+                  className={`truncate font-bold uppercase leading-[1.1] tracking-[0.0313rem] text-[#000035] dark:text-[#D7D7D7] ${isBookVariant ? "text-4xl font-bold sm:text-5xl lg:text-[3.5rem] max-[1024px]:text-3xl" : "text-4xl font-bold sm:text-5xl lg:text-[3.5rem] max-[1024px]:text-3xl"}`}
                   style={{
                     fontFamily: isBookVariant
                       ? "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif"
