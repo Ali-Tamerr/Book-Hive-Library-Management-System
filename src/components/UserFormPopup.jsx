@@ -23,10 +23,19 @@ function UserFormPopup({
 
   const onFormChange = (e) => {
     const { name, value } = e.target;
-    if (name === "role" && value === "Admin") {
+    if (name === "role") {
+      const isStaff = value === "Admin" || value === "Librarian";
       const newId =
-        !editMode && nextUserId ? nextUserId.toString() : formData.user_id;
-      setFormData({ ...formData, [name]: value, plan: null, user_id: newId });
+        !editMode && nextUserId && value === "Admin"
+          ? nextUserId.toString()
+          : formData.user_id;
+
+      setFormData({
+        ...formData,
+        [name]: value,
+        plan: isStaff ? null : formData.plan,
+        user_id: newId,
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -89,6 +98,7 @@ function UserFormPopup({
     options: [
       { value: "User", label: "Role: User" },
       { value: "Admin", label: "Role: Admin" },
+      { value: "Librarian", label: "Role: Librarian" },
     ],
   };
 
@@ -132,43 +142,33 @@ function UserFormPopup({
     ),
   };
 
+  const isRoleUser = formData.role === "User";
   const isRoleAdmin = formData.role === "Admin";
 
   const editInputs = [
-    baseInputs.find((input) => input.name === "first_name"),
-    baseInputs.find((input) => input.name === "last_name"),
-    baseInputs.find((input) => input.name === "email"),
-    baseInputs.find((input) => input.name === "password"),
-    planInput,
+    ...baseInputs,
+    isRoleUser ? planInput : null,
+    roleInput,
     branchInput,
   ].filter(Boolean);
 
   const addInputs = isSuperAdmin
     ? isRoleAdmin
       ? [
-          baseInputs.find((input) => input.name === "first_name"),
-          baseInputs.find((input) => input.name === "last_name"),
-          baseInputs.find((input) => input.name === "email"),
-          baseInputs.find((input) => input.name === "password"),
+          ...baseInputs,
           roleInput,
           branchInput,
         ].filter(Boolean)
       : [
-          baseInputs.find((input) => input.name === "first_name"),
-          baseInputs.find((input) => input.name === "last_name"),
-          baseInputs.find((input) => input.name === "email"),
-          baseInputs.find((input) => input.name === "password"),
-          planInput,
+          ...baseInputs,
+          isRoleUser ? planInput : null,
           roleInput,
           branchInput,
           userIdInput,
         ].filter(Boolean)
     : [
-        baseInputs.find((input) => input.name === "first_name"),
-        baseInputs.find((input) => input.name === "last_name"),
-        baseInputs.find((input) => input.name === "email"),
-        baseInputs.find((input) => input.name === "password"),
-        planInput,
+        ...baseInputs,
+        isRoleUser ? planInput : null,
         userIdInput,
       ].filter(Boolean);
 
@@ -177,25 +177,26 @@ function UserFormPopup({
   const editCustomLayout = [
     { type: "flex", inputs: ["first_name", "last_name"] },
     { type: "flex", inputs: ["email", "password"] },
-    { type: "flex", inputs: ["plan", "branch_id"] },
+    { type: "flex", inputs: isRoleUser ? ["plan", "role"] : ["role"] },
+    { type: "flex", inputs: ["branch_id"] },
   ];
 
   const addCustomLayout = isSuperAdmin
     ? [
         { type: "flex", inputs: ["first_name", "last_name"] },
         { type: "flex", inputs: ["email", "password"] },
-        isRoleAdmin
-          ? { type: "flex", inputs: ["role", "branch_id"] }
-          : { type: "flex", inputs: ["plan", "role"] },
-        ...(isRoleAdmin ? [] : [{ type: "flex", inputs: ["branch_id"] }]),
-        ...(isRoleAdmin ? [] : [{ type: "flex", inputs: ["user_id"] }]),
+        isRoleUser
+          ? { type: "flex", inputs: ["plan", "role"] }
+          : { type: "flex", inputs: ["role"] },
+        { type: "flex", inputs: ["branch_id"] },
+        { type: "flex", inputs: ["user_id"] },
       ]
     : [
         { type: "flex", inputs: ["first_name", "last_name"] },
         { type: "flex", inputs: ["email", "password"] },
-        { type: "flex", inputs: ["plan"] },
+        isRoleUser ? { type: "flex", inputs: ["plan"] } : null,
         { type: "flex", inputs: ["user_id"] },
-      ];
+      ].filter(Boolean);
 
   const customLayout = editMode ? editCustomLayout : addCustomLayout;
 
