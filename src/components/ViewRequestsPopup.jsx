@@ -427,7 +427,7 @@ const ViewRequestsPopup = ({
       panelClassName="h-[90vh] lg:max-h-[53.125rem]"
     >
       <div className="flex h-full flex-col gap-4">
-        <div className="flex gap-2">
+        <div className="flex gap-2 max-[40.625rem]:grid max-[40.625rem]:grid-cols-1 max-[40.625rem]:gap-2">
           <TabButton
             label="User Requests"
             isActive={activeTab === "users"}

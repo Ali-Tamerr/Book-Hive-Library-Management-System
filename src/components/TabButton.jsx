@@ -14,9 +14,9 @@ const TabButton = ({
 
   // Prevent text from shifting by always keeping a 0.0625rem border
   const baseBorder = `border`;
-  const firstBorder = `${baseBorder} rounded-l-xl `;
-  const middleBorder = ` ${baseBorder}`;
-  const lastBorder = ` ${baseBorder} rounded-r-xl`;
+  const firstBorder = `${baseBorder} rounded-xl min-[40.625rem]:rounded-r-none `;
+  const middleBorder = ` ${baseBorder} rounded-xl min-[40.625rem]:rounded-none`;
+  const lastBorder = ` ${baseBorder} rounded-xl min-[40.625rem]:rounded-l-none`;
 
   const borderClasses =
     position === "first"
@@ -28,7 +28,7 @@ const TabButton = ({
   return (
     <button
       onClick={onClick}
-      className={`min-[62.5rem]:h-10 w-full min-w-30 max-w-50 font-['Bebas_Neue',sans-serif]! h-12 cursor-pointer whitespace-nowrap text-lg min-[87.5rem]:text-xl font-semibold uppercase tracking-widest ${borderClasses} ${isActive ? activeClasses : inactiveClasses} ${className}`}
+      className={`min-[62.5rem]:h-10 w-full min-w-30 min-[40.625rem]:max-w-50 font-['Bebas_Neue',sans-serif]! h-12 cursor-pointer whitespace-nowrap text-lg min-[87.5rem]:text-xl font-semibold uppercase tracking-widest ${borderClasses} ${isActive ? activeClasses : inactiveClasses} ${className}`}
     >
       {label}
     </button>
