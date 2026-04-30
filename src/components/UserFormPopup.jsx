@@ -24,7 +24,7 @@ function UserFormPopup({
   const onFormChange = (e) => {
     const { name, value } = e.target;
     if (name === "role") {
-      const isStaff = value === "Admin" || value === "Librarian";
+      const isStaff = value === "Admin";
       const newId =
         !editMode && nextUserId && value === "Admin"
           ? nextUserId.toString()
@@ -97,8 +97,7 @@ function UserFormPopup({
     autocomplete: "off",
     options: [
       { value: "User", label: "Role: User" },
-      { value: "Admin", label: "Role: Admin" },
-      { value: "Librarian", label: "Role: Librarian" },
+      { value: "Admin", label: "Role: Librarian" },
     ],
   };
 

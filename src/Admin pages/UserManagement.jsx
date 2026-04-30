@@ -604,17 +604,17 @@ function UserManagement({ searchValue, setSearchValue }) {
         </button>
         <button
           onClick={() => {
-            const isLibrarian = user.role?.toLowerCase().includes("librarian");
+            const isLibrarian = user.role?.toLowerCase().includes("admin");
             if (isLibrarian) return;
             handleRenew(user);
           }}
           className={`ml-2 text-lg transition-transform ${
-            user.role?.toLowerCase().includes("librarian")
+            user.role?.toLowerCase().includes("admin")
               ? "cursor-not-allowed text-gray-400 opacity-50 dark:text-gray-600"
               : "cursor-pointer text-[#000035] hover:scale-125 dark:text-white"
           }`}
           title={
-            user.role?.toLowerCase().includes("librarian")
+            user.role?.toLowerCase().includes("admin")
               ? "cannot add plans to an librarian"
               : "Renew"
           }
