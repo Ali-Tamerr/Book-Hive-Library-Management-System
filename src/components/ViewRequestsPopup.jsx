@@ -471,7 +471,7 @@ const ViewRequestsPopup = ({
               placeholder={getSearchPlaceholder()}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="h-[3.125rem] w-[70%] rounded-xl border border-[#000035] py-3 pl-12 pr-4 text-[0.8125rem] placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:placeholder-[#D7D7D7]"
+              className="h-[3.125rem] w-full lg:w-[70%] rounded-xl border border-[#000035] py-3 pl-12 pr-4 text-[0.8125rem] placeholder-[#000035] outline-none dark:border-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
         </div>
