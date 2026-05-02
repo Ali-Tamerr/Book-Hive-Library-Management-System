@@ -3,7 +3,7 @@ import React from "react";
 const Footer = ({ logoIcon, setActivePopup }) => {
   return (
     <footer
-      className="footer px-5 pb-[2.5rem] pt-[4.5rem] font-[family-name:var(--second-font)] text-[var(--text-color)] max-[42.5rem]:px-4 max-[42.5rem]:pt-[3.125rem] max-[1080px]-pb-10 dark:!bg-[#101114]"
+      className="footer px-5 pb-[2.5rem] pt-[4.5rem] font-[family-name:var(--second-font)] text-[var(--text-color)] max-[42.5rem]:px-4 max-[42.5rem]:pt-[3.125rem] max-[64rem]:pb-32 dark:!bg-[#101114]"
       data-reveal
     >
       <div className="footer-container mx-auto grid max-w-[100rem] grid-cols-[1.5fr_1fr_1fr_1fr] items-start gap-12 max-[59.375rem]:grid-cols-2 max-[59.375rem]:text-center max-[37.5rem]:grid-cols-1">
