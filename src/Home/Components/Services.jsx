@@ -5,10 +5,9 @@ const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
   return (
     <section className="services pb-28" data-reveal>
       <div
-        className="services__container grid grid-cols-2 min-[40rem]:grid-cols-3 max-w-[105.5rem] px-5"
+        className="services__container grid grid-cols-2 min-[40rem]:grid-cols-3 gap-y-10 min-[40rem]:gap-y-[4.2rem] max-w-[105.5rem] px-5"
         style={{
           columnGap: 0,
-          rowGap: "4.2rem",
           margin: "0 auto",
         }}
       >
