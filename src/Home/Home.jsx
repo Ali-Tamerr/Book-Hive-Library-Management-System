@@ -321,7 +321,7 @@ const Home = () => {
     return () => clearInterval(heroIntervalRef.current);
   }, [heroBooks]);
 
-  const featuredPerView = windowWidth >= 1150 ? 4 : windowWidth >= 850 ? 3 : windowWidth >= 600 ? 2 : 1;
+  const featuredPerView = windowWidth >= 1150 ? 4 : windowWidth >= 768 ? 3 : windowWidth > 320 ? 2 : 1;
   const testimonialPerView = windowWidth >= 1150 ? 3 : windowWidth >= 768 ? 2 : 1;
 
   const isEverythingLoaded = pageLoaded;
