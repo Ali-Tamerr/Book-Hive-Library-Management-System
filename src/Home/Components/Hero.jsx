@@ -90,14 +90,14 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
             One Library, <br />
             Infinite Stories
           </h1>
-          <p className="min-[71.875rem]:mb-22 mb-8 font-[family-name:var(--second-font)] text-[1.125rem] font-medium leading-[1.5] text-[var(--title-color)] max-[32.5rem]:text-[1rem] dark:!text-[#b9bbc1] min-[71.875rem]:text-[1.5625rem]">
+          <p className="min-[71.875rem]:mb-22 mb-4 font-[family-name:var(--second-font)] text-[1.125rem] font-medium leading-[1.5] text-[var(--title-color)] max-[32.5rem]:text-[1rem] dark:!text-[#b9bbc1] min-[71.875rem]:text-[1.5625rem]">
             With Bookhive, every book has a place and every reader has a path:
             search, borrow, and renew in a few clicks, while librarians track
             everything effortlessly.
           </p>
           <HomeButton
             href="#featured"
-            className="px-9 py-5 max-[71.875rem]:mt-10 max-[42.5rem]:px-7 max-[42.5rem]:py-3.5"
+            className="px-9 py-5 max-[71.875rem]:mt-0 max-[42.5rem]:px-7 max-[42.5rem]:py-3.5"
             onClick={(e) => scrollToSection(e, "featured")}
           >
             Explore Now
@@ -136,7 +136,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
                     <LazyImage
                       src={book.image}
                       alt={book.name}
-                      className="h-[29.375rem] w-full rounded-lg object-cover max-[42.5rem]:h-[22.5rem] max-[32.5rem]:h-[18.75rem]"
+                      className="h-[29.375rem] w-full rounded-lg object-cover max-[42.5rem]:h-[26.5rem] max-[32.5rem]:h-[23.5rem]"
                       priority
                     />
                   </article>
