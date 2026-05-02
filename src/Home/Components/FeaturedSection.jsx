@@ -99,11 +99,11 @@ const FeaturedSection = ({
                   className="mx-auto mb-6 h-[23.75rem] !w-full !max-w-none rounded-[0.875rem] object-cover max-[42.5rem]:h-[16.875rem]"
                   priority
                 />
-                <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[1.625rem] font-bold leading-tight text-[#000035] max-[42.5rem]:text-[1.25rem] dark:!text-[#D7D7D7]">
+                <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[1.625rem] font-bold leading-tight text-[#000035] max-[42.5rem]:text-[1.1rem] dark:!text-[#D7D7D7]">
                   {book.name}
                 </h2>
                 <HomeButton
-                  className="px-[2.5rem] py-[1.125rem] max-[42.5rem]:px-[1.5rem] max-[42.5rem]:py-[0.75rem]"
+                  className="px-[2.5rem] py-[1.125rem] max-[42.5rem]:px-[1.25rem] max-[42.5rem]:py-[0.6rem] max-[42.5rem]:text-[1rem]"
                   onClick={() => onExplore()}
                 >
                   Explore Now
