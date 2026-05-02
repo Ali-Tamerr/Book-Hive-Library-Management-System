@@ -5,12 +5,10 @@ const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
   return (
     <section className="services pb-28" data-reveal>
       <div
-        className="services__container grid max-w-[105.5rem] px-5"
+        className="services__container grid grid-cols-2 min-[40rem]:grid-cols-3 max-w-[105.5rem] px-5"
         style={{
-          gridTemplateColumns: "repeat(3, 1fr)",
           columnGap: 0,
           rowGap: "4.2rem",
-          justifyContent: "stretch",
           margin: "0 auto",
         }}
       >
@@ -27,13 +25,15 @@ const Services = ({ freeShippingIcon, secureInfoIcon, chatbotIcon }) => {
           description="100% Secure Information"
           delay="0.4s"
         />
-        <ServiceCard
-          iconSrc={chatbotIcon}
-          iconAlt="Chatbot"
-          title="ChatBot"
-          description="Talk with us anytime"
-          delay="0.6s"
-        />
+        <div className="col-span-2 min-[40rem]:col-span-1">
+          <ServiceCard
+            iconSrc={chatbotIcon}
+            iconAlt="Chatbot"
+            title="ChatBot"
+            description="Talk with us anytime"
+            delay="0.6s"
+          />
+        </div>
       </div>
     </section>
   );
