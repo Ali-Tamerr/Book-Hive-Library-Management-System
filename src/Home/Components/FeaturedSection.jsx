@@ -87,8 +87,8 @@ const FeaturedSection = ({
                 key={`${book.book_id}-${index}`}
                 className="duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[#000035] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[#D7D7D7]"
                 style={{
-                  width: `calc(${100 / safePerView}% - 2.5rem)`,
-                  margin: "0 1.25rem", // mx-[1.25rem] equals 2.5rem total margin per card
+                  width: `calc(${100 / safePerView}% - ${safePerView > 2 ? "2.5rem" : "1.5rem"})`,
+                  margin: `0 ${safePerView > 2 ? "1.25rem" : "0.75rem"}`, // Reduce margin on mobile to fit 2 cards better
                   height: "unset", // Keep natural or responsive sizing
                   minHeight: window.innerWidth < 680 ? "28.75rem" : "36.25rem", // ensure steady height
                 }}
