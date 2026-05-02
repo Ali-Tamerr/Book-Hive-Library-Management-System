@@ -8,7 +8,7 @@
   --header-height: 4.5rem;
   --first-color: #000035;
   --title-color: #000035;
-  --text-color: hsl(230, 16%, 45%);
+  --text-color: #000035;
   --border-color: hsl(230, 50%, 90%);
   --white-color: hsl(0, 0%, 100%);
   --body-color: #e8e8e8;
@@ -280,15 +280,25 @@ body {
   padding: 0;
   min-height: 100vh;
   background: #f4f6fb;
+  color: var(--text-color);
   width: 100%;
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--title-color);
+}
+
 body.dark-theme {
-  --title-color: #d7d7d7;
-  --text-color: #b9bbc1;
+  --title-color: #D7D7D7;
+  --text-color: #D7D7D7;
   --border-color: #2a2c31;
   --white-color: #ffffff;
   --body-color: #111214;

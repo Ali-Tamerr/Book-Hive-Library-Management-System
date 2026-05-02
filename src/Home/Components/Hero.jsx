@@ -86,11 +86,11 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
     <section className="home py-16 pb-4 max-[42.5rem]:py-12" id="home" data-reveal>
       <div className="home__container min-[71.875rem]:pt-35 mx-auto grid w-full max-w-[105.5rem] gap-x-9 gap-y-10 px-6 pt-16 max-[42.5rem]:px-4 max-[71.875rem]:grid-cols-1 max-[71.875rem]:text-center min-[71.875rem]:grid-cols-[38.25rem_65.25rem] min-[71.875rem]:items-center min-[71.875rem]:pb-7">
         <div className="text-center min-[71.875rem]:text-left">
-          <h1 className="mb-4 font-[family-name:var(--body-font)] text-[2.7rem] font-extrabold leading-[1.1] text-[var(--title-color)] max-[32.5rem]:text-[2.15rem] min-[71.875rem]:text-[5.0625rem] dark:!text-[#c7c9cf]">
+          <h1 className="mb-4 font-[family-name:var(--body-font)] text-[2.7rem] font-extrabold leading-[1.1] text-[var(--title-color)] max-[32.5rem]:text-[2.15rem] min-[71.875rem]:text-[5.0625rem] dark:!text-[var(--title-color)]">
             One Library, <br />
             Infinite Stories
           </h1>
-          <p className="min-[71.875rem]:mb-22 mb-4 font-[family-name:var(--second-font)] text-[1.125rem] font-medium leading-[1.5] text-[var(--title-color)] max-[32.5rem]:text-[1rem] dark:!text-[#b9bbc1] min-[71.875rem]:text-[1.5625rem]">
+          <p className="min-[71.875rem]:mb-22 mb-4 font-[family-name:var(--second-font)] text-[1.125rem] font-medium leading-[1.5] text-[var(--text-color)] max-[32.5rem]:text-[1rem] dark:!text-[var(--text-color)] min-[71.875rem]:text-[1.5625rem]">
             With Bookhive, every book has a place and every reader has a path:
             search, borrow, and renew in a few clicks, while librarians track
             everything effortlessly.

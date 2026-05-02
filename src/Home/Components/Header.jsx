@@ -26,7 +26,7 @@ const Header = ({
             className="inline-flex items-center gap-x-2 font-medium text-[var(--first-color)]"
           >
             <div
-              className="h-[2.625rem] w-[3rem] bg-[#000035] dark:bg-[#D7D7D7]"
+              className="h-[2.625rem] w-[3rem] bg-[var(--title-color)] dark:bg-[var(--title-color)]"
               style={{
                 mask: `url(${logoIcon}) no-repeat center`,
                 WebkitMask: `url(${logoIcon}) no-repeat center`,
@@ -83,17 +83,17 @@ const Header = ({
 
           <div className="nav__actions flex items-center gap-x-3">
             <i
-              className="ri-search-line duration-400 cursor-pointer text-[1.375rem] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]"
+              className="ri-search-line duration-400 cursor-pointer text-[1.375rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]"
               onClick={() => setIsSearchOpen(true)}
             ></i>
             <i
-              className="ri-user-line login-button duration-400 cursor-pointer text-[1.375rem] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]"
+              className="ri-user-line login-button duration-400 cursor-pointer text-[1.375rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]"
               id="login-button"
               onClick={() => setIsLoginOpen(true)}
               style={{ cursor: "pointer" }}
             ></i>
             <i
-              className={`${themeIcon} change-theme duration-400 cursor-pointer text-[1.375rem] font-bold text-[#000035] transition-colors dark:text-[#D7D7D7] dark:hover:!text-[#c7c9cf]`}
+              className={`${themeIcon} change-theme duration-400 cursor-pointer text-[1.375rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]`}
               onClick={toggleTheme}
               style={{ cursor: "pointer" }}
             ></i>

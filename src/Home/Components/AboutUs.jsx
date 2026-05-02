@@ -19,7 +19,7 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
         </h2>
         <div className="about-grid grid grid-cols-[1fr_minmax(32.5rem,43.75rem)] items-center gap-12 max-[71.875rem]:grid-cols-1 max-[71.875rem]:text-center">
           <div className="about-left mx-auto max-w-[75rem]">
-            <p className="about-text mb-12 text-center font-[family-name:var(--second-font)] text-[1.5rem] font-bold leading-[1.55] text-[#000035] dark:!text-[var(--muted)] max-[42.5rem]:mb-8 max-[42.5rem]:text-[1.125rem] max-[32.5rem]:text-[1rem]">
+            <p className="about-text mb-12 text-center font-[family-name:var(--second-font)] text-[1.5rem] font-bold leading-[1.55] text-[var(--text-color)] dark:!text-[var(--text-color)] max-[42.5rem]:mb-8 max-[42.5rem]:text-[1.125rem] max-[32.5rem]:text-[1rem]">
               We are a smart, technology-driven library system that uses RFID to
               make book management faster and easier. Our platform helps
               students and staff search, borrow, and track books efficiently
@@ -31,26 +31,26 @@ const AboutUs = ({ stats, setActivePopup, aboutBooks }) => {
               aria-label="Quick facts"
             >
               <div className="stat min-w-[10rem] text-center max-[42.5rem]:min-w-[6.25rem]" role="listitem">
-                <div className="num mb-2 font-[family-name:var(--body-font)] text-[2.375rem] font-bold text-[var(--accent)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.875rem]">
+                <div className="num mb-2 font-[family-name:var(--body-font)] text-[2.375rem] font-bold text-[var(--title-color)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.875rem]">
                   {stats.branches}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[1.1875rem] font-bold text-[#000035] dark:!text-[#9ea1a8] max-[42.5rem]:text-[1rem]">
+                <div className="label font-[family-name:var(--second-font)] text-[1.1875rem] font-bold text-[var(--text-color)] dark:!text-[var(--text-color)] max-[42.5rem]:text-[1rem]">
                   Branches
                 </div>
               </div>
               <div className="stat min-w-[10rem] text-center max-[42.5rem]:min-w-[6.25rem]" role="listitem">
-                <div className="num mb-2 font-[family-name:var(--body-font)] text-[2.375rem] font-bold text-[var(--accent)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.875rem]">
+                <div className="num mb-2 font-[family-name:var(--body-font)] text-[2.375rem] font-bold text-[var(--title-color)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.875rem]">
                   {stats.books}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[1.1875rem] font-bold text-[#000035] dark:!text-[#9ea1a8] max-[42.5rem]:text-[1rem]">
+                <div className="label font-[family-name:var(--second-font)] text-[1.1875rem] font-bold text-[var(--text-color)] dark:!text-[var(--text-color)] max-[42.5rem]:text-[1rem]">
                   Books
                 </div>
               </div>
               <div className="stat min-w-[10rem] text-center max-[42.5rem]:min-w-[6.25rem]" role="listitem">
-                <div className="num mb-2 font-[family-name:var(--body-font)] text-[2.375rem] font-bold text-[var(--accent)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.875rem]">
+                <div className="num mb-2 font-[family-name:var(--body-font)] text-[2.375rem] font-bold text-[var(--title-color)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.875rem]">
                   {stats.categories}+
                 </div>
-                <div className="label font-[family-name:var(--second-font)] text-[1.1875rem] font-bold text-[#000035] dark:!text-[#9ea1a8] max-[42.5rem]:text-[1rem]">
+                <div className="label font-[family-name:var(--second-font)] text-[1.1875rem] font-bold text-[var(--text-color)] dark:!text-[var(--text-color)] max-[42.5rem]:text-[1rem]">
                   Category
                 </div>
               </div>

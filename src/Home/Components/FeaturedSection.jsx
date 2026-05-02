@@ -62,7 +62,7 @@ const FeaturedSection = ({
 
   return (
     <section className="featured overflow-hidden py-16 pb-4 max-[42.5rem]:py-10" id="featured">
-      <h2 className="mb-16 text-center font-[family-name:var(--body-font)] text-[4.5rem] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)] max-[42.5rem]:mb-8 max-[42.5rem]:text-[2.75rem] max-[32.5rem]:text-[2.25rem]">
+      <h2 className="mb-16 text-center font-[family-name:var(--body-font)] text-[4.5rem] font-extrabold tracking-wide text-[var(--title-color)] dark:!text-[var(--title-color)] max-[42.5rem]:mb-8 max-[42.5rem]:text-[2.75rem] max-[32.5rem]:text-[2.25rem]">
         FEATURED BOOKS
       </h2>
 
@@ -85,7 +85,7 @@ const FeaturedSection = ({
             {displayBooks.map((book, index) => (
               <article
                 key={`${book.book_id}-${index}`}
-                className="duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[#000035] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[#D7D7D7]"
+                className="duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[var(--title-color)] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[var(--title-color)]"
                 style={{
                   width: `calc(${100 / safePerView}% - ${safePerView > 2 ? "2.5rem" : "1.5rem"})`,
                   margin: `0 ${safePerView > 2 ? "1.25rem" : "0.75rem"}`, // Reduce margin on mobile to fit 2 cards better
@@ -99,7 +99,7 @@ const FeaturedSection = ({
                   className="mx-auto mb-6 h-[23.75rem] !w-full !max-w-none rounded-[0.875rem] object-cover max-[42.5rem]:h-[16.875rem]"
                   priority
                 />
-                <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[1.625rem] font-bold leading-tight text-[#000035] max-[42.5rem]:text-[1.1rem] dark:!text-[#D7D7D7]">
+                <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[1.625rem] font-bold leading-tight text-[var(--title-color)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.1rem]">
                   {book.name}
                 </h2>
                 <HomeButton

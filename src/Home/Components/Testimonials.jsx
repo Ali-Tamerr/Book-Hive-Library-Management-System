@@ -78,7 +78,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
 
   return (
     <section className="py-8 pb-0 max-[42.5rem]:py-6" id="testimonial">
-      <h2 className="mb-7 text-center font-[family-name:var(--body-font)] text-[2.875rem] font-extrabold tracking-wide text-[var(--accent)] dark:!text-[var(--title-color)] max-[42.5rem]:mb-5 max-[42.5rem]:text-[2.375rem] max-[32.5rem]:text-[2rem]">
+      <h2 className="mb-7 text-center font-[family-name:var(--body-font)] text-[2.875rem] font-extrabold tracking-wide text-[var(--title-color)] dark:!text-[var(--title-color)] max-[42.5rem]:mb-5 max-[42.5rem]:text-[2.375rem] max-[32.5rem]:text-[2rem]">
         CUSTOMER OPINIONS
       </h2>
       <div className="mx-auto w-full max-w-[100rem] px-6 max-[42.5rem]:px-4" data-reveal>
@@ -105,7 +105,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                     </div>
                     <div className="mx-auto mb-3 h-5 w-28 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
                     <div className="mx-auto mb-4 h-12 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
-                    <div className="text-[1.5rem] text-[#000035] dark:text-[#d3d6de]">
+                    <div className="text-[1.5rem] text-[var(--text-color)] dark:text-[var(--text-color)]">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <i key={i} className="ri-star-line"></i>
                       ))}
@@ -121,7 +121,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                   return (
                     <article
                       key={`${fb.request_id ?? fb.feedback_id ?? fb.user_id}-${idx}`}
-                      className="duration-400 shrink-0 rounded-[1.25rem] border border-[#000035] px-6 py-5 pb-6 text-center transition-colors max-[42.5rem]:px-4 max-[42.5rem]:py-4 dark:border-[#D7D7D7]"
+                      className="duration-400 shrink-0 rounded-[1.25rem] border border-[var(--title-color)] px-6 py-5 pb-6 text-center transition-colors max-[42.5rem]:px-4 max-[42.5rem]:py-4 dark:border-[var(--title-color)]"
                       style={{
                         width: `calc(${100 / safePerView}% - 1.75rem)`,
                         margin: "0 0.875rem",
@@ -134,17 +134,17 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                           className="mx-auto mb-4 !h-[4rem] !w-[4rem] overflow-hidden rounded-full object-cover max-[42.5rem]:!h-[3.5rem] max-[42.5rem]:!w-[3.5rem]"
                         />
                       ) : (
-                        <div className="mx-auto mb-4 flex h-[4rem] w-[4rem] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] max-[42.5rem]:h-[3.5rem] max-[42.5rem]:w-[3.5rem] dark:bg-[#171c29] dark:text-[#d3d6de]">
+                        <div className="mx-auto mb-4 flex h-[4rem] w-[4rem] items-center justify-center rounded-full bg-[#000035] text-[#D7D7D7] max-[42.5rem]:h-[3.5rem] max-[42.5rem]:w-[3.5rem] dark:bg-[#171c29] dark:text-[var(--text-color)]">
                           <i className="ri-user-line text-[2.375rem] max-[42.5rem]:text-[1.875rem]"></i>
                         </div>
                       )}
-                      <h2 className="mb-3 font-[family-name:var(--body-font)] text-[1.75rem] font-extrabold uppercase tracking-wide text-[#000035] max-[42.5rem]:text-[1.375rem] dark:!text-[#d3d6de]">
+                      <h2 className="mb-3 font-[family-name:var(--body-font)] text-[1.75rem] font-extrabold uppercase tracking-wide text-[var(--title-color)] max-[42.5rem]:text-[1.375rem] dark:!text-[var(--title-color)]">
                         {fb.user_name || fb.user_id || "Guest"}
                       </h2>
-                      <p className="mx-auto mb-4 max-w-[33.75rem] font-[family-name:var(--second-font)] text-[1.0625rem] font-bold leading-[1.45] text-[#000035] max-[42.5rem]:text-[0.9375rem] dark:!text-[#c3c7d1]">
+                      <p className="mx-auto mb-4 max-w-[33.75rem] font-[family-name:var(--second-font)] text-[1.0625rem] font-bold leading-[1.45] text-[var(--text-color)] max-[42.5rem]:text-[0.9375rem] dark:!text-[var(--text-color)]">
                         {fb.feedback || fb.description || "Great experience!"}
                       </p>
-                      <div className="text-[1.5rem] text-[#000035] max-[42.5rem]:text-[1.25rem] dark:text-[#d3d6de]">
+                      <div className="text-[1.5rem] text-[var(--text-color)] max-[42.5rem]:text-[1.25rem] dark:text-[var(--text-color)]">
                         {Array.from({ length: fullStars }, (_, i) => (
                           <i key={`full-${i}`} className="ri-star-fill"></i>
                         ))}
