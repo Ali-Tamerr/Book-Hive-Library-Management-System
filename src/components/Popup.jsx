@@ -26,7 +26,7 @@ const Popup = ({
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/10 backdrop-blur-sm ${heightClass || ""}`}
+      className={`fixed inset-0 z-9999 flex items-center justify-center bg-black/10 backdrop-blur-sm ${heightClass || ""}`}
     >
       {/* Overlay click to close */}
       <div className="absolute inset-0" onClick={onClose}></div>
@@ -52,7 +52,7 @@ const Popup = ({
             <div className="flex items-center gap-4">
               {icon && (
                 <div
-                  className={`flex min-h-[3.75rem] min-w-[3.75rem] items-center justify-center rounded-lg border border-[#000035] dark:border-[#D7D7D7] ${iconWrapperClassName || ""}`}
+                  className={`flex min-h-15 min-w-15 items-center justify-center rounded-lg border border-[#000035] dark:border-[#D7D7D7] ${iconWrapperClassName || ""}`}
                 >
                   {icon}
                 </div>
@@ -67,7 +67,7 @@ const Popup = ({
         )}
         {!hideDivider && (
           <div
-            className={`mx-auto h-[0.0625rem] w-[100%] bg-[#000035] dark:bg-[#D7D7D7] ${dividerClassName || ""}`}
+            className={`mx-auto h-0.25 w-full bg-[#000035] dark:bg-[#D7D7D7] ${dividerClassName || ""}`}
           ></div>
         )}
         <div

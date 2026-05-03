@@ -54,12 +54,12 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
               ""
             }
             placeholder="Name"
-            className="h-[3.125rem] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[0.8125rem] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
+            className="h-12.5 w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[0.8125rem] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
           />
           <select
             value={selectedPlan}
             onChange={(e) => setSelectedPlan(e.target.value)}
-            className="h-[3.125rem] w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[0.8125rem] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
+            className="h-12.5 w-full rounded-xl border border-[#D7D7D7] bg-transparent px-4 py-3 text-[0.8125rem] text-[#000035] outline-none dark:border-[#D7D7D7] dark:text-gray-300"
           >
             {plans.map((p) => (
               <option
@@ -74,7 +74,7 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
         </div>
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="max-w-[26.25rem] text-lg leading-relaxed text-[#000035] dark:text-gray-300">
+          <p className="max-w-105 text-lg leading-relaxed text-[#000035] dark:text-gray-300">
             Are you certain you wish to proceed with the renew of the selected
             entry?
           </p>

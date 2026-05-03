@@ -127,7 +127,7 @@ const RateBookPopup = ({
         <div className="flex w-full items-center justify-center">
           <FormInput
             type="textarea"
-            className="h-[11.25rem] w-full resize-none text-[#000035] placeholder:text-[#000035] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7] border-[#000035] dark:border-[#D7D7D7] text-[1.125rem] "
+            className="h-45 w-full resize-none text-[#000035] placeholder:text-[#000035] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7] border-[#000035] dark:border-[#D7D7D7] text-[1.125rem] "
             placeholder={isReply ? "Write your reply..." : "Share your opinion"}
             value={reviewText}
             onChange={(e) => setReviewText(e.target.value)}
@@ -169,7 +169,7 @@ const RateBookPopup = ({
                       <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
                         <Star
                           size={38}
-                          className="min-w-[2.375rem] fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                          className="min-w-9.5 fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                           strokeWidth={1.5}
                           style={{
                             width: "2.375rem",
