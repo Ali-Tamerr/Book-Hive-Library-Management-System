@@ -1,24 +1,50 @@
 import React, { useState, useMemo } from "react";
-import { useBookCovers } from "../hooks/useBooks";
+import { useDashboardBooks } from "../hooks/useBooks";
+import { useCategories } from "../hooks/useCategories";
 import LazyImage from "./LazyImage";
 import BookCard from "./BookCard";
 import { getImageUrl } from "../services/api.config";
 
 const SearchOverlay = ({ isOpen, onClose, onBookClick, setIsLoginOpen }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { data: booksSource } = useBookCovers({ enabled: isOpen });
+  const { data: booksSource } = useDashboardBooks({ enabled: isOpen });
+  const { data: categoriesData } = useCategories({ enabled: isOpen });
 
   const books = useMemo(() => {
-    return Array.isArray(booksSource) ? booksSource : booksSource?.data || [];
+    if (Array.isArray(booksSource)) return booksSource;
+    return booksSource?.data || [];
   }, [booksSource]);
+
+  const categories = useMemo(() => {
+    if (Array.isArray(categoriesData)) return categoriesData;
+    return categoriesData?.data || [];
+  }, [categoriesData]);
 
   const filteredBooks = useMemo(() => {
     if (!searchTerm.trim()) return [];
     const lowerSearch = searchTerm.toLowerCase();
-    return books.filter((book) =>
-      book.name?.toLowerCase().includes(lowerSearch)
-    ).slice(0, 15); // Increased limit for better browse experience
-  }, [books, searchTerm]);
+
+    return books
+      .map((book) => {
+        let score = 0;
+        const nameMatch = book.name?.toLowerCase().includes(lowerSearch);
+        
+        // Find category name for this book
+        const category = categories.find(cat => String(cat.category_id) === String(book.category_id));
+        const categoryMatch = category?.category_name?.toLowerCase().includes(lowerSearch);
+        
+        const descriptionMatch = book.description?.toLowerCase().includes(lowerSearch);
+
+        if (nameMatch) score += 1000;
+        if (categoryMatch) score += 100;
+        if (descriptionMatch) score += 10;
+
+        return { ...book, searchScore: score };
+      })
+      .filter((book) => book.searchScore > 0)
+      .sort((a, b) => b.searchScore - a.searchScore || (a.name || "").localeCompare(b.name || ""))
+      .slice(0, 20);
+  }, [books, categories, searchTerm]);
 
   return (
     <div
