@@ -36,7 +36,7 @@ const Header = ({
             />
           </a>
 
-          <div className="max-[71.875rem]:fixed max-[71.875rem]:inset-x-0 max-[71.875rem]:bottom-0 max-[71.875rem]:w-full max-[71.875rem]:bg-[var(--container-color)] max-[71.875rem]:px-10 max-[71.875rem]:py-10 max-[42.5rem]:px-8 max-[42.5rem]:py-8 max-[71.875rem]:shadow-[0_-0.5rem_2rem_hsla(0,0%,0%,0.1)] min-[71.875rem]:mx-auto min-[71.875rem]:flex min-[71.875rem]:flex-1 min-[71.875rem]:justify-center dark:max-[71.875rem]:shadow-[0_-0.5rem_2rem_hsla(0,0%,0%,0.4)]">
+          <div className="max-[71.875rem]:fixed max-[71.875rem]:inset-x-0 max-[71.875rem]:bottom-0 max-[71.875rem]:w-full max-[71.875rem]:bg-[var(--body-color)] max-[71.875rem]:px-10 max-[71.875rem]:py-10 max-[42.5rem]:px-8 max-[42.5rem]:py-8 max-[71.875rem]:shadow-[0_-0.5rem_2rem_hsla(0,0%,0%,0.1)] min-[71.875rem]:mx-auto min-[71.875rem]:flex min-[71.875rem]:flex-1 min-[71.875rem]:justify-center dark:max-[71.875rem]:shadow-[0_-0.5rem_2rem_hsla(0,0%,0%,0.4)]">
             <ul className="flex w-full items-center justify-between min-[71.875rem]:justify-around min-[71.875rem]:px-12">
               <NavLink
                 href="#home"
