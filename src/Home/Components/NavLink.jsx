@@ -20,7 +20,7 @@ const NavLink = ({
         onClick={(e) => scrollToSection(e, sectionId)}
       >
         <i
-          className={`${iconClass} text-[1.25rem] text-inherit min-[71.875rem]:hidden max-[42.5rem]:text-[1.125rem]`}
+          className={`${iconClass} text-[1.5rem] text-inherit min-[71.875rem]:hidden max-[42.5rem]:text-[1.375rem]`}
         ></i>
         <span className="hidden min-[71.875rem]:block">{label}</span>
       </a>
