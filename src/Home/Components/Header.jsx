@@ -20,13 +20,13 @@ const Header = ({
         className={`duration-400 fixed left-0 right-0 top-0 z-[100] mx-auto w-full bg-[var(--body-color)] transition-all dark:border-b dark:border-[rgba(255,255,255,0.06)] ${showShadowHeader ? "shadow-[0_0.125rem_1rem_hsla(0,0%,0%,0.1)] dark:shadow-[0_0.125rem_1rem_hsla(0,0%,0%,0.4)]" : ""}`}
         id="header"
       >
-        <nav className="flex h-[5rem] items-center justify-between px-6 max-[42.5rem]:h-[4.5rem] max-[42.5rem]:px-4 xl:pr-14">
+        <nav className="flex h-[6rem] items-center justify-between px-10 max-[42.5rem]:h-[4.5rem] max-[42.5rem]:px-4 xl:pr-14">
           <a
             href="#"
             className="inline-flex items-center gap-x-2 font-medium text-[var(--first-color)]"
           >
             <div
-              className="h-[2.75rem] w-[3.25rem] bg-[var(--title-color)] dark:bg-[var(--title-color)]"
+              className="h-[4rem] w-[5rem] max-[42.5rem]:h-[2.5rem] max-[42.5rem]:w-[3rem] bg-[var(--title-color)] dark:bg-[var(--title-color)]"
               style={{
                 mask: `url(${logoIcon}) no-repeat center`,
                 WebkitMask: `url(${logoIcon}) no-repeat center`,
@@ -81,19 +81,19 @@ const Header = ({
             </ul>
           </div>
 
-          <div className="nav__actions flex items-center gap-x-4">
+          <div className="nav__actions flex items-center gap-x-6 max-[42.5rem]:gap-x-4">
             <i
-              className="ri-search-line duration-400 cursor-pointer text-[1.5rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]"
+              className="ri-search-line duration-400 cursor-pointer text-[1.875rem] max-[42.5rem]:text-[1.5rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]"
               onClick={() => setIsSearchOpen(true)}
             ></i>
             <i
-              className="ri-user-line login-button duration-400 cursor-pointer text-[1.5rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]"
+              className="ri-user-line login-button duration-400 cursor-pointer text-[1.875rem] max-[42.5rem]:text-[1.5rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]"
               id="login-button"
               onClick={() => setIsLoginOpen(true)}
               style={{ cursor: "pointer" }}
             ></i>
             <i
-              className={`${themeIcon} change-theme duration-400 cursor-pointer text-[1.5rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]`}
+              className={`${themeIcon} change-theme duration-400 cursor-pointer text-[1.875rem] max-[42.5rem]:text-[1.5rem] font-bold text-[var(--title-color)] transition-colors dark:text-[var(--title-color)] dark:hover:!text-[var(--title-color)]`}
               onClick={toggleTheme}
               style={{ cursor: "pointer" }}
             ></i>
