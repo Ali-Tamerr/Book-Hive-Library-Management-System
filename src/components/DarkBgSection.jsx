@@ -20,7 +20,7 @@ const DarkBgSection = ({
       : "rounded-tl-[5rem] rounded-bl-[5rem]";
 
   const bgColor = isDarkMode ? "bg-[#E8E8E8]" : "bg-[#000035]";
-  const textColor = isDarkMode ? "text-[#121317]" : "text-white";
+  const textColor = isDarkMode ? "!text-[#121317]" : "!text-white";
   const borderColor = isDarkMode ? "border-[#121317]" : "border-white";
   const hoverBg = isDarkMode
     ? "hover:bg-[#121317] hover:text-white"
@@ -58,7 +58,7 @@ const DarkBgSection = ({
         BookHive
         <br />
         <span
-          className={`-mt-6 block ${headingFontClass} text-[3.125rem] font-medium`}
+          className={`-mt-6 block ${headingFontClass} ${textColor} text-[3.125rem] font-medium`}
         >
           Library
         </span>
