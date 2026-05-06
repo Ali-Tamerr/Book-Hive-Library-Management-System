@@ -75,9 +75,9 @@ const Home = () => {
     let done = false;
 
     const showPage = (statsData) => {
+      if (statsData) setStats(statsData);
       if (done) return;
       done = true;
-      if (statsData) setStats(statsData);
       requestAnimationFrame(() => {
         setTimeout(() => setPageLoaded(true), 50);
       });
@@ -90,6 +90,20 @@ const Home = () => {
     }, 10000);
 
     const fetchStats = async () => {
+      // 1. Try to unblock UI instantly using cached stats
+      try {
+        const cachedRaw = localStorage.getItem("homeStatsCache");
+        if (cachedRaw) {
+          const cachedStats = JSON.parse(cachedRaw);
+          if (cachedStats && typeof cachedStats === "object") {
+            showPage(cachedStats);
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to read stats cache:", e);
+      }
+
+      // 2. Fetch fresh stats in background
       try {
         const maybeStats = await apiGet("/Stats").catch(() => null);
 
@@ -109,7 +123,10 @@ const Home = () => {
             : 0;
         }
 
-        showPage({ branches, categories, books: booksCount });
+        const freshStats = { branches, categories, books: booksCount };
+        localStorage.setItem("homeStatsCache", JSON.stringify(freshStats));
+
+        showPage(freshStats);
       } catch (error) {
         console.error("Failed to fetch stats:", error);
         showPage(null);
