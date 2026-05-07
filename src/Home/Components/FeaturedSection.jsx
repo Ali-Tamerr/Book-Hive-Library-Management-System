@@ -7,8 +7,13 @@ const FeaturedSection = ({
   featuredPerView = 1,
   onExplore,
 }) => {
-  const [localIndex, setLocalIndex] = useState(0);
+  const [localIndex, setLocalIndex] = useState(-1); // Start at -1, initialize in effect
   const [transitionEnabled, setTransitionEnabled] = useState(true);
+  const [isSwiping, setIsSwiping] = useState(false);
+
+  const touchStartX = React.useRef(0);
+  const touchEndX = React.useRef(0);
+  const swipeTimer = React.useRef(null);
 
   // Skeleton data for loading state
   const skeletons = Array.from({ length: 5 }).map((_, i) => ({
@@ -19,6 +24,13 @@ const FeaturedSection = ({
 
   const originalLength =
     featuredBooks.length > 0 ? featuredBooks.length : skeletons.length;
+
+  // Initialize localIndex to start at the second block (for backward swiping)
+  useEffect(() => {
+    if (localIndex === -1 && originalLength > 0) {
+      setLocalIndex(originalLength);
+    }
+  }, [originalLength, localIndex]);
 
   const displayBooks = useMemo(() => {
     const list = featuredBooks.length > 0 ? featuredBooks : skeletons;
@@ -31,32 +43,69 @@ const FeaturedSection = ({
 
   // Auto-scroll logic
   useEffect(() => {
-    if (!isCarousel) return;
+    if (!isCarousel || isSwiping || localIndex === -1) return;
     const interval = setInterval(() => {
       setLocalIndex((prev) => prev + 1);
     }, 3500); // 3.5 seconds per slide
     return () => clearInterval(interval);
-  }, [isCarousel]);
+  }, [isCarousel, isSwiping, localIndex]);
 
   // Infinite loop snap-back logic
   useEffect(() => {
-    if (originalLength === 0) return;
+    if (originalLength === 0 || localIndex === -1) return;
 
-    // When we've scrolled a full original set, snap back silently
-    if (localIndex > 0 && localIndex % originalLength === 0) {
+    if (localIndex >= originalLength * 2) {
       const timer = setTimeout(() => {
         setTransitionEnabled(false);
-        setLocalIndex(0); // Snap back to the real 0
-
-        // Re-enable transition after snap
+        setLocalIndex(originalLength); // Snap back to middle block
         setTimeout(() => setTransitionEnabled(true), 50);
-      }, 700); // Wait for the CSS transition (duration-700) to finish
+      }, 700);
+      return () => clearTimeout(timer);
+    }
 
+    if (localIndex < originalLength) {
+      const timer = setTimeout(() => {
+        setTransitionEnabled(false);
+        setLocalIndex(originalLength * 2 - 1);
+        setTimeout(() => setTransitionEnabled(true), 50);
+      }, 700);
       return () => clearTimeout(timer);
     }
   }, [localIndex, originalLength]);
 
-  const trackTransform = isCarousel
+  const handleDragStart = (clientX) => {
+    setIsSwiping(true);
+    if (swipeTimer.current) clearTimeout(swipeTimer.current);
+    touchStartX.current = clientX;
+    touchEndX.current = clientX;
+  };
+
+  const handleDragMove = (clientX) => {
+    if (!isSwiping) return;
+    touchEndX.current = clientX;
+  };
+
+  const handleDragEnd = () => {
+    if (!isSwiping) return;
+    const swipeDistance = touchStartX.current - touchEndX.current;
+
+    if (Math.abs(swipeDistance) > 50) {
+      if (swipeDistance > 0) {
+        setLocalIndex((prev) => prev + 1);
+      } else {
+        setLocalIndex((prev) => prev - 1);
+      }
+    }
+
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+
+    swipeTimer.current = setTimeout(() => {
+      setIsSwiping(false);
+    }, 1000);
+  };
+
+  const trackTransform = isCarousel && localIndex !== -1
     ? `translateX(-${localIndex * (100 / safePerView)}%)`
     : "none";
 
@@ -71,9 +120,18 @@ const FeaturedSection = ({
         className="featured__container mx-auto w-full max-w-[93.75rem]"
         data-reveal
       >
-        <div className="overflow-hidden">
+        <div 
+          className="overflow-hidden cursor-grab active:cursor-grabbing"
+          onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
+          onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
+          onTouchEnd={handleDragEnd}
+          onMouseDown={(e) => handleDragStart(e.clientX)}
+          onMouseMove={(e) => handleDragMove(e.clientX)}
+          onMouseUp={handleDragEnd}
+          onMouseLeave={handleDragEnd}
+        >
           <div
-            className={`flex ${
+            className={`flex pointer-events-none ${
               transitionEnabled
                 ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
                 : ""
@@ -85,7 +143,7 @@ const FeaturedSection = ({
             {displayBooks.map((book, index) => (
               <article
                 key={`${book.book_id}-${index}`}
-                className="duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[var(--title-color)] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[var(--title-color)]"
+                className="pointer-events-auto duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[var(--title-color)] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[var(--title-color)]"
                 style={{
                   width: `calc(${100 / safePerView}% - ${safePerView > 2 ? "2.5rem" : "1.5rem"})`,
                   margin: `0 ${safePerView > 2 ? "1.25rem" : "0.75rem"}`, // Reduce margin on mobile to fit 2 cards better

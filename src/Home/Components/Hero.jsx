@@ -2,10 +2,16 @@ import React from "react";
 import LazyImage from "../../components/LazyImage";
 import HomeButton from "./HomeButton";
 
-const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
+const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
   const [offset, setOffset] = React.useState(0);
   const [isReady, setIsReady] = React.useState(false);
   const [transitionEnabled, setTransitionEnabled] = React.useState(false);
+  const [localIndex, setLocalIndex] = React.useState(0);
+  const [isSwiping, setIsSwiping] = React.useState(false);
+
+  const touchStartX = React.useRef(0);
+  const touchEndX = React.useRef(0);
+  const swipeTimer = React.useRef(null);
 
   const displayBooks = React.useMemo(() => {
     const list =
@@ -20,31 +26,39 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
     return [...list, ...list, ...list];
   }, [heroBooks]);
 
-
   const originalLength = heroBooks.length > 0 ? heroBooks.length : 3;
-  const [localIndex, setLocalIndex] = React.useState(heroIndex);
 
-  // Sync heroIndex to localIndex with seamless wrapping logic
+  // Auto-scroll logic
   React.useEffect(() => {
-    if (heroIndex === localIndex % originalLength) return;
-
-    // Detect if we wrapped (e.g. from 2 to 0)
-    const isWrapForward =
-      heroIndex === 0 && localIndex % originalLength === originalLength - 1;
-
-    if (isWrapForward) {
+    if (heroBooks.length === 0 || isSwiping) return;
+    const interval = setInterval(() => {
       setLocalIndex((prev) => prev + 1);
-      // After animation, snap back to the 'original' range
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [heroBooks, isSwiping]);
+
+  // Snapping logic
+  React.useEffect(() => {
+    if (originalLength === 0) return;
+
+    if (localIndex >= originalLength) {
       const timer = setTimeout(() => {
         setTransitionEnabled(false);
-        setLocalIndex(heroIndex);
+        setLocalIndex(0);
         setTimeout(() => setTransitionEnabled(true), 50);
       }, 700);
       return () => clearTimeout(timer);
-    } else {
-      setLocalIndex(heroIndex);
     }
-  }, [heroIndex, originalLength]);
+
+    if (localIndex < 0) {
+      const timer = setTimeout(() => {
+        setTransitionEnabled(false);
+        setLocalIndex(originalLength - 1);
+        setTimeout(() => setTransitionEnabled(true), 50);
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [localIndex, originalLength]);
 
   React.useLayoutEffect(() => {
     const calculate = () => {
@@ -66,7 +80,6 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
       if (!isReady) {
         setOffset(newOffset);
         setIsReady(true);
-        // Wait for next tick to enable transitions to avoid initial snap slide
         setTimeout(() => setTransitionEnabled(true), 200);
       } else {
         setOffset(newOffset);
@@ -81,6 +94,38 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
       window.removeEventListener("resize", calculate);
     };
   }, [localIndex, originalLength, heroContainerRef, isReady]);
+
+  const handleDragStart = (clientX) => {
+    setIsSwiping(true);
+    if (swipeTimer.current) clearTimeout(swipeTimer.current);
+    touchStartX.current = clientX;
+    touchEndX.current = clientX;
+  };
+
+  const handleDragMove = (clientX) => {
+    if (!isSwiping) return;
+    touchEndX.current = clientX;
+  };
+
+  const handleDragEnd = () => {
+    if (!isSwiping) return;
+    const swipeDistance = touchStartX.current - touchEndX.current;
+
+    if (Math.abs(swipeDistance) > 50) {
+      if (swipeDistance > 0) {
+        setLocalIndex((prev) => prev + 1);
+      } else {
+        setLocalIndex((prev) => prev - 1);
+      }
+    }
+
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+
+    swipeTimer.current = setTimeout(() => {
+      setIsSwiping(false);
+    }, 1000);
+  };
 
   return (
     <section className="home py-16 pb-4 max-[42.5rem]:py-12" id="home" data-reveal>
@@ -103,9 +148,18 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
             Explore Now
           </HomeButton>
         </div>
-        <div className="grid w-full overflow-hidden">
+        <div 
+          className="grid w-full overflow-hidden cursor-grab active:cursor-grabbing"
+          onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
+          onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
+          onTouchEnd={handleDragEnd}
+          onMouseDown={(e) => handleDragStart(e.clientX)}
+          onMouseMove={(e) => handleDragMove(e.clientX)}
+          onMouseUp={handleDragEnd}
+          onMouseLeave={handleDragEnd}
+        >
           <div
-            className="relative w-full overflow-hidden"
+            className="relative w-full overflow-hidden pointer-events-none"
             ref={heroContainerRef}
           >
             <div
@@ -115,10 +169,15 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
               }}
             >
               {[...displayBooks, displayBooks[0]].map((book, i) => {
-                const isCurrent =
-                  i % originalLength === heroIndex &&
-                  i >= originalLength &&
-                  i < originalLength * 2;
+                let isCurrent = false;
+                if (localIndex >= 0 && localIndex < originalLength) {
+                  isCurrent = i === originalLength + localIndex;
+                } else if (localIndex < 0) {
+                  isCurrent = i === originalLength - 1;
+                } else if (localIndex >= originalLength) {
+                  isCurrent = i === originalLength * 2;
+                }
+
                 return (
                   <article
                     key={`${book.book_id}-${i}`}
@@ -136,7 +195,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroIndex, heroBooks }) => {
                     <LazyImage
                       src={book.image}
                       alt={book.name}
-                      className="h-[29.375rem] w-full rounded-lg object-cover max-[42.5rem]:h-[26.5rem] max-[32.5rem]:h-[23.5rem]"
+                      className="h-[29.375rem] w-full rounded-lg object-cover max-[42.5rem]:h-[26.5rem] max-[32.5rem]:h-[23.5rem] pointer-events-auto"
                       priority
                     />
                   </article>

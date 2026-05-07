@@ -50,7 +50,6 @@ const Home = () => {
   const [showShadowHeader, setShowShadowHeader] = useState(false);
   const [showScrollUp, setShowScrollUp] = useState(false);
   const [activeSection, setActiveSection] = useState("");
-  const [heroIndex, setHeroIndex] = useState(0);
   const [isDesktopLayout, setIsDesktopLayout] = useState(
     typeof window !== "undefined" ? window.innerWidth >= 1150 : true,
   );
@@ -330,14 +329,6 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (heroBooks.length === 0) return;
-    heroIntervalRef.current = setInterval(() => {
-      setHeroIndex((prev) => (prev + 1) % heroBooks.length);
-    }, 3000);
-    return () => clearInterval(heroIntervalRef.current);
-  }, [heroBooks]);
-
   const featuredPerView = windowWidth >= 1150 ? 4 : windowWidth >= 768 ? 3 : windowWidth >= 400 ? 2 : 1;
   const testimonialPerView = windowWidth >= 1150 ? 3 : windowWidth >= 768 ? 2 : 1;
 
@@ -416,7 +407,6 @@ const Home = () => {
           <Hero
             scrollToSection={scrollToSection}
             heroContainerRef={heroContainerRef}
-            heroIndex={heroIndex}
             heroBooks={heroBooks}
           />
 
