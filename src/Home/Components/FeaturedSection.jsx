@@ -32,8 +32,6 @@ const FeaturedSection = ({
 
   // Initial scroll to middle block
   useEffect(() => {
-  // Initial scroll to middle block
-  useEffect(() => {
     const el = carouselRef.current;
     if (el && originalLength > 0 && isCarousel) {
       el.style.scrollBehavior = "auto";
