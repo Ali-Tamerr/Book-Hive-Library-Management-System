@@ -1,20 +1,14 @@
-import React from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import LazyImage from "../../components/LazyImage";
 import HomeButton from "./HomeButton";
 
-const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
-  const [offset, setOffset] = React.useState(0);
-  const [isReady, setIsReady] = React.useState(false);
-  const [transitionEnabled, setTransitionEnabled] = React.useState(false);
-  const [localIndex, setLocalIndex] = React.useState(0);
-  const [isSwiping, setIsSwiping] = React.useState(false);
-  const [dragOffset, setDragOffset] = React.useState(0);
+const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
+  const heroContainerRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const scrollTimer = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
-  const touchStartX = React.useRef(0);
-  const touchEndX = React.useRef(0);
-  const swipeTimer = React.useRef(null);
-
-  const displayBooks = React.useMemo(() => {
+  const displayBooks = useMemo(() => {
     const list =
       heroBooks.length > 0
         ? heroBooks
@@ -29,106 +23,86 @@ const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
 
   const originalLength = heroBooks.length > 0 ? heroBooks.length : 3;
 
-  // Auto-scroll logic
-  React.useEffect(() => {
-    if (heroBooks.length === 0 || isSwiping) return;
-    const interval = setInterval(() => {
-      setLocalIndex((prev) => prev + 1);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [heroBooks, isSwiping]);
-
-  // Snapping logic
-  React.useEffect(() => {
-    if (originalLength === 0) return;
-
-    if (localIndex >= originalLength) {
-      const timer = setTimeout(() => {
-        setTransitionEnabled(false);
-        setLocalIndex(0);
-        setTimeout(() => setTransitionEnabled(true), 50);
-      }, 700);
-      return () => clearTimeout(timer);
-    }
-
-    if (localIndex < 0) {
-      const timer = setTimeout(() => {
-        setTransitionEnabled(false);
-        setLocalIndex(originalLength - 1);
-        setTimeout(() => setTransitionEnabled(true), 50);
-      }, 700);
-      return () => clearTimeout(timer);
-    }
-  }, [localIndex, originalLength]);
-
-  React.useLayoutEffect(() => {
-    const calculate = () => {
-      const container = heroContainerRef.current;
-      if (!container) return;
-
-      const firstSlide = container.querySelector("article");
-      const slideWidth = firstSlide ? firstSlide.offsetWidth : (window.innerWidth >= 1150 ? 340 : 250);
-      const gap = 20;
-      const step = slideWidth + gap;
-      const containerWidth = container.offsetWidth;
-
-      if (containerWidth === 0) return;
-
-      const baseIndex = originalLength + localIndex;
-      const centerPos = (containerWidth / 2) - (slideWidth / 2);
-      const newOffset = centerPos - (baseIndex * step);
-      
-      if (!isReady) {
-        setOffset(newOffset);
-        setIsReady(true);
-        setTimeout(() => setTransitionEnabled(true), 200);
-      } else {
-        setOffset(newOffset);
+  // Initial scroll to middle block
+  useEffect(() => {
+    const el = heroContainerRef.current;
+    if (el && originalLength > 0) {
+      const targetIndex = originalLength;
+      const children = Array.from(el.children);
+      if (children[targetIndex]) {
+        const child = children[targetIndex];
+        // Center the target child
+        const scrollPos = child.offsetLeft - (el.clientWidth / 2) + (child.offsetWidth / 2);
+        el.scrollLeft = scrollPos;
+        setActiveIndex(targetIndex);
       }
-    };
+    }
+  }, [originalLength]);
 
-    calculate();
-    const timer = setTimeout(calculate, 100);
-    window.addEventListener("resize", calculate);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", calculate);
-    };
-  }, [localIndex, originalLength, heroContainerRef, isReady]);
+  const handleScroll = () => {
+    setIsHovered(true);
+    if (scrollTimer.current) clearTimeout(scrollTimer.current);
 
-  const handleDragStart = (clientX) => {
-    setIsSwiping(true);
-    if (swipeTimer.current) clearTimeout(swipeTimer.current);
-    touchStartX.current = clientX;
-    touchEndX.current = clientX;
-  };
+    const el = heroContainerRef.current;
+    if (!el) return;
 
-  const handleDragMove = (clientX) => {
-    if (!isSwiping) return;
-    touchEndX.current = clientX;
-    setDragOffset(clientX - touchStartX.current);
-  };
+    // Calculate active index
+    const containerCenter = el.scrollLeft + el.clientWidth / 2;
+    const children = Array.from(el.children);
+    let closestIndex = 0;
+    let minDistance = Infinity;
 
-  const handleDragEnd = () => {
-    if (!isSwiping) return;
-    const swipeDistance = touchStartX.current - touchEndX.current;
+    children.forEach((child, index) => {
+      const childCenter = child.offsetLeft + child.offsetWidth / 2;
+      const distance = Math.abs(childCenter - containerCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
 
-    if (Math.abs(swipeDistance) > 50 && touchEndX.current !== touchStartX.current) {
-      if (swipeDistance > 0) {
-        setLocalIndex((prev) => prev + 1);
-      } else {
-        setLocalIndex((prev) => prev - 1);
+    if (closestIndex !== activeIndex) {
+      setActiveIndex(closestIndex);
+    }
+
+    // Infinite loop snap
+    if (children.length > 0) {
+      const slideWidth = children[0].offsetWidth + 20; // 20 is the gap
+      // If we scrolled past the second block
+      if (closestIndex >= originalLength * 2) {
+        el.style.scrollBehavior = "auto";
+        el.scrollLeft = el.scrollLeft - slideWidth * originalLength;
+        el.style.scrollBehavior = "smooth";
+      } 
+      // If we scrolled before the second block
+      else if (closestIndex < originalLength) {
+        el.style.scrollBehavior = "auto";
+        el.scrollLeft = el.scrollLeft + slideWidth * originalLength;
+        el.style.scrollBehavior = "smooth";
       }
     }
 
-    touchStartX.current = 0;
-    touchEndX.current = 0;
-    setDragOffset(0);
-
-    swipeTimer.current = setTimeout(() => {
-      setIsSwiping(false);
+    scrollTimer.current = setTimeout(() => {
+      setIsHovered(false);
     }, 1000);
   };
+
+  // Auto-scroll logic
+  useEffect(() => {
+    if (isHovered || originalLength === 0) return;
+    const interval = setInterval(() => {
+      const el = heroContainerRef.current;
+      if (el) {
+        const children = Array.from(el.children);
+        if (children.length > 0) {
+          const slideWidth = children[0].offsetWidth + 20;
+          el.style.scrollBehavior = "smooth";
+          el.scrollBy({ left: slideWidth });
+        }
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isHovered, originalLength]);
 
   return (
     <section className="home py-16 pb-4 max-[42.5rem]:py-12" id="home" data-reveal>
@@ -152,59 +126,42 @@ const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
           </HomeButton>
         </div>
         <div 
-          className="grid w-full overflow-hidden cursor-grab active:cursor-grabbing"
-          onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
-          onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
-          onTouchEnd={handleDragEnd}
-          onMouseDown={(e) => handleDragStart(e.clientX)}
-          onMouseMove={(e) => handleDragMove(e.clientX)}
-          onMouseUp={handleDragEnd}
-          onMouseLeave={handleDragEnd}
+          className="grid w-full overflow-hidden"
         >
           <div
-            className="relative w-full overflow-hidden pointer-events-none"
+            className="flex h-full w-full snap-x snap-mandatory flex-row overflow-x-auto pb-4 pt-4 scrollbar-none gap-[20px]"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             ref={heroContainerRef}
+            onScroll={handleScroll}
+            onTouchStart={() => { setIsHovered(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); }}
+            onMouseEnter={() => { setIsHovered(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); }}
+            onMouseLeave={() => { scrollTimer.current = setTimeout(() => setIsHovered(false), 1000); }}
+            onTouchEnd={() => { scrollTimer.current = setTimeout(() => setIsHovered(false), 1000); }}
           >
-            <div
-              className={`flex ${transitionEnabled && !isSwiping && dragOffset === 0 ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
-              style={{
-                transform: `translateX(${offset + dragOffset}px)`,
-              }}
-            >
-              {[...displayBooks, displayBooks[0]].map((book, i) => {
-                let isCurrent = false;
-                if (localIndex >= 0 && localIndex < originalLength) {
-                  isCurrent = i === originalLength + localIndex;
-                } else if (localIndex < 0) {
-                  isCurrent = i === originalLength - 1;
-                } else if (localIndex >= originalLength) {
-                  isCurrent = i === originalLength * 2;
-                }
-
-                return (
-                  <article
-                    key={`${book.book_id}-${i}`}
-                    className="shrink-0 select-none transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
-                    style={{
-                      width:
-                        window.innerWidth >= 1150
-                          ? "21.25rem"
-                          : "min(15.625rem, 80vw)",
-                      marginRight: "1.25rem",
-                      opacity: 1,
-                      scale: isCurrent ? "1" : "0.85",
-                    }}
-                  >
-                    <LazyImage
-                      src={book.image}
-                      alt={book.name}
-                      className="h-[29.375rem] w-full rounded-lg object-cover max-[42.5rem]:h-[26.5rem] max-[32.5rem]:h-[23.5rem] pointer-events-auto"
-                      priority
-                    />
-                  </article>
-                );
-              })}
-            </div>
+            {displayBooks.map((book, i) => {
+              const isCurrent = i === activeIndex;
+              return (
+                <article
+                  key={`${book.book_id}-${i}`}
+                  className="shrink-0 snap-center select-none transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                  style={{
+                    width:
+                      window.innerWidth >= 1150
+                        ? "21.25rem"
+                        : "min(15.625rem, 80vw)",
+                    opacity: 1,
+                    scale: isCurrent ? "1" : "0.85",
+                  }}
+                >
+                  <LazyImage
+                    src={book.image}
+                    alt={book.name}
+                    className="h-[29.375rem] w-full rounded-lg object-cover max-[42.5rem]:h-[26.5rem] max-[32.5rem]:h-[23.5rem] pointer-events-auto"
+                    priority
+                  />
+                </article>
+              );
+            })}
           </div>
         </div>
       </div>

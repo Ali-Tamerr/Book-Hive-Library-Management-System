@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import LazyImage from "../../components/LazyImage";
 import HomeButton from "./HomeButton";
 
@@ -7,14 +7,9 @@ const FeaturedSection = ({
   featuredPerView = 1,
   onExplore,
 }) => {
-  const [localIndex, setLocalIndex] = useState(-1); // Start at -1, initialize in effect
-  const [transitionEnabled, setTransitionEnabled] = useState(true);
-  const [isSwiping, setIsSwiping] = useState(false);
-  const [dragOffset, setDragOffset] = useState(0);
-
-  const touchStartX = React.useRef(0);
-  const touchEndX = React.useRef(0);
-  const swipeTimer = React.useRef(null);
+  const carouselRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const scrollTimer = useRef(null);
 
   // Skeleton data for loading state
   const skeletons = Array.from({ length: 5 }).map((_, i) => ({
@@ -26,13 +21,6 @@ const FeaturedSection = ({
   const originalLength =
     featuredBooks.length > 0 ? featuredBooks.length : skeletons.length;
 
-  // Initialize localIndex to start at the second block (for backward swiping)
-  useEffect(() => {
-    if (localIndex === -1 && originalLength > 0) {
-      setLocalIndex(originalLength);
-    }
-  }, [originalLength, localIndex]);
-
   const displayBooks = useMemo(() => {
     const list = featuredBooks.length > 0 ? featuredBooks : skeletons;
     // Triple the array for seamless infinite looping
@@ -42,75 +30,55 @@ const FeaturedSection = ({
   const safePerView = featuredPerView || 1;
   const isCarousel = originalLength > safePerView;
 
-  // Auto-scroll logic
+  // Initial scroll to middle block
   useEffect(() => {
-    if (!isCarousel || isSwiping || localIndex === -1) return;
-    const interval = setInterval(() => {
-      setLocalIndex((prev) => prev + 1);
-    }, 3500); // 3.5 seconds per slide
-    return () => clearInterval(interval);
-  }, [isCarousel, isSwiping, localIndex]);
-
-  // Infinite loop snap-back logic
-  useEffect(() => {
-    if (originalLength === 0 || localIndex === -1) return;
-
-    if (localIndex >= originalLength * 2) {
-      const timer = setTimeout(() => {
-        setTransitionEnabled(false);
-        setLocalIndex(originalLength); // Snap back to middle block
-        setTimeout(() => setTransitionEnabled(true), 50);
-      }, 700);
-      return () => clearTimeout(timer);
+    const el = carouselRef.current;
+    if (el && originalLength > 0 && isCarousel) {
+      const slideWidth = el.scrollWidth / (originalLength * 3);
+      el.scrollLeft = slideWidth * originalLength;
     }
+  }, [originalLength, isCarousel]);
 
-    if (localIndex < originalLength) {
-      const timer = setTimeout(() => {
-        setTransitionEnabled(false);
-        setLocalIndex(originalLength * 2 - 1);
-        setTimeout(() => setTransitionEnabled(true), 50);
-      }, 700);
-      return () => clearTimeout(timer);
-    }
-  }, [localIndex, originalLength]);
+  // Handle native scroll
+  const handleScroll = () => {
+    setIsHovered(true);
+    if (scrollTimer.current) clearTimeout(scrollTimer.current);
 
-  const handleDragStart = (clientX) => {
-    setIsSwiping(true);
-    if (swipeTimer.current) clearTimeout(swipeTimer.current);
-    touchStartX.current = clientX;
-    touchEndX.current = clientX;
-  };
-
-  const handleDragMove = (clientX) => {
-    if (!isSwiping) return;
-    touchEndX.current = clientX;
-    setDragOffset(clientX - touchStartX.current);
-  };
-
-  const handleDragEnd = () => {
-    if (!isSwiping) return;
-    const swipeDistance = touchStartX.current - touchEndX.current;
-
-    if (Math.abs(swipeDistance) > 50 && touchEndX.current !== touchStartX.current) {
-      if (swipeDistance > 0) {
-        setLocalIndex((prev) => prev + 1);
-      } else {
-        setLocalIndex((prev) => prev - 1);
+    const el = carouselRef.current;
+    if (el && originalLength > 0 && isCarousel) {
+      const slideWidth = el.scrollWidth / (originalLength * 3);
+      // If we scrolled past the second block
+      if (el.scrollLeft >= slideWidth * originalLength * 2) {
+        el.style.scrollBehavior = "auto";
+        el.scrollLeft = el.scrollLeft - slideWidth * originalLength;
+        el.style.scrollBehavior = "smooth";
+      } 
+      // If we scrolled before the second block
+      else if (el.scrollLeft <= slideWidth * (originalLength - 1)) {
+        el.style.scrollBehavior = "auto";
+        el.scrollLeft = el.scrollLeft + slideWidth * originalLength;
+        el.style.scrollBehavior = "smooth";
       }
     }
 
-    touchStartX.current = 0;
-    touchEndX.current = 0;
-    setDragOffset(0);
-
-    swipeTimer.current = setTimeout(() => {
-      setIsSwiping(false);
+    scrollTimer.current = setTimeout(() => {
+      setIsHovered(false);
     }, 1000);
   };
 
-  const trackTransform = isCarousel && localIndex !== -1
-    ? `translateX(-${localIndex * (100 / safePerView)}%) translateX(${dragOffset}px)`
-    : "none";
+  // Auto-scroll logic
+  useEffect(() => {
+    if (!isCarousel || isHovered) return;
+    const interval = setInterval(() => {
+      const el = carouselRef.current;
+      if (el) {
+        const slideWidth = el.scrollWidth / (originalLength * 3);
+        el.style.scrollBehavior = "smooth";
+        el.scrollBy({ left: slideWidth });
+      }
+    }, 3500); // 3.5 seconds per slide
+    return () => clearInterval(interval);
+  }, [isCarousel, isHovered, originalLength]);
 
   return (
     <section className="featured overflow-hidden py-16 pb-4 max-[42.5rem]:py-10" id="featured">
@@ -124,54 +92,43 @@ const FeaturedSection = ({
         data-reveal
       >
         <div 
-          className="overflow-hidden cursor-grab active:cursor-grabbing"
-          onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
-          onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
-          onTouchEnd={handleDragEnd}
-          onMouseDown={(e) => handleDragStart(e.clientX)}
-          onMouseMove={(e) => handleDragMove(e.clientX)}
-          onMouseUp={handleDragEnd}
-          onMouseLeave={handleDragEnd}
+          ref={carouselRef}
+          onScroll={handleScroll}
+          onTouchStart={() => { setIsHovered(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); }}
+          onMouseEnter={() => { setIsHovered(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); }}
+          onMouseLeave={() => { scrollTimer.current = setTimeout(() => setIsHovered(false), 1000); }}
+          onTouchEnd={() => { scrollTimer.current = setTimeout(() => setIsHovered(false), 1000); }}
+          className="flex h-full w-full snap-x snap-mandatory flex-row overflow-x-auto pb-4 scrollbar-none"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          <div
-            className={`flex pointer-events-none ${
-              transitionEnabled && !isSwiping && dragOffset === 0
-                ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
-                : ""
-            }`}
-            style={{
-              transform: trackTransform,
-            }}
-          >
-            {displayBooks.map((book, index) => (
-              <article
-                key={`${book.book_id}-${index}`}
-                className="select-none pointer-events-auto duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[var(--title-color)] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[var(--title-color)]"
-                style={{
-                  width: `calc(${100 / safePerView}% - ${safePerView > 2 ? "2.5rem" : "1.5rem"})`,
-                  margin: `0 ${safePerView > 2 ? "1.25rem" : "0.75rem"}`, // Reduce margin on mobile to fit 2 cards better
-                  height: "unset", // Keep natural or responsive sizing
-                  minHeight: window.innerWidth < 680 ? "28.75rem" : "36.25rem", // ensure steady height
-                }}
+          {displayBooks.map((book, index) => (
+            <article
+              key={`${book.book_id}-${index}`}
+              className="select-none snap-center pointer-events-auto duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[var(--title-color)] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[var(--title-color)]"
+              style={{
+                width: `calc(${100 / safePerView}% - ${safePerView > 2 ? "2.5rem" : "1.5rem"})`,
+                margin: `0 ${safePerView > 2 ? "1.25rem" : "0.75rem"}`, // Reduce margin on mobile to fit 2 cards better
+                height: "unset", // Keep natural or responsive sizing
+                minHeight: window.innerWidth < 680 ? "28.75rem" : "36.25rem", // ensure steady height
+              }}
+            >
+              <LazyImage
+                src={book.image}
+                alt={book.name}
+                className="mx-auto mb-6 h-[23.75rem] !w-full !max-w-none rounded-[0.875rem] object-cover max-[42.5rem]:h-[16.875rem]"
+                priority
+              />
+              <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[1.625rem] font-bold leading-tight text-[var(--title-color)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.1rem]">
+                {book.name}
+              </h2>
+              <HomeButton
+                className="px-[2.5rem] py-[1.125rem] max-[42.5rem]:px-[1.25rem] max-[42.5rem]:py-[0.6rem] max-[42.5rem]:text-[1rem]"
+                onClick={() => onExplore()}
               >
-                <LazyImage
-                  src={book.image}
-                  alt={book.name}
-                  className="mx-auto mb-6 h-[23.75rem] !w-full !max-w-none rounded-[0.875rem] object-cover max-[42.5rem]:h-[16.875rem]"
-                  priority
-                />
-                <h2 className="mb-6 flex grow items-end justify-center overflow-hidden text-ellipsis font-[family-name:var(--second-font)] text-[1.625rem] font-bold leading-tight text-[var(--title-color)] dark:!text-[var(--title-color)] max-[42.5rem]:text-[1.1rem]">
-                  {book.name}
-                </h2>
-                <HomeButton
-                  className="px-[2.5rem] py-[1.125rem] max-[42.5rem]:px-[1.25rem] max-[42.5rem]:py-[0.6rem] max-[42.5rem]:text-[1rem]"
-                  onClick={() => onExplore()}
-                >
-                  Explore Now
-                </HomeButton>
-              </article>
-            ))}
-          </div>
+                Explore Now
+              </HomeButton>
+            </article>
+          ))}
         </div>
       </div>
     </section>
