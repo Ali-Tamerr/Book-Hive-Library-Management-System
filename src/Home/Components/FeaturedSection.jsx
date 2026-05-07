@@ -10,6 +10,7 @@ const FeaturedSection = ({
   const [localIndex, setLocalIndex] = useState(-1); // Start at -1, initialize in effect
   const [transitionEnabled, setTransitionEnabled] = useState(true);
   const [isSwiping, setIsSwiping] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
 
   const touchStartX = React.useRef(0);
   const touchEndX = React.useRef(0);
@@ -83,13 +84,14 @@ const FeaturedSection = ({
   const handleDragMove = (clientX) => {
     if (!isSwiping) return;
     touchEndX.current = clientX;
+    setDragOffset(clientX - touchStartX.current);
   };
 
   const handleDragEnd = () => {
     if (!isSwiping) return;
     const swipeDistance = touchStartX.current - touchEndX.current;
 
-    if (Math.abs(swipeDistance) > 50) {
+    if (Math.abs(swipeDistance) > 50 && touchEndX.current !== touchStartX.current) {
       if (swipeDistance > 0) {
         setLocalIndex((prev) => prev + 1);
       } else {
@@ -99,6 +101,7 @@ const FeaturedSection = ({
 
     touchStartX.current = 0;
     touchEndX.current = 0;
+    setDragOffset(0);
 
     swipeTimer.current = setTimeout(() => {
       setIsSwiping(false);
@@ -106,7 +109,7 @@ const FeaturedSection = ({
   };
 
   const trackTransform = isCarousel && localIndex !== -1
-    ? `translateX(-${localIndex * (100 / safePerView)}%)`
+    ? `translateX(-${localIndex * (100 / safePerView)}%) translateX(${dragOffset}px)`
     : "none";
 
   return (
@@ -132,7 +135,7 @@ const FeaturedSection = ({
         >
           <div
             className={`flex pointer-events-none ${
-              transitionEnabled
+              transitionEnabled && !isSwiping && dragOffset === 0
                 ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
                 : ""
             }`}

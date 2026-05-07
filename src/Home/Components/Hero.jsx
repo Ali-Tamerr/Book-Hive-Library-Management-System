@@ -8,6 +8,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
   const [transitionEnabled, setTransitionEnabled] = React.useState(false);
   const [localIndex, setLocalIndex] = React.useState(0);
   const [isSwiping, setIsSwiping] = React.useState(false);
+  const [dragOffset, setDragOffset] = React.useState(0);
 
   const touchStartX = React.useRef(0);
   const touchEndX = React.useRef(0);
@@ -105,13 +106,14 @@ const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
   const handleDragMove = (clientX) => {
     if (!isSwiping) return;
     touchEndX.current = clientX;
+    setDragOffset(clientX - touchStartX.current);
   };
 
   const handleDragEnd = () => {
     if (!isSwiping) return;
     const swipeDistance = touchStartX.current - touchEndX.current;
 
-    if (Math.abs(swipeDistance) > 50) {
+    if (Math.abs(swipeDistance) > 50 && touchEndX.current !== touchStartX.current) {
       if (swipeDistance > 0) {
         setLocalIndex((prev) => prev + 1);
       } else {
@@ -121,6 +123,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
 
     touchStartX.current = 0;
     touchEndX.current = 0;
+    setDragOffset(0);
 
     swipeTimer.current = setTimeout(() => {
       setIsSwiping(false);
@@ -163,9 +166,9 @@ const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
             ref={heroContainerRef}
           >
             <div
-              className={`flex ${transitionEnabled ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
+              className={`flex ${transitionEnabled && !isSwiping && dragOffset === 0 ? "transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
               style={{
-                transform: `translateX(${offset}px)`,
+                transform: `translateX(${offset + dragOffset}px)`,
               }}
             >
               {[...displayBooks, displayBooks[0]].map((book, i) => {
