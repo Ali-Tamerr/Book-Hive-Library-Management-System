@@ -32,10 +32,14 @@ const FeaturedSection = ({
 
   // Initial scroll to middle block
   useEffect(() => {
+  // Initial scroll to middle block
+  useEffect(() => {
     const el = carouselRef.current;
     if (el && originalLength > 0 && isCarousel) {
+      el.style.scrollBehavior = "auto";
       const slideWidth = el.scrollWidth / (originalLength * 3);
       el.scrollLeft = slideWidth * originalLength;
+      el.style.scrollBehavior = "smooth";
     }
   }, [originalLength, isCarousel]);
 
@@ -81,6 +85,7 @@ const FeaturedSection = ({
       startX.current = e.pageX - el.offsetLeft;
       scrollLeftRef.current = el.scrollLeft;
       // Disable snap temporarily to allow fluid dragging
+      el.style.scrollBehavior = "auto";
       el.classList.remove("snap-x", "snap-mandatory");
     }
   };
@@ -89,7 +94,10 @@ const FeaturedSection = ({
     if (isDragging) {
       setIsDragging(false);
       const el = carouselRef.current;
-      if (el) el.classList.add("snap-x", "snap-mandatory");
+      if (el) {
+        el.style.scrollBehavior = "smooth";
+        el.classList.add("snap-x", "snap-mandatory");
+      }
     }
     scrollTimer.current = setTimeout(() => setIsHovered(false), 1000);
   };
@@ -98,7 +106,10 @@ const FeaturedSection = ({
     if (isDragging) {
       setIsDragging(false);
       const el = carouselRef.current;
-      if (el) el.classList.add("snap-x", "snap-mandatory");
+      if (el) {
+        el.style.scrollBehavior = "smooth";
+        el.classList.add("snap-x", "snap-mandatory");
+      }
     }
     scrollTimer.current = setTimeout(() => setIsHovered(false), 1000);
   };

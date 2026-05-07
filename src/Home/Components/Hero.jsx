@@ -31,10 +31,18 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
       const children = Array.from(el.children);
       if (children[targetIndex]) {
         const child = children[targetIndex];
-        // Center the target child
-        const scrollPos = child.offsetLeft - (el.clientWidth / 2) + (child.offsetWidth / 2);
+        // Center the target child using rects
+        const childWidth = child.offsetWidth;
+        const slideWidth = childWidth + 20; // 20 is the gap
+        
+        // Disable smooth scroll for initial jump
+        el.style.scrollBehavior = "auto";
+        const scrollPos = targetIndex * slideWidth - (el.clientWidth / 2) + (childWidth / 2);
         el.scrollLeft = scrollPos;
         setActiveIndex(targetIndex);
+        
+        // Restore smooth scroll for future snapping
+        el.style.scrollBehavior = "smooth";
       }
     }
   }, [originalLength]);
@@ -46,14 +54,16 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
     const el = heroContainerRef.current;
     if (!el) return;
 
-    // Calculate active index
-    const containerCenter = el.scrollLeft + el.clientWidth / 2;
+    // Calculate active index using viewport rects
+    const containerRect = el.getBoundingClientRect();
+    const containerCenter = containerRect.left + containerRect.width / 2;
     const children = Array.from(el.children);
     let closestIndex = 0;
     let minDistance = Infinity;
 
     children.forEach((child, index) => {
-      const childCenter = child.offsetLeft + child.offsetWidth / 2;
+      const childRect = child.getBoundingClientRect();
+      const childCenter = childRect.left + childRect.width / 2;
       const distance = Math.abs(childCenter - containerCenter);
       if (distance < minDistance) {
         minDistance = distance;
@@ -101,7 +111,8 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
     if (el) {
       startX.current = e.pageX - el.offsetLeft;
       scrollLeftRef.current = el.scrollLeft;
-      // Disable snap temporarily to allow fluid dragging
+      // Disable smooth scroll and snap temporarily to allow fluid dragging
+      el.style.scrollBehavior = "auto";
       el.classList.remove("snap-x", "snap-mandatory");
     }
   };
@@ -110,7 +121,10 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
     if (isDragging) {
       setIsDragging(false);
       const el = heroContainerRef.current;
-      if (el) el.classList.add("snap-x", "snap-mandatory");
+      if (el) {
+        el.style.scrollBehavior = "smooth";
+        el.classList.add("snap-x", "snap-mandatory");
+      }
     }
     scrollTimer.current = setTimeout(() => setIsHovered(false), 1000);
   };
@@ -119,7 +133,10 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
     if (isDragging) {
       setIsDragging(false);
       const el = heroContainerRef.current;
-      if (el) el.classList.add("snap-x", "snap-mandatory");
+      if (el) {
+        el.style.scrollBehavior = "smooth";
+        el.classList.add("snap-x", "snap-mandatory");
+      }
     }
     scrollTimer.current = setTimeout(() => setIsHovered(false), 1000);
   };
