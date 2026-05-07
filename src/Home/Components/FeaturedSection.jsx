@@ -146,7 +146,7 @@ const FeaturedSection = ({
             {displayBooks.map((book, index) => (
               <article
                 key={`${book.book_id}-${index}`}
-                className="pointer-events-auto duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[var(--title-color)] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[var(--title-color)]"
+                className="select-none pointer-events-auto duration-400 relative flex shrink-0 flex-col items-center overflow-hidden rounded-[1.5rem] border border-[var(--title-color)] p-[1.375rem_1.625rem] text-center transition-[box-shadow,background-color,border-color] max-[42.5rem]:rounded-[1.125rem] max-[42.5rem]:p-[1rem_0.875rem] dark:border-[var(--title-color)]"
                 style={{
                   width: `calc(${100 / safePerView}% - ${safePerView > 2 ? "2.5rem" : "1.5rem"})`,
                   margin: `0 ${safePerView > 2 ? "1.25rem" : "0.75rem"}`, // Reduce margin on mobile to fit 2 cards better

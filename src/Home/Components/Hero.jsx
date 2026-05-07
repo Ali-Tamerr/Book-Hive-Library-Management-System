@@ -184,7 +184,7 @@ const Hero = ({ scrollToSection, heroContainerRef, heroBooks }) => {
                 return (
                   <article
                     key={`${book.book_id}-${i}`}
-                    className="shrink-0 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                    className="shrink-0 select-none transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
                     style={{
                       width:
                         window.innerWidth >= 1150

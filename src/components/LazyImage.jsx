@@ -9,6 +9,7 @@ const LazyImage = ({
   onClick,
   onError,
   priority = false,
+  draggable = false,
 }) => {
   const imgRef = useRef(null);
   const imgElRef = useRef(null);
@@ -74,23 +75,24 @@ const LazyImage = ({
         )}
 
         {shouldLoad && src ? (
-          <img
-            src={src}
-            alt={alt}
-            loading={priority ? "eager" : "lazy"}
-            ref={imgElRef}
-            referrerPolicy="no-referrer"
-            className={`absolute inset-0 h-full w-full ${objectFitClass} transition-opacity duration-300 ${
-              loaded ? "opacity-100" : "opacity-0"
-            }`}
-            onLoad={() => setLoaded(true)}
-            onError={(e) => {
-              setFailed(true);
-              setLoaded(false);
-              if (onError) onError(e);
-            }}
-            onClick={onClick}
-          />
+            <img
+              src={src}
+              alt={alt}
+              loading={priority ? "eager" : "lazy"}
+              ref={imgElRef}
+              referrerPolicy="no-referrer"
+              draggable={draggable}
+              className={`absolute inset-0 h-full w-full ${objectFitClass} transition-opacity duration-300 ${
+                loaded ? "opacity-100" : "opacity-0"
+              }`}
+              onLoad={() => setLoaded(true)}
+              onError={(e) => {
+                setFailed(true);
+                setLoaded(false);
+                if (onError) onError(e);
+              }}
+              onClick={onClick}
+            />
         ) : (
           <div aria-hidden="true" className="h-full w-full" />
         )}
