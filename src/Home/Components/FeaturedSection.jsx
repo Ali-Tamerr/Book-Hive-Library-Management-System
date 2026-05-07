@@ -66,9 +66,57 @@ const FeaturedSection = ({
     }, 1000);
   };
 
+  // Mouse drag logic
+  const [isDragging, setIsDragging] = useState(false);
+  const startX = useRef(0);
+  const scrollLeftRef = useRef(0);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setIsHovered(true);
+    if (scrollTimer.current) clearTimeout(scrollTimer.current);
+    
+    const el = carouselRef.current;
+    if (el) {
+      startX.current = e.pageX - el.offsetLeft;
+      scrollLeftRef.current = el.scrollLeft;
+      // Disable snap temporarily to allow fluid dragging
+      el.classList.remove("snap-x", "snap-mandatory");
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      const el = carouselRef.current;
+      if (el) el.classList.add("snap-x", "snap-mandatory");
+    }
+    scrollTimer.current = setTimeout(() => setIsHovered(false), 1000);
+  };
+
+  const handleMouseUp = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      const el = carouselRef.current;
+      if (el) el.classList.add("snap-x", "snap-mandatory");
+    }
+    scrollTimer.current = setTimeout(() => setIsHovered(false), 1000);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const el = carouselRef.current;
+    if (el) {
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX.current) * 1.5;
+      el.scrollLeft = scrollLeftRef.current - walk;
+    }
+  };
+
   // Auto-scroll logic
   useEffect(() => {
-    if (!isCarousel || isHovered) return;
+    if (!isCarousel || isHovered || isDragging) return;
     const interval = setInterval(() => {
       const el = carouselRef.current;
       if (el) {
@@ -78,7 +126,7 @@ const FeaturedSection = ({
       }
     }, 3500); // 3.5 seconds per slide
     return () => clearInterval(interval);
-  }, [isCarousel, isHovered, originalLength]);
+  }, [isCarousel, isHovered, isDragging, originalLength]);
 
   return (
     <section className="featured overflow-hidden py-16 pb-4 max-[42.5rem]:py-10" id="featured">
@@ -95,10 +143,12 @@ const FeaturedSection = ({
           ref={carouselRef}
           onScroll={handleScroll}
           onTouchStart={() => { setIsHovered(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); }}
-          onMouseEnter={() => { setIsHovered(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); }}
-          onMouseLeave={() => { scrollTimer.current = setTimeout(() => setIsHovered(false), 1000); }}
           onTouchEnd={() => { scrollTimer.current = setTimeout(() => setIsHovered(false), 1000); }}
-          className="flex h-full w-full snap-x snap-mandatory flex-row overflow-x-auto pb-4 scrollbar-none"
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          className={`flex h-full w-full snap-x snap-mandatory flex-row overflow-x-auto pb-4 scrollbar-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {displayBooks.map((book, index) => (

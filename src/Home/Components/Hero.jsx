@@ -87,9 +87,57 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
     }, 1000);
   };
 
+  // Mouse drag logic
+  const [isDragging, setIsDragging] = useState(false);
+  const startX = useRef(0);
+  const scrollLeftRef = useRef(0);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setIsHovered(true);
+    if (scrollTimer.current) clearTimeout(scrollTimer.current);
+    
+    const el = heroContainerRef.current;
+    if (el) {
+      startX.current = e.pageX - el.offsetLeft;
+      scrollLeftRef.current = el.scrollLeft;
+      // Disable snap temporarily to allow fluid dragging
+      el.classList.remove("snap-x", "snap-mandatory");
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      const el = heroContainerRef.current;
+      if (el) el.classList.add("snap-x", "snap-mandatory");
+    }
+    scrollTimer.current = setTimeout(() => setIsHovered(false), 1000);
+  };
+
+  const handleMouseUp = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      const el = heroContainerRef.current;
+      if (el) el.classList.add("snap-x", "snap-mandatory");
+    }
+    scrollTimer.current = setTimeout(() => setIsHovered(false), 1000);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const el = heroContainerRef.current;
+    if (el) {
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX.current) * 1.5;
+      el.scrollLeft = scrollLeftRef.current - walk;
+    }
+  };
+
   // Auto-scroll logic
   useEffect(() => {
-    if (isHovered || originalLength === 0) return;
+    if (isHovered || isDragging || originalLength === 0) return;
     const interval = setInterval(() => {
       const el = heroContainerRef.current;
       if (el) {
@@ -102,7 +150,7 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
       }
     }, 3000);
     return () => clearInterval(interval);
-  }, [isHovered, originalLength]);
+  }, [isHovered, isDragging, originalLength]);
 
   return (
     <section className="home py-16 pb-4 max-[42.5rem]:py-12" id="home" data-reveal>
@@ -129,14 +177,16 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
           className="grid w-full overflow-hidden"
         >
           <div
-            className="flex h-full w-full snap-x snap-mandatory flex-row overflow-x-auto pb-4 pt-4 scrollbar-none gap-[20px]"
+            className={`flex h-full w-full snap-x snap-mandatory flex-row overflow-x-auto pb-4 pt-4 scrollbar-none gap-[20px] ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             ref={heroContainerRef}
             onScroll={handleScroll}
             onTouchStart={() => { setIsHovered(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); }}
-            onMouseEnter={() => { setIsHovered(true); if (scrollTimer.current) clearTimeout(scrollTimer.current); }}
-            onMouseLeave={() => { scrollTimer.current = setTimeout(() => setIsHovered(false), 1000); }}
             onTouchEnd={() => { scrollTimer.current = setTimeout(() => setIsHovered(false), 1000); }}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
           >
             {displayBooks.map((book, i) => {
               const isCurrent = i === activeIndex;
@@ -150,7 +200,7 @@ const Hero = ({ scrollToSection, heroContainerRef: outerRef, heroBooks }) => {
                         ? "21.25rem"
                         : "min(15.625rem, 80vw)",
                     opacity: 1,
-                    scale: isCurrent ? "1" : "0.85",
+                    transform: `scale(${isCurrent ? 1 : 0.85})`,
                   }}
                 >
                   <LazyImage
