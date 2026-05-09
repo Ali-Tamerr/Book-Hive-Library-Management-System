@@ -232,7 +232,7 @@ const SettingsPopup = ({ show, onClose }) => {
         onSubmit={handleSubmit}
         className="settings-credentials-form flex flex-col gap-12 text-[#000035] dark:text-[#d6d6d6]"
       >
-        <div className="space-y-6 px-10">
+        <div className="space-y-6 px-4 min-[42.5rem]:px-10">
           <div className="flex flex-col items-center gap-4">
             <div className="flex h-[6.25rem] w-[6.25rem] items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
               {displayImage ? (
@@ -246,7 +246,7 @@ const SettingsPopup = ({ show, onClose }) => {
               )}
             </div>
 
-            <label className="flex h-[2.625rem] w-[20rem] cursor-pointer items-center justify-between rounded-lg border dark:border-[#D7D7D7] px-4 text-[1.875rem] text-[#000035] border-[#000035] dark:text-[#E8E8E8]">
+            <label className="flex h-[2.625rem] w-full min-[42.5rem]:w-[20rem] cursor-pointer items-center justify-between rounded-lg border dark:border-[#D7D7D7] px-4 text-[1.875rem] text-[#000035] border-[#000035] dark:text-[#E8E8E8]">
               <span className="font-regular flex h-full items-center text-[1.1875rem]">
                 Add your photo
               </span>
@@ -261,7 +261,7 @@ const SettingsPopup = ({ show, onClose }) => {
           </div>
 
           <div className="flex w-full flex-col items-start gap-2 min-[42.5rem]:flex-row min-[42.5rem]:items-center min-[42.5rem]:gap-6">
-            <label className="font-regular text-left text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
+            <label className="font-regular text-left text-[0.75rem] min-[42.5rem]:text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
               Enter Current Password
             </label>
             <FormInput
@@ -275,7 +275,7 @@ const SettingsPopup = ({ show, onClose }) => {
           </div>
 
           <div className="flex w-full flex-col items-start gap-2 min-[42.5rem]:flex-row min-[42.5rem]:items-center min-[42.5rem]:gap-6">
-            <label className="font-regular text-left text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
+            <label className="font-regular text-left text-[0.75rem] min-[42.5rem]:text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
               Enter New Password
             </label>
             <FormInput
@@ -289,7 +289,7 @@ const SettingsPopup = ({ show, onClose }) => {
           </div>
 
           <div className="flex w-full flex-col items-start gap-2 min-[42.5rem]:flex-row min-[42.5rem]:items-center min-[42.5rem]:gap-6">
-            <label className="font-regular text-left text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
+            <label className="font-regular text-left text-[0.75rem] min-[42.5rem]:text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
               Confirm New Password
             </label>
             <FormInput
@@ -308,7 +308,7 @@ const SettingsPopup = ({ show, onClose }) => {
         {/* Wrap error/success and buttons in a fragment to fix adjacent JSX error */}
         <>
           {(error || success) && (
-            <div className="px-10 pb-2">
+            <div className="px-4 pb-2 min-[42.5rem]:px-10">
               {error && (
                 <p className="mb-2 text-center text-sm text-red-500">{error}</p>
               )}
