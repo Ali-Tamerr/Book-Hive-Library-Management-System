@@ -113,7 +113,7 @@ const CommonLayout = ({
                   <th
                     key={col.accessor}
                     style={{ width: col.width || "auto" }}
-                    className={`px-4 py-3 text-center text-[1.375rem] font-extrabold tracking-widest max-[48rem]:px-3 max-[48rem]:py-2 max-[48rem]:text-[1.125rem] shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]`}
+                    className={`whitespace-nowrap px-4 py-3 text-center text-[1.375rem] font-extrabold tracking-widest max-[48rem]:px-3 max-[48rem]:py-2 max-[48rem]:text-[1.125rem] shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]`}
                   >
                     {col.header}
                   </th>
