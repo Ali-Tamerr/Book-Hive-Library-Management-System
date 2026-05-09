@@ -22,7 +22,7 @@ import {
   useUpdateFeedbackStatus,
 } from "../hooks/useFeedbacks.js";
 
-const AdminNotifications = () => {
+const AdminNotifications = ({ className = "" }) => {
   const currentUser = getCurrentUser();
   const isSuperAdmin = currentUser?.role === "Super Admin";
 
@@ -216,7 +216,7 @@ const AdminNotifications = () => {
   return (
     <>
       <button
-        className="relative h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+        className={`relative cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF] ${className || "h-8 w-8"}`}
         title="Notifications"
         onClick={() => setShowRequestsPopup(true)}
       >

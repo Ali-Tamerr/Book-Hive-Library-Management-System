@@ -109,21 +109,28 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
   const isDashboard = location.pathname === "/dashboard";
   const showSearchInput = !isDashboard;
 
-  const notificationOrFeedbackItem = (roleLabel === "Admin" ||
-    roleLabel === "Super Admin" ||
-    roleLabel === "Librarian" ||
-    currentUser?.role?.toLowerCase() === "admin" ||
-    currentUser?.role?.toLowerCase() === "super admin") ? (
-      <AdminNotifications />
-    ) : (
+  const renderNotificationOrFeedback = (className = "h-8 w-8") => {
+    const isAdmin =
+      roleLabel === "Admin" ||
+      roleLabel === "Super Admin" ||
+      roleLabel === "Librarian" ||
+      currentUser?.role?.toLowerCase() === "admin" ||
+      currentUser?.role?.toLowerCase() === "super admin";
+
+    if (isAdmin) {
+      return <AdminNotifications className={className} />;
+    }
+
+    return (
       <button
-        className="flex h-9 w-9 cursor-pointer items-center justify-center p-0.5 transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
+        className={`flex cursor-pointer items-center justify-center p-0.5 transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF] ${className}`}
         onClick={() => setShowFeedbackPopup(true)}
         title="Give Feedback"
       >
         <FeedbackIcon className="h-full w-full" />
       </button>
     );
+  };
 
   return (
     <>
@@ -183,7 +190,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
                 </div>
 
                 <div className="flex items-center justify-between gap-2 pt-1">
-                  {notificationOrFeedbackItem}
+                  {renderNotificationOrFeedback("h-7 w-7")}
                   <button
                     className="h-7 w-7 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
                     onClick={toggleTheme}
@@ -230,7 +237,7 @@ const Navbar = ({ toggleSidebar, searchValue, setSearchValue }) => {
           <div className="max-[67.5rem]:hidden h-10 w-0.5 rounded-full bg-[#0b0b3b] dark:bg-white"></div>
 
           <div className="max-[67.5rem]:hidden flex items-center gap-3">
-            {notificationOrFeedbackItem}
+            {renderNotificationOrFeedback("h-8 w-8")}
             <button
               className="h-8 w-8 cursor-pointer transition-colors hover:text-[#1e255e] dark:hover:text-[#9CA3AF]"
               onClick={toggleTheme}
