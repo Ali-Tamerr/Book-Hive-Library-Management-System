@@ -244,13 +244,13 @@ function Dashboard() {
   }, [activeDotIndex]);
 
   return (
-    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[64rem]:py-4 max-[64rem]:px-11 max-[26.875rem]:w-dvw max-[26.875rem]:px-4">
-      <div className="flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto max-[64rem]:flex-col max-[64rem]:gap-0 max-[64rem]:overflow-x-hidden max-[40.625rem]:overflow-hidden">
-        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[64rem]:mx-0 max-[64rem]:h-fit max-[64rem]:flex-none max-[40.625rem]:shrink">
-          <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[64rem]:h-fit">
-            <div className="[26.875rem]:px-0 [26.875rem]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[64rem]:my-0 max-[64rem]:h-fit max-[64rem]:max-w-full max-[64rem]:flex-row max-[64rem]:justify-center max-[64rem]:overflow-hidden max-[40.625rem]:h-auto max-[40.625rem]:flex-col-reverse max-[40.625rem]:gap-4">
+    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[75rem]:py-4 max-[75rem]:px-11 max-[26.875rem]:w-dvw max-[26.875rem]:px-4">
+      <div className="flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto max-[75rem]:flex-col max-[75rem]:gap-0 max-[75rem]:overflow-x-hidden max-[40.625rem]:overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[75rem]:mx-0 max-[75rem]:h-fit max-[75rem]:flex-none max-[40.625rem]:shrink">
+          <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[75rem]:h-fit">
+            <div className="[26.875rem]:px-0 [26.875rem]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[75rem]:my-0 max-[75rem]:h-fit max-[75rem]:max-w-full max-[75rem]:flex-row max-[75rem]:justify-center max-[75rem]:overflow-hidden max-[40.625rem]:h-auto max-[40.625rem]:flex-col-reverse max-[40.625rem]:gap-4">
               <PieChartLegend variant="mobile" label2="Total Returned Books" />
-              <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[64rem]:min-h-[10.125rem] max-[64rem]:min-w-0 max-[64rem]:max-w-[15.625rem] max-[64rem]:pb-0 max-[64rem]:max-w-[11.25rem] max-[40.625rem]:mb-0 max-[40.625rem]:w-[50vw] max-[40.625rem]:max-w-none">
+              <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[75rem]:min-h-[10.125rem] max-[75rem]:min-w-0 max-[75rem]:max-w-[15.625rem] max-[75rem]:pb-0 max-[75rem]:max-w-[11.25rem] max-[40.625rem]:mb-0 max-[40.625rem]:w-[50vw] max-[40.625rem]:max-w-none">
                 <PieChart
                   totalBorrowed={stats.totalBorrowed}
                   currentlyBorrowed={stats.currentlyBorrowed}
@@ -262,11 +262,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="flex min-h-0 w-full flex-1 max-[96.25rem]:flex-2 flex-col gap-6 max-[64rem]:mt-6">
+        <div className="flex min-h-0 w-full flex-1 max-[96.25rem]:flex-2 flex-col gap-6 max-[75rem]:mt-6">
           {isSuperAdmin ? (
             <>
               {/* Desktop Grid */}
-              <div className="grid h-full w-full auto-rows-fr grid-cols-2 gap-6 max-[40.625rem]:hidden">
+              <div className="grid h-full w-full auto-rows-fr grid-cols-[repeat(auto-fit,minmax(17.5rem,1fr))] gap-6 max-[40.625rem]:hidden">
                 <DashboardCard title="Borrowed Books">
                   {renderTransactionList(borrowedItems, "No borrowed books")}
                 </DashboardCard>
