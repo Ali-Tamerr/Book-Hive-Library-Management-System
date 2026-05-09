@@ -293,14 +293,24 @@ function BorrowedBooks({
     const isReturned = status === "returned";
     const hasReturnDate = !!book.return_date;
 
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const dueDate = book.due_date ? new Date(book.due_date) : null;
+    if (dueDate) dueDate.setHours(0, 0, 0, 0);
+
+    const isOverdue =
+      !isReturned &&
+      !hasReturnDate &&
+      (status === "overdue" || (dueDate && dueDate < now));
+
     if (showPending) {
       return isPending;
     }
     if (showReturned) {
       return isReturned || hasReturnDate;
     }
-    // Show everything except Pending and Returned (i.e., Completed, Overdue)
-    return !isPending && !isReturned;
+    // Show active borrowings (exclude Pending, Returned, and Overdue)
+    return !isPending && !isReturned && !hasReturnDate && !isOverdue;
   });
 
   const filteredBorrowedBooks = searchValue
