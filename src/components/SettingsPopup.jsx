@@ -260,8 +260,8 @@ const SettingsPopup = ({ show, onClose }) => {
             </label>
           </div>
 
-          <div className="flex items-center gap-6">
-            <label className="font-regular w-[11.25rem] whitespace-nowrap text-left text-sm">
+          <div className="flex w-full flex-col items-start gap-2 min-[42.5rem]:flex-row min-[42.5rem]:items-center min-[42.5rem]:gap-6">
+            <label className="font-regular text-left text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
               Enter Current Password
             </label>
             <FormInput
@@ -270,12 +270,12 @@ const SettingsPopup = ({ show, onClose }) => {
               placeholder="Enter Current Password"
               value={formData.currentPassword}
               onChange={handleChange}
-              className="flex-1"
+              className="w-full min-[42.5rem]:flex-1"
             />
           </div>
 
-          <div className="flex items-center gap-6">
-            <label className="font-regular w-[11.25rem] whitespace-nowrap text-left text-sm">
+          <div className="flex w-full flex-col items-start gap-2 min-[42.5rem]:flex-row min-[42.5rem]:items-center min-[42.5rem]:gap-6">
+            <label className="font-regular text-left text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
               Enter New Password
             </label>
             <FormInput
@@ -284,12 +284,12 @@ const SettingsPopup = ({ show, onClose }) => {
               placeholder="Enter New Password"
               value={formData.newPassword}
               onChange={handleChange}
-              className="flex-1"
+              className="w-full min-[42.5rem]:flex-1"
             />
           </div>
 
-          <div className="flex items-center gap-6">
-            <label className="font-regular w-[11.25rem] whitespace-nowrap text-left text-sm">
+          <div className="flex w-full flex-col items-start gap-2 min-[42.5rem]:flex-row min-[42.5rem]:items-center min-[42.5rem]:gap-6">
+            <label className="font-regular text-left text-sm min-[42.5rem]:w-[11.25rem] min-[42.5rem]:whitespace-nowrap">
               Confirm New Password
             </label>
             <FormInput
@@ -298,7 +298,7 @@ const SettingsPopup = ({ show, onClose }) => {
               placeholder="Confirm New Password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="flex-1"
+              className="w-full min-[42.5rem]:flex-1"
             />
           </div>
 
