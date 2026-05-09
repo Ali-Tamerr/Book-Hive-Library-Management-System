@@ -397,6 +397,14 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
   box-sizing: none;
 }
 
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 ::-webkit-scrollbar {
   border-radius: 0.25rem;
   width: 0.6rem;

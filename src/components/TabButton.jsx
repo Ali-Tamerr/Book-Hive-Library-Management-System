@@ -14,9 +14,9 @@ const TabButton = ({
 
   // Prevent text from shifting by always keeping a 0.0625rem border
   const baseBorder = `border`;
-  const firstBorder = `${baseBorder} rounded-xl min-[40.625rem]:rounded-r-none `;
-  const middleBorder = ` ${baseBorder} rounded-xl min-[40.625rem]:rounded-none`;
-  const lastBorder = ` ${baseBorder} rounded-xl min-[40.625rem]:rounded-l-none`;
+  const firstBorder = `${baseBorder} rounded-xl min-[62.5rem]:rounded-r-none `;
+  const middleBorder = ` ${baseBorder} rounded-xl min-[62.5rem]:rounded-none`;
+  const lastBorder = ` ${baseBorder} rounded-xl min-[62.5rem]:rounded-l-none`;
 
   const borderClasses =
     position === "first"
@@ -28,7 +28,7 @@ const TabButton = ({
   return (
     <button
       onClick={onClick}
-      className={`min-[62.5rem]:h-10 min-w-fit max-[40.625rem]:max-w-none font-['Bebas_Neue',sans-serif]! min-[87.5rem]:text-xl h-12 min-[40.625rem]:w-auto w-full flex-shrink-0 cursor-pointer whitespace-nowrap px-10 text-lg font-semibold uppercase tracking-widest ${borderClasses} ${isActive ? activeClasses : inactiveClasses} ${className}`}
+      className={`min-[62.5rem]:h-10 min-w-fit max-[62.5rem]:max-w-none font-['Bebas_Neue',sans-serif]! min-[87.5rem]:text-xl h-12 w-auto flex-shrink-0 cursor-pointer whitespace-nowrap px-4 min-[62.5rem]:px-10 text-lg font-semibold uppercase tracking-widest ${borderClasses} ${isActive ? activeClasses : inactiveClasses} ${className}`}
     >
       {label}
     </button>
