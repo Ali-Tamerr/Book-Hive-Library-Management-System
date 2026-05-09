@@ -67,11 +67,19 @@ const CommonLayout = ({
               {title}
             </h2>
           )}
-          <div className="max-[62.5rem]:flex hidden h-10 flex-1">
-            <SearchBar
-              searchValue={searchValue}
-              setSearchValue={setSearchValue}
-            />
+          <div className="max-[62.5rem]:flex hidden h-10 flex-1 gap-2">
+            <div className="flex-1">
+              <SearchBar
+                searchValue={searchValue}
+                setSearchValue={setSearchValue}
+              />
+            </div>
+            {buttonText && (
+              <ButtonOne
+                buttonBehaviour={buttonBehaviour}
+                text={buttonText}
+              />
+            )}
           </div>
           <div className="max-[62.5rem]:hidden flex h-10 gap-2">
             {secondaryButton}
@@ -84,21 +92,11 @@ const CommonLayout = ({
             />
           </div>
         </div>
-        {(secondaryButton || buttonText) && (
+        {secondaryButton && (
           <div className="max-[62.5rem]:flex hidden h-10 gap-2">
-            {secondaryButton && (
-              <div className="flex-1 [&>button]:w-full [&>button]:justify-center">
-                {secondaryButton}
-              </div>
-            )}
-            {buttonText && (
-              <div className="flex-1">
-                <ButtonOne
-                  buttonBehaviour={buttonBehaviour}
-                  text={buttonText}
-                />
-              </div>
-            )}
+            <div className="flex-1 [&>button]:w-full [&>button]:justify-center">
+              {secondaryButton}
+            </div>
           </div>
         )}
       </div>
