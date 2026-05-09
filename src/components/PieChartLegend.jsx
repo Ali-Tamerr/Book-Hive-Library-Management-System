@@ -10,7 +10,7 @@ const PieChartLegend = ({
   if (variant === "mobile") {
     return (
       <div
-        className={`max-[21.25rem]:scale-90 hidden w-fit flex-col items-center justify-center gap-2 rounded-md border border-[#000035] bg-transparent px-3.5 py-3 dark:border-[rgba(185,189,200,0.78)] dark:bg-[#121317] dark:text-[#d3d6de] max-[75rem]:flex ${className || ""}`}
+        className={`max-[21.25rem]:scale-90 hidden w-fit flex-col items-center justify-center gap-2 rounded-md border border-[#000035] bg-transparent px-3.5 py-3 dark:border-[rgba(185,189,200,0.78)] dark:bg-[#121317] dark:text-[#d3d6de] max-[64rem]:flex ${className || ""}`}
       >
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3">
@@ -36,7 +36,7 @@ const PieChartLegend = ({
 
   return (
     <div
-      className={`flex items-center gap-7 whitespace-nowrap rounded-md border border-[#000035] bg-transparent px-8 py-5 max-[75rem]:hidden dark:border dark:border-[rgba(185,189,200,0.78)] dark:bg-[#121317] ${className || ""}`}
+      className={`flex items-center gap-7 whitespace-nowrap rounded-md border border-[#000035] bg-transparent px-8 py-5 max-[64rem]:hidden dark:border dark:border-[rgba(185,189,200,0.78)] dark:bg-[#121317] ${className || ""}`}
       style={{ transform: `scale(clamp(0.75, calc((100vh - 12.5rem) / 43.75rem), 1))`, transformOrigin: "center center" }}
     >
       <div className="block max-[103.125rem]:hidden">
