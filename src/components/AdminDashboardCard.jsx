@@ -64,25 +64,25 @@ const AdminDashboardCard = ({
             <div className="h-10 w-0.5 rounded-full bg-[#000035] dark:bg-[#D7D7D7]"></div>
 
             <div className="flex-1 overflow-hidden">
-              <p className="truncate text-lg font-bold leading-tight text-[#000035] dark:text-[#D7D7D7]">
+              <p className="truncate text-lg font-bold leading-tight text-[#000035] dark:text-[#D7D7D7] max-[78.125rem]:text-sm">
                 {admin.name}
               </p>
-              <p className="truncate text-[0.8125rem] font-medium leading-tight text-[#000035] dark:text-[#D7D7D7]">
+              <p className="truncate text-[0.8125rem] font-medium leading-tight text-[#000035] dark:text-[#D7D7D7] max-[78.125rem]:text-[0.65rem]">
                 {admin.subtitle || `Unknown Branch`}
               </p>
             </div>
 
-            <div className="max-[81.25rem]: flex flex-col items-center justify-center gap-1 self-stretch max-[81.25rem]:-ml-2 max-[81.25rem]:w-20">
+            <div className="flex flex-col items-center justify-center gap-1 self-stretch max-[81.25rem]:-ml-2 max-[81.25rem]:w-20">
               <RefreshCw
                 onClick={() => handleRefreshAdmins(admin.id)}
-                className={`h-8 w-8 cursor-pointer text-[#000035] transition-transform dark:text-[#D7D7D7] ${loadingAdmins[admin.id] ? "animate-spin" : ""}`}
+                className={`h-8 w-8 cursor-pointer text-[#000035] transition-transform dark:text-[#D7D7D7] max-[78.125rem]:h-6 max-[78.125rem]:w-6 ${loadingAdmins[admin.id] ? "animate-spin" : ""}`}
               />
               <div className="flex items-center gap-1.5">
                 <div
                   className={`h-2 w-2 rounded-full ${admin.isOnline ? "bg-[#000035] dark:bg-[#D7D7D7]" : "bg-[#3d3e3e] dark:bg-[#3d3e3e]"}`}
                 ></div>
                 <p
-                  className={`text-[0.75rem] font-bold text-[#000035] dark:text-[#D7D7D7]`}
+                  className={`text-[0.75rem] font-bold text-[#000035] dark:text-[#D7D7D7] max-[78.125rem]:text-[0.65rem]`}
                 >
                   {admin.isOnline ? "Active" : "Not Active"}
                 </p>
