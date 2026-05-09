@@ -14,9 +14,9 @@ const TabButton = ({
 
   // Prevent text from shifting by always keeping a 0.0625rem border
   const baseBorder = `border`;
-  const firstBorder = `${baseBorder} rounded-l-xl`;
-  const middleBorder = `${baseBorder} border-l-0`;
-  const lastBorder = `${baseBorder} border-l-0 rounded-r-xl`;
+  const firstBorder = `${baseBorder} rounded-l-xl max-[62.5rem]:rounded-xl`;
+  const middleBorder = `${baseBorder} border-l-0 max-[62.5rem]:border-l max-[62.5rem]:rounded-xl`;
+  const lastBorder = `${baseBorder} border-l-0 rounded-r-xl max-[62.5rem]:border-l max-[62.5rem]:rounded-xl`;
 
   const borderClasses =
     position === "first"
