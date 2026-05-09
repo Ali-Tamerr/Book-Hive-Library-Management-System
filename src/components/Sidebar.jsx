@@ -91,10 +91,10 @@ const Sidebar = ({
           />
 
           <h2
-            className={`logo-stable-transition text-center font-['Bebas_Neue',sans-serif]! text-3xl leading-tight text-white dark:text-black ${isExpanded ? "max-w-[12.5rem] scale-100 opacity-100" : "max-w-0 scale-50 overflow-hidden opacity-0"} whitespace-nowrap max-[67.5rem]:mt-2 max-[67.5rem]:max-w-full max-[67.5rem]:scale-100 max-[67.5rem]:text-center max-[67.5rem]:opacity-100`}
+            className={`logo-stable-transition text-center font-['Bebas_Neue',sans-serif]! text-3xl leading-tight text-[#D7D7D7] dark:text-[#121317] ${isExpanded ? "max-w-[12.5rem] scale-100 opacity-100" : "max-w-0 scale-50 overflow-hidden opacity-0"} whitespace-nowrap max-[67.5rem]:mt-2 max-[67.5rem]:max-w-full max-[67.5rem]:scale-100 max-[67.5rem]:text-center max-[67.5rem]:opacity-100`}
           >
             BookHive
-            <span className="block text-center font-['Bebas_Neue',sans-serif] text-xl text-[#b5b8d1] dark:text-black">
+            <span className="block text-center font-['Bebas_Neue',sans-serif] text-xl text-[#b5b8d1] dark:text-[#121317]">
               Library
             </span>
           </h2>
