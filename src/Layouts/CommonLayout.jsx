@@ -118,15 +118,20 @@ const CommonLayout = ({
   );
 
   // ── Touch handlers ────────────────────────────────────────────────────────
+  const touchStartX = useRef(null);
   const handleTouchStart = (e) => {
     touchStartY.current = e.touches[0].clientY;
+    touchStartX.current = e.touches[0].clientX;
   };
   const handleTouchEnd = (e) => {
     if (touchStartY.current === null) return;
-    const delta = touchStartY.current - e.changedTouches[0].clientY;
+    const deltaY = touchStartY.current - e.changedTouches[0].clientY;
+    const deltaX = touchStartX.current - e.changedTouches[0].clientX;
     touchStartY.current = null;
-    if (Math.abs(delta) < SWIPE_THRESHOLD) return;
-    goToPage(delta > 0 ? 1 : -1); // swipe up = next, swipe down = prev
+    touchStartX.current = null;
+    // Only trigger page change if the swipe is predominantly vertical
+    if (Math.abs(deltaY) < SWIPE_THRESHOLD || Math.abs(deltaY) < Math.abs(deltaX)) return;
+    goToPage(deltaY > 0 ? 1 : -1);
   };
 
   // ── Desktop infinite-scroll observer ────────────────────────────────────
@@ -238,27 +243,10 @@ const CommonLayout = ({
       {isMobile ? (
         <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg">
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[#000035] dark:border-[#D7D7D7]">
-            {/* Sticky header */}
-            <div className="bg-[#f0f0f1] dark:bg-[#121317] shrink-0">
-              <table className="w-full table-auto border-collapse text-left text-sm dark:text-[#E8E8E8]">
-                <thead>
-                  <tr>
-                    {columns.map((col) => (
-                      <th
-                        key={col.accessor}
-                        className="whitespace-nowrap px-3 py-2 text-center text-[0.9rem] font-extrabold tracking-widest shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]"
-                      >
-                        {col.header}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-              </table>
-            </div>
 
-            {/* Animated rows area */}
+            {/* Single scrollable container — horizontal scroll + vertical swipe */}
             <div
-              className="relative flex-1 overflow-hidden"
+              className="flex-1 overflow-auto"
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
             >
@@ -271,11 +259,22 @@ const CommonLayout = ({
                   No items found
                 </div>
               ) : (
-                <table
-                  key={mobilePage}
-                  className={`w-full table-auto border-collapse text-left text-sm dark:text-[#E8E8E8] ${animClass}`}
-                >
-                  <tbody>
+                <table className="w-full min-w-max table-auto border-collapse text-left text-sm dark:text-[#E8E8E8]">
+                  {/* Sticky header — same table so column widths are shared */}
+                  <thead className="sticky top-0 z-10 bg-[#f0f0f1] dark:bg-[#121317]">
+                    <tr>
+                      {columns.map((col) => (
+                        <th
+                          key={col.accessor}
+                          className="whitespace-nowrap px-3 py-2 text-center text-[0.9rem] font-extrabold tracking-widest shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]"
+                        >
+                          {col.header}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  {/* Animated tbody — key change re-mounts it, triggering CSS animation */}
+                  <tbody key={mobilePage} className={animClass}>
                     {visibleRows.map((item, index) => (
                       <tr
                         key={index}
