@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
-import { FilePenLine, Trash2, ReceiptText, ChevronUp, ChevronDown } from "lucide-react";
+import { FilePenLine, Trash2, ReceiptText, ChevronUp } from "lucide-react";
 import SearchBar from "../components/SearchBar.jsx";
 import ButtonOne from "../components/ButtonOne.jsx";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
@@ -22,10 +22,18 @@ const MOBILE_ANIM_STYLES = `
     from { opacity: 1; transform: translateY(0); }
     to   { opacity: 0; transform: translateY(28px); }
   }
-  .mobile-slide-in-up   { animation: slideInUp 280ms ease forwards; }
-  .mobile-slide-out-up  { animation: slideOutUp 280ms ease forwards; }
-  .mobile-slide-in-down { animation: slideInDown 280ms ease forwards; }
-  .mobile-slide-out-down{ animation: slideOutDown 280ms ease forwards; }
+  @keyframes swipeHint {
+    0%   { opacity: 0; transform: translateY(6px); }
+    8%   { opacity: 1; transform: translateY(0); }
+    25%  { opacity: 1; transform: translateY(0); }
+    33%  { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 0; transform: translateY(6px); }
+  }
+  .mobile-slide-in-up    { animation: slideInUp 280ms ease forwards; }
+  .mobile-slide-out-up   { animation: slideOutUp 280ms ease forwards; }
+  .mobile-slide-in-down  { animation: slideInDown 280ms ease forwards; }
+  .mobile-slide-out-down { animation: slideOutDown 280ms ease forwards; }
+  .mobile-swipe-hint     { animation: swipeHint 4s ease infinite; }
 `;
 
 const ROWS_PER_PAGE = 3;
@@ -74,6 +82,22 @@ const CommonLayout = ({
   const [visibleRows, setVisibleRows] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const touchStartY = useRef(null);
+  const mobileContainerRef = useRef(null);
+
+  // Prevent browser pull-to-refresh on vertical swipes inside the mobile table
+  useEffect(() => {
+    const el = mobileContainerRef.current;
+    if (!el) return;
+    const onTouchMove = (e) => {
+      if (touchStartY.current === null || touchStartX.current === null) return;
+      const touch = e.touches[0];
+      const deltaY = Math.abs(touchStartY.current - touch.clientY);
+      const deltaX = Math.abs(touchStartX.current - touch.clientX);
+      if (deltaY > deltaX && deltaY > 8) e.preventDefault();
+    };
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => el.removeEventListener("touchmove", onTouchMove);
+  }, []);
 
   const totalMobilePages = Math.ceil((data?.length || 0) / ROWS_PER_PAGE);
 
@@ -246,6 +270,7 @@ const CommonLayout = ({
 
             {/* Single scrollable container — horizontal scroll + vertical swipe */}
             <div
+              ref={mobileContainerRef}
               className="flex-1 overflow-auto"
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
@@ -278,7 +303,7 @@ const CommonLayout = ({
                     {visibleRows.map((item, index) => (
                       <tr
                         key={index}
-                        className="h-13 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                        className="h-16 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                       >
                         {columns.map((col) => {
                           const cellContent = renderCell(col, item);
@@ -301,32 +326,15 @@ const CommonLayout = ({
               )}
             </div>
 
-            {/* Navigation bar */}
-            {(data?.length || 0) > 0 && !isLoading && (
-              <div className="flex shrink-0 items-center justify-between border-t border-[#000035] px-4 py-2 dark:border-[#D7D7D7]">
-                <button
-                  onClick={() => goToPage(-1)}
-                  disabled={mobilePage === 0 || isAnimating}
-                  className="flex cursor-pointer items-center gap-1 text-[0.75rem] font-semibold text-[#000035] disabled:opacity-30 dark:text-[#D7D7D7]"
-                >
-                  <ChevronUp size={16} /> Prev
-                </button>
-                <span className="text-[0.7rem] font-medium text-[#000035] dark:text-[#D7D7D7]">
-                  {mobilePage * ROWS_PER_PAGE + 1}–
-                  {Math.min((mobilePage + 1) * ROWS_PER_PAGE, data?.length || 0)}{" "}
-                  / {data?.length || 0}
-                  {hasMore ? "+" : ""}
-                </span>
-                <button
-                  onClick={() => goToPage(1)}
-                  disabled={mobilePage >= totalMobilePages - 1 || isAnimating}
-                  className="flex cursor-pointer items-center gap-1 text-[0.75rem] font-semibold text-[#000035] disabled:opacity-30 dark:text-[#D7D7D7]"
-                >
-                  Next <ChevronDown size={16} />
-                </button>
-              </div>
-            )}
           </div>
+
+          {/* Swipe hint — cycles 1s visible / 3s hidden */}
+          {(data?.length || 0) > 0 && !isLoading && mobilePage < totalMobilePages - 1 && (
+            <div className="mobile-swipe-hint mt-3 flex items-center justify-center gap-1.5 text-[0.7rem] font-medium text-[#000035] dark:text-[#D7D7D7]">
+              <ChevronUp size={13} />
+              swipe up to view more
+            </div>
+          )}
         </section>
       ) : (
         /* ════════════════════════════════════════════════════════════════ */
