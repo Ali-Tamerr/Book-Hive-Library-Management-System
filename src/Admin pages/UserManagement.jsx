@@ -30,6 +30,17 @@ function UserManagement({ searchValue, setSearchValue }) {
   const currentUser = getCurrentUser();
   const isSuperAdmin = currentUser?.role === "Super Admin";
 
+  // Detect mobile to use a smaller initial fetch limit
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 62.5rem)").matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 62.5rem)");
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   const [showPopup, setShowPopup] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -62,7 +73,7 @@ function UserManagement({ searchValue, setSearchValue }) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useUsers();
+  } = useUsers(isMobile ? { limit: 6 } : {});
   const { data: branches = [] } = useBranches();
   const { data: plans = [] } = usePlans();
 

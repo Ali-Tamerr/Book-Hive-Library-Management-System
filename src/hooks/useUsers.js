@@ -25,10 +25,10 @@ export const userKeys = {
   detail: (id) => [...userKeys.details(), id],
 };
 
-export const useUsers = (options = {}) => {
+export const useUsers = ({ limit = 12, ...options } = {}) => {
   return useInfiniteQuery({
-    queryKey: userKeys.infinite(),
-    queryFn: ({ pageParam = 1 }) => getAllUsers({ page: pageParam, limit: 12 }),
+    queryKey: [...userKeys.infinite(), { limit }],
+    queryFn: ({ pageParam = 1 }) => getAllUsers({ page: pageParam, limit }),
     getNextPageParam: (lastPage, allPages) => {
       // Robust pagination logic
       const total = lastPage.total || lastPage.totalCount || 0;
@@ -47,8 +47,7 @@ export const useUsers = (options = {}) => {
       } else {
         // Fallback: If no total is provided, assume more pages if last page was full
         const lastPageLength = lastPage.data?.length || 0;
-        const LIMIT = 12;
-        if (lastPageLength === LIMIT) {
+        if (lastPageLength === limit) {
           return currentPage + 1;
         }
       }
