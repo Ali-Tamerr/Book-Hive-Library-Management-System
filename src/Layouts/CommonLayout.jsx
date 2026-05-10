@@ -24,16 +24,16 @@ const MOBILE_ANIM_STYLES = `
   }
   @keyframes swipeHint {
     0%   { opacity: 0; transform: translateY(6px); }
-    8%   { opacity: 1; transform: translateY(0); }
-    25%  { opacity: 1; transform: translateY(0); }
-    33%  { opacity: 0; transform: translateY(6px); }
+    6%   { opacity: 1; transform: translateY(0); }
+    46%  { opacity: 1; transform: translateY(0); }
+    52%  { opacity: 0; transform: translateY(6px); }
     100% { opacity: 0; transform: translateY(6px); }
   }
   .mobile-slide-in-up    { animation: slideInUp 280ms ease forwards; }
   .mobile-slide-out-up   { animation: slideOutUp 280ms ease forwards; }
   .mobile-slide-in-down  { animation: slideInDown 280ms ease forwards; }
   .mobile-slide-out-down { animation: slideOutDown 280ms ease forwards; }
-  .mobile-swipe-hint     { animation: swipeHint 4s ease infinite; }
+  .mobile-swipe-hint     { animation: swipeHint 5s ease infinite; }
 `;
 
 const ROWS_PER_PAGE = 3;
@@ -286,7 +286,7 @@ const CommonLayout = ({
               ) : (
                 <table
                   className="table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]"
-                  style={{ width: `${columns.length * 6.5}rem` }}
+                  style={{ width: `${columns.length * 8}rem` }}
                 >
                   {/* Sticky header — same table so column widths are shared */}
                   <thead className="sticky top-0 z-10 bg-[#f0f0f1] dark:bg-[#121317]">
@@ -410,10 +410,10 @@ const CommonLayout = ({
           {isUserPage && null}
         </section>
       )}
-      {/* Swipe hint — fixed on screen, centered horizontally, cycles 1s on / 3s off */}
+      {/* Swipe hint — fixed on screen, centered horizontally, cycles 2s on / 3s off */}
       {isMobile && (data?.length || 0) > 0 && !isLoading && mobilePage < totalMobilePages - 1 && (
-        <div className="mobile-swipe-hint pointer-events-none fixed bottom-6 left-0 right-0 z-50 flex items-center justify-center gap-1.5 text-[0.75rem] font-semibold text-[#000035] dark:text-[#D7D7D7]">
-          <ChevronUp size={14} />
+        <div className="mobile-swipe-hint pointer-events-none fixed bottom-6 left-0 right-0 z-50 flex items-center justify-center gap-1.5 text-[0.875rem] font-semibold text-[#000035] dark:text-[#D7D7D7]">
+          <ChevronUp size={18} />
           swipe up to view more
         </div>
       )}
