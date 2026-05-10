@@ -284,7 +284,7 @@ const CommonLayout = ({
                   No items found
                 </div>
               ) : (
-                <table className="w-full min-w-max table-auto border-collapse text-left text-sm dark:text-[#E8E8E8]">
+                <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
                   {/* Sticky header — same table so column widths are shared */}
                   <thead className="sticky top-0 z-10 bg-[#f0f0f1] dark:bg-[#121317]">
                     <tr>
@@ -327,14 +327,6 @@ const CommonLayout = ({
             </div>
 
           </div>
-
-          {/* Swipe hint — cycles 1s visible / 3s hidden */}
-          {(data?.length || 0) > 0 && !isLoading && mobilePage < totalMobilePages - 1 && (
-            <div className="mobile-swipe-hint mt-3 flex items-center justify-center gap-1.5 text-[0.7rem] font-medium text-[#000035] dark:text-[#D7D7D7]">
-              <ChevronUp size={13} />
-              swipe up to view more
-            </div>
-          )}
         </section>
       ) : (
         /* ════════════════════════════════════════════════════════════════ */
@@ -414,6 +406,13 @@ const CommonLayout = ({
           </div>
           {isUserPage && null}
         </section>
+      )}
+      {/* Swipe hint — fixed on screen, centered horizontally, cycles 1s on / 3s off */}
+      {isMobile && (data?.length || 0) > 0 && !isLoading && mobilePage < totalMobilePages - 1 && (
+        <div className="mobile-swipe-hint pointer-events-none fixed bottom-6 left-0 right-0 z-50 flex items-center justify-center gap-1.5 text-[0.75rem] font-semibold text-[#000035] dark:text-[#D7D7D7]">
+          <ChevronUp size={14} />
+          swipe up to view more
+        </div>
       )}
 
       {formPopup}
