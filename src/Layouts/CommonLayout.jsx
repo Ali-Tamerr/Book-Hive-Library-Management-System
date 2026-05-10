@@ -67,8 +67,8 @@ const CommonLayout = ({
               {title}
             </h2>
           )}
-          <div className="max-[62.5rem]:flex hidden h-10 flex-1 gap-2">
-            <div className="flex-1">
+          <div className="max-[62.5rem]:flex hidden h-10 items-stretch flex-1 gap-2">
+            <div className="flex-1 h-full">
               <SearchBar
                 searchValue={searchValue}
                 setSearchValue={setSearchValue}

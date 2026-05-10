@@ -31,7 +31,7 @@ const SearchBar = ({ searchValue, setSearchValue }) => {
   const isDashboard = location.pathname === "/dashboard";
   const showSearchInput = !isDashboard;
   return (
-    <div className="flex h-10 w-full rounded-xl border border-[#000035] dark:border-[#D7D7D7]">
+    <div className="flex h-full w-full rounded-xl border border-[#000035] dark:border-[#D7D7D7]">
       <button className="h-full cursor-pointer pl-3 py-2 font-[Noto_Sans_Georgian,sans-serif] text-[#000035] dark:text-[#D7D7D7]">
         <Search className="h-full w-full" />
       </button>
