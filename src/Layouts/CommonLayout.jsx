@@ -284,7 +284,10 @@ const CommonLayout = ({
                   No items found
                 </div>
               ) : (
-                <table className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
+                <table
+                  className="table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]"
+                  style={{ width: `${columns.length * 6.5}rem` }}
+                >
                   {/* Sticky header — same table so column widths are shared */}
                   <thead className="sticky top-0 z-10 bg-[#f0f0f1] dark:bg-[#121317]">
                     <tr>
