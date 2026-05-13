@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const rawApiUrl =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5174/api";
 export const API_BASE_URL = rawApiUrl.replace(/^['"]|['"]$/g, "");
 
 const inferMimeFromBytes = (bytes) => {
