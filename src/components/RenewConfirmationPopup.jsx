@@ -17,17 +17,6 @@ const RenewConfirmationPopup = ({ show, onClose, user, onConfirm }) => {
     setSelectedPlan(user?.plan || "Discover");
   }, [show, user]);
 
-  const calculateNewDate = () => {
-    if (!user) return "";
-    const now = new Date();
-    const newEndDate = new Date(now);
-    newEndDate.setMonth(newEndDate.getMonth() + 1);
-    return newEndDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   return (
     <Popup
