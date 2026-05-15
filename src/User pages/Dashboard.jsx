@@ -188,29 +188,10 @@ function Dashboard() {
     transactionsLoading ||
     aiLoading;
 
-  // Calculate current month's limits
+  // Calculate current plan's limits
   const userPlanId = currentUser?.plan || "Discover";
   const userPlan = plansData?.find((p) => p.id === userPlanId);
   const borrowLimit = userPlan?.borrow_limit || 3;
-
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-
-  const userBorrowedTransactions = Array.isArray(bookTransactions)
-    ? bookTransactions.filter(
-        (t) =>
-          t.transaction_type === "Check-Out" &&
-          t.user_id === currentUser?.user_id,
-      )
-    : [];
-
-  const monthlyBorrowedCount = userBorrowedTransactions.filter((t) => {
-    const borrowDate = new Date(t.created_at);
-    return (
-      borrowDate.getMonth() === currentMonth &&
-      borrowDate.getFullYear() === currentYear
-    );
-  }).length;
 
   const subscriptionExpirationRaw =
     currentUser?.subscription_end_date ||
@@ -227,6 +208,31 @@ function Dashboard() {
     return expirationDate < new Date();
   }, [subscriptionExpirationRaw]);
 
+  const userBorrowedTransactions = Array.isArray(bookTransactions)
+    ? bookTransactions.filter(
+        (t) =>
+          t.transaction_type === "Check-Out" &&
+          t.user_id === currentUser?.user_id,
+      )
+    : [];
+
+  // Derive the current subscription start date from the end date (plans are monthly)
+  const subscriptionStartDate = useMemo(() => {
+    if (!subscriptionExpirationRaw) return null;
+    const endDate = new Date(subscriptionExpirationRaw);
+    if (Number.isNaN(endDate.getTime())) return null;
+    const startDate = new Date(endDate);
+    startDate.setMonth(startDate.getMonth() - 1);
+    return startDate;
+  }, [subscriptionExpirationRaw]);
+
+  // Only count borrows made during the current subscription period
+  const currentPlanBorrowedCount = userBorrowedTransactions.filter((t) => {
+    if (!subscriptionStartDate) return false;
+    const borrowDate = new Date(t.created_at);
+    return borrowDate >= subscriptionStartDate;
+  }).length;
+
   const stats = {
     totalUsers: generalStats.users || 0,
     totalBooks: generalStats.books || displayBooks?.length || 0,
@@ -234,9 +240,10 @@ function Dashboard() {
     totalBorrowed: isExpired ? 0 : borrowLimit, // Total pie size
     currentlyBorrowed: isExpired
       ? 0
-      : Math.max(0, borrowLimit - monthlyBorrowedCount), // Grey empty limit left
-    returnedBooks: isExpired ? 0 : monthlyBorrowedCount, // Navy Blue filled part
+      : Math.max(0, borrowLimit - currentPlanBorrowedCount), // Grey empty limit left
+    returnedBooks: isExpired ? 0 : currentPlanBorrowedCount, // Navy Blue filled part
   };
+
 
   const subscriptionExpirationLabel = useMemo(() => {
     if (!subscriptionExpirationRaw) return "N/A";
