@@ -72,12 +72,9 @@ export const deleteBook = async (id) => {
 export const getAIRecommendations = async (userId) => {
   if (!userId) return { status: "error", data: [] };
   
-  const HF_SPACE_URL = "https://alitaamrr-book-hive.hf.space";
-  
   try {
-    const response = await fetch(`${HF_SPACE_URL}/api/recommendations/${userId}`);
-    if (!response.ok) throw new Error("HF Space response was not ok");
-    return await response.json();
+    // Call our backend proxy which handles caching and invalidation
+    return await apiGet(`${BASE_ENDPOINT}/ai-recommendations/${userId}`);
   } catch (error) {
     console.error("AI Recommendation Error:", error);
     return { status: "error", data: [], message: error.message };

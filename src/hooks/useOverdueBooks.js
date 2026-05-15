@@ -9,9 +9,24 @@ const overdueKeys = {
 };
 
 export const useOverdueBooks = () => {
+  const cacheKey = "overdue_books_cache";
+
   return useQuery({
     queryKey: overdueKeys.lists(),
-    queryFn: getAllOverdueBooks,
+    queryFn: async () => {
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        try {
+          return JSON.parse(cachedData);
+        } catch (e) {}
+      }
+
+      const data = await getAllOverdueBooks();
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      return data;
+    },
     ...adminQueryOptions,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };

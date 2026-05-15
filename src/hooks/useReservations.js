@@ -17,10 +17,25 @@ export const reservationKeys = {
 };
 
 export const useReservations = () => {
+  const cacheKey = "reservations_cache";
+
   return useQuery({
     queryKey: reservationKeys.lists(),
-    queryFn: getAllReservations,
+    queryFn: async () => {
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        try {
+          return JSON.parse(cachedData);
+        } catch (e) {}
+      }
+
+      const data = await getAllReservations();
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      return data;
+    },
     ...adminQueryOptions,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
@@ -41,6 +56,7 @@ export const useCreateReservation = () => {
     mutationFn: createReservation,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reservationKeys.lists() });
+      localStorage.removeItem("reservations_cache");
     },
   });
 };
@@ -54,6 +70,7 @@ export const useUpdateReservation = () => {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: reservationKeys.detail(variables.id) });
       queryClient.invalidateQueries({ queryKey: reservationKeys.lists() });
+      localStorage.removeItem("reservations_cache");
     },
   });
 };
@@ -66,6 +83,7 @@ export const useDeleteReservation = () => {
     mutationFn: deleteReservation,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reservationKeys.lists() });
+      localStorage.removeItem("reservations_cache");
     },
   });
 };

@@ -7,6 +7,7 @@ import {
   deleteBorrowedBook 
 } from '../services/borrowedBooks.api';
 import { adminQueryOptions } from './queryConfig';
+import { bookKeys } from './useBooks';
 
 export const borrowedBooksKeys = {
   all: ['borrowedBooks'],
@@ -17,10 +18,25 @@ export const borrowedBooksKeys = {
 };
 
 export const useBorrowedBooks = () => {
+  const cacheKey = "borrowed_books_cache";
+
   return useQuery({
     queryKey: borrowedBooksKeys.lists(),
-    queryFn: getAllBorrowedBooks,
+    queryFn: async () => {
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        try {
+          return JSON.parse(cachedData);
+        } catch (e) {}
+      }
+
+      const data = await getAllBorrowedBooks();
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      return data;
+    },
     ...adminQueryOptions,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
@@ -39,8 +55,16 @@ export const useCreateBorrowedBook = () => {
   
   return useMutation({
     mutationFn: createBorrowedBook,
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.lists() });
+      localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("dashboard_books_cache");
+      if (variables?.user_id) {
+        queryClient.invalidateQueries({
+          queryKey: bookKeys.recommendations(variables.user_id),
+        });
+        localStorage.removeItem(`ai_recommendations_${variables.user_id}`);
+      }
     },
   });
 };
@@ -54,6 +78,8 @@ export const useUpdateBorrowedBook = () => {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.detail(variables.id) });
       queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.lists() });
+      localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("dashboard_books_cache");
     },
   });
 };
@@ -66,6 +92,8 @@ export const useDeleteBorrowedBook = () => {
     mutationFn: deleteBorrowedBook,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.lists() });
+      localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("dashboard_books_cache");
     },
   });
 };

@@ -9,6 +9,7 @@ import {
   returnTransaction,
 } from "../services/bookTransactions.api";
 import { adminQueryOptions } from "./queryConfig";
+import { bookKeys } from "./useBooks";
 
 export const bookTransactionKeys = {
   all: ["bookTransactions"],
@@ -20,18 +21,48 @@ export const bookTransactionKeys = {
 };
 
 export const useBookTransactions = () => {
+  const cacheKey = "transactions_all_cache";
+
   return useQuery({
     queryKey: bookTransactionKeys.lists(),
-    queryFn: getAllTransactions,
+    queryFn: async () => {
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        try {
+          return JSON.parse(cachedData);
+        } catch (e) {}
+      }
+
+      const data = await getAllTransactions();
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      return data;
+    },
     ...adminQueryOptions,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
 export const useDashboardTransactions = () => {
+  const cacheKey = "transactions_dashboard_cache";
+
   return useQuery({
     queryKey: bookTransactionKeys.dashboard(),
-    queryFn: getDashboardTransactions,
+    queryFn: async () => {
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        try {
+          return JSON.parse(cachedData);
+        } catch (e) {}
+      }
+
+      const data = await getDashboardTransactions();
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      return data;
+    },
     ...adminQueryOptions,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
@@ -48,8 +79,19 @@ export const useCreateBookTransaction = () => {
 
   return useMutation({
     mutationFn: createTransaction,
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: bookTransactionKeys.lists() });
+      localStorage.removeItem("transactions_all_cache");
+      localStorage.removeItem("transactions_dashboard_cache");
+      localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("overdue_books_cache");
+      localStorage.removeItem("dashboard_books_cache");
+      if (variables?.user_id) {
+        queryClient.invalidateQueries({
+          queryKey: bookKeys.recommendations(variables.user_id),
+        });
+        localStorage.removeItem(`ai_recommendations_${variables.user_id}`);
+      }
     },
   });
 };
@@ -64,6 +106,11 @@ export const useUpdateBookTransaction = () => {
         queryKey: bookTransactionKeys.detail(variables.id),
       });
       queryClient.invalidateQueries({ queryKey: bookTransactionKeys.lists() });
+      localStorage.removeItem("transactions_all_cache");
+      localStorage.removeItem("transactions_dashboard_cache");
+      localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("overdue_books_cache");
+      localStorage.removeItem("dashboard_books_cache");
     },
   });
 };
@@ -75,6 +122,11 @@ export const useDeleteBookTransaction = () => {
     mutationFn: deleteTransaction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bookTransactionKeys.lists() });
+      localStorage.removeItem("transactions_all_cache");
+      localStorage.removeItem("transactions_dashboard_cache");
+      localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("overdue_books_cache");
+      localStorage.removeItem("dashboard_books_cache");
     },
   });
 };
@@ -86,6 +138,11 @@ export const useReturnBookTransaction = () => {
     mutationFn: returnTransaction,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: bookTransactionKeys.lists() });
+      localStorage.removeItem("transactions_all_cache");
+      localStorage.removeItem("transactions_dashboard_cache");
+      localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("overdue_books_cache");
+      localStorage.removeItem("dashboard_books_cache");
     },
   });
 };

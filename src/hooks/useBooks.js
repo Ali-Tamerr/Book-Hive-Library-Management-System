@@ -52,10 +52,25 @@ export const useBookCovers = (options = {}) => {
 };
 
 export const useDashboardBooks = (options = {}) => {
+  const cacheKey = "dashboard_books_cache";
+
   return useQuery({
     queryKey: bookKeys.dashboard(),
-    queryFn: getDashboardBooks,
+    queryFn: async () => {
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        try {
+          return JSON.parse(cachedData);
+        } catch (e) {}
+      }
+
+      const data = await getDashboardBooks();
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      return data;
+    },
     ...adminQueryOptions,
+    staleTime: Infinity,
+    gcTime: Infinity,
     ...options,
   });
 };
@@ -107,6 +122,7 @@ export const useUpdateBook = () => {
       queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
       queryClient.invalidateQueries({ queryKey: bookKeys.management() });
       queryClient.invalidateQueries({ queryKey: bookCopyKeys.lists() });
+      localStorage.removeItem("dashboard_books_cache");
     },
   });
 };
@@ -121,15 +137,36 @@ export const useDeleteBook = () => {
       queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
       queryClient.invalidateQueries({ queryKey: bookKeys.management() });
       queryClient.invalidateQueries({ queryKey: bookCopyKeys.lists() });
+      localStorage.removeItem("dashboard_books_cache");
     },
   });
 };
 
 export const useAIRecommendations = (userId) => {
+  const queryClient = useQueryClient();
+  const cacheKey = `ai_recommendations_${userId}`;
+
   return useQuery({
     queryKey: bookKeys.recommendations(userId),
-    queryFn: () => getAIRecommendations(userId),
+    queryFn: async () => {
+      // Check if we have a valid cache in localStorage
+      const cachedData = localStorage.getItem(cacheKey);
+      if (cachedData) {
+        try {
+          return JSON.parse(cachedData);
+        } catch (e) {
+          console.error("Failed to parse cached recommendations", e);
+        }
+      }
+
+      const response = await getAIRecommendations(userId);
+      if (response?.status === "success") {
+        localStorage.setItem(cacheKey, JSON.stringify(response));
+      }
+      return response;
+    },
     enabled: !!userId,
-    staleTime: 30 * 60 * 1000,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
