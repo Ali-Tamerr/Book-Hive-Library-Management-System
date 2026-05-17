@@ -24,7 +24,7 @@ const FormInput = ({
     placeholder,
     required,
     autoComplete: autocomplete || "off",
-    className: `w-full h-[3.125rem] px-4 py-4 rounded-xl border border-[#000035] dark:border-[#D7D7D7]   text-black dark:text-[#D7D7D7] placeholder-[#000035] dark:placeholder-[#D7D7D7] outline-none text-[0.8125rem] ${className || ""}`,
+    className: `w-full ${type === "textarea" ? "min-h-[3.125rem]" : "h-[3.125rem]"} px-4 py-4 rounded-xl border border-[#000035] dark:border-[#D7D7D7]   text-black dark:text-[#D7D7D7] placeholder-[#000035] dark:placeholder-[#D7D7D7] outline-none text-[0.8125rem] ${className || ""}`,
   };
 
   if (step) {
