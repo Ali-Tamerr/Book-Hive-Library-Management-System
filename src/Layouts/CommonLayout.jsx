@@ -340,7 +340,7 @@ const CommonLayout = ({
             ref={scrollContainerRef}
             className="min-h-0 min-w-0 flex-1 overflow-auto rounded-lg pb-4"
           >
-            <table className="w-full min-w-250 max-[48rem]:min-w-2xl table-auto border-collapse text-left text-sm dark:text-[#E8E8E8]">
+            <table className="w-full min-w-250 max-[48rem]:min-w-2xl table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]">
               <thead className="sticky top-0 z-10 bg-[#f0f0f1] transition-colors duration-300 dark:bg-[#121317]">
                 <tr>
                   {columns.map((col) => (
