@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { RefreshCw, User } from "lucide-react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { RefreshCw, User, MapPin } from "lucide-react";
 import DashboardCard from "./DashboardCard";
 
 const AdminDashboardCard = ({
@@ -13,6 +13,42 @@ const AdminDashboardCard = ({
   const [hoveredAdmin, setHoveredAdmin] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const hoverTimeoutRef = useRef(null);
+
+  const [selectedBranch, setSelectedBranch] = useState("All branches");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const branches = useMemo(() => {
+    const branchSet = new Set();
+    displayAdmins.forEach((admin) => {
+      if (admin.subtitle) {
+        const match = admin.subtitle.match(/Branch:\s*(.+)$/i);
+        if (match && match[1] && match[1] !== "N/A") {
+          branchSet.add(match[1]);
+        }
+      }
+    });
+    return ["All branches", ...Array.from(branchSet).sort()];
+  }, [displayAdmins]);
+
+  const filteredAdmins = useMemo(() => {
+    if (selectedBranch === "All branches") return displayAdmins;
+    return displayAdmins.filter((admin) => {
+      return (
+        admin.subtitle && admin.subtitle.includes(`Branch: ${selectedBranch}`)
+      );
+    });
+  }, [displayAdmins, selectedBranch]);
 
   const handleMouseEnter = (e, admin) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -32,14 +68,46 @@ const AdminDashboardCard = ({
     setHoveredAdmin(null);
   };
 
+  const customTitle = (
+    <div className="flex items-center justify-center gap-2">
+      <span>{title}</span>
+      <div className="relative flex items-center justify-center" ref={dropdownRef}>
+        <MapPin
+          className="h-7 w-7 cursor-pointer text-[#000035] transition-opacity hover:opacity-80 dark:text-[#d3d6de] max-[75rem]:h-6 max-[75rem]:w-6"
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+        />
+        {dropdownOpen && (
+          <div className="absolute right-0 top-full z-50 mt-2 w-40 rounded-md border border-[#000035] bg-white shadow-lg dark:border-[#D7D7D7] dark:bg-[#121317]">
+            <ul className="py-1">
+              {branches.map((branch) => (
+                <li
+                  key={branch}
+                  className={`cursor-pointer px-4 py-2 text-sm text-[#000035] hover:bg-gray-100 dark:text-[#d3d6de] dark:hover:bg-gray-800 ${
+                    selectedBranch === branch ? "font-bold" : ""
+                  }`}
+                  onClick={() => {
+                    setSelectedBranch(branch);
+                    setDropdownOpen(false);
+                  }}
+                >
+                  {branch}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
-    <DashboardCard title={title}>
+    <DashboardCard title={customTitle}>
       {loading ? (
         <li className="flex items-center gap-2.5 rounded-md p-2.5 text-xs dark:text-[#d3d6de]">
           Loading...
         </li>
-      ) : displayAdmins.length > 0 ? (
-        displayAdmins.map((admin) => (
+      ) : filteredAdmins.length > 0 ? (
+        filteredAdmins.map((admin) => (
           <li
             key={admin.id}
             onMouseEnter={(e) => handleMouseEnter(e, admin)}
@@ -75,11 +143,17 @@ const AdminDashboardCard = ({
             <div className="flex flex-col items-center justify-center gap-1 self-stretch max-[81.25rem]:-ml-2 max-[81.25rem]:w-20">
               <RefreshCw
                 onClick={() => handleRefreshAdmins(admin.id)}
-                className={`h-8 w-8 cursor-pointer text-[#000035] transition-transform dark:text-[#D7D7D7] max-[78.125rem]:h-6 max-[78.125rem]:w-6 ${loadingAdmins[admin.id] ? "animate-spin" : ""}`}
+                className={`h-8 w-8 cursor-pointer text-[#000035] transition-transform dark:text-[#D7D7D7] max-[78.125rem]:h-6 max-[78.125rem]:w-6 ${
+                  loadingAdmins[admin.id] ? "animate-spin" : ""
+                }`}
               />
               <div className="flex items-center gap-1.5">
                 <div
-                  className={`h-2 w-2 rounded-full ${admin.isOnline ? "bg-[#000035] dark:bg-[#D7D7D7]" : "bg-[#3d3e3e] dark:bg-[#3d3e3e]"}`}
+                  className={`h-2 w-2 rounded-full ${
+                    admin.isOnline
+                      ? "bg-[#000035] dark:bg-[#D7D7D7]"
+                      : "bg-[#3d3e3e] dark:bg-[#3d3e3e]"
+                  }`}
                 ></div>
                 <p
                   className={`text-[0.75rem] font-bold text-[#000035] dark:text-[#D7D7D7] max-[78.125rem]:text-[0.65rem]`}
