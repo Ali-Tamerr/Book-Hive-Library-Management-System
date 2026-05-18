@@ -19,11 +19,15 @@ import { useOverdueBooks } from "../hooks/useOverdueBooks";
 import { useBookTransactions } from "../hooks/useBookTransactions";
 import { useBookCopies } from "../hooks/useBookCopies";
 import { usePlans } from "../hooks/usePlans";
+import { useUser } from "../hooks/useUsers";
 import { getCurrentUser } from "../services/auth.api";
 import { apiGet, getImageUrl } from "../services/api.config";
 
 function Dashboard() {
-  const currentUser = getCurrentUser();
+  const localUser = getCurrentUser();
+  const { data: userProfile } = useUser(localUser?.user_id);
+  const currentUser = userProfile && userProfile.user_id ? userProfile : localUser;
+
   const currentUserDisplayName =
     `${currentUser?.first_name || ""} ${currentUser?.last_name || ""}`.trim() ||
     currentUser?.user_id ||
