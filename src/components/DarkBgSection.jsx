@@ -20,11 +20,14 @@ const DarkBgSection = ({
       : "rounded-tl-[5rem] rounded-bl-[5rem]";
 
   const bgColor = isDarkMode ? "bg-[#E8E8E8]" : "bg-[#000035]";
-  const textColor = isDarkMode ? "!text-[#121317]" : "!text-white";
-  const borderColor = isDarkMode ? "border-[#121317]" : "border-white";
+  const textColor = isDarkMode ? "!text-[#121317]" : "!text-[#F2F2F2]";
+  const btnTextColor = isDarkMode
+    ? "!text-[#121317] hover:!text-[#F2F2F2]"
+    : "!text-[#F2F2F2] hover:!text-[#000035]";
+  const borderColor = isDarkMode ? "border-[#121317]" : "border-[#F2F2F2]";
   const hoverBg = isDarkMode
-    ? "hover:bg-[#121317] hover:text-white"
-    : "hover:bg-white hover:text-[#000035]";
+    ? "hover:bg-[#121317] "
+    : "hover:bg-white ";
   const headingFontClass = "font-['Bebas_Neue',sans-serif]";
   const contentFontClass = "font-['Noto_Sans_Georgian',sans-serif]";
   const logoSrc = isDarkMode ? logoDark : logoLight;
@@ -39,7 +42,7 @@ const DarkBgSection = ({
       {backButton && (
         <button
           onClick={backButton.onClick}
-          className={`absolute ${backButton.position === "left" ? "left-4 top-4" : "right-4 top-4"} border ${borderColor} ${textColor} ${hoverBg} cursor-pointer rounded-sm px-4 py-1 text-xs font-medium transition-colors`}
+          className={`absolute ${backButton.position === "left" ? "left-4 top-4" : "right-4 top-4"} border ${borderColor} ${btnTextColor} ${hoverBg} cursor-pointer rounded-sm px-4 py-1 text-xs font-medium transition-colors`}
         >
           {backButton.text}
         </button>
@@ -72,7 +75,7 @@ const DarkBgSection = ({
         {buttonText && onButtonClick && (
           <button
             onClick={onButtonClick}
-            className={`border-2 ${borderColor} ${contentFontClass} ${textColor} w-full rounded-[1.25rem] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
+            className={`border-2 ${borderColor} ${contentFontClass} ${btnTextColor} w-full rounded-[1.25rem] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
           >
             {buttonText}
           </button>
@@ -80,7 +83,7 @@ const DarkBgSection = ({
         {secondButtonText && onSecondButtonClick && (
           <button
             onClick={onSecondButtonClick}
-            className={`border-2 ${borderColor} ${contentFontClass} ${textColor} w-full rounded-[1.25rem] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
+            className={`border-2 ${borderColor} ${contentFontClass} ${btnTextColor} w-full rounded-[1.25rem] px-10 py-4 text-lg font-semibold ${hoverBg} cursor-pointer transition-colors`}
           >
             {secondButtonText}
           </button>
