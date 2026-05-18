@@ -364,11 +364,11 @@ function Dashboard() {
               </div>
             </>
           ) : (
-            <div className="ml-auto mt-2 flex h-full min-h-0 w-fit flex-col gap-5 max-[64rem]:mx-auto max-[64rem]:w-full">
+            <div className="max-[64rem]:mx-auto max-[64rem]:w-full mt-2 flex h-full min-h-0 w-full flex-col gap-5">
               <div className="max-[56.25rem]:block max-[56.25rem]:w-full max-[56.25rem]:max-w-[26.25rem] max-[56.25rem]:self-center flex min-h-0 flex-1 justify-center">
                 <DashboardCard
                   title="Borrowed Books"
-                  className={compactCardClass}
+                  className="!flex-none w-full max-w-[calc((100%-1.5rem)/2)] !h-full !min-h-[15.625rem] max-[56.25rem]:!max-w-[26.25rem]"
                   listClassName="pt-2"
                 >
                   {renderTransactionList(borrowedItems, "No borrowed books")}
@@ -378,14 +378,14 @@ function Dashboard() {
               <div className="max-[56.25rem]:grid-cols-1 grid min-h-0 w-full flex-1 auto-rows-fr grid-cols-2 place-items-stretch gap-6">
                 <DashboardCard
                   title="Overdue Borrowers"
-                  className={compactCardClass}
+                  className="!h-full !min-h-[15.625rem] w-full max-[56.25rem]:max-w-[26.25rem]"
                   listClassName="pt-2"
                 >
                   {renderTransactionList(overdueItems, "No overdue books")}
                 </DashboardCard>
                 <DashboardCard
                   title="Returned Books"
-                  className={compactCardClass}
+                  className="!h-full !min-h-[15.625rem] w-full max-[56.25rem]:max-w-[26.25rem]"
                   listClassName="pt-2"
                 >
                   {renderTransactionList(returnedItems, "No returned books")}
