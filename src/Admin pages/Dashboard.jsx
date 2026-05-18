@@ -1,7 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { User } from "lucide-react";
 import { useLibrarians } from "../hooks/useUsers";
-import { useDashboardTransactions, useBookTransactions } from "../hooks/useBookTransactions";
+import {
+  useDashboardTransactions,
+  useBookTransactions,
+} from "../hooks/useBookTransactions";
 import { useBookCopies } from "../hooks/useBookCopies";
 import { getCurrentUser } from "../services/auth.api";
 import DashboardCard from "../components/DashboardCard";
@@ -58,7 +61,8 @@ function Dashboard() {
 
   const { data: dashboardTransactions, isLoading: transactionsLoading } =
     useDashboardTransactions();
-  const { data: rawTransactions = [], isLoading: rawTransactionsLoading } = useBookTransactions();
+  const { data: rawTransactions = [], isLoading: rawTransactionsLoading } =
+    useBookTransactions();
   const { data: bookCopies = [], isLoading: copiesLoading } = useBookCopies();
 
   const handleRefreshAdmins = (adminId) => {
@@ -68,7 +72,8 @@ function Dashboard() {
     });
   };
 
-  const transactionsLoadingState = transactionsLoading || rawTransactionsLoading || copiesLoading;
+  const transactionsLoadingState =
+    transactionsLoading || rawTransactionsLoading || copiesLoading;
 
   const getUserBranchId = (u) => {
     if (!u) return null;
@@ -90,20 +95,25 @@ function Dashboard() {
     const branchCopyIds = new Set(
       bookCopies
         .filter((c) => String(c.branch_id) === String(currentUserBranchId))
-        .map((c) => String(c.book_copy_id || c.id))
+        .map((c) => String(c.book_copy_id || c.id)),
     );
 
     // Filter raw transactions to those on books from this branch
     const branchTransactions = rawTransactions.filter(
-      (t) => t.transaction_type === "Check-Out" && t.status !== "Pending" && branchCopyIds.has(String(t.book_id))
+      (t) =>
+        t.transaction_type === "Check-Out" &&
+        t.status !== "Pending" &&
+        branchCopyIds.has(String(t.book_id)),
     );
 
     const totalBorrowedCount = branchTransactions.length;
     const returnedCount = branchTransactions.filter(
-      (t) => t.status === "Returned" || t.return_date != null
+      (t) => t.status === "Returned" || t.return_date != null,
     ).length;
     const currentlyBorrowedCount = branchTransactions.filter(
-      (t) => (t.status === "Completed" || t.status === "Overdue") && t.return_date == null
+      (t) =>
+        (t.status === "Completed" || t.status === "Overdue") &&
+        t.return_date == null,
     ).length;
 
     derivedStats = {
@@ -244,13 +254,13 @@ function Dashboard() {
   }, [activeDotIndex]);
 
   return (
-    <section className="relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7 max-[64rem]:py-4 max-[64rem]:px-11 max-[26.875rem]:w-dvw max-[26.875rem]:px-4">
-      <div className="flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto max-[64rem]:flex-col max-[64rem]:gap-0 max-[64rem]:overflow-x-hidden max-[40.625rem]:overflow-hidden">
-        <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden max-[64rem]:mx-0 max-[64rem]:h-fit max-[64rem]:flex-none max-[40.625rem]:shrink">
-          <div className="flex h-full w-full flex-col items-center justify-stretch rounded-lg max-[64rem]:h-fit">
-            <div className="[26.875rem]:px-0 [26.875rem]:mx-0 flex h-full w-full flex-col items-center justify-between gap-10 max-[64rem]:my-0 max-[64rem]:h-fit max-[64rem]:max-w-full max-[64rem]:flex-row max-[64rem]:justify-center max-[64rem]:overflow-hidden max-[40.625rem]:h-auto max-[40.625rem]:flex-col-reverse max-[40.625rem]:gap-4">
+    <section className="max-[64rem]:py-4 max-[64rem]:px-11 max-[26.875rem]:w-dvw max-[26.875rem]:px-4 relative flex h-full w-full flex-1 flex-col overflow-hidden px-9 py-7">
+      <div className="max-[64rem]:flex-col max-[64rem]:gap-0 max-[64rem]:overflow-x-hidden max-[40.625rem]:overflow-hidden flex min-h-0 flex-1 flex-row justify-between gap-12 overflow-y-auto">
+        <div className="max-[64rem]:mx-0 max-[64rem]:h-fit max-[64rem]:flex-none max-[40.625rem]:shrink flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden">
+          <div className="max-[64rem]:h-fit flex h-full w-full flex-col items-center justify-stretch rounded-lg">
+            <div className="[26.875rem]:px-0 [26.875rem]:mx-0 max-[64rem]:my-0 max-[64rem]:h-fit max-[64rem]:max-w-full max-[64rem]:flex-row max-[64rem]:justify-center max-[64rem]:overflow-hidden max-[40.625rem]:h-auto max-[40.625rem]:flex-col-reverse max-[40.625rem]:gap-4 flex h-full w-full flex-col items-center justify-between gap-10">
               <PieChartLegend variant="mobile" label2="Total Returned Books" />
-              <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6 max-[64rem]:min-h-[10.125rem] max-[64rem]:min-w-0 max-[64rem]:max-w-[15.625rem] max-[64rem]:pb-0 max-[64rem]:max-w-[11.25rem] max-[40.625rem]:mb-0 max-[40.625rem]:w-[50vw] max-[40.625rem]:max-w-none">
+              <div className="max-[64rem]:min-h-[10.125rem] max-[64rem]:min-w-0 max-[64rem]:max-w-[15.625rem] max-[64rem]:pb-0 max-[64rem]:max-w-[11.25rem] max-[40.625rem]:mb-0 max-[40.625rem]:w-[50vw] max-[40.625rem]:max-w-none flex min-h-0 w-full flex-1 flex-col items-center justify-center pb-6">
                 <PieChart
                   totalBorrowed={stats.totalBorrowed}
                   currentlyBorrowed={stats.currentlyBorrowed}
@@ -262,11 +272,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="flex min-h-0 w-full flex-1 max-[96.25rem]:flex-2 flex-col gap-6 max-[64rem]:mt-6">
+        <div className="max-[96.25rem]:flex-2 max-[64rem]:mt-6 flex min-h-0 w-full flex-1 flex-col gap-6">
           {isSuperAdmin ? (
             <>
               {/* Desktop Grid */}
-              <div className="grid h-full w-full auto-rows-fr grid-cols-2 gap-6 max-[40.625rem]:hidden">
+              <div className="max-[40.625rem]:hidden grid h-full w-full auto-rows-fr grid-cols-2 gap-6">
                 <DashboardCard title="Borrowed Books">
                   {renderTransactionList(borrowedItems, "No borrowed books")}
                 </DashboardCard>
@@ -287,15 +297,21 @@ function Dashboard() {
               </div>
 
               {/* Mobile Carousel */}
-              <div className="hidden h-full w-full flex-col gap-4 max-[40.625rem]:flex">
+              <div className="max-[40.625rem]:flex hidden h-full w-full flex-col gap-4">
                 <div
                   ref={carouselRef}
-                  className="flex h-full w-full snap-x snap-mandatory flex-row gap-6 overflow-x-auto pb-2 scrollbar-none"
-                  style={{ scrollbarWidth: "none", "-ms-overflow-style": "none" }}
+                  className="scrollbar-none flex h-full w-full snap-x snap-mandatory flex-row gap-6 overflow-x-auto pb-2"
+                  style={{
+                    scrollbarWidth: "none",
+                    "-ms-overflow-style": "none",
+                  }}
                 >
                   <div className="w-full shrink-0 snap-center">
                     <DashboardCard title="Borrowed Books">
-                      {renderTransactionList(borrowedItems, "No borrowed books")}
+                      {renderTransactionList(
+                        borrowedItems,
+                        "No borrowed books",
+                      )}
                     </DashboardCard>
                   </div>
                   <div className="w-full shrink-0 snap-center">
@@ -305,7 +321,10 @@ function Dashboard() {
                   </div>
                   <div className="w-full shrink-0 snap-center">
                     <DashboardCard title="Returned Books">
-                      {renderTransactionList(returnedItems, "No returned books")}
+                      {renderTransactionList(
+                        returnedItems,
+                        "No returned books",
+                      )}
                     </DashboardCard>
                   </div>
                   <div className="w-full shrink-0 snap-center">
@@ -345,8 +364,8 @@ function Dashboard() {
               </div>
             </>
           ) : (
-            <div className="mx-auto mt-2 flex h-full min-h-0 w-full max-w-[43.75rem] flex-col gap-5">
-              <div className="flex min-h-0 flex-1 justify-center max-[56.25rem]:block max-[56.25rem]:w-full max-[56.25rem]:max-w-[26.25rem] max-[56.25rem]:self-center">
+            <div className="ml-auto mt-2 flex h-full min-h-0 w-fit flex-col gap-5 max-[64rem]:mx-auto max-[64rem]:w-full">
+              <div className="max-[56.25rem]:block max-[56.25rem]:w-full max-[56.25rem]:max-w-[26.25rem] max-[56.25rem]:self-center flex min-h-0 flex-1 justify-center">
                 <DashboardCard
                   title="Borrowed Books"
                   className={compactCardClass}
@@ -356,7 +375,7 @@ function Dashboard() {
                 </DashboardCard>
               </div>
 
-              <div className="grid min-h-0 w-full flex-1 auto-rows-fr grid-cols-2 place-items-stretch gap-6 max-[56.25rem]:grid-cols-1">
+              <div className="max-[56.25rem]:grid-cols-1 grid min-h-0 w-full flex-1 auto-rows-fr grid-cols-2 place-items-stretch gap-6">
                 <DashboardCard
                   title="Overdue Borrowers"
                   className={compactCardClass}
