@@ -21,48 +21,22 @@ export const bookTransactionKeys = {
 };
 
 export const useBookTransactions = () => {
-  const cacheKey = "transactions_all_cache";
-
   return useQuery({
     queryKey: bookTransactionKeys.lists(),
     queryFn: async () => {
-      const cachedData = localStorage.getItem(cacheKey);
-      if (cachedData) {
-        try {
-          return JSON.parse(cachedData);
-        } catch (e) {}
-      }
-
-      const data = await getAllTransactions();
-      localStorage.setItem(cacheKey, JSON.stringify(data));
-      return data;
+      return await getAllTransactions();
     },
     ...adminQueryOptions,
-    staleTime: Infinity,
-    gcTime: Infinity,
   });
 };
 
 export const useDashboardTransactions = () => {
-  const cacheKey = "transactions_dashboard_cache";
-
   return useQuery({
     queryKey: bookTransactionKeys.dashboard(),
     queryFn: async () => {
-      const cachedData = localStorage.getItem(cacheKey);
-      if (cachedData) {
-        try {
-          return JSON.parse(cachedData);
-        } catch (e) {}
-      }
-
-      const data = await getDashboardTransactions();
-      localStorage.setItem(cacheKey, JSON.stringify(data));
-      return data;
+      return await getDashboardTransactions();
     },
     ...adminQueryOptions,
-    staleTime: Infinity,
-    gcTime: Infinity,
   });
 };
 

@@ -52,25 +52,12 @@ export const useBookCovers = (options = {}) => {
 };
 
 export const useDashboardBooks = (options = {}) => {
-  const cacheKey = "dashboard_books_cache";
-
   return useQuery({
     queryKey: bookKeys.dashboard(),
     queryFn: async () => {
-      const cachedData = localStorage.getItem(cacheKey);
-      if (cachedData) {
-        try {
-          return JSON.parse(cachedData);
-        } catch (e) {}
-      }
-
-      const data = await getDashboardBooks();
-      localStorage.setItem(cacheKey, JSON.stringify(data));
-      return data;
+      return await getDashboardBooks();
     },
     ...adminQueryOptions,
-    staleTime: Infinity,
-    gcTime: Infinity,
     ...options,
   });
 };

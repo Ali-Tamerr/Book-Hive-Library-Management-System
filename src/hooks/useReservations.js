@@ -17,25 +17,12 @@ export const reservationKeys = {
 };
 
 export const useReservations = () => {
-  const cacheKey = "reservations_cache";
-
   return useQuery({
     queryKey: reservationKeys.lists(),
     queryFn: async () => {
-      const cachedData = localStorage.getItem(cacheKey);
-      if (cachedData) {
-        try {
-          return JSON.parse(cachedData);
-        } catch (e) {}
-      }
-
-      const data = await getAllReservations();
-      localStorage.setItem(cacheKey, JSON.stringify(data));
-      return data;
+      return await getAllReservations();
     },
     ...adminQueryOptions,
-    staleTime: Infinity,
-    gcTime: Infinity,
   });
 };
 

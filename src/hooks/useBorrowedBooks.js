@@ -18,25 +18,12 @@ export const borrowedBooksKeys = {
 };
 
 export const useBorrowedBooks = () => {
-  const cacheKey = "borrowed_books_cache";
-
   return useQuery({
     queryKey: borrowedBooksKeys.lists(),
     queryFn: async () => {
-      const cachedData = localStorage.getItem(cacheKey);
-      if (cachedData) {
-        try {
-          return JSON.parse(cachedData);
-        } catch (e) {}
-      }
-
-      const data = await getAllBorrowedBooks();
-      localStorage.setItem(cacheKey, JSON.stringify(data));
-      return data;
+      return await getAllBorrowedBooks();
     },
     ...adminQueryOptions,
-    staleTime: Infinity,
-    gcTime: Infinity,
   });
 };
 

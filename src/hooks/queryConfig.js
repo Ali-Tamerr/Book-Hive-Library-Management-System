@@ -1,4 +1,4 @@
-export const REFETCH_INTERVAL = false;
+export const REFETCH_INTERVAL = 10000; // 10 seconds
 
 // Default admin query options. Increased `staleTime` and disabled
 // refetch on mount to avoid redundant requests when multiple components
@@ -7,7 +7,7 @@ export const adminQueryOptions = {
   staleTime: 5 * 60 * 1000, // 5 minutes
   refetchInterval: REFETCH_INTERVAL,
   refetchIntervalInBackground: false,
-  refetchOnWindowFocus: false,
+  refetchOnWindowFocus: true,
   refetchOnMount: false,
   refetchOnReconnect: true,
   retry: 1,
