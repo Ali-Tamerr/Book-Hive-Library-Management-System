@@ -87,6 +87,22 @@ function Dashboard() {
     isFetching: selectedBookFetching,
   } = useBook(selectedBookId);
 
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const categoryDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target)
+      ) {
+        setCategoryDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // 1. Fetch Stats from backend (just like Home.jsx)
   useEffect(() => {
     const fetchStats = async () => {
@@ -454,26 +470,49 @@ function Dashboard() {
               className="w-full rounded-lg border border-[#000035] py-1.5 pl-10 pr-3.5 text-sm transition-colors placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
-          <div className="mr-22 max-[40rem]:mr-0 max-[40rem]:min-w-0 max-[40rem]:max-w-none relative w-full min-w-40.5 max-w-132.75 flex-1">
-            <select
-              value={selectedCategory}
-              onChange={(e) => {
-                setSelectedCategory(e.target.value);
-                setCurrentPage(0);
-              }}
-              className="w-full cursor-pointer appearance-none rounded-lg border border-[#000035] px-3.5 py-1.5 pr-9 text-sm transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7]"
+          <div
+            ref={categoryDropdownRef}
+            className="mr-22 max-[40rem]:mr-0 max-[40rem]:min-w-0 max-[40rem]:max-w-none relative w-full min-w-40.5 max-w-132.75 flex-1"
+          >
+            <div
+              onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+              className="w-full cursor-pointer rounded-lg border border-[#000035] px-3.5 py-1.5 pr-9 text-sm transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7] select-none text-left bg-transparent"
             >
-              <option value="">Category</option>
-              {categories.map((cat) => (
-                <option
-                  key={cat.category_id}
-                  value={cat.category_id}
-                  className="bg-[#D7D7D7] font-['Noto_Sans_Georgian',sans-serif] text-[#000035] dark:bg-[#121317] dark:text-[#D7D7D7]"
-                >
-                  {cat.category_name || cat.name}
-                </option>
-              ))}
-            </select>
+              {categories.find(c => String(c.category_id) === String(selectedCategory))?.category_name || categories.find(c => String(c.category_id) === String(selectedCategory))?.name || "Category"}
+            </div>
+            {categoryDropdownOpen && (
+              <div className="absolute left-0 top-full z-50 mt-2 w-full max-h-60 overflow-y-auto rounded-md border border-[#000035] bg-white shadow-lg dark:border-[#D7D7D7] dark:bg-[#121317]">
+                <ul className="py-1">
+                  <li
+                    className={`cursor-pointer px-4 py-2 text-sm text-[#000035] hover:bg-gray-100 dark:text-[#d3d6de] dark:hover:bg-gray-800 ${
+                      selectedCategory === "" ? "font-bold" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedCategory("");
+                      setCurrentPage(0);
+                      setCategoryDropdownOpen(false);
+                    }}
+                  >
+                    Category
+                  </li>
+                  {categories.map((cat) => (
+                    <li
+                      key={cat.category_id}
+                      className={`cursor-pointer px-4 py-2 text-sm text-[#000035] hover:bg-gray-100 dark:text-[#d3d6de] dark:hover:bg-gray-800 ${
+                        String(selectedCategory) === String(cat.category_id) ? "font-bold" : ""
+                      }`}
+                      onClick={() => {
+                        setSelectedCategory(cat.category_id);
+                        setCurrentPage(0);
+                        setCategoryDropdownOpen(false);
+                      }}
+                    >
+                      {cat.category_name || cat.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <ChevronDown
               className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[#000035] dark:text-[#D7D7D7]"
               size={16}
