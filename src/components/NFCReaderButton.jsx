@@ -26,10 +26,29 @@ const NFCReaderButton = ({
   }, [onDataReceived, registerCallback]);
 
   useEffect(() => {
-    if ((isConnected || isWireless) && inputRef?.current) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
+    if (isConnected || isWireless) {
+      const focus = () => {
+        if (inputRef?.current) {
+          inputRef.current.focus();
+        }
+      };
+
+      // Try immediately
+      focus();
+
+      // Set up sequential timers to ensure focus is grabbed and held,
+      // preventing the browser from stealing focus when Web Serial modal closes
+      const timers = [
+        setTimeout(focus, 50),
+        setTimeout(focus, 150),
+        setTimeout(focus, 300),
+        setTimeout(focus, 600),
+        setTimeout(focus, 1000),
+      ];
+
+      return () => {
+        timers.forEach(clearTimeout);
+      };
     }
   }, [isConnected, isWireless, inputRef]);
 
