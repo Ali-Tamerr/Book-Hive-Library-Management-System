@@ -25,7 +25,7 @@ import { apiGet, getImageUrl } from "../services/api.config";
 
 function Dashboard() {
   const localUser = getCurrentUser();
-  const { data: userProfile } = useUser(localUser?.user_id);
+  const { data: userProfile, isLoading: isUserProfileLoading } = useUser(localUser?.user_id);
   const currentUser = userProfile && userProfile.user_id ? userProfile : localUser;
 
   const currentUserDisplayName =
@@ -222,11 +222,14 @@ function Dashboard() {
     null;
 
   const isExpired = useMemo(() => {
+    // If user profile is still loading and local user has no end date,
+    // default to false to avoid flashing expired warning on mount.
+    if (isUserProfileLoading && !localUser?.subscription_end_date) return false;
     if (!subscriptionExpirationRaw) return true;
     const expirationDate = new Date(subscriptionExpirationRaw);
     if (Number.isNaN(expirationDate.getTime())) return true;
     return expirationDate < new Date();
-  }, [subscriptionExpirationRaw]);
+  }, [subscriptionExpirationRaw, isUserProfileLoading, localUser]);
 
   const userBorrowedTransactions = Array.isArray(bookTransactions)
     ? bookTransactions.filter(
@@ -416,7 +419,7 @@ function Dashboard() {
         className="max-[40rem]:h-auto max-[40rem]:px-2 flex min-h-full flex-1 flex-col px-5 py-3"
         style={{ gap: "clamp(0.25rem, 1.5vh, 1.125rem)" }}
       >
-        {showSubscriptionInfo && (
+        {showSubscriptionInfo && !isUserProfileLoading && (
           <div className="max-[40rem]:block hidden w-full">
             <div
               className="relative flex w-full items-start justify-between rounded-lg p-3"
@@ -677,7 +680,7 @@ function Dashboard() {
                 />
               )}
             </div>
-            {showSubscriptionInfo && (
+            {showSubscriptionInfo && !isUserProfileLoading && (
               <div
                 className="max-[40rem]:hidden mt-auto flex w-full justify-start md:ml-10"
                 style={{
