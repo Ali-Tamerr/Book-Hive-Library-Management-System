@@ -12,7 +12,7 @@ const BookCard = ({ book, onClick, scale = 1 }) => {
       }}
     >
       <div
-        className="flex h-[18.75rem] w-40 cursor-pointer flex-col overflow-hidden rounded-lg px-2 py-2 font-['Noto_Sans_Georgian',sans-serif] shrink-0"
+        className="flex h-[18.75rem] w-40 shrink-0 flex-col overflow-hidden rounded-lg px-2 py-2 font-['Noto_Sans_Georgian',sans-serif]"
         style={{
           transform: `scale(${scale})`,
           transformOrigin: "center center",
@@ -34,11 +34,11 @@ const BookCard = ({ book, onClick, scale = 1 }) => {
           )}
         </div>
         <div className="mt-1 flex w-full shrink-0 flex-col gap-1">
-          <h3 className="text-md min-h-[2.75rem] line-clamp-2 text-center !font-['Noto_Sans_Georgian',sans-serif] font-bold text-[#000035] dark:text-[#D7D7D7]">
+          <h3 className="text-md line-clamp-2 min-h-[2.75rem] text-center !font-['Noto_Sans_Georgian',sans-serif] font-bold text-[#000035] dark:text-[#D7D7D7]">
             {book.name || "Untitled"}
           </h3>
           <button
-            className="w-full shrink-0 cursor-pointer whitespace-nowrap rounded-xl border border-[#000035] py-1.5 text-[1.0625rem] font-bold text-[#000035] transition-colors dark:border-[#D7D7D7] dark:text-[#D7D7D7]"
+            className="w-full shrink-0 cursor-pointer whitespace-nowrap rounded-xl border border-[var(--title-color)] py-1.5 text-[1.0625rem] font-bold text-[var(--title-color)] no-underline transition-colors duration-500 hover:border-transparent hover:bg-[var(--title-color)] hover:text-[#000035] hover:text-[#D7D7D7] dark:border-[#D7D7D7] dark:border-[var(--title-color)] dark:text-[#D7D7D7] dark:text-[var(--title-color)] dark:hover:border-transparent dark:hover:bg-[var(--title-color)] dark:hover:text-[#121317]"
             onClick={(e) => {
               e.stopPropagation();
               onClick();
