@@ -478,20 +478,16 @@ const ViewRequestsPopup = ({
 
         <div className="flex flex-1 flex-col justify-center overflow-hidden rounded-[0.625rem] border border-[#000035] dark:border-[#D7D7D7] min-h-[15.625rem]">
           <div className="min-w-[6.25rem] flex-1 overflow-auto">
-            {currentLoading ? (
-              <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">
-                Loading requests...
-              </div>
-            ) : currentData.length === 0 ? (
-              <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">
-                {searchValue
-                  ? "No requests match your search."
-                  : showRejected
-                    ? "No rejected requests."
-                    : "No pending requests."}
-              </div>
-            ) : activeTab === "users" ? (
+            {activeTab === "users" ? (
               <RequestsTable
+                isLoading={currentLoading}
+                emptyMessage={
+                  searchValue
+                    ? "No requests match your search."
+                    : showRejected
+                      ? "No rejected requests."
+                      : "No pending requests."
+                }
                 data={filteredUserRequests}
                 keyExtractor={(req, idx) => req.request_id || idx}
                 columns={[
@@ -535,6 +531,14 @@ const ViewRequestsPopup = ({
               />
             ) : activeTab === "books" ? (
               <RequestsTable
+                isLoading={currentLoading}
+                emptyMessage={
+                  searchValue
+                    ? "No requests match your search."
+                    : showRejected
+                      ? "No rejected requests."
+                      : "No pending requests."
+                }
                 data={filteredBookRequests}
                 keyExtractor={(req, idx) => req.transaction_id || idx}
                 columns={[
@@ -573,6 +577,14 @@ const ViewRequestsPopup = ({
               />
             ) : (
               <RequestsTable
+                isLoading={currentLoading}
+                emptyMessage={
+                  searchValue
+                    ? "No requests match your search."
+                    : showRejected
+                      ? "No rejected requests."
+                      : "No pending requests."
+                }
                 data={filteredFeedbackRequests}
                 keyExtractor={(req, idx) => req.request_id || req.feedback_id || idx}
                 columns={[

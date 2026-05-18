@@ -1,6 +1,6 @@
 import React from "react";
 
-const RequestsTable = ({ columns, data, keyExtractor }) => {
+const RequestsTable = ({ columns, data, keyExtractor, isLoading, emptyMessage }) => {
   return (
     <table className="w-full border-collapse">
       <thead>
@@ -16,20 +16,39 @@ const RequestsTable = ({ columns, data, keyExtractor }) => {
         </tr>
       </thead>
 
-
-      <tbody className="">
-        {data.map((item, index) => (
-          <tr key={keyExtractor ? keyExtractor(item, index) : index}>
-            {columns.map((col, idx) => (
-              <td
-                key={idx}
-                className={`whitespace-nowrap p-4 max-[48rem]:p-3 text-center text-sm max-[48rem]:text-[0.75rem] text-[#000035] dark:text-[#D7D7D7] ${col.cellClassName || ""}`}
-              >
-                {col.render ? col.render(item, index) : item[col.accessor]}
-              </td>
-            ))}
+      <tbody>
+        {isLoading ? (
+          <tr>
+            <td
+              colSpan={columns.length}
+              className="p-8 text-center text-sm text-[#000035] dark:text-[#D7D7D7]"
+            >
+              Loading requests...
+            </td>
           </tr>
-        ))}
+        ) : !data || data.length === 0 ? (
+          <tr>
+            <td
+              colSpan={columns.length}
+              className="p-8 text-center text-sm text-[#000035] dark:text-[#D7D7D7]"
+            >
+              {emptyMessage || "No data found."}
+            </td>
+          </tr>
+        ) : (
+          data.map((item, index) => (
+            <tr key={keyExtractor ? keyExtractor(item, index) : index}>
+              {columns.map((col, idx) => (
+                <td
+                  key={idx}
+                  className={`whitespace-nowrap p-4 max-[48rem]:p-3 text-center text-sm max-[48rem]:text-[0.75rem] text-[#000035] dark:text-[#D7D7D7] ${col.cellClassName || ""}`}
+                >
+                  {col.render ? col.render(item, index) : item[col.accessor]}
+                </td>
+              ))}
+            </tr>
+          ))
+        )}
       </tbody>
     </table>
   );
