@@ -454,7 +454,7 @@ function Dashboard() {
               className="w-full rounded-lg border border-[#000035] py-1.5 pl-10 pr-3.5 text-sm transition-colors placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder-[#D7D7D7]"
             />
           </div>
-          <div className="mr-22 max-[40rem]:mr-0 max-[40rem]:min-w-0 max-[40rem]:max-w-none relative w-full min-w-[10.125rem] max-w-[33.1875rem] flex-1">
+          <div className="mr-22 max-[40rem]:mr-0 max-[40rem]:min-w-0 max-[40rem]:max-w-none relative w-full min-w-40.5 max-w-132.75 flex-1">
             <select
               value={selectedCategory}
               onChange={(e) => {
@@ -489,15 +489,15 @@ function Dashboard() {
           }}
         >
           <div
-            className={`max-[40rem]:mx-auto max-[40rem]:flex-none min-[40rem]:order-last min-[40rem]:h-full min-[96.25rem]:-ml-5 flex flex-col items-center justify-center gap-3 overflow-hidden transition-all duration-500 ease-in-out ${
+            className={`max-[40rem]:mx-auto max-[40rem]:flex-none sm:order-last sm:h-full min-[96.25rem]:-ml-5 flex flex-col items-center justify-center gap-3 overflow-hidden transition-all duration-500 ease-in-out ${
               searchValue || isSearchFocused
                 ? "invisible max-h-0 max-w-0 flex-[0.0001] -translate-y-2 scale-95 opacity-0"
-                : "flex-3 scaleden0 visible max-h-[50rem] max-w-full translate-y-0 opacity-100"
+                : "flex-3 scaleden0 visible max-h-200 max-w-full translate-y-0 opacity-100"
             }`}
           >
             <div className="min-[75rem]:mb-6 flex h-full w-full flex-col items-center justify-start rounded-md">
               <div className="flex h-full w-full flex-col items-center justify-between gap-6 overflow-hidden">
-                <div className="max-[40rem]:min-h-[10.125rem] relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center overflow-hidden">
+                <div className="max-[40rem]:min-h-40.5 relative flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <PieChart
                       totalBorrowed={stats.totalBorrowed}
@@ -509,17 +509,17 @@ function Dashboard() {
                 </div>
                 <PieChartLegend
                   variant="mobile"
-                  className="max-[96.25rem]:!hidden max-[67.5rem]:!flex"
+                  className="max-[96.25rem]:hidden! max-[67.5rem]:flex!"
                 />
                 <PieChartLegend
                   variant="desktop"
-                  className="max-[96.25rem]:!flex max-[67.5rem]:!hidden"
+                  className="max-[96.25rem]:flex! max-[67.5rem]:hidden!"
                 />
               </div>
             </div>
           </div>
           <div
-            className="min-[40rem]:flex-4 min-[40rem]:h-full flex w-full flex-col"
+            className="sm:flex-4 sm:h-full flex w-full flex-col"
             style={{ gap: "clamp(0.125rem, 1vh, 1.25rem)" }}
           >
             <div className="max-[40rem]:flex-col-reverse max-[40rem]:items-start max-[40rem]:gap-2 flex items-center justify-between border-b border-[#000035] dark:border-[#D7D7D7]">
@@ -529,7 +529,7 @@ function Dashboard() {
                     setActiveTab("recommended");
                     setCurrentPage(0);
                   }}
-                  className={`max-[47.5rem]:text-xl relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors ${
+                  className={`max-[47.5rem]:text-xl relative pb-3 font-['Bebas_Neue',sans-serif]! text-2xl font-bold tracking-wider transition-colors ${
                     activeTab === "recommended"
                       ? "text-[#000035] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#000035] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:text-[#D7D7D7]/40 dark:hover:text-gray-300"
@@ -542,7 +542,7 @@ function Dashboard() {
                     setActiveTab("recently");
                     setCurrentPage(0);
                   }}
-                  className={`max-[47.5rem]:text-xl relative pb-3 !font-['Bebas_Neue',sans-serif] text-2xl font-bold tracking-wider transition-colors ${
+                  className={`max-[47.5rem]:text-xl relative pb-3 font-['Bebas_Neue',sans-serif]! text-2xl font-bold tracking-wider transition-colors ${
                     activeTab === "recently"
                       ? "text-[#000035] after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#000035] dark:text-[#D7D7D7] dark:after:bg-white"
                       : "cursor-pointer text-[#000035] hover:text-gray-600 dark:text-[#D7D7D7]/40 dark:hover:text-gray-300"
@@ -571,7 +571,7 @@ function Dashboard() {
                   {Array.from({ length: 3 }).map((_, i) => (
                     <div
                       key={i}
-                      className={`h-[0.0938rem] w-[0.625rem] rounded-full transition-colors ${
+                      className={`h-[0.0938rem] w-2.5 rounded-full transition-colors ${
                         i === Math.min(currentPage, 2)
                           ? "bg-[#000035] dark:bg-[#D7D7D7]"
                           : "bg-[#000035]/10 dark:bg-[#D7D7D7]/10"
