@@ -476,7 +476,7 @@ const ViewRequestsPopup = ({
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col justify-center overflow-hidden rounded-[0.625rem] border border-[#000035] dark:border-[#D7D7D7]">
+        <div className="flex flex-1 flex-col justify-center overflow-hidden rounded-[0.625rem] border border-[#000035] dark:border-[#D7D7D7] min-h-[15.625rem]">
           <div className="min-w-[6.25rem] flex-1 overflow-auto">
             {currentLoading ? (
               <div className="p-8 text-center text-[#000035] dark:text-[#D7D7D7]">

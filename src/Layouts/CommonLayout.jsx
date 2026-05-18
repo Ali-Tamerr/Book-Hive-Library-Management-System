@@ -266,7 +266,7 @@ const CommonLayout = ({
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isMobile ? (
         <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg">
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border-x border-b border-[#000035] dark:border-[#D7D7D7]">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border-b border-[#000035] dark:border-[#D7D7D7]">
 
             {/* Single scrollable container — horizontal scroll + vertical swipe */}
             <div
