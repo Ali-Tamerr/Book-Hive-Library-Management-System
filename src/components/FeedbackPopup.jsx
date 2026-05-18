@@ -84,7 +84,7 @@ const FeedbackPopup = ({ show, onClose }) => {
         <div className="flex w-full items-center justify-center">
           <FormInput
             type="textarea"
-            className="h-[9.375rem] w-full max-w-[25rem] resize-none"
+            className="h-[9.375rem] w-full max-w-[25rem] resize-none border-[#000035] text-[#000035] placeholder:text-[#000035] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:placeholder:text-[#D7D7D7]"
             placeholder="Share your experience"
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
@@ -104,20 +104,20 @@ const FeedbackPopup = ({ show, onClose }) => {
               <button
                 key={star}
                 type="button"
-                className="cursor-pointer transition-transform hover:scale-110 "
+                className="cursor-pointer transition-transform hover:scale-110"
                 onMouseMove={(e) => handleMouseMove(e, star)}
                 onClick={handleStarClick}
               >
                 <div className="relative">
                   <Star
                     size={34}
-                    className="text-[#0b0b3b] dark:text-[#D7D7D7]"
+                    className="text-[#000035] dark:text-[#D7D7D7]"
                     strokeWidth={1.5}
                   />
                   {isFull && (
                     <Star
                       size={34}
-                      className="absolute left-0 top-0 fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                      className="absolute left-0 top-0 fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                       strokeWidth={1.5}
                     />
                   )}
@@ -125,7 +125,7 @@ const FeedbackPopup = ({ show, onClose }) => {
                     <div className="absolute left-0 top-0 h-full w-1/2 overflow-hidden">
                       <Star
                         size={34}
-                        className="min-w-[2.125rem] fill-[#0b0b3b] text-[#0b0b3b] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
+                        className="min-w-[2.125rem] fill-[#000035] text-[#000035] dark:fill-[#D7D7D7] dark:text-[#D7D7D7]"
                         strokeWidth={1.5}
                         style={{
                           width: "2.125rem",
