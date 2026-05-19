@@ -21,6 +21,7 @@ import {
   useFeedbacks,
   useUpdateFeedbackStatus,
 } from "../hooks/useFeedbacks.js";
+import { useBranches } from "../hooks/useBranches.js";
 
 const AdminNotifications = ({ className = "" }) => {
   const currentUser = getCurrentUser();
@@ -42,6 +43,7 @@ const AdminNotifications = ({ className = "" }) => {
     status: "Active",
     password: "",
     password_hash: "",
+    branch_id: "",
   });
 
   const { data } = useUsers();
@@ -60,6 +62,7 @@ const AdminNotifications = ({ className = "" }) => {
   const { data: books = [] } = useBooks();
   const updateBookCopyMutation = useUpdateBookCopy();
   const { data: bookCopies = [] } = useBookCopies();
+  const { data: branches = [] } = useBranches();
 
   /* eslint-disable no-unused-vars */
   const EXPIRATION_DAYS = 7;
@@ -159,6 +162,11 @@ const AdminNotifications = ({ className = "" }) => {
 
       const selectedRole =
         isSuperAdmin && formData.role ? formData.role : "User";
+      
+      const userBranchId = formData.branch_id 
+        ? parseInt(formData.branch_id, 10) 
+        : (currentUser?.branch_id ? parseInt(currentUser.branch_id, 10) : null);
+
       const apiData = {
         user_id: formData.user_id.trim(),
         first_name: formData.first_name.trim(),
@@ -169,6 +177,7 @@ const AdminNotifications = ({ className = "" }) => {
         status: formData.status || "Active",
         password_hash: formData.password,
         created_by: currentUser?.user_id || null,
+        branch_id: userBranchId,
       };
 
       await createUserMutation.mutateAsync(apiData);
@@ -193,6 +202,7 @@ const AdminNotifications = ({ className = "" }) => {
         status: "Active",
         password: "",
         password_hash: "",
+        branch_id: "",
       });
       setShowUserFormPopup(false);
       setEditMode(false);
@@ -251,6 +261,7 @@ const AdminNotifications = ({ className = "" }) => {
             status: "Active",
             password: request.password || "",
             password_hash: "",
+            branch_id: request.branch_id || "",
           });
           setPendingRequestId(request.request_id);
           setShowRequestsPopup(false);
@@ -343,6 +354,7 @@ const AdminNotifications = ({ className = "" }) => {
         isSuperAdmin={isSuperAdmin}
         error={formError}
         nextUserId={nextUserId}
+        branches={branches}
       />
 
       <FeedbackDetailsPopup
