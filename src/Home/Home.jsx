@@ -438,7 +438,7 @@ const Home = () => {
           />
         </main>
 
-        <Footer logoIcon={logoIcon} setActivePopup={setActivePopup} />
+        <Footer logoIcon={logoIcon} setActivePopup={setActivePopup} scrollToSection={scrollToSection} />
 
         {/* <a
           href="#"

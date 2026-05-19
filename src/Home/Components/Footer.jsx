@@ -1,6 +1,6 @@
 import React from "react";
 
-const Footer = ({ logoIcon, setActivePopup }) => {
+const Footer = ({ logoIcon, setActivePopup, scrollToSection }) => {
   return (
     <footer
       className="footer px-5 pb-[2.5rem] pt-[4.5rem] font-[family-name:var(--second-font)] text-[var(--text-color)] max-[42.5rem]:px-4 max-[42.5rem]:pt-[3.125rem] max-[64rem]:pb-32 dark:!bg-[#101114]"
@@ -43,7 +43,15 @@ const Footer = ({ logoIcon, setActivePopup }) => {
           </h3>
           <ul className="footer-links list-none space-y-5">
             <li className="flex group justify-center max-[59.375rem]:justify-center min-[59.375rem]:justify-start">
-              <a href="#" className="relative w-fit font-[family-name:var(--second-font)] text-[1.125rem] font-bold text-[var(--text-color)] no-underline transition-all duration-300 before:absolute before:-bottom-1 before:left-1/2 before:-translate-x-1/2 before:h-[0.1875rem] before:w-0 before:bg-[var(--text-color)] before:transition-all before:duration-300 before:content-[''] hover:before:w-full max-[42.5rem]:text-[1rem] dark:text-[var(--text-color)] dark:before:bg-[var(--text-color)]">
+              <a
+                href="#about"
+                className="relative w-fit font-[family-name:var(--second-font)] text-[1.125rem] font-bold text-[var(--text-color)] no-underline transition-all duration-300 before:absolute before:-bottom-1 before:left-1/2 before:-translate-x-1/2 before:h-[0.1875rem] before:w-0 before:bg-[var(--text-color)] before:transition-all before:duration-300 before:content-[''] hover:before:w-full max-[42.5rem]:text-[1rem] dark:text-[var(--text-color)] dark:before:bg-[var(--text-color)]"
+                onClick={(e) => {
+                  if (scrollToSection) {
+                    scrollToSection(e, "about");
+                  }
+                }}
+              >
                 Who are we ?
               </a>
             </li>
