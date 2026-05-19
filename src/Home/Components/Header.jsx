@@ -76,7 +76,7 @@ const Header = ({
                 activeSection={activeSection}
                 scrollToSection={scrollToSection}
                 iconClass="ri-message-3-line"
-                label="Testimonial"
+                label="Testimonials"
               />
             </ul>
           </div>

@@ -480,5 +480,23 @@ body.dark-theme .app-popup .settings-credentials-input::placeholder {
   animation: spinner-logo-breathe 1.8s ease-in-out infinite;
 }
 
+/* Scroll offset for fixed header navigation */
+#about,
+#featured,
+#plans,
+#testimonial {
+  scroll-margin-top: 6.5rem;
+}
+
+@media screen and (min-width: 71.875rem) {
+  #about,
+  #featured,
+  #plans,
+  #testimonial {
+    scroll-margin-top: 8.5rem;
+  }
+}
+
+
 
 
