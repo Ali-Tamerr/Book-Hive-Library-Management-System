@@ -497,10 +497,6 @@ function UserManagement({ searchValue, setSearchValue }) {
       return false;
     }
 
-    if (isBranchScopedRole) {
-      return isSameBranch(user);
-    }
-
     return true;
   });
 

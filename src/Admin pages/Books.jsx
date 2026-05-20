@@ -266,23 +266,8 @@ function Books({ searchValue, setSearchValue }) {
     return uniqueBranchNames.length > 0 ? uniqueBranchNames.join(", ") : "N/A";
   };
 
-  // Filter books based on branch and search value
+  // Filter books based on search value (branch filtering is handled by the backend)
   const filteredBooks = books.filter((book) => {
-    // 1. Filter by Branch (Permission)
-    if (!isSuperAdmin) {
-      if (!currentUserBranchId) return false; // If admin has no branch, show nothing? Or all? Assuming restricted.
-
-      // Check if this book has ANY copy in the current user's branch
-      const hasCopyWithBranch = bookCopies.some(
-        (copy) =>
-          copy.book_id === book.book_id &&
-          String(copy.branch_id).trim() === String(currentUserBranchId).trim(),
-      );
-
-      if (!hasCopyWithBranch) return false;
-    }
-
-    // 2. Filter by Search (Search bar)
     if (searchValue) {
       const name = book.name || "";
       const book_id = book.book_id || "";
