@@ -268,23 +268,11 @@ const AdminNotifications = ({ className = "" }) => {
           setEditMode(false);
           setShowUserFormPopup(true);
         }}
-        onReject={async (request) => {
+        onReject={async (request, reason = "") => {
           try {
-            const fallbackFullName = String(request.name || "").trim();
-            const [fallbackFirstName = "", ...fallbackRest] = fallbackFullName
-              ? fallbackFullName.split(/\s+/)
-              : [""];
-
             await rejectRequestMutation.mutateAsync({
               id: request.request_id,
-              data: {
-                first_name: request.first_name || fallbackFirstName,
-                last_name: request.last_name || fallbackRest.join(" "),
-                email: request.email,
-                password: request.password,
-                plan: request.plan,
-                status: "Rejected",
-              },
+              reason: reason,
             });
           } catch (error) {
             console.error("Failed to reject request:", error);

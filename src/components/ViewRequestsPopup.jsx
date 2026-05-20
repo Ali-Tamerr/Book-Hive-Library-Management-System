@@ -12,7 +12,7 @@ import {
   MessageSquare,
   ReceiptText,
 } from "lucide-react";
-
+import RejectReasonPopup from "./RejectReasonPopup.jsx";
 
 
 const ViewRequestsPopup = ({
@@ -39,6 +39,7 @@ const ViewRequestsPopup = ({
   const [searchValue, setSearchValue] = useState("");
   const [showRejected, setShowRejected] = useState(false);
   const [activeTab, setActiveTab] = useState("users");
+  const [rejectingRequest, setRejectingRequest] = useState(null);
 
   const normalizeBranchValue = (value) => {
     if (value === undefined || value === null) return null;
@@ -466,7 +467,7 @@ const ViewRequestsPopup = ({
                               <Check size={16} />
                             </button>
                             <button
-                              onClick={() => onReject && onReject(request)}
+                              onClick={() => setRejectingRequest(request)}
                               className="cursor-pointer rounded-lg border border-[#000035] dark:border-[#D7D7D7] p-2 text-[#000035] dark:text-[#D7D7D7]"
                               title="Reject"
                             >
@@ -585,6 +586,18 @@ const ViewRequestsPopup = ({
           </FormButton>
         </div>
       </div>
+
+      <RejectReasonPopup
+        show={!!rejectingRequest}
+        onClose={() => setRejectingRequest(null)}
+        onConfirm={(reason) => {
+          if (onReject) {
+            onReject(rejectingRequest, reason);
+          }
+          setRejectingRequest(null);
+        }}
+        isSubmitting={isLoading}
+      />
     </Popup>
   );
 };
