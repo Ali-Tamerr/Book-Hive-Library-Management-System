@@ -13,7 +13,7 @@ import {
   ReceiptText,
 } from "lucide-react";
 
-const EXPIRATION_DAYS = 7;
+
 
 const ViewRequestsPopup = ({
   show,
@@ -117,26 +117,7 @@ const ViewRequestsPopup = ({
     return null;
   };
 
-  const isExpired = (createdAt) => {
-    if (!createdAt) return false;
-    const createdDate = new Date(createdAt);
-    const expirationDate = new Date(
-      createdDate.getTime() + EXPIRATION_DAYS * 24 * 60 * 60 * 1000,
-    );
-    return new Date() > expirationDate;
-  };
 
-  const getDaysRemaining = (createdAt) => {
-    if (!createdAt) return 0;
-    const createdDate = new Date(createdAt);
-    const expirationDate = new Date(
-      createdDate.getTime() + EXPIRATION_DAYS * 24 * 60 * 60 * 1000,
-    );
-    const remaining = Math.ceil(
-      (expirationDate - new Date()) / (24 * 60 * 60 * 1000),
-    );
-    return Math.max(0, remaining);
-  };
 
   const filteredUserRequests = useMemo(() => {
     let filtered = requests.filter((request) => {
@@ -144,16 +125,17 @@ const ViewRequestsPopup = ({
         return request.status === "Rejected";
       } else {
         if (request.status === "Rejected") return false;
-        if (request.status === "Pending" && isExpired(request.created_at))
-          return false;
         return true;
       }
     });
 
     if (shouldApplyBranchFilter) {
-      filtered = filtered.filter(
-        (request) => getRequestBranch(request) === currentUserBranch,
-      );
+      filtered = filtered.filter((request) => {
+        const requestBranch = getRequestBranch(request);
+        // If a request has no branch, show it to all admins
+        if (requestBranch === null) return true;
+        return requestBranch === currentUserBranch;
+      });
     }
 
     if (searchValue.trim()) {
@@ -303,36 +285,12 @@ const ViewRequestsPopup = ({
   };
 
   const getUserStatusBadge = (request) => {
-    if (request.status === "Pending") {
-      const daysLeft = getDaysRemaining(request.created_at);
-      if (daysLeft <= 0) {
-        return (
-          <span className="text-xs font-medium text-red-500">Expired</span>
-        );
-      }
-      return (
-        <span className="text-xs font-medium">Pending ({daysLeft}d left)</span>
-      );
-    }
     return (
       <span className="text-xs font-medium">{request.status || "Pending"}</span>
     );
   };
 
   const getBookStatusBadge = (request) => {
-    if (request.status === "Rejected" && showRejected) {
-      const daysLeft = getDaysRemaining(request.created_at);
-      if (daysLeft <= 0) {
-        return (
-          <span className="text-xs font-medium text-red-500">Expired</span>
-        );
-      }
-      return (
-        <span className="text-xs font-medium text-red-500">
-          Rejected ({daysLeft}d left)
-        </span>
-      );
-    }
     return (
       <span className="text-xs font-medium">{request.status || "Pending"}</span>
     );
@@ -622,21 +580,7 @@ const ViewRequestsPopup = ({
           </div>
         </div>
 
-        {/* <div className="text-center text-sm text-[#000035]">
-          <div>
-            Showing {currentData.length} of {totalData.length} requests
-          </div>
-          {activeTab === "users" && !showRejected && (
-            <div className="mt-1 text-xs">
-              Request expiration = {EXPIRATION_DAYS} days
-            </div>
-          )}
-          {activeTab === "books" && showRejected && (
-            <div className="mt-1 text-xs">
-              Rejected request expiration = {EXPIRATION_DAYS} days
-            </div>
-          )}
-        </div> */}
+
 
         <div className="flex justify-center gap-3">
           <FormButton onClick={onClose} isPrimary={false}>

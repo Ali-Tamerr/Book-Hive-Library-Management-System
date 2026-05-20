@@ -192,6 +192,7 @@ function SignupPopup({ isOpen, onClose, onLogin, onShowOTP, slideFromTop = false
                     placeholder="Branch"
                     variant="auth"
                     isDarkMode={isDarkMode}
+                    required
                     options={branches.map((b) => ({
                       value: b.branch_id || b.id,
                       label: b.name,

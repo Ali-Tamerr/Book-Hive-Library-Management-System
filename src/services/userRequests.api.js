@@ -11,7 +11,12 @@ export const getUserRequestById = async (id) => {
 };
 
 export const createUserRequest = async (requestData, otp) => {
-  return await apiPost(BASE_ENDPOINT, { UserRequest: requestData, Otp: otp });
+  // Ensure branch_id is sent as a number (or null) to match backend model expectations
+  const sanitizedData = {
+    ...requestData,
+    branch_id: requestData.branch_id ? parseInt(requestData.branch_id, 10) : null,
+  };
+  return await apiPost(BASE_ENDPOINT, { UserRequest: sanitizedData, Otp: otp });
 };
 
 export const updateUserRequest = async (id, requestData) => {
