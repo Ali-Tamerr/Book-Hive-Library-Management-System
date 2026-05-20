@@ -269,23 +269,7 @@ function BorrowedBooks({
     });
   };
 
-  const visibleBorrowedBooks = borrowedBooks.filter((item) => {
-    // If super admin, show all
-    if (isSuperAdmin) return true;
-
-    // If regular admin/librarian, show only items where item branch matches user branch
-    if (currentUserBranchId) {
-      const itemBranchId = getBookBranchId(item.book_id);
-      return String(itemBranchId) === String(currentUserBranchId);
-    }
-
-    // Fallback if no branch assigned to user? Maybe show none or all?
-    // Usually strict policy -> show none. But based on UserManagement logic, we might show all.
-    // Let's assume strict for now, or match UserManagement "show all if unassigned".
-    // "but for admin/librarians, they will see ... returned books' rows of their branch onlyy"
-    // implies restriction.
-    return false;
-  });
+  const visibleBorrowedBooks = borrowedBooks;
 
   const filteredPending = visibleBorrowedBooks.filter((book) => {
     const status = (book.status || "").toLowerCase();

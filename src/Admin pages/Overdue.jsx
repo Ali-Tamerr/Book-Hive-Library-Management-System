@@ -104,16 +104,7 @@ function Overdue({ searchValue, setSearchValue, customTitle }) {
     });
   };
 
-  const visibleOverdueBooks = overdueBooks.filter((item) => {
-    if (isSuperAdmin) return true;
-    if (currentUserBranchId) {
-      const itemBranchId = getBookBranchId(item.book_id); // book_id here is actually book_copy_id in transactions usually?
-      // API docs say `book_id` in `BookTransactions` refers to `BookCopies.book_copy_id`.
-      // So checking `item.book_id` against copy's branch is correct.
-      return String(itemBranchId) === String(currentUserBranchId);
-    }
-    return false;
-  });
+  const visibleOverdueBooks = overdueBooks;
 
   const enrichedOverdueBooks = visibleOverdueBooks.map((book) => ({
     ...book,
