@@ -130,12 +130,9 @@ const ViewRequestsPopup = ({
     });
 
     if (shouldApplyBranchFilter) {
-      filtered = filtered.filter((request) => {
-        const requestBranch = getRequestBranch(request);
-        // If a request has no branch, show it to all admins
-        if (requestBranch === null) return true;
-        return requestBranch === currentUserBranch;
-      });
+      filtered = filtered.filter(
+        (request) => getRequestBranch(request) === currentUserBranch
+      );
     }
 
     if (searchValue.trim()) {
