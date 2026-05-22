@@ -18,6 +18,7 @@ const NFCReaderButton = ({
     registerCallback,
     targetDeviceId,
     forgetScannerId,
+    requestScannerId,
   } = useNFCReader();
 
   const [isActivating, setIsActivating] = useState(false);
@@ -69,14 +70,17 @@ const NFCReaderButton = ({
     }
 
     try {
+      // First ensure we have a scanner ID
+      const activeDeviceId = deviceId || await requestScannerId();
+      if (!activeDeviceId) return; // User cancelled prompt
+
       setIsActivating(true);
 
       // ننده Edge Function ونبعت device_id بس
-      const activeDeviceId = deviceId || targetDeviceId;
       await startRegisterMode(activeDeviceId);
 
       // فعّل wireless visual state والـ polling
-      toggleWireless();
+      await toggleWireless();
 
       // Automatically focus the first empty ID row after starting registration mode
       // This ensures the software is ready for the upcoming wireless scan.

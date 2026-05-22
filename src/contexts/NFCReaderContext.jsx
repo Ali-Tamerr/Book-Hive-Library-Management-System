@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { apiGet } from "../services/api.config";
 import { createClient } from "@supabase/supabase-js";
+import PromptToast from "../components/PromptToast.jsx";
 
 const NFCReaderContext = createContext();
 
@@ -29,6 +30,34 @@ export const NFCReaderProvider = ({ children }) => {
     localStorage.getItem("nfc_scanner_id") || "esp32",
   );
   const lastProcessedScanTimeRef = useRef(new Date().toISOString());
+  const [promptConfig, setPromptConfig] = useState({ show: false, resolve: null });
+
+  const requestScannerId = () => {
+    return new Promise((resolve) => {
+      let id = localStorage.getItem("nfc_scanner_id");
+      if (id) {
+        resolve(id);
+      } else {
+        setPromptConfig({ show: true, resolve });
+      }
+    });
+  };
+
+  const handlePromptSubmit = (id) => {
+    if (id && id.trim()) {
+      localStorage.setItem("nfc_scanner_id", id.trim());
+      setTargetDeviceId(id.trim());
+      if (promptConfig.resolve) promptConfig.resolve(id.trim());
+    } else {
+      if (promptConfig.resolve) promptConfig.resolve(null);
+    }
+    setPromptConfig({ show: false, resolve: null });
+  };
+
+  const handlePromptCancel = () => {
+    if (promptConfig.resolve) promptConfig.resolve(null);
+    setPromptConfig({ show: false, resolve: null });
+  };
 
   useEffect(() => {
     if ("serial" in navigator) {
@@ -205,21 +234,10 @@ export const NFCReaderProvider = ({ children }) => {
 
   // Wireless Scanning: Poll the Backend API directly
   // This respects the new architecture where the Backend proxies/manages the database access.
-  const toggleWireless = () => {
+  const toggleWireless = async () => {
     if (!isWireless) {
-      // Turning ON: Check for Device ID
-      let id = localStorage.getItem("nfc_scanner_id");
-      if (!id) {
-        id = prompt("Enter Scanner ID (shown on LCD):", "esp32");
-        if (id) {
-          localStorage.setItem("nfc_scanner_id", id.trim());
-          setTargetDeviceId(id.trim());
-        } else {
-          return; // User cancelled
-        }
-      } else {
-        setTargetDeviceId(id.trim());
-      }
+      const id = await requestScannerId();
+      if (!id) return; // User cancelled
     }
     setIsWireless((prev) => !prev);
     lastProcessedScanTimeRef.current = new Date().toISOString();
@@ -293,11 +311,19 @@ export const NFCReaderProvider = ({ children }) => {
     registerCallback,
     targetDeviceId,
     forgetScannerId,
+    requestScannerId,
   };
 
   return (
     <NFCReaderContext.Provider value={value}>
       {children}
+      <PromptToast
+        show={promptConfig.show}
+        message="Enter Scanner ID (shown on LCD):"
+        defaultValue="esp32"
+        onSubmit={handlePromptSubmit}
+        onCancel={handlePromptCancel}
+      />
     </NFCReaderContext.Provider>
   );
 };
