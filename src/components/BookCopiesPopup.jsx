@@ -4,15 +4,6 @@ import Popup from "./Popup.jsx";
 import FormButton from "./FormButton.jsx";
 import NFCReaderButton from "./NFCReaderButton.jsx";
 import { useBranches } from "../hooks/useBranches";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-const getSupabaseClient = () => {
-  if (!supabaseUrl || !supabaseKey) return null;
-  return createClient(supabaseUrl, supabaseKey);
-};
 
 function BookCopiesPopup({
   show,
@@ -89,31 +80,6 @@ function BookCopiesPopup({
     });
   }, []);
 
-  useEffect(() => {
-    if (!show) return;
-    const supabase = getSupabaseClient();
-    if (!supabase) return;
-
-    const channel = supabase
-      .channel("book-uid-scans")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "scanned_book_uids",
-          filter: "device_id=eq.kiosk1",
-        },
-        (payload) => {
-          handleNFCData(payload.new.uid);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [show, currentInputIndex, copies.length]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -165,7 +131,6 @@ function BookCopiesPopup({
         <div className="flex items-start gap-4 px-20">
           <div className="shrink-0">
             <NFCReaderButton
-              deviceId="kiosk1"
               isFlexOne
               inputRef={firstEmptyRef}
               onDataReceived={handleNFCData}

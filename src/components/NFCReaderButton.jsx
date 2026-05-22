@@ -5,7 +5,7 @@ import { startRegisterMode } from "../services/supabaseEdge.api";
 
 const NFCReaderButton = ({
   onDataReceived,
-  deviceId = "kiosk1",
+  deviceId,
   inputRef,
   isFlexOne = "false",
 }) => {
@@ -15,6 +15,7 @@ const NFCReaderButton = ({
     handleConnectClick,
     toggleWireless,
     registerCallback,
+    targetDeviceId,
   } = useNFCReader();
 
   const [isActivating, setIsActivating] = useState(false);
@@ -68,7 +69,8 @@ const NFCReaderButton = ({
       setIsActivating(true);
 
       // ننده Edge Function ونبعت device_id بس
-      await startRegisterMode(deviceId);
+      const activeDeviceId = deviceId || targetDeviceId;
+      await startRegisterMode(activeDeviceId);
 
       // فعّل wireless visual state والـ polling
       toggleWireless();

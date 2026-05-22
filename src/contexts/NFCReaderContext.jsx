@@ -283,6 +283,7 @@ export const NFCReaderProvider = ({ children }) => {
     handleConnectClick, // Wired connect
     toggleWireless, // Wireless toggle
     registerCallback,
+    targetDeviceId,
   };
 
   return (
