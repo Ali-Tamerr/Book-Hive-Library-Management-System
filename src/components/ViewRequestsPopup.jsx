@@ -432,7 +432,7 @@ const ViewRequestsPopup = ({
           </div>
         </div>
 
-        <div className="flex flex-col overflow-hidden rounded-[0.625rem] border border-[#000035] dark:border-[#D7D7D7] max-h-[14rem]">
+        <div className="flex flex-col overflow-hidden rounded-[0.625rem] border border-[#000035] dark:border-[#D7D7D7] h-[16.6rem]">
           <div className="min-w-[6.25rem] flex-1 overflow-auto">
             {activeTab === "users" ? (
               <RequestsTable
