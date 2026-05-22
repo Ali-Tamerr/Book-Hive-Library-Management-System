@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNFCReader } from "../contexts/NFCReaderContext";
 import { Wifi, Usb, Loader2 } from "lucide-react";
 import { startRegisterMode } from "../services/supabaseEdge.api";
+import ConfirmToast from "./ConfirmToast.jsx";
 
 const NFCReaderButton = ({
   onDataReceived,
@@ -16,9 +17,11 @@ const NFCReaderButton = ({
     toggleWireless,
     registerCallback,
     targetDeviceId,
+    forgetScannerId,
   } = useNFCReader();
 
   const [isActivating, setIsActivating] = useState(false);
+  const [showConfirmToast, setShowConfirmToast] = useState(false);
 
   useEffect(() => {
     if (!onDataReceived) return;
@@ -93,17 +96,35 @@ const NFCReaderButton = ({
   const flexClass = isFlexOne === true || isFlexOne === "true" ? "flex-1" : "";
 
   return (
-    <div className="flex h-[3.125rem] gap-2">
+    <div className="relative flex h-[3.125rem] gap-2">
+      <ConfirmToast
+        show={showConfirmToast}
+        message="Forget saved scanner ID?"
+        confirmText="Forget"
+        onConfirm={(e) => {
+          e?.stopPropagation?.();
+          forgetScannerId();
+          setShowConfirmToast(false);
+        }}
+        onCancel={(e) => {
+          e?.stopPropagation?.();
+          setShowConfirmToast(false);
+        }}
+      />
       <button
         type="button"
         onClick={handleScanClick}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setShowConfirmToast(true);
+        }}
         disabled={isActivating}
         className={`${flexClass} flex min-w-[6.25rem] cursor-pointer items-center justify-center gap-2 rounded-[0.75rem] px-4 text-[0.8125rem] font-medium transition-colors ${
           isActive
             ? "border border-red-200 bg-red-100 text-red-700 hover:bg-red-200"
             : "border border-[#000035] text-[#000035] hover:bg-[#000035] hover:text-[#F2F2F2] dark:border-[#D7D7D7] dark:text-[#D7D7D7] dark:hover:bg-[#D7D7D7] dark:hover:bg-gray-300 dark:hover:text-[#121317]"
         } ${isActivating ? "cursor-not-allowed opacity-50" : ""}`}
-        title={isActive ? "Stop Scanning" : "Scan via Wireless"}
+        title={isActive ? "Stop Scanning (Right-click to forget ID)" : "Scan via Wireless (Right-click to forget ID)"}
       >
         {isActivating ? (
           <Loader2 size={18} className="animate-spin" />

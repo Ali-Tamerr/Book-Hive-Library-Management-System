@@ -268,6 +268,14 @@ export const NFCReaderProvider = ({ children }) => {
     };
   }, [isWireless, targetDeviceId]);
 
+  const forgetScannerId = () => {
+    localStorage.removeItem("nfc_scanner_id");
+    setTargetDeviceId("esp32");
+    if (isWireless) {
+      setIsWireless(false);
+    }
+  };
+
   const handleConnectClick = async () => {
     if (isConnected) {
       await disconnectFromArduino();
@@ -284,6 +292,7 @@ export const NFCReaderProvider = ({ children }) => {
     toggleWireless, // Wireless toggle
     registerCallback,
     targetDeviceId,
+    forgetScannerId,
   };
 
   return (
