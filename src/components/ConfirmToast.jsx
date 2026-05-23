@@ -12,7 +12,7 @@ const ConfirmToast = ({
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 z-[9999] flex flex-col items-center gap-6 rounded-xl border border-[#000035] bg-white px-10 py-6 shadow-2xl dark:border-[#D7D7D7] dark:bg-[#121317] animate-[slideUp_0.4s_cubic-bezier(0.16,1,0.3,1)]">
+    <div className="fixed bottom-6 left-6 z-9999 flex flex-col items-center gap-6 rounded-xl border border-[#000035] bg-white px-10 py-6 shadow-2xl dark:border-[#D7D7D7] dark:bg-[#121317] animate-[slideUp_0.4s_cubic-bezier(0.16,1,0.3,1)]">
       <style>
         {`
           @keyframes slideUp {
@@ -28,14 +28,14 @@ const ConfirmToast = ({
         <FormButton
           fullWidth={false}
           onClick={onCancel}
-          className="!py-2.5 !px-5 !min-w-[6rem] !text-sm !rounded-md"
+          className="py-2.5! px-5! min-w-24! text-sm! rounded-md!"
         >
           {cancelText}
         </FormButton>
         <FormButton
           fullWidth={false}
           onClick={onConfirm}
-          className="!py-2.5 !px-5 !min-w-[6rem] !text-sm !rounded-md"
+          className="py-2.5! px-5! min-w-24! text-sm! rounded-md!"
         >
           {confirmText}
         </FormButton>
