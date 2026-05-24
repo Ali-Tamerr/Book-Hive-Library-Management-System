@@ -4,7 +4,22 @@ import AuthInput from "../components/AuthInput";
 import PrimaryButton from "../components/PrimaryButton";
 import DarkBgSection from "../components/DarkBgSection";
 import WhiteBgSection from "../components/WhiteBgSection";
-import { createUserRequest } from "../services/userRequests.api";
+import { createUserRequest, sendOtpToEmail } from "../services/userRequests.api";
+
+const formatCooldownTime = (seconds) => {
+  if (seconds <= 0) return "";
+  
+  if (seconds === 1800) return "30m";
+  if (seconds === 300) return "5m";
+  if (seconds === 60) return "1m";
+
+  if (seconds >= 60) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+  }
+  return `${seconds}s`;
+};
 
 function OTPPopup({
   isOpen,
@@ -22,7 +37,48 @@ function OTPPopup({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [resendMsg, setResendMsg] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    if (!email || !isOpen) return;
+
+    const key = `otp_cooldown_${email}`;
+    const rawData = localStorage.getItem(key);
+    if (rawData) {
+      try {
+        const data = JSON.parse(rawData);
+        const now = Date.now();
+        
+        // If a day has passed since the first click, clear/reset the data
+        if (data.firstClickTime && now - data.firstClickTime > 24 * 60 * 60 * 1000) {
+          localStorage.removeItem(key);
+          setTimeLeft(0);
+          return;
+        }
+
+        if (data.nextAllowedTime && data.nextAllowedTime > now) {
+          const secondsLeft = Math.ceil((data.nextAllowedTime - now) / 1000);
+          setTimeLeft(secondsLeft);
+        } else {
+          setTimeLeft(0);
+        }
+      } catch (e) {
+        console.error("Error parsing OTP cooldown data", e);
+      }
+    } else {
+      setTimeLeft(0);
+    }
+  }, [email, isOpen]);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timeLeft]);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -40,6 +96,7 @@ function OTPPopup({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setResendMsg("");
     
     if (isSignupVerification) {
       if (!email || !signupData) {
@@ -68,6 +125,69 @@ function OTPPopup({
     }
   };
 
+  const handleResend = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      setError("Email is missing.");
+      return;
+    }
+    if (timeLeft > 0) return;
+
+    setError("");
+    setResendMsg("");
+    try {
+      await sendOtpToEmail(email);
+      setResendMsg("A new OTP has been sent to your email.");
+
+      // Calculate cooldown and store in localStorage
+      const key = `otp_cooldown_${email}`;
+      const rawData = localStorage.getItem(key);
+      let clickCount = 0;
+      let firstClickTime = Date.now();
+
+      if (rawData) {
+        try {
+          const data = JSON.parse(rawData);
+          // Only use previous values if within 24 hours
+          if (data.firstClickTime && Date.now() - data.firstClickTime <= 24 * 60 * 60 * 1000) {
+            clickCount = data.clickCount || 0;
+            firstClickTime = data.firstClickTime;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      clickCount += 1;
+
+      // Progressive duration sequence:
+      // 1st click = 30s
+      // 2nd click = 1m (60s)
+      // 3rd click = 5m (300s)
+      // 4th+ clicks = 30m (1800s)
+      let cooldownDuration = 30;
+      if (clickCount === 2) {
+        cooldownDuration = 60;
+      } else if (clickCount === 3) {
+        cooldownDuration = 300;
+      } else if (clickCount >= 4) {
+        cooldownDuration = 1800;
+      }
+
+      const nextAllowedTime = Date.now() + cooldownDuration * 1000;
+      const newState = {
+        clickCount,
+        firstClickTime,
+        nextAllowedTime,
+      };
+
+      localStorage.setItem(key, JSON.stringify(newState));
+      setTimeLeft(cooldownDuration);
+    } catch (err) {
+      setError(err?.response?.data?.message || "Failed to resend OTP.");
+    }
+  };
+
   const handleBack = () => {
     onClose?.();
     onBack?.();
@@ -84,6 +204,7 @@ function OTPPopup({
         setShouldRender(false);
         setError("");
         setSuccess(false);
+        setResendMsg("");
         setOtp("");
       }, 500);
       return () => clearTimeout(timer);
@@ -131,7 +252,23 @@ function OTPPopup({
                   required
                   isDarkMode={isDarkMode}
                 />
-                {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                {timeLeft > 0 ? (
+                  <span 
+                    className={`block self-start text-lg max-[48rem]:text-base font-medium ${isDarkMode ? "text-gray-500" : "text-gray-400"} mb-3 cursor-not-allowed`}
+                  >
+                    Resend OTP ({formatCooldownTime(timeLeft)})
+                  </span>
+                ) : (
+                  <a 
+                    href="#" 
+                    onClick={handleResend}
+                    className={`block self-start text-lg max-[48rem]:text-base font-medium ${isDarkMode ? "text-white" : "text-[#000035]"} mb-3 hover:underline`}
+                  >
+                    Resend OTP
+                  </a>
+                )}
+                {resendMsg && <p className="self-start text-green-500 text-sm">{resendMsg}</p>}
+                {error && <p className="self-start text-red-500 text-sm">{error}</p>}
                 <PrimaryButton type="submit" disabled={loading} isDarkMode={isDarkMode}>
                   {loading ? "VERIFYING..." : "VERIFY"}
                 </PrimaryButton>
