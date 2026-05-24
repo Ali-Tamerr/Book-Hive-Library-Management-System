@@ -40,6 +40,7 @@ function OTPPopup({
   const [resendMsg, setResendMsg] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [isResending, setIsResending] = useState(false);
 
   useEffect(() => {
     if (!email || !isOpen) return;
@@ -51,8 +52,8 @@ function OTPPopup({
         const data = JSON.parse(rawData);
         const now = Date.now();
         
-        // If a day has passed since the first click, clear/reset the data
-        if (data.firstClickTime && now - data.firstClickTime > 24 * 60 * 60 * 1000) {
+        // If 3 hours have passed since the first click, clear/reset the data
+        if (data.firstClickTime && now - data.firstClickTime > 3 * 60 * 60 * 1000) {
           localStorage.removeItem(key);
           setTimeLeft(0);
           return;
@@ -131,8 +132,9 @@ function OTPPopup({
       setError("Email is missing.");
       return;
     }
-    if (timeLeft > 0) return;
+    if (timeLeft > 0 || isResending) return;
 
+    setIsResending(true);
     setError("");
     setResendMsg("");
     try {
@@ -148,8 +150,8 @@ function OTPPopup({
       if (rawData) {
         try {
           const data = JSON.parse(rawData);
-          // Only use previous values if within 24 hours
-          if (data.firstClickTime && Date.now() - data.firstClickTime <= 24 * 60 * 60 * 1000) {
+          // Only use previous values if within 3 hours
+          if (data.firstClickTime && Date.now() - data.firstClickTime <= 3 * 60 * 60 * 1000) {
             clickCount = data.clickCount || 0;
             firstClickTime = data.firstClickTime;
           }
@@ -185,6 +187,8 @@ function OTPPopup({
       setTimeLeft(cooldownDuration);
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to resend OTP.");
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -252,22 +256,28 @@ function OTPPopup({
                   required
                   isDarkMode={isDarkMode}
                 />
-                {timeLeft > 0 ? (
-                  <span 
-                    className={`block self-start text-lg max-[48rem]:text-base font-medium ${isDarkMode ? "text-gray-500" : "text-gray-400"} mb-3 cursor-not-allowed`}
-                  >
-                    Resend OTP ({formatCooldownTime(timeLeft)})
-                  </span>
-                ) : (
-                  <a 
-                    href="#" 
-                    onClick={handleResend}
-                    className={`block self-start text-lg max-[48rem]:text-base font-medium ${isDarkMode ? "text-white" : "text-[#000035]"} mb-3 hover:underline`}
-                  >
-                    Resend OTP
-                  </a>
-                )}
-                {resendMsg && <p className="self-start text-green-500 text-sm">{resendMsg}</p>}
+                <div className="flex w-full items-baseline gap-3 mb-3 self-start max-[48rem]:flex-wrap">
+                  {timeLeft > 0 || isResending ? (
+                    <span 
+                      className={`text-lg max-[48rem]:text-base font-medium ${isDarkMode ? "text-gray-500" : "text-gray-400"} cursor-not-allowed`}
+                    >
+                      {isResending ? "Resending OTP..." : `Resend OTP (${formatCooldownTime(timeLeft)})`}
+                    </span>
+                  ) : (
+                    <a 
+                      href="#" 
+                      onClick={handleResend}
+                      className={`text-lg max-[48rem]:text-base font-medium ${isDarkMode ? "text-white" : "text-[#000035]"} hover:underline`}
+                    >
+                      Resend OTP
+                    </a>
+                  )}
+                  {resendMsg && (
+                    <span className="text-green-500 text-sm">
+                      {resendMsg}
+                    </span>
+                  )}
+                </div>
                 {error && <p className="self-start text-red-500 text-sm">{error}</p>}
                 <PrimaryButton type="submit" disabled={loading} isDarkMode={isDarkMode}>
                   {loading ? "VERIFYING..." : "VERIFY"}
