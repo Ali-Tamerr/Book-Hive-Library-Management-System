@@ -4,41 +4,6 @@ import SearchBar from "../components/SearchBar.jsx";
 import ButtonOne from "../components/ButtonOne.jsx";
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
-// ─── Mobile swipe pagination animation styles ───────────────────────────────
-const MOBILE_ANIM_STYLES = `
-  @keyframes slideInUp {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes slideOutUp {
-    from { opacity: 1; transform: translateY(0); }
-    to   { opacity: 0; transform: translateY(-28px); }
-  }
-  @keyframes slideInDown {
-    from { opacity: 0; transform: translateY(-28px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes slideOutDown {
-    from { opacity: 1; transform: translateY(0); }
-    to   { opacity: 0; transform: translateY(28px); }
-  }
-  @keyframes swipeHint {
-    0%   { opacity: 0; transform: translateY(6px); }
-    6%   { opacity: 1; transform: translateY(0); }
-    46%  { opacity: 1; transform: translateY(0); }
-    52%  { opacity: 0; transform: translateY(6px); }
-    100% { opacity: 0; transform: translateY(6px); }
-  }
-  .mobile-slide-in-up    { animation: slideInUp 280ms ease forwards; }
-  .mobile-slide-out-up   { animation: slideOutUp 280ms ease forwards; }
-  .mobile-slide-in-down  { animation: slideInDown 280ms ease forwards; }
-  .mobile-slide-out-down { animation: slideOutDown 280ms ease forwards; }
-  .mobile-swipe-hint     { animation: swipeHint 5s ease infinite; }
-`;
-
-const ROWS_PER_PAGE = 3;
-const SWIPE_THRESHOLD = 50; // px
-
 const CommonLayout = ({
   searchValue,
   setSearchValue,
@@ -75,88 +40,6 @@ const CommonLayout = ({
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
-
-  // ── Mobile pagination state ───────────────────────────────────────────────
-  const [mobilePage, setMobilePage] = useState(0);
-  const [animClass, setAnimClass] = useState("mobile-slide-in-up");
-  const [visibleRows, setVisibleRows] = useState([]);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const touchStartY = useRef(null);
-  const mobileContainerRef = useRef(null);
-
-  // Prevent browser pull-to-refresh on vertical swipes inside the mobile table
-  useEffect(() => {
-    const el = mobileContainerRef.current;
-    if (!el) return;
-    const onTouchMove = (e) => {
-      if (touchStartY.current === null || touchStartX.current === null) return;
-      const touch = e.touches[0];
-      const deltaY = Math.abs(touchStartY.current - touch.clientY);
-      const deltaX = Math.abs(touchStartX.current - touch.clientX);
-      if (deltaY > deltaX && deltaY > 8) e.preventDefault();
-    };
-    el.addEventListener("touchmove", onTouchMove, { passive: false });
-    return () => el.removeEventListener("touchmove", onTouchMove);
-  }, []);
-
-  const totalMobilePages = Math.ceil((data?.length || 0) / ROWS_PER_PAGE);
-
-  // Reset to page 0 when data (search results) changes
-  useEffect(() => {
-    setMobilePage(0);
-    setAnimClass("mobile-slide-in-up");
-    setVisibleRows((data || []).slice(0, ROWS_PER_PAGE));
-  }, [data]);
-
-  // ── Pre-fetch: when user is 1 page away from end of loaded data ───────────
-  useEffect(() => {
-    if (!isMobile || !hasMore || !onLoadMore) return;
-    // Trigger when the NEXT page's rows aren't in memory yet
-    const nextPageStart = (mobilePage + 2) * ROWS_PER_PAGE;
-    if (nextPageStart >= (data?.length || 0)) {
-      onLoadMore();
-    }
-  }, [mobilePage, isMobile, hasMore, onLoadMore, data]);
-
-  const goToPage = useCallback(
-    (dir) => {
-      if (isAnimating) return;
-      const next = mobilePage + dir;
-      if (next < 0 || next >= totalMobilePages) return;
-
-      const outClass = dir > 0 ? "mobile-slide-out-up" : "mobile-slide-out-down";
-      const inClass = dir > 0 ? "mobile-slide-in-up" : "mobile-slide-in-down";
-
-      setIsAnimating(true);
-      setAnimClass(outClass);
-
-      setTimeout(() => {
-        const nextRows = (data || []).slice(next * ROWS_PER_PAGE, (next + 1) * ROWS_PER_PAGE);
-        setVisibleRows(nextRows);
-        setMobilePage(next);
-        setAnimClass(inClass);
-        setTimeout(() => setIsAnimating(false), 300);
-      }, 280);
-    },
-    [isAnimating, mobilePage, totalMobilePages, data],
-  );
-
-  // ── Touch handlers ────────────────────────────────────────────────────────
-  const touchStartX = useRef(null);
-  const handleTouchStart = (e) => {
-    touchStartY.current = e.touches[0].clientY;
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const handleTouchEnd = (e) => {
-    if (touchStartY.current === null) return;
-    const deltaY = touchStartY.current - e.changedTouches[0].clientY;
-    const deltaX = touchStartX.current - e.changedTouches[0].clientX;
-    touchStartY.current = null;
-    touchStartX.current = null;
-    // Only trigger page change if the swipe is predominantly vertical
-    if (Math.abs(deltaY) < SWIPE_THRESHOLD || Math.abs(deltaY) < Math.abs(deltaX)) return;
-    goToPage(deltaY > 0 ? 1 : -1);
-  };
 
   // ── Desktop infinite-scroll observer ────────────────────────────────────
   useEffect(() => {
@@ -219,8 +102,6 @@ const CommonLayout = ({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5 max-[67.5rem]:gap-2 overflow-hidden p-7 pb-0 pr-0 max-[67.5rem]:p-0 max-[67.5rem]:pt-5">
-      {/* Inject animation keyframes once */}
-      <style>{MOBILE_ANIM_STYLES}</style>
 
       {/* ── Header: title + search/button ─────────────────────────────── */}
       <div className="flex flex-col gap-3 max-[67.5rem]:gap-2 pr-7 max-[67.5rem]:px-5">
@@ -262,20 +143,16 @@ const CommonLayout = ({
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* MOBILE VIEW — swipe paginated (3 rows at a time)                  */}
+      {/* MOBILE VIEW — horizontal scroll table showing all rows             */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       {isMobile ? (
         <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg">
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border-b border-[#000035] dark:border-[#D7D7D7]">
-
-            {/* Single scrollable container — horizontal scroll + vertical swipe */}
             <div
-              ref={mobileContainerRef}
+              ref={scrollContainerRef}
               className="flex-1 overflow-auto"
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
             >
-              {isLoading ? (
+              {isLoading && (data?.length || 0) === 0 ? (
                 <div className="flex h-full items-center justify-center py-8">
                   <LoadingSpinner size="sm" />
                 </div>
@@ -284,51 +161,59 @@ const CommonLayout = ({
                   No items found
                 </div>
               ) : (
-                <table
-                  className="table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]"
-                  style={{ width: `${columns.length * 8}rem` }}
-                >
-                  {/* Sticky header — same table so column widths are shared */}
-                  <thead className="sticky top-0 z-10 bg-[#f0f0f1] dark:bg-[#121317]">
-                    <tr>
-                      {columns.map((col) => (
-                        <th
-                          key={col.accessor}
-                          className="whitespace-nowrap px-3 py-2 text-center text-[0.9rem] font-extrabold tracking-widest shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]"
-                        >
-                          {col.header}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  {/* Animated tbody — key change re-mounts it, triggering CSS animation */}
-                  <tbody key={mobilePage} className={animClass}>
-                    {visibleRows.map((item, index) => (
-                      <tr
-                        key={index}
-                        className="h-16 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                      >
-                        {columns.map((col) => {
-                          const cellContent = renderCell(col, item);
-                          const isAction = col.accessor === "action";
-                          const isFullText = typeof cellContent === "string";
-                          return (
-                            <td
-                              key={col.accessor}
-                              title={isFullText ? cellContent : undefined}
-                              className={`px-3 py-2 text-center text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
-                            >
-                              {cellContent}
-                            </td>
-                          );
-                        })}
+                <>
+                  <table
+                    className="table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]"
+                    style={{ width: `${columns.length * 8}rem` }}
+                  >
+                    <thead className="sticky top-0 z-10 bg-[#f0f0f1] dark:bg-[#121317]">
+                      <tr>
+                        {columns.map((col) => (
+                          <th
+                            key={col.accessor}
+                            className="whitespace-nowrap px-3 py-2 text-center text-[0.9rem] font-extrabold tracking-widest shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]"
+                          >
+                            {col.header}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {data.map((item, index) => (
+                        <tr
+                          key={index}
+                          className="h-16 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                        >
+                          {columns.map((col) => {
+                            const cellContent = renderCell(col, item);
+                            const isAction = col.accessor === "action";
+                            const isFullText = typeof cellContent === "string";
+                            return (
+                              <td
+                                key={col.accessor}
+                                title={isFullText ? cellContent : undefined}
+                                className={`px-3 py-2 text-center text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
+                              >
+                                {cellContent}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {hasMore && (
+                    <div
+                      ref={observerTarget}
+                      onClick={onLoadMore}
+                      className="h-10 w-full cursor-pointer p-2 text-center text-[0.875rem] font-semibold text-[#000035] dark:text-[#D7D7D7] transition-colors hover:text-gray-800"
+                    >
+                      Load More (Scroll or Click)
+                    </div>
+                  )}
+                </>
               )}
             </div>
-
           </div>
         </section>
       ) : (
@@ -409,13 +294,6 @@ const CommonLayout = ({
           </div>
           {isUserPage && null}
         </section>
-      )}
-      {/* Swipe hint — fixed on screen, centered horizontally, cycles 2s on / 3s off */}
-      {isMobile && (data?.length || 0) > 0 && !isLoading && mobilePage < totalMobilePages - 1 && (
-        <div className="mobile-swipe-hint pointer-events-none fixed bottom-6 left-0 right-0 z-50 flex items-center justify-center gap-1.5 text-[0.875rem] font-semibold text-[#000035] dark:text-[#D7D7D7]">
-          <ChevronUp size={18} />
-          swipe up to view more
-        </div>
       )}
 
       {formPopup}
