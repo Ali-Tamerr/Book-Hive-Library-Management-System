@@ -1,11 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { User } from "lucide-react";
 import { useLibrarians } from "../hooks/useUsers";
-import {
-  useDashboardTransactions,
-  useBookTransactions,
-} from "../hooks/useBookTransactions";
-import { useBookCopies } from "../hooks/useBookCopies";
+import { useDashboardTransactions } from "../hooks/useBookTransactions";
 import { getCurrentUser } from "../services/auth.api";
 import DashboardCard from "../components/DashboardCard";
 import { useUserActivity } from "../hooks/useUserActivity";
@@ -57,13 +53,10 @@ function Dashboard() {
     data: librariansData,
     isLoading: librariansLoading,
     refetch: refetchLibrarians,
-  } = useLibrarians();
+  } = useLibrarians({ enabled: isSuperAdmin });
 
   const { data: dashboardTransactions, isLoading: transactionsLoading } =
     useDashboardTransactions();
-  const { data: rawTransactions = [], isLoading: rawTransactionsLoading } =
-    useBookTransactions();
-  const { data: bookCopies = [], isLoading: copiesLoading } = useBookCopies();
 
   const handleRefreshAdmins = (adminId) => {
     setLoadingAdmins((prev) => ({ ...prev, [adminId]: true }));
@@ -72,58 +65,15 @@ function Dashboard() {
     });
   };
 
-  const transactionsLoadingState =
-    transactionsLoading || rawTransactionsLoading || copiesLoading;
+  const transactionsLoadingState = transactionsLoading;
 
-  const getUserBranchId = (u) => {
-    if (!u) return null;
-    return u.branch_id || u.branchId || u.branch?.branch_id || u.branch?.id;
-  };
-  const currentUserBranchId = getUserBranchId(currentUser);
-
-  // Derive stats logic:
-  // Super Admin uses backend aggregated stats.
-  // Librarian uses branch-scoped computation from raw transactions.
-  let derivedStats = {
+  // Stats come directly from the backend /dashboard endpoint,
+  // which is already branch-scoped for Librarians.
+  const stats = {
     totalBorrowed: dashboardTransactions?.total_borrowed || 0,
     currentlyBorrowed: dashboardTransactions?.currently_borrowed || 0,
     returnedBooks: dashboardTransactions?.returned_count || 0,
   };
-
-  if (!isSuperAdmin) {
-    // Collect all copy IDs that belong to this librarian's branch
-    const branchCopyIds = new Set(
-      bookCopies
-        .filter((c) => String(c.branch_id) === String(currentUserBranchId))
-        .map((c) => String(c.book_copy_id || c.id)),
-    );
-
-    // Filter raw transactions to those on books from this branch
-    const branchTransactions = rawTransactions.filter(
-      (t) =>
-        t.transaction_type === "Check-Out" &&
-        t.status !== "Pending" &&
-        branchCopyIds.has(String(t.book_id)),
-    );
-
-    const totalBorrowedCount = branchTransactions.length;
-    const returnedCount = branchTransactions.filter(
-      (t) => t.status === "Returned" || t.return_date != null,
-    ).length;
-    const currentlyBorrowedCount = branchTransactions.filter(
-      (t) =>
-        (t.status === "Completed" || t.status === "Overdue") &&
-        t.return_date == null,
-    ).length;
-
-    derivedStats = {
-      totalBorrowed: totalBorrowedCount,
-      currentlyBorrowed: currentlyBorrowedCount,
-      returnedBooks: returnedCount,
-    };
-  }
-
-  const stats = derivedStats;
 
   const buildTransactionItem = (transaction, sourceCard) => ({
     id: transaction.transaction_id || `tx-${Math.random()}`,
