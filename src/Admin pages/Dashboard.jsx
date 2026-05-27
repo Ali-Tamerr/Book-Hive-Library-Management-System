@@ -10,6 +10,7 @@ import PieChart from "../components/PieChart";
 import PieChartLegend from "../components/PieChartLegend";
 import AdminDashboardCard from "../components/AdminDashboardCard.jsx";
 import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
+import { getImageUrl } from "../services/api.config";
 
 const MaximizeIcon = ({ className }) => (
   <svg
@@ -85,6 +86,7 @@ function Dashboard() {
     dueDate: transaction.due_date || "N/A",
     returnDate: transaction.return_date || "N/A",
     createdAt: transaction.created_at || "N/A",
+    userImageUrl: transaction.user_image_url || null,
     sourceCard,
   });
 
@@ -143,8 +145,16 @@ function Dashboard() {
         key={item.id}
         className="flex h-14 items-center gap-2.5 rounded-xl border border-[#000035] bg-transparent px-2.5 py-3 text-xs dark:border-[rgba(185,189,200,0.78)]"
       >
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full">
-          <User className="h-full w-full text-[#000035] dark:text-[#d3d6de]" />
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full overflow-hidden">
+          {item.userImageUrl ? (
+            <img
+              src={getImageUrl(item.userImageUrl)}
+              alt={item.userName}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <User className="h-full w-full text-[#000035] dark:text-[#d3d6de]" />
+          )}
         </div>
         <div className="h-full w-[0.1125rem] rounded-full bg-[#000035] dark:bg-[rgba(185,189,200,0.78)]"></div>
         <div className="flex-1 overflow-hidden">
@@ -351,6 +361,7 @@ function Dashboard() {
         onClose={() => setSelectedTransactionItem(null)}
         title="Transaction Details"
         data={selectedDetails}
+        imageUrl={selectedTransactionItem ? getImageUrl(selectedTransactionItem.userImageUrl) : null}
         variant="details"
       />
     </section>
