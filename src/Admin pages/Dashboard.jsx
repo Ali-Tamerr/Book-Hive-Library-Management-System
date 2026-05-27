@@ -324,34 +324,94 @@ function Dashboard() {
               </div>
             </>
           ) : (
-            <div className="max-[64rem]:mx-auto max-[64rem]:w-full mt-2 flex h-full min-h-0 w-full flex-col gap-5">
-              <div className="max-[56.25rem]:block max-[56.25rem]:w-full max-[56.25rem]:max-w-[26.25rem] max-[56.25rem]:self-center flex min-h-0 flex-1 justify-center">
-                <DashboardCard
-                  title="Borrowed Books"
-                  className="!flex-none w-full max-w-[calc((100%-1.5rem)/2)] !h-full !min-h-[15.625rem] max-[56.25rem]:!max-w-[26.25rem]"
-                  listClassName="pt-2"
-                >
-                  {renderTransactionList(borrowedItems, "No borrowed books")}
-                </DashboardCard>
+            <>
+              {/* Desktop/Tablet Grid */}
+              <div className="max-[40.625rem]:hidden max-[64rem]:mx-auto max-[64rem]:w-full mt-2 flex h-full min-h-0 w-full flex-col gap-5">
+                <div className="max-[56.25rem]:block max-[56.25rem]:w-full max-[56.25rem]:max-w-[26.25rem] max-[56.25rem]:self-center flex min-h-0 flex-1 justify-center">
+                  <DashboardCard
+                    title="Borrowed Books"
+                    className="!flex-none w-full max-w-[calc((100%-1.5rem)/2)] !h-full !min-h-[15.625rem] max-[56.25rem]:!max-w-[26.25rem]"
+                    listClassName="pt-2"
+                  >
+                    {renderTransactionList(borrowedItems, "No borrowed books")}
+                  </DashboardCard>
+                </div>
+
+                <div className="max-[56.25rem]:grid-cols-1 grid min-h-0 w-full flex-1 auto-rows-fr grid-cols-2 place-items-stretch gap-6">
+                  <DashboardCard
+                    title="Overdue Borrowers"
+                    className="!h-full !min-h-[15.625rem] w-full max-[56.25rem]:max-w-[26.25rem]"
+                    listClassName="pt-2"
+                  >
+                    {renderTransactionList(overdueItems, "No overdue books")}
+                  </DashboardCard>
+                  <DashboardCard
+                    title="Returned Books"
+                    className="!h-full !min-h-[15.625rem] w-full max-[56.25rem]:max-w-[26.25rem]"
+                    listClassName="pt-2"
+                  >
+                    {renderTransactionList(returnedItems, "No returned books")}
+                  </DashboardCard>
+                </div>
               </div>
 
-              <div className="max-[56.25rem]:grid-cols-1 grid min-h-0 w-full flex-1 auto-rows-fr grid-cols-2 place-items-stretch gap-6">
-                <DashboardCard
-                  title="Overdue Borrowers"
-                  className="!h-full !min-h-[15.625rem] w-full max-[56.25rem]:max-w-[26.25rem]"
-                  listClassName="pt-2"
+              {/* Mobile Carousel */}
+              <div className="max-[40.625rem]:flex hidden h-full w-full flex-col gap-4">
+                <div
+                  ref={carouselRef}
+                  className="scrollbar-none flex h-full w-full snap-x snap-mandatory flex-row gap-6 overflow-x-auto pb-2"
+                  style={{
+                    scrollbarWidth: "none",
+                    "-ms-overflow-style": "none",
+                  }}
                 >
-                  {renderTransactionList(overdueItems, "No overdue books")}
-                </DashboardCard>
-                <DashboardCard
-                  title="Returned Books"
-                  className="!h-full !min-h-[15.625rem] w-full max-[56.25rem]:max-w-[26.25rem]"
-                  listClassName="pt-2"
-                >
-                  {renderTransactionList(returnedItems, "No returned books")}
-                </DashboardCard>
+                  <div className="w-full shrink-0 snap-center">
+                    <DashboardCard title="Borrowed Books" listClassName="pt-2">
+                      {renderTransactionList(
+                        borrowedItems,
+                        "No borrowed books",
+                      )}
+                    </DashboardCard>
+                  </div>
+                  <div className="w-full shrink-0 snap-center">
+                    <DashboardCard title="Overdue Borrowers" listClassName="pt-2">
+                      {renderTransactionList(overdueItems, "No overdue books")}
+                    </DashboardCard>
+                  </div>
+                  <div className="w-full shrink-0 snap-center">
+                    <DashboardCard title="Returned Books" listClassName="pt-2">
+                      {renderTransactionList(
+                        returnedItems,
+                        "No returned books",
+                      )}
+                    </DashboardCard>
+                  </div>
+                </div>
+
+                {/* Carousel Dots */}
+                <div className="flex justify-center gap-2.5 pb-2">
+                  {[0, 1, 2].map((idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        if (carouselRef.current) {
+                          carouselRef.current.scrollTo({
+                            left: idx * carouselRef.current.clientWidth,
+                            behavior: "smooth",
+                          });
+                        }
+                      }}
+                      className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
+                        activeDotIndex === idx
+                          ? "w-6 bg-[#000035] dark:bg-[#D7D7D7]"
+                          : "bg-[#000035]/30 dark:bg-[#D7D7D7]/30"
+                      }`}
+                      aria-label={`Go to slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>
