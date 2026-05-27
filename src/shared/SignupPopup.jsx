@@ -141,76 +141,88 @@ function SignupPopup({ isOpen, onClose, onLogin, onShowOTP, slideFromTop = false
                 className="flex w-full flex-col items-center gap-4"
               >
                 <div className="flex w-full gap-4">
-                  <AuthInput
-                    type="text"
-                    name="first_name"
-                    placeholder="First Name"
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    required
-                    autoComplete="given-name"
-                    isDarkMode={isDarkMode}
-                  />
-                  <AuthInput
-                    type="text"
-                    name="last_name"
-                    placeholder="Last Name"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    required
-                    autoComplete="family-name"
-                    isDarkMode={isDarkMode}
-                  />
+                  <div className="flex-1 min-w-0">
+                    <AuthInput
+                      type="text"
+                      name="first_name"
+                      placeholder="First Name"
+                      value={formData.first_name}
+                      onChange={handleChange}
+                      required
+                      autoComplete="given-name"
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <AuthInput
+                      type="text"
+                      name="last_name"
+                      placeholder="Last Name"
+                      value={formData.last_name}
+                      onChange={handleChange}
+                      required
+                      autoComplete="family-name"
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
                 </div>
                 <div className="flex w-full gap-4">
-                  <AuthInput
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    autoComplete="email"
-                    isDarkMode={isDarkMode}
-                  />
-                  <AuthInput
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    autoComplete="new-password"
-                    isDarkMode={isDarkMode}
-                  />
+                  <div className="flex-1 min-w-0">
+                    <AuthInput
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      autoComplete="email"
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <AuthInput
+                      type="password"
+                      name="password"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      autoComplete="new-password"
+                      isDarkMode={isDarkMode}
+                    />
+                  </div>
                 </div>
                 <div className="flex w-full gap-4">
-                  <FormSelect
-                    name="branch_id"
-                    value={formData.branch_id || ""}
-                    onChange={handleChange}
-                    placeholder="Branch"
-                    variant="auth"
-                    isDarkMode={isDarkMode}
-                    required
-                    options={branches.map((b) => ({
-                      value: b.branch_id || b.id,
-                      label: b.name,
-                    }))}
-                  />
-                  <FormSelect
-                    name="plan"
-                    value={formData.plan}
-                    onChange={handleChange}
-                    placeholder="Select Plan"
-                    variant="auth"
-                    isDarkMode={isDarkMode}
-                    options={[
-                      { value: "Discover", label: "Discover" },
-                      { value: "Enterprise", label: "Enterprise" },
-                      { value: "Professional", label: "Professional" },
-                    ]}
-                  />
+                  <div className="flex-1 min-w-0">
+                    <FormSelect
+                      name="branch_id"
+                      value={formData.branch_id || ""}
+                      onChange={handleChange}
+                      placeholder="Branch"
+                      variant="auth"
+                      isDarkMode={isDarkMode}
+                      required
+                      options={branches.map((b) => ({
+                        value: b.branch_id || b.id,
+                        label: b.name,
+                      }))}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <FormSelect
+                      name="plan"
+                      value={formData.plan}
+                      onChange={handleChange}
+                      placeholder="Select Plan"
+                      variant="auth"
+                      isDarkMode={isDarkMode}
+                      options={[
+                        { value: "Discover", label: "Discover" },
+                        { value: "Enterprise", label: "Enterprise" },
+                        { value: "Professional", label: "Professional" },
+                      ]}
+                    />
+                  </div>
                 </div>
                 {error && (
                   <p className="mb-3 text-base text-red-500">{error}</p>
