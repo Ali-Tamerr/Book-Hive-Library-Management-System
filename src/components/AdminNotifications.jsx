@@ -87,19 +87,21 @@ const AdminNotifications = ({ className = "" }) => {
   };
 
   const pendingBookRequests = bookTransactions.filter(
-    (t) => t.status === "Pending" && t.transaction_type === "Check-Out",
+    (t) => String(t.status || "").trim().toLowerCase() === "pending" &&
+           String(t.transaction_type || "").trim().toLowerCase() === "check-out"
   );
 
   const pendingReturnRequests = bookTransactions.filter(
-    (t) => t.status === "Pending" && t.transaction_type === "Check-In",
+    (t) => String(t.status || "").trim().toLowerCase() === "pending" &&
+           String(t.transaction_type || "").trim().toLowerCase() === "check-in"
   );
 
   const pendingUserRequests = userRequests.filter(
-    (req) => req.status === "Pending" && !isExpired(req.created_at),
+    (req) => String(req.status || "").trim().toLowerCase() === "pending" && !isExpired(req.created_at)
   );
 
   const pendingFeedbackRequests = feedbacksFromApi.filter(
-    (req) => req.status === "Pending",
+    (req) => String(req.status || "").trim().toLowerCase() === "pending"
   );
 
   const availableNumericIds = users
@@ -295,7 +297,7 @@ const AdminNotifications = ({ className = "" }) => {
         onApproveBook={async (request) => {
           try {
             const bookCopy = bookCopies.find(
-              (bc) => bc.book_copy_id === request.book_id,
+              (bc) => String(bc.book_copy_id).trim().toLowerCase() === String(request.book_id).trim().toLowerCase()
             );
 
             if (bookCopy) {
@@ -357,7 +359,7 @@ const AdminNotifications = ({ className = "" }) => {
         show={showFeedbackDetails}
         onClose={() => setShowFeedbackDetails(false)}
         feedback={selectedFeedback}
-        user={users.find((u) => u.user_id === selectedFeedback?.user_id)}
+        user={users.find((u) => String(u.user_id).trim().toLowerCase() === String(selectedFeedback?.user_id).trim().toLowerCase())}
       />
     </>
   );

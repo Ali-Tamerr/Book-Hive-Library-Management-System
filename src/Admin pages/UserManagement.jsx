@@ -57,6 +57,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [updatingUserId, setUpdatingUserId] = useState(null);
   const [formData, setFormData] = useState({
     id: "",
+    user_id: "",
     first_name: "",
     last_name: "",
     email: "",
@@ -66,6 +67,9 @@ function UserManagement({ searchValue, setSearchValue }) {
     password: "",
     password_hash: "",
     branch_id: "",
+    subscription_end_date: null,
+    image_url: null,
+    created_by: null,
   });
 
   const {
@@ -166,7 +170,9 @@ function UserManagement({ searchValue, setSearchValue }) {
       };
 
       if (editMode && formData.user_id) {
-        const originalUser = users.find((u) => u.user_id === formData.user_id);
+        const originalUser = users.find(
+          (u) => String(u.user_id).trim() === String(formData.user_id).trim()
+        );
         if (
           originalUser &&
           (originalUser.role?.toLowerCase() === "super admin" ||
@@ -178,6 +184,26 @@ function UserManagement({ searchValue, setSearchValue }) {
 
         // Exclude created_by for updates to avoid FK violation and preserve original creator
         const { created_by, ...updateData } = apiData;
+
+        // Preserve important existing fields that aren't managed by this form,
+        // preventing the C# model binder from resetting them to null.
+        if (formData.subscription_end_date !== undefined) {
+          updateData.subscription_end_date = formData.subscription_end_date;
+        } else if (originalUser) {
+          updateData.subscription_end_date = originalUser.subscription_end_date;
+        }
+
+        if (formData.image_url !== undefined) {
+          updateData.image_url = formData.image_url;
+        } else if (originalUser) {
+          updateData.image_url = originalUser.image_url || null;
+        }
+
+        if (formData.created_by !== undefined) {
+          updateData.created_by = formData.created_by;
+        } else if (originalUser) {
+          updateData.created_by = originalUser.created_by || null;
+        }
 
         if (!formData.password || formData.password.trim() === "") {
           updateData.password_hash = formData.password_hash;
@@ -219,6 +245,9 @@ function UserManagement({ searchValue, setSearchValue }) {
         password: "",
         password_hash: "",
         branch_id: "",
+        subscription_end_date: null,
+        image_url: null,
+        created_by: null,
       });
     } catch (error) {
       console.error("Failed to save user:", error);
@@ -265,6 +294,9 @@ function UserManagement({ searchValue, setSearchValue }) {
       password: "",
       password_hash: user.password_hash || "",
       branch_id: user.branch_id || "",
+      subscription_end_date: user.subscription_end_date || null,
+      image_url: user.image_url || null,
+      created_by: user.created_by || null,
     });
     setEditMode(true);
     setShowPopup(true);
@@ -432,6 +464,9 @@ function UserManagement({ searchValue, setSearchValue }) {
       password: "",
       password_hash: "",
       branch_id: "",
+      subscription_end_date: null,
+      image_url: null,
+      created_by: null,
     });
     setEditMode(false);
     setShowPopup(true);

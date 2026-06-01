@@ -74,7 +74,7 @@ const ViewRequestsPopup = ({
         normalizeBranchValue(user?.branchName);
 
       if (branchValue) {
-        map.set(String(userId), branchValue);
+        map.set(String(userId).trim().toLowerCase(), branchValue);
       }
     });
 
@@ -93,7 +93,7 @@ const ViewRequestsPopup = ({
 
     const userId = request?.user_id ?? request?.id;
     if (userId !== undefined && userId !== null) {
-      return userBranchByUserId.get(String(userId)) || null;
+      return userBranchByUserId.get(String(userId).trim().toLowerCase()) || null;
     }
 
     return null;
@@ -105,7 +105,7 @@ const ViewRequestsPopup = ({
 
     const copyId = request?.book_id ?? request?.book_copy_id;
     const copy = bookCopies.find(
-      (bc) => (bc?.book_copy_id ?? bc?.id) === copyId,
+      (bc) => String(bc?.book_copy_id ?? bc?.id ?? "").trim().toLowerCase() === String(copyId ?? "").trim().toLowerCase(),
     );
 
     const copyBranch =
@@ -163,10 +163,11 @@ const ViewRequestsPopup = ({
 
   const filteredBookRequests = useMemo(() => {
     let filtered = bookRequests.filter((request) => {
+      const statusNormalized = String(request.status || "").trim().toLowerCase();
       if (showRejected) {
-        return request.status === "Rejected";
+        return statusNormalized === "rejected";
       } else {
-        return request.status === "Pending";
+        return statusNormalized === "pending";
       }
     });
 
@@ -179,9 +180,11 @@ const ViewRequestsPopup = ({
     if (searchValue.trim()) {
       const searchLower = searchValue.toLowerCase();
       filtered = filtered.filter((request) => {
-        const user = users.find((u) => u.user_id === request.user_id);
+        const user = users.find(
+          (u) => String(u.user_id).trim().toLowerCase() === String(request.user_id).trim().toLowerCase()
+        );
         const bookCopy = bookCopies.find(
-          (bc) => bc.book_copy_id === request.book_id,
+          (bc) => String(bc.book_copy_id).trim().toLowerCase() === String(request.book_id).trim().toLowerCase()
         );
         const book = bookCopy
           ? books.find((b) => b.book_id === bookCopy.book_id)
@@ -295,7 +298,9 @@ const ViewRequestsPopup = ({
   };
 
   const getUserName = (userId) => {
-    const user = users.find((u) => u.user_id === userId);
+    const user = users.find(
+      (u) => String(u.user_id).trim().toLowerCase() === String(userId).trim().toLowerCase()
+    );
     if (user?.first_name || user?.last_name)
       return `${user.first_name || ""} ${user.last_name || ""}`.trim();
 
@@ -309,7 +314,9 @@ const ViewRequestsPopup = ({
   };
 
   const getBookName = (bookCopyId) => {
-    const bookCopy = bookCopies.find((bc) => bc.book_copy_id === bookCopyId);
+    const bookCopy = bookCopies.find(
+      (bc) => String(bc.book_copy_id).trim().toLowerCase() === String(bookCopyId).trim().toLowerCase()
+    );
     if (!bookCopy) return bookCopyId || "Unknown";
     const book = books.find((b) => b.book_id === bookCopy.book_id);
     return book?.name || bookCopyId || "Unknown";

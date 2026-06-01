@@ -205,9 +205,12 @@ const CommonLayout = ({
                                   className={`px-3 py-2 text-center text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
                                 >
                                   <div className="relative w-full h-full flex items-center justify-center min-h-[1.75rem]">
-                                    <div className={`w-full ${updating ? "blur-[1px] opacity-40 pointer-events-none transition-all duration-300" : ""}`}>
+                                    <div className={`w-full ${updating ? "opacity-35 pointer-events-none transition-all duration-300" : ""}`}>
                                       {cellContent}
                                     </div>
+                                    {updating && (
+                                      <div className="absolute inset-0 z-10 bg-white/10 dark:bg-black/10 backdrop-blur-[8px] rounded-sm pointer-events-none" />
+                                    )}
                                     {updating && isCenter && (
                                       <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
                                         <LoadingSpinner size="xs" />
@@ -297,9 +300,12 @@ const CommonLayout = ({
                               className={`px-4 py-3 max-[48rem]:px-3 max-[48rem]:py-2 text-center text-base max-[48rem]:text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
                             >
                               <div className="relative w-full h-full flex items-center justify-center min-h-[2.5rem]">
-                                <div className={`w-full ${updating ? "blur-[1.2px] opacity-40 pointer-events-none transition-all duration-300" : ""}`}>
+                                <div className={`w-full ${updating ? "opacity-35 pointer-events-none transition-all duration-300" : ""}`}>
                                   {cellContent}
                                 </div>
+                                {updating && (
+                                  <div className="absolute inset-0 z-10 bg-white/10 dark:bg-black/10 backdrop-blur-[8px] rounded-sm pointer-events-none" />
+                                )}
                                 {updating && isCenter && (
                                   <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
                                     <LoadingSpinner size="xs" />
