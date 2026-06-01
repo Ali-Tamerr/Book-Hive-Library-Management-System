@@ -60,7 +60,8 @@ export const useCreateBookTransaction = () => {
   return useMutation({
     mutationFn: createTransaction,
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: bookTransactionKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: bookTransactionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["borrowedBooks"] });
       localStorage.removeItem("transactions_all_cache");
       localStorage.removeItem("transactions_dashboard_cache");
       localStorage.removeItem("borrowed_books_cache");
@@ -82,10 +83,8 @@ export const useUpdateBookTransaction = () => {
   return useMutation({
     mutationFn: ({ id, data }) => updateTransaction(id, data),
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: bookTransactionKeys.detail(variables.id),
-      });
-      queryClient.invalidateQueries({ queryKey: bookTransactionKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: bookTransactionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["borrowedBooks"] });
       localStorage.removeItem("transactions_all_cache");
       localStorage.removeItem("transactions_dashboard_cache");
       localStorage.removeItem("borrowed_books_cache");
@@ -101,7 +100,8 @@ export const useDeleteBookTransaction = () => {
   return useMutation({
     mutationFn: deleteTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: bookTransactionKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: bookTransactionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["borrowedBooks"] });
       localStorage.removeItem("transactions_all_cache");
       localStorage.removeItem("transactions_dashboard_cache");
       localStorage.removeItem("borrowed_books_cache");
@@ -117,7 +117,8 @@ export const useReturnBookTransaction = () => {
   return useMutation({
     mutationFn: returnTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: bookTransactionKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: bookTransactionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["borrowedBooks"] });
       localStorage.removeItem("transactions_all_cache");
       localStorage.removeItem("transactions_dashboard_cache");
       localStorage.removeItem("borrowed_books_cache");

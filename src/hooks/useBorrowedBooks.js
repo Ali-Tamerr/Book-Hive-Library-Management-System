@@ -43,8 +43,12 @@ export const useCreateBorrowedBook = () => {
   return useMutation({
     mutationFn: createBorrowedBook,
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["bookTransactions"] });
+      localStorage.removeItem("transactions_all_cache");
+      localStorage.removeItem("transactions_dashboard_cache");
       localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("overdue_books_cache");
       localStorage.removeItem("dashboard_books_cache");
       if (variables?.user_id) {
         queryClient.invalidateQueries({
@@ -63,9 +67,12 @@ export const useUpdateBorrowedBook = () => {
   return useMutation({
     mutationFn: ({ id, data }) => updateBorrowedBook(id, data),
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.detail(variables.id) });
-      queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["bookTransactions"] });
+      localStorage.removeItem("transactions_all_cache");
+      localStorage.removeItem("transactions_dashboard_cache");
       localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("overdue_books_cache");
       localStorage.removeItem("dashboard_books_cache");
     },
   });
@@ -78,8 +85,12 @@ export const useDeleteBorrowedBook = () => {
   return useMutation({
     mutationFn: deleteBorrowedBook,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["bookTransactions"] });
+      localStorage.removeItem("transactions_all_cache");
+      localStorage.removeItem("transactions_dashboard_cache");
       localStorage.removeItem("borrowed_books_cache");
+      localStorage.removeItem("overdue_books_cache");
       localStorage.removeItem("dashboard_books_cache");
     },
   });

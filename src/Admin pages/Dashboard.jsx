@@ -1,7 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { User } from "lucide-react";
-import { useLibrarians } from "../hooks/useUsers";
-import { useDashboardTransactions } from "../hooks/useBookTransactions";
+import { useLibrarians, useUsers } from "../hooks/useUsers";
+import { useBorrowedBooks } from "../hooks/useBorrowedBooks";
+import { useBooks } from "../hooks/useBooks";
+import { useBookCopies } from "../hooks/useBookCopies";
+import { useBranches } from "../hooks/useBranches";
 import { getCurrentUser } from "../services/auth.api";
 import DashboardCard from "../components/DashboardCard";
 import { useUserActivity } from "../hooks/useUserActivity";
@@ -49,15 +52,21 @@ function Dashboard() {
   const carouselRef = useRef(null);
   useUserActivity();
 
-  // Use React Query hooks - newly optimized tiny footprint
+  // Use React Query hooks - identical footprint to Catalog tabs
   const {
     data: librariansData,
     isLoading: librariansLoading,
     refetch: refetchLibrarians,
   } = useLibrarians({ enabled: isSuperAdmin });
 
-  const { data: dashboardTransactions, isLoading: transactionsLoading } =
-    useDashboardTransactions();
+  const { data: transactions = [], isLoading: transactionsLoading } = useBorrowedBooks();
+  const { data: books = [] } = useBooks();
+  const { data: usersData } = useUsers();
+  const users = usersData
+    ? usersData.pages.flatMap((page) => page.data || [])
+    : [];
+  const { data: bookCopies = [] } = useBookCopies();
+  const { data: branches = [] } = useBranches();
 
   const handleRefreshAdmins = (adminId) => {
     setLoadingAdmins((prev) => ({ ...prev, [adminId]: true }));
@@ -66,27 +75,105 @@ function Dashboard() {
     });
   };
 
-  const transactionsLoadingState = transactionsLoading;
+  const getBookName = (bookCopyId) => {
+    const copy = bookCopies.find(
+      (c) =>
+        String(c.book_copy_id) === String(bookCopyId) ||
+        String(c.id) === String(bookCopyId),
+    );
+    if (copy && copy.book) {
+      return copy.book.name || copy.book.title || "-";
+    }
+    const actualBookId = copy?.book_id;
+    if (actualBookId) {
+      const book = books.find(
+        (b) =>
+          String(b.book_id) === String(actualBookId) ||
+          String(b.id) === String(actualBookId),
+      );
+      return book?.name || book?.title || "-";
+    }
+    const directBook = books.find(
+      (b) =>
+        String(b.book_id) === String(bookCopyId) ||
+        String(b.id) === String(bookCopyId),
+    );
+    return directBook?.name || directBook?.title || "-";
+  };
 
-  // Stats come directly from the backend /dashboard endpoint,
-  // which is already branch-scoped for Librarians.
+  const getUserName = (userId) => {
+    const user = users.find((u) => u.user_id === userId || u.id === userId);
+    return user
+      ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+      : "-";
+  };
+
+  const getUserImage = (userId) => {
+    const user = users.find((u) => u.user_id === userId || u.id === userId);
+    return user?.image_url || null;
+  };
+
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+
+  const grouped = transactions.reduce(
+    (acc, t) => {
+      const status = (t.status || "").toLowerCase();
+      const isPending = status === "pending";
+      const isReturned = status === "returned";
+      const hasReturnDate = !!t.return_date;
+      const dueDate = t.due_date ? new Date(t.due_date) : null;
+      if (dueDate) dueDate.setHours(0, 0, 0, 0);
+
+      const isOverdue =
+        !isReturned &&
+        !hasReturnDate &&
+        (status === "overdue" || (dueDate && dueDate < now));
+
+      if (isPending) {
+        acc.pending.push(t);
+      } else if (isReturned || hasReturnDate) {
+        acc.returned.push(t);
+      } else if (isOverdue) {
+        acc.overdue.push(t);
+      } else {
+        acc.borrowed.push(t);
+      }
+      return acc;
+    },
+    { pending: [], borrowed: [], overdue: [], returned: [] },
+  );
+
+  const sortByDate = (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0);
+  const sortByReturnDate = (a, b) => new Date(b.return_date || b.created_at || 0) - new Date(a.return_date || a.created_at || 0);
+
+  const rawBorrowed = [...grouped.borrowed].sort(sortByDate).slice(0, 5);
+  const rawOverdue = [...grouped.overdue].sort(sortByDate).slice(0, 5);
+  const rawReturned = [...grouped.returned].sort(sortByReturnDate).slice(0, 5);
+
   const stats = {
-    totalBorrowed: dashboardTransactions?.total_borrowed || 0,
-    currentlyBorrowed: dashboardTransactions?.currently_borrowed || 0,
-    returnedBooks: dashboardTransactions?.returned_count || 0,
+    totalBorrowed: transactions.filter(t => (t.status || "").toLowerCase() !== "pending").length,
+    currentlyBorrowed: transactions.filter(t => {
+      const status = (t.status || "").toLowerCase();
+      return status !== "pending" && status !== "returned" && !t.return_date;
+    }).length,
+    returnedBooks: transactions.filter(t => {
+      const status = (t.status || "").toLowerCase();
+      return status === "returned" || !!t.return_date;
+    }).length,
   };
 
   const buildTransactionItem = (transaction, sourceCard) => ({
     id: transaction.transaction_id || `tx-${Math.random()}`,
-    userName: transaction.user_name || "Unknown",
-    bookName: transaction.book_name || "Unknown",
+    userName: getUserName(transaction.user_id),
+    bookName: getBookName(transaction.book_id),
     transactionType: transaction.transaction_type || "N/A",
     status: transaction.status || "N/A",
     borrowType: transaction.borrow_type || "N/A",
     dueDate: transaction.due_date || "N/A",
     returnDate: transaction.return_date || "N/A",
     createdAt: transaction.created_at || "N/A",
-    userImageUrl: transaction.user_image_url || null,
+    userImageUrl: getUserImage(transaction.user_id),
     sourceCard,
   });
 
@@ -97,15 +184,17 @@ function Dashboard() {
     return parsed.toLocaleDateString();
   };
 
-  const borrowedItems = (dashboardTransactions?.borrowed || []).map((t) =>
+  const borrowedItems = rawBorrowed.map((t) =>
     buildTransactionItem(t, "borrowed"),
   );
-  const overdueItems = (dashboardTransactions?.overdue || []).map((t) =>
+  const overdueItems = rawOverdue.map((t) =>
     buildTransactionItem(t, "overdue"),
   );
-  const returnedItems = (dashboardTransactions?.returned || []).map((t) =>
+  const returnedItems = rawReturned.map((t) =>
     buildTransactionItem(t, "returned"),
   );
+
+  const transactionsLoadingState = transactionsLoading;
 
   const displayAdmins = Array.isArray(librariansData)
     ? librariansData
