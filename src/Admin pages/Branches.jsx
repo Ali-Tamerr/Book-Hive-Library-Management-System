@@ -4,7 +4,9 @@ import {
   useCreateBranch,
   useUpdateBranch,
   useDeleteBranch,
+  branchKeys,
 } from "../hooks/useBranches";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUsers } from "../hooks/useUsers";
 import CommonLayout from "../Layouts/CommonLayout";
 import BranchFormPopup from "../components/BranchFormPopup";
@@ -13,8 +15,10 @@ import ViewDetailsPopup from "../components/ViewDetailsPopup.jsx";
 import { getCurrentUser } from "../services/auth.api";
 
 function Branches({ searchValue, setSearchValue }) {
+  const queryClient = useQueryClient();
   const currentUser = getCurrentUser();
   const [showPopup, setShowPopup] = useState(false);
+  const [updatingBranchId, setUpdatingBranchId] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [branchToDelete, setBranchToDelete] = useState(null);
@@ -44,13 +48,25 @@ function Branches({ searchValue, setSearchValue }) {
         contact_number: formData.contact_number || null,
         created_by: currentUser?.user_id || null,
       };
-      if (editMode && formData.branch_id) {
-        await updateBranchMutation.mutateAsync({
-          id: formData.branch_id,
-          data: apiData,
-        });
-      } else {
-        await createBranchMutation.mutateAsync(apiData);
+      const isEdit = editMode && formData.branch_id;
+      if (isEdit) {
+        setUpdatingBranchId(formData.branch_id);
+      }
+      try {
+        if (isEdit) {
+          await updateBranchMutation.mutateAsync({
+            id: formData.branch_id,
+            data: apiData,
+          });
+          await queryClient.invalidateQueries({ queryKey: branchKeys.lists() });
+          await queryClient.invalidateQueries({ queryKey: branchKeys.management() });
+        } else {
+          await createBranchMutation.mutateAsync(apiData);
+        }
+      } finally {
+        if (isEdit) {
+          setUpdatingBranchId(null);
+        }
       }
       setFormData({ name: "", location: "", contact_number: "" });
       setShowPopup(false);
@@ -163,6 +179,7 @@ function Branches({ searchValue, setSearchValue }) {
         buttonText={buttonText}
         columns={columns}
         formPopup={formPopup}
+        updatingId={updatingBranchId}
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}

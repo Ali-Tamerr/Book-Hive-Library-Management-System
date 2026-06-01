@@ -4,7 +4,9 @@ import {
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,
+  categoryKeys,
 } from "../hooks/useCategories.js";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUsers } from "../hooks/useUsers.js";
 import CategoryFormPopup from "../components/CategoryFormPopup.jsx";
 import DeleteConfirmationPopup from "../components/DeleteConfirmationPopup.jsx";
@@ -13,8 +15,10 @@ import CommonLayout from "../Layouts/CommonLayout.jsx";
 import { getCurrentUser } from "../services/auth.api";
 
 function Categories({ searchValue, setSearchValue }) {
+  const queryClient = useQueryClient();
   const currentUser = getCurrentUser();
   const [showPopup, setShowPopup] = useState(false);
+  const [updatingCategoryId, setUpdatingCategoryId] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
@@ -46,13 +50,25 @@ function Categories({ searchValue, setSearchValue }) {
         created_by: currentUser?.user_id || null,
       };
 
-      if (editMode && formData.id) {
-        await updateCategoryMutation.mutateAsync({
-          id: formData.id,
-          data: apiData,
-        });
-      } else {
-        await createCategoryMutation.mutateAsync(apiData);
+      const isEdit = editMode && formData.id;
+      if (isEdit) {
+        setUpdatingCategoryId(formData.id);
+      }
+      try {
+        if (isEdit) {
+          await updateCategoryMutation.mutateAsync({
+            id: formData.id,
+            data: apiData,
+          });
+          await queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
+          await queryClient.invalidateQueries({ queryKey: categoryKeys.management() });
+        } else {
+          await createCategoryMutation.mutateAsync(apiData);
+        }
+      } finally {
+        if (isEdit) {
+          setUpdatingCategoryId(null);
+        }
       }
       setFormData({ name: "", description: "" });
       setShowPopup(false);
@@ -184,6 +200,7 @@ function Categories({ searchValue, setSearchValue }) {
         buttonText={buttonText}
         columns={columns}
         formPopup={formPopup}
+        updatingId={updatingCategoryId}
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}

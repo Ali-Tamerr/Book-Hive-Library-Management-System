@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   useUsers,
   useCreateUser,
@@ -27,6 +28,7 @@ import { getCurrentUser } from "../services/auth.api";
 import { getImageUrl } from "../services/api.config";
 
 function UserManagement({ searchValue, setSearchValue }) {
+  const queryClient = useQueryClient();
   const currentUser = getCurrentUser();
   const isSuperAdmin = currentUser?.role === "Super Admin";
 
@@ -52,6 +54,7 @@ function UserManagement({ searchValue, setSearchValue }) {
   const [deleteWarning, setDeleteWarning] = useState(null);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(false);
   const [formError, setFormError] = useState(null);
+  const [updatingUserId, setUpdatingUserId] = useState(null);
   const [formData, setFormData] = useState({
     id: "",
     first_name: "",
@@ -179,10 +182,19 @@ function UserManagement({ searchValue, setSearchValue }) {
         if (!formData.password || formData.password.trim() === "") {
           updateData.password_hash = formData.password_hash;
         }
-        await updateUserMutation.mutateAsync({
-          id: formData.user_id,
-          data: updateData,
-        });
+        setShowPopup(false);
+        setEditMode(false);
+        setFormError(null);
+        setUpdatingUserId(formData.user_id);
+        try {
+          await updateUserMutation.mutateAsync({
+            id: formData.user_id,
+            data: updateData,
+          });
+          await queryClient.invalidateQueries({ queryKey: ["users"] });
+        } finally {
+          setUpdatingUserId(null);
+        }
       } else {
         if (selectedRole === "User") {
           const now = new Date();
@@ -190,6 +202,9 @@ function UserManagement({ searchValue, setSearchValue }) {
           oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
           apiData.subscription_end_date = oneMonthLater.toISOString();
         }
+        setShowPopup(false);
+        setEditMode(false);
+        setFormError(null);
         await createUserMutation.mutateAsync(apiData);
       }
       setFormData({
@@ -205,9 +220,6 @@ function UserManagement({ searchValue, setSearchValue }) {
         password_hash: "",
         branch_id: "",
       });
-      setShowPopup(false);
-      setEditMode(false);
-      setFormError(null);
     } catch (error) {
       console.error("Failed to save user:", error);
       const errorMsg =
@@ -387,12 +399,19 @@ function UserManagement({ searchValue, setSearchValue }) {
         subscription_end_date: newEndDate.toISOString(),
       };
 
-      await updateUserMutation.mutateAsync({
-        id: selectedRenewUser.user_id,
-        data: apiData,
-      });
+      const renewUserId = selectedRenewUser.user_id;
       setShowRenewPopup(false);
       setSelectedRenewUser(null);
+      setUpdatingUserId(renewUserId);
+      try {
+        await updateUserMutation.mutateAsync({
+          id: renewUserId,
+          data: apiData,
+        });
+        await queryClient.invalidateQueries({ queryKey: ["users"] });
+      } finally {
+        setUpdatingUserId(null);
+      }
     } catch (error) {
       console.error("Failed to renew user:", error);
       alert("Failed to renew user plan. Please try again.");
@@ -690,6 +709,7 @@ function UserManagement({ searchValue, setSearchValue }) {
         onScroll={handleScroll}
         onLoadMore={fetchNextPage}
         hasMore={hasNextPage}
+        updatingId={updatingUserId}
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}

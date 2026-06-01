@@ -31,6 +31,7 @@ function Books({ searchValue, setSearchValue }) {
   const [bookToDelete, setBookToDelete] = useState(null);
   const [showViewDetails, setShowViewDetails] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [updatingBookId, setUpdatingBookId] = useState(null);
 
   const [formData, setFormData] = useState({
     book_id: "",
@@ -83,13 +84,27 @@ function Books({ searchValue, setSearchValue }) {
         created_by: currentUser?.user_id || null,
       };
 
-      if (editMode && currentData.book_id) {
-        await updateBookMutation.mutateAsync({
-          id: currentData.book_id,
-          data: apiData,
-        });
-      } else {
-        await createBookMutation.mutateAsync(apiData);
+      setShowPopup(false);
+      setEditMode(false);
+      const isEdit = editMode && currentData.book_id;
+      if (isEdit) {
+        setUpdatingBookId(currentData.book_id);
+      }
+      try {
+        if (isEdit) {
+          await updateBookMutation.mutateAsync({
+            id: currentData.book_id,
+            data: apiData,
+          });
+          await queryClient.invalidateQueries({ queryKey: bookKeys.lists() });
+          await queryClient.invalidateQueries({ queryKey: bookKeys.management() });
+        } else {
+          await createBookMutation.mutateAsync(apiData);
+        }
+      } finally {
+        if (isEdit) {
+          setUpdatingBookId(null);
+        }
       }
       setFormData({
         book_id: "",
@@ -99,8 +114,6 @@ function Books({ searchValue, setSearchValue }) {
         sale_price: "",
         BookCopies: [],
       });
-      setShowPopup(false);
-      setEditMode(false);
     } catch (error) {
       console.error("Failed to save book:", error);
       if (error.status === 405) {
@@ -385,6 +398,7 @@ function Books({ searchValue, setSearchValue }) {
         buttonText={buttonText}
         columns={columns}
         formPopup={formPopup}
+        updatingId={updatingBookId}
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}

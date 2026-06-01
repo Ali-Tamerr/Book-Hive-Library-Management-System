@@ -24,11 +24,18 @@ const CommonLayout = ({
   onLoadMore,
   hasMore,
   emphasizedColumns = [],
+  updatingId,
 }) => {
   const FormPopupComponent = formPopup;
   const observerTarget = useRef(null);
   const scrollContainerRef = useRef(null);
   const emphasizedColumnsSet = new Set(emphasizedColumns);
+
+  const isItemUpdating = (item) => {
+    if (!updatingId) return false;
+    const itemId = item.id || item.user_id || item.book_id || item.category_id || item.branch_id;
+    return String(updatingId) === String(itemId);
+  };
 
   // ── Mobile detection ──────────────────────────────────────────────────────
   const [isMobile, setIsMobile] = useState(
@@ -179,27 +186,40 @@ const CommonLayout = ({
                       </tr>
                     </thead>
                     <tbody>
-                      {data.map((item, index) => (
-                        <tr
-                          key={index}
-                          className="h-16 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                        >
-                          {columns.map((col) => {
-                            const cellContent = renderCell(col, item);
-                            const isAction = col.accessor === "action";
-                            const isFullText = typeof cellContent === "string";
-                            return (
-                              <td
-                                key={col.accessor}
-                                title={isFullText ? cellContent : undefined}
-                                className={`px-3 py-2 text-center text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
-                              >
-                                {cellContent}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ))}
+                      {data.map((item, index) => {
+                        const updating = isItemUpdating(item);
+                        return (
+                          <tr
+                            key={index}
+                            className="h-16 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                          >
+                            {columns.map((col, colIdx) => {
+                              const cellContent = renderCell(col, item);
+                              const isAction = col.accessor === "action";
+                              const isFullText = typeof cellContent === "string";
+                              const isCenter = colIdx === Math.floor(columns.length / 2);
+                              return (
+                                <td
+                                  key={col.accessor}
+                                  title={isFullText ? cellContent : undefined}
+                                  className={`px-3 py-2 text-center text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
+                                >
+                                  <div className="relative w-full h-full flex items-center justify-center min-h-[1.75rem]">
+                                    <div className={`w-full ${updating ? "blur-[1px] opacity-40 pointer-events-none transition-all duration-300" : ""}`}>
+                                      {cellContent}
+                                    </div>
+                                    {updating && isCenter && (
+                                      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                                        <LoadingSpinner size="xs" />
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                   {hasMore && (
@@ -257,28 +277,41 @@ const CommonLayout = ({
                       No items found
                     </td>
                   </tr>
-                ) : (
-                  data.map((item, index) => (
-                    <tr
-                      key={index}
-                      className="h-17 max-[48rem]:h-13 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                    >
-                      {columns.map((col) => {
-                        const cellContent = renderCell(col, item);
-                        const isAction = col.accessor === "action";
-                        const isFullText = typeof cellContent === "string";
-                        return (
-                          <td
-                            key={col.accessor}
-                            title={isFullText ? cellContent : undefined}
-                            className={`px-4 py-3 max-[48rem]:px-3 max-[48rem]:py-2 text-center text-base max-[48rem]:text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
-                          >
-                            {cellContent}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))
+                 ) : (
+                  data.map((item, index) => {
+                    const updating = isItemUpdating(item);
+                    return (
+                      <tr
+                        key={index}
+                        className="h-17 max-[48rem]:h-13 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                      >
+                        {columns.map((col, colIdx) => {
+                          const cellContent = renderCell(col, item);
+                          const isAction = col.accessor === "action";
+                          const isFullText = typeof cellContent === "string";
+                          const isCenter = colIdx === Math.floor(columns.length / 2);
+                          return (
+                            <td
+                              key={col.accessor}
+                              title={isFullText ? cellContent : undefined}
+                              className={`px-4 py-3 max-[48rem]:px-3 max-[48rem]:py-2 text-center text-base max-[48rem]:text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
+                            >
+                              <div className="relative w-full h-full flex items-center justify-center min-h-[2.5rem]">
+                                <div className={`w-full ${updating ? "blur-[1.2px] opacity-40 pointer-events-none transition-all duration-300" : ""}`}>
+                                  {cellContent}
+                                </div>
+                                {updating && isCenter && (
+                                  <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                                    <LoadingSpinner size="xs" />
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

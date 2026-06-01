@@ -4,7 +4,9 @@ import {
   useCreateBorrowedBook,
   useUpdateBorrowedBook,
   useDeleteBorrowedBook,
+  borrowedBooksKeys,
 } from "../hooks/useBorrowedBooks.js";
+import { useQueryClient } from "@tanstack/react-query";
 import { useBooks } from "../hooks/useBooks.js";
 import { useUsers } from "../hooks/useUsers.js";
 import { useBookCopies } from "../hooks/useBookCopies.js";
@@ -24,7 +26,9 @@ function BorrowedBooks({
   showPending = false,
   showReturned = false,
 }) {
+  const queryClient = useQueryClient();
   const [showPopup, setShowPopup] = useState(false);
+  const [updatingTransactionId, setUpdatingTransactionId] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
@@ -176,13 +180,26 @@ function BorrowedBooks({
         apiData.status = formData.status || "Pending";
       }
 
-      if (editMode && formData.transaction_id) {
-        await updateBorrowedBookMutation.mutateAsync({
-          id: formData.transaction_id,
-          data: apiData,
-        });
-      } else {
-        await createBorrowedBookMutation.mutateAsync(apiData);
+      setShowPopup(false);
+      setEditMode(false);
+      const isEdit = editMode && formData.transaction_id;
+      if (isEdit) {
+        setUpdatingTransactionId(formData.transaction_id);
+      }
+      try {
+        if (isEdit) {
+          await updateBorrowedBookMutation.mutateAsync({
+            id: formData.transaction_id,
+            data: apiData,
+          });
+          await queryClient.invalidateQueries({ queryKey: borrowedBooksKeys.lists() });
+        } else {
+          await createBorrowedBookMutation.mutateAsync(apiData);
+        }
+      } finally {
+        if (isEdit) {
+          setUpdatingTransactionId(null);
+        }
       }
       setFormData({
         transaction_id: "",
@@ -195,8 +212,6 @@ function BorrowedBooks({
         status: "Pending",
         borrow_type: "Borrow",
       });
-      setShowPopup(false);
-      setEditMode(false);
     } catch (error) {
       console.error("Failed to save transaction:", error);
       alert("Failed to save transaction. Please try again.");
@@ -369,6 +384,7 @@ function BorrowedBooks({
         ]}
         formPopup={formPopupComponent}
         customTitle={customTitle}
+        updatingId={updatingTransactionId}
       />
       <DeleteConfirmationPopup
         show={showDeleteConfirm}
