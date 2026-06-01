@@ -33,6 +33,8 @@ const CommonLayout = ({
 
   // ── Custom Tooltip for truncated cells ──────────────────────────────────
   const [tooltipConfig, setTooltipConfig] = useState(null); // { text, x, y }
+  const [adjustedX, setAdjustedX] = useState(0);
+  const tooltipRef = useRef(null);
 
   const handleCellClick = (e, text) => {
     e.stopPropagation();
@@ -44,17 +46,44 @@ const CommonLayout = ({
         x: rect.left + rect.width / 2,
         y: rect.top,
       });
+      setAdjustedX(0); // Reset adjustedX so it recalculates for the new tooltip
     }
   };
 
   useEffect(() => {
     if (!tooltipConfig) return;
+
+    const adjustPosition = () => {
+      const el = tooltipRef.current;
+      if (!el) return;
+
+      const width = el.offsetWidth;
+      const padding = 16; // Safe padding from screen edges
+      const screenWidth = window.innerWidth;
+      
+      let x = tooltipConfig.x;
+      // Clamp left boundary
+      if (x - width / 2 < padding) {
+        x = width / 2 + padding;
+      } 
+      // Clamp right boundary
+      else if (x + width / 2 > screenWidth - padding) {
+        x = screenWidth - padding - width / 2;
+      }
+      setAdjustedX(x);
+    };
+
+    adjustPosition();
+    
+    // Close tooltips on resize or scroll
     const handleClose = () => setTooltipConfig(null);
     window.addEventListener("click", handleClose);
     window.addEventListener("scroll", handleClose, true);
+    window.addEventListener("resize", adjustPosition);
     return () => {
       window.removeEventListener("click", handleClose);
       window.removeEventListener("scroll", handleClose, true);
+      window.removeEventListener("resize", adjustPosition);
     };
   }, [tooltipConfig]);
 
@@ -370,17 +399,23 @@ const CommonLayout = ({
 
       {tooltipConfig && (
         <div
-          className="animate-in fade-in zoom-in pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-[calc(100%+0.75rem)] rounded-lg border-2 border-[#000035] bg-[#F2F2F2] px-4 py-3 shadow-lg duration-200 dark:border-[#D7D7D7] dark:bg-[#121317]"
+          ref={tooltipRef}
+          className={`animate-in fade-in zoom-in pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-[calc(100%+0.75rem)] rounded-lg border-2 border-[#000035] bg-[#F2F2F2] px-4 py-3 shadow-lg duration-200 dark:border-[#D7D7D7] dark:bg-[#121317] ${adjustedX === 0 ? "opacity-0" : "opacity-100"}`}
           style={{
-            left: `${tooltipConfig.x}px`,
+            left: `${adjustedX || tooltipConfig.x}px`,
             top: `${tooltipConfig.y}px`,
           }}
         >
-          <p className="whitespace-nowrap text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
+          <p className="whitespace-normal break-words max-w-[calc(100vw-32px)] md:max-w-[20rem] text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
             {tooltipConfig.text}
           </p>
           {/* Tooltip Arrow */}
-          <div className="absolute bottom-0 left-1/2 h-3 w-3 -translate-x-1/2 translate-y-1/2 rotate-45 border-b-2 border-r-2 border-[#000035] bg-[#F2F2F2] dark:border-[#D7D7D7] dark:bg-[#121317]" />
+          <div 
+            className="absolute bottom-0 left-1/2 h-3 w-3 -translate-x-1/2 translate-y-1/2 rotate-45 border-b-2 border-r-2 border-[#000035] bg-[#F2F2F2] dark:border-[#D7D7D7] dark:bg-[#121317]" 
+            style={{
+              left: adjustedX ? `calc(50% + ${tooltipConfig.x - adjustedX}px)` : "50%",
+            }}
+          />
         </div>
       )}
       {formPopup}
