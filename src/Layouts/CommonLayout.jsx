@@ -170,15 +170,15 @@ const CommonLayout = ({
               ) : (
                 <>
                   <table
-                    className="table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]"
-                    style={{ width: `${columns.length * 8}rem` }}
+                    className="w-full table-fixed border-collapse text-left text-sm dark:text-[#E8E8E8]"
+                    style={{ minWidth: `${columns.length * 8}rem` }}
                   >
                     <thead className="sticky top-0 z-10 bg-[#f0f0f1] dark:bg-[#121317]">
                       <tr>
                         {columns.map((col) => (
                           <th
                             key={col.accessor}
-                            className="whitespace-nowrap px-3 py-2 text-center text-[0.9rem] font-extrabold tracking-widest shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]"
+                            className="whitespace-nowrap px-3 py-2 md:px-4 md:py-3 text-center text-[0.9rem] md:text-[1.2rem] font-extrabold tracking-widest shadow-[inset_0_-1px_0_0_#000035] dark:shadow-[inset_0_-1px_0_0_#D7D7D7]"
                           >
                             {col.header}
                           </th>
@@ -191,7 +191,7 @@ const CommonLayout = ({
                         return (
                           <tr
                             key={index}
-                            className="h-16 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                            className="h-16 md:h-18 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                           >
                             {columns.map((col, colIdx) => {
                               const cellContent = renderCell(col, item);
@@ -202,7 +202,7 @@ const CommonLayout = ({
                                 <td
                                   key={col.accessor}
                                   title={isFullText ? cellContent : undefined}
-                                  className={`px-3 py-2 text-center text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
+                                  className={`px-3 py-2 md:px-4 md:py-3 text-center text-[0.675rem] md:text-[0.95rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
                                 >
                                   <div className="relative w-full h-full flex items-center justify-center min-h-[1.75rem]">
                                     <div className={`w-full ${updating ? "opacity-35 pointer-events-none transition-all duration-300" : ""}`}>
