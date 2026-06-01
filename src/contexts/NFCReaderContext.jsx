@@ -6,7 +6,6 @@ import React, {
   useEffect,
 } from "react";
 import { apiGet } from "../services/api.config";
-import { createClient } from "@supabase/supabase-js";
 import PromptToast from "../components/PromptToast.jsx";
 
 const NFCReaderContext = createContext();
@@ -233,8 +232,8 @@ export const NFCReaderProvider = ({ children }) => {
     }
   };
 
-  // Wireless Scanning: Poll the Backend API directly
-  // This respects the new architecture where the Backend proxies/manages the database access.
+  // Wireless Scanning: Poll the secure backend proxy endpoint.
+  // This completely resolves Supabase client-side RLS policy restrictions.
   const toggleWireless = async () => {
     if (!isWireless) {
       const id = await requestScannerId();
@@ -242,59 +241,48 @@ export const NFCReaderProvider = ({ children }) => {
     }
     setIsWireless((prev) => !prev);
     lastProcessedScanTimeRef.current = new Date().toISOString();
+    lastProcessedScanIdRef.current = null;
   };
 
   useEffect(() => {
     if (!isWireless) return;
 
-    let supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    let supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    if (!supabaseUrl || !supabaseKey) {
-      console.error("Missing Supabase credentials for Realtime NFC Reader");
-      return;
-    }
-    
-    // Use the globally imported createClient
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const handlePoll = async () => {
+      try {
+        // Fetch the latest scan for this device ID securely through the C# backend API
+        const response = await apiGet(`/supabase/latest_scan?deviceId=${targetDeviceId}`);
+        
+        if (response && response.uid) {
+          const scanId = response.id || response.uid;
+          const scanTime = response.created_at || new Date().toISOString();
+          
+          const isDuplicate = lastProcessedScanIdRef.current === scanId;
+          const scanTimeMs = new Date(scanTime).getTime();
+          
+          // Allow a very small 5-second skew in case server time is slightly behind the client
+          const thresholdTimeMs = new Date(lastProcessedScanTimeRef.current).getTime() - 5000;
+          const isRecent = scanTimeMs > thresholdTimeMs;
 
-    const filterString = targetDeviceId === "esp8266" ? "" : `device_id=eq.${targetDeviceId}`;
-    
-    const channel = supabase
-      .channel("nfc-reader-global-scans")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "scanned_book_uids",
-          filter: filterString || undefined,
-        },
-        (payload) => {
-          const latestScan = payload.new;
-          if (latestScan && latestScan.uid) {
-             const scanId = latestScan.id || latestScan.uid;
-             const scanTime = latestScan.created_at || latestScan.scanned_at || new Date().toISOString();
-             
-             // Prevent duplicate processing of the same database row event
-             const isDuplicate = lastProcessedScanIdRef.current === scanId;
-             
-             // Allow a generous 5-minute clock skew margin between Kestrel/Postgres server and local machine
-             const clientStartTime = new Date(lastProcessedScanTimeRef.current).getTime() - 5 * 60 * 1000;
-             const isRecent = new Date(scanTime).getTime() > clientStartTime;
-
-             if (!isDuplicate && isRecent) {
-                notifyCallbacks(latestScan.uid);
-                lastProcessedScanIdRef.current = scanId;
-                // Keep the ref updated with the latest time as a sliding baseline
-                lastProcessedScanTimeRef.current = scanTime;
-             }
+          if (!isDuplicate && isRecent) {
+            notifyCallbacks(response.uid);
+            lastProcessedScanIdRef.current = scanId;
+            lastProcessedScanTimeRef.current = scanTime;
           }
         }
-      )
-      .subscribe();
+      } catch (err) {
+        // 404 is expected if the device hasn't scanned anything yet, so we don't log it as an error
+        if (err.status !== 404 && err.response?.status !== 404) {
+          console.error("Wireless proxy polling error:", err);
+        }
+      }
+    };
+
+    // Run the poll immediately once wireless is toggled, then every 1 second
+    handlePoll();
+    const intervalId = setInterval(handlePoll, 1000);
 
     return () => {
-      supabase.removeChannel(channel);
+      clearInterval(intervalId);
     };
   }, [isWireless, targetDeviceId]);
 
