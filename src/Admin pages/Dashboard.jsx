@@ -60,12 +60,12 @@ function Dashboard() {
   } = useLibrarians({ enabled: isSuperAdmin });
 
   const { data: transactions = [], isLoading: transactionsLoading } = useBorrowedBooks();
-  const { data: books = [] } = useBooks();
-  const { data: usersData } = useUsers();
+  const { data: books = [], isLoading: booksLoading } = useBooks();
+  const { data: usersData, isLoading: usersLoading } = useUsers();
   const users = usersData
     ? usersData.pages.flatMap((page) => page.data || [])
     : [];
-  const { data: bookCopies = [] } = useBookCopies();
+  const { data: bookCopies = [], isLoading: bookCopiesLoading } = useBookCopies();
   const { data: branches = [] } = useBranches();
 
   const handleRefreshAdmins = (adminId) => {
@@ -194,7 +194,11 @@ function Dashboard() {
     buildTransactionItem(t, "returned"),
   );
 
-  const transactionsLoadingState = transactionsLoading;
+  const transactionsLoadingState =
+    transactionsLoading ||
+    usersLoading ||
+    booksLoading ||
+    bookCopiesLoading;
 
   const displayAdmins = Array.isArray(librariansData)
     ? librariansData
