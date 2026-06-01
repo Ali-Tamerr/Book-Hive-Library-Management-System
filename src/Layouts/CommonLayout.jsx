@@ -108,10 +108,10 @@ const CommonLayout = ({
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-5 max-[67.5rem]:gap-2 overflow-hidden p-7 pb-0 pr-0 max-[67.5rem]:p-0 max-[67.5rem]:pt-5">
+    <div className="flex min-h-0 flex-1 flex-col gap-5 max-[67.5rem]:gap-2 overflow-hidden pt-7 pb-0 pr-0 pl-0 max-[67.5rem]:p-0 max-[67.5rem]:pt-5">
 
       {/* ── Header: title + search/button ─────────────────────────────── */}
-      <div className="flex flex-col gap-3 max-[67.5rem]:gap-2 pr-7 max-[67.5rem]:px-5">
+      <div className="flex flex-col gap-3 max-[67.5rem]:gap-2 px-7 max-[67.5rem]:px-5">
         <div
           className={`flex items-center justify-between gap-12 max-[62.5rem]:items-stretch max-[62.5rem]:gap-2 ${customTitle ? "max-[62.5rem]:flex-col-reverse" : "max-[62.5rem]:flex-col"}`}
         >
