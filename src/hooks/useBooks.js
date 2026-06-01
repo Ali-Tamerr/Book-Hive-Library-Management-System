@@ -68,7 +68,7 @@ export const useBook = (id) => {
     queryKey: bookKeys.detail(id),
     queryFn: () => getBookById(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
     gcTime: 10 * 60 * 1000,
   });
 };

@@ -27,7 +27,7 @@ export const useApprovedFeedbacks = () => {
   return useQuery({
     queryKey: feedbackKeys.approved(),
     queryFn: getApprovedFeedbacks,
-    staleTime: 10 * 60 * 1000, // 10 minutes – testimonials rarely change
+    staleTime: Infinity,
     refetchInterval: false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,

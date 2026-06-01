@@ -36,7 +36,7 @@ export const useDashboardTransactions = () => {
     queryFn: async () => {
       return await getDashboardTransactions();
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: Infinity,
     refetchInterval: 30_000, // 30 seconds
     refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,

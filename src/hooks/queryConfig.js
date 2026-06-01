@@ -4,7 +4,7 @@ export const REFETCH_INTERVAL = 10000; // 10 seconds
 // refetch on mount to avoid redundant requests when multiple components
 // mount on the same page (e.g. multiple carousels on homepage).
 export const adminQueryOptions = {
-  staleTime: 5 * 60 * 1000, // 5 minutes
+  staleTime: Infinity,
   refetchInterval: REFETCH_INTERVAL,
   refetchIntervalInBackground: false,
   refetchOnWindowFocus: true,

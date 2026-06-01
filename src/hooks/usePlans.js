@@ -16,7 +16,7 @@ export function usePlans() {
       }
       return response.json();
     },
-    staleTime: 60 * 60 * 1000, // 1 hour
+    staleTime: Infinity,
     cacheTime: 24 * 60 * 60 * 1000, // 24 hours
     refetchOnWindowFocus: false,
     retry: 2,
