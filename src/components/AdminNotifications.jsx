@@ -120,12 +120,14 @@ const AdminNotifications = ({ className = "" }) => {
 
   const [showFeedbackDetails, setShowFeedbackDetails] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const [updatingRequestId, setUpdatingRequestId] = useState(null);
 
   const handleApproveFeedback = async (request) => {
     const feedbackId = request?.request_id ?? request?.feedback_id;
     if (!feedbackId) return;
 
     try {
+      setUpdatingRequestId(feedbackId);
       await updateFeedbackMutation.mutateAsync({
         ...request,
         id: feedbackId,
@@ -133,6 +135,8 @@ const AdminNotifications = ({ className = "" }) => {
       });
     } catch (error) {
       console.error("Failed to approve feedback:", error);
+    } finally {
+      setUpdatingRequestId(null);
     }
   };
 
@@ -141,6 +145,7 @@ const AdminNotifications = ({ className = "" }) => {
     if (!feedbackId) return;
 
     try {
+      setUpdatingRequestId(feedbackId);
       await updateFeedbackMutation.mutateAsync({
         ...request,
         id: feedbackId,
@@ -148,6 +153,8 @@ const AdminNotifications = ({ className = "" }) => {
       });
     } catch (error) {
       console.error("Failed to reject feedback:", error);
+    } finally {
+      setUpdatingRequestId(null);
     }
   };
 
@@ -261,6 +268,7 @@ const AdminNotifications = ({ className = "" }) => {
         currentUser={currentUser}
         requests={userRequests}
         isLoading={isLoadingRequests}
+        updatingId={updatingRequestId}
         onApprove={(request) => {
           const fallbackFullName = String(request.name || "").trim();
           const [fallbackFirstName = "", ...fallbackRest] = fallbackFullName
@@ -287,6 +295,7 @@ const AdminNotifications = ({ className = "" }) => {
         }}
         onReject={async (request, reason = "") => {
           try {
+            setUpdatingRequestId(request.request_id);
             await rejectRequestMutation.mutateAsync({
               id: request.request_id,
               requestData: request,
@@ -295,6 +304,8 @@ const AdminNotifications = ({ className = "" }) => {
           } catch (error) {
             console.error("Failed to reject request:", error);
             alert("Failed to reject request. Please try again.");
+          } finally {
+            setUpdatingRequestId(null);
           }
         }}
         bookRequests={pendingBookRequests}
@@ -304,6 +315,7 @@ const AdminNotifications = ({ className = "" }) => {
         bookCopies={bookCopies}
         onApproveBook={async (request) => {
           try {
+            setUpdatingRequestId(request.transaction_id);
             const bookCopy = bookCopies.find(
               (bc) => String(bc.book_copy_id).trim().toLowerCase() === String(request.book_id).trim().toLowerCase()
             );
@@ -323,16 +335,21 @@ const AdminNotifications = ({ className = "" }) => {
           } catch (error) {
             console.error("Failed to approve book request:", error);
             alert("Failed to approve book request. Please try again.");
+          } finally {
+            setUpdatingRequestId(null);
           }
         }}
         onRejectBook={async (request) => {
           try {
+            setUpdatingRequestId(request.transaction_id);
             await deleteBookTransactionMutation.mutateAsync(
               request.transaction_id,
             );
           } catch (error) {
             console.error("Failed to reject book request:", error);
             alert("Failed to reject book request. Please try again.");
+          } finally {
+            setUpdatingRequestId(null);
           }
         }}
         returnRequests={[]}

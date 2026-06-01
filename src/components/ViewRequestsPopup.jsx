@@ -35,6 +35,7 @@ const ViewRequestsPopup = ({
   users = [],
   books = [],
   bookCopies = [],
+  updatingId = null,
 }) => {
   const [searchValue, setSearchValue] = useState("");
   const [showRejected, setShowRejected] = useState(false);
@@ -461,6 +462,8 @@ const ViewRequestsPopup = ({
             {activeTab === "users" ? (
               <RequestsTable
                 isLoading={currentLoading}
+                updatingId={updatingId}
+                className="min-w-250 max-[48rem]:min-w-2xl"
                 emptyMessage={
                   searchValue
                     ? "No requests match your search."
@@ -512,6 +515,8 @@ const ViewRequestsPopup = ({
             ) : activeTab === "books" ? (
               <RequestsTable
                 isLoading={currentLoading}
+                updatingId={updatingId}
+                className="min-w-250 max-[48rem]:min-w-2xl"
                 emptyMessage={
                   searchValue
                     ? "No requests match your search."
@@ -558,6 +563,8 @@ const ViewRequestsPopup = ({
             ) : (
               <RequestsTable
                 isLoading={currentLoading}
+                updatingId={updatingId}
+                className="min-w-250 max-[48rem]:min-w-2xl"
                 emptyMessage={
                   searchValue
                     ? "No requests match your search."
