@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { getImageUrl } from "../../services/api.config";
 import LazyImage from "../../components/LazyImage";
-import LoadingSpinner from "../../components/LoadingSpinner.jsx";
 
 
 const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
@@ -100,9 +99,7 @@ const Testimonials = ({ feedbacks, testimonialPerView, isLoading = false }) => {
                       margin: "0 0.875rem",
                     }}
                   >
-                    <div className="mx-auto mb-4 flex h-[4.625rem] w-[4.625rem] items-center justify-center rounded-full bg-[#e6e7eb] dark:bg-[#171c29]">
-                      <LoadingSpinner size="lg" />
-                    </div>
+                    <div className="mx-auto mb-4 h-[4.625rem] w-[4.625rem] animate-pulse rounded-full bg-[#e6e7eb] dark:bg-[#171c29]" />
                     <div className="mx-auto mb-3 h-5 w-28 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
                     <div className="mx-auto mb-4 h-12 w-3/4 rounded bg-[#e6e7eb] dark:bg-[#22293b]" />
                     <div className="text-[1.5rem] text-[var(--text-color)] dark:text-[var(--text-color)]">

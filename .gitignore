@@ -37,3 +37,6 @@ hf_space_deployment
 /playwright/.cache/
 /playwright/.auth/
 rls_policies.sql
+
+
+ai_chats/

@@ -27,7 +27,12 @@ export const useApprovedFeedbacks = () => {
   return useQuery({
     queryKey: feedbackKeys.approved(),
     queryFn: getApprovedFeedbacks,
-    ...adminQueryOptions,
+    staleTime: 10 * 60 * 1000, // 10 minutes – testimonials rarely change
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: true,
+    retry: 1,
   });
 };
 

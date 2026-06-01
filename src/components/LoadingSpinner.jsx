@@ -11,10 +11,9 @@ const sizes = {
 const LoadingSpinner = ({ size = "md", className = "" }) => {
   const s = sizes[size] || sizes.md;
   return (
-    <div className={`relative inline-flex items-center justify-center ${s.container} ${className} spinner-logo-breathe`}>
-      <div className="absolute inset-0 animate-spin rounded-full border-4 border-[#000035] border-t-transparent dark:border-[#D7D7D7] dark:border-t-transparent" />
+    <div className={`relative inline-flex items-center justify-center ${s.container} ${className}`}>
       <div
-        className={`${s.logo} bg-[#000035] dark:bg-[#D7D7D7]`}
+        className={`${s.logo} spinner-logo-breathe bg-[#000035] dark:bg-[#D7D7D7]`}
         style={{
           mask: `url(${logoSrc}) no-repeat center`,
           WebkitMask: `url(${logoSrc}) no-repeat center`,
