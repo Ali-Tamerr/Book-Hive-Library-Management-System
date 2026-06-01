@@ -30,6 +30,7 @@ export const NFCReaderProvider = ({ children }) => {
     localStorage.getItem("nfc_scanner_id") || "esp32",
   );
   const lastProcessedScanTimeRef = useRef(new Date().toISOString());
+  const lastProcessedScanIdRef = useRef(null);
   const [promptConfig, setPromptConfig] = useState({ show: false, resolve: null });
 
   const requestScannerId = () => {
@@ -271,9 +272,20 @@ export const NFCReaderProvider = ({ children }) => {
         (payload) => {
           const latestScan = payload.new;
           if (latestScan && latestScan.uid) {
+             const scanId = latestScan.id || latestScan.uid;
              const scanTime = latestScan.created_at || latestScan.scanned_at || new Date().toISOString();
-             if (new Date(scanTime) > new Date(lastProcessedScanTimeRef.current)) {
+             
+             // Prevent duplicate processing of the same database row event
+             const isDuplicate = lastProcessedScanIdRef.current === scanId;
+             
+             // Allow a generous 5-minute clock skew margin between Kestrel/Postgres server and local machine
+             const clientStartTime = new Date(lastProcessedScanTimeRef.current).getTime() - 5 * 60 * 1000;
+             const isRecent = new Date(scanTime).getTime() > clientStartTime;
+
+             if (!isDuplicate && isRecent) {
                 notifyCallbacks(latestScan.uid);
+                lastProcessedScanIdRef.current = scanId;
+                // Keep the ref updated with the latest time as a sliding baseline
                 lastProcessedScanTimeRef.current = scanTime;
              }
           }
