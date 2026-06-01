@@ -297,7 +297,17 @@ const ViewRequestsPopup = ({
     );
   };
 
-  const getUserName = (userId) => {
+  const getUserName = (requestOrUserId) => {
+    const isObject = typeof requestOrUserId === "object" && requestOrUserId !== null;
+    const userId = isObject ? requestOrUserId.user_id : requestOrUserId;
+
+    if (isObject && requestOrUserId.user) {
+      const u = requestOrUserId.user;
+      if (u.first_name || u.last_name) {
+        return `${u.first_name || ""} ${u.last_name || ""}`.trim();
+      }
+    }
+
     const user = users.find(
       (u) => String(u.user_id).trim().toLowerCase() === String(userId).trim().toLowerCase()
     );
@@ -313,7 +323,14 @@ const ViewRequestsPopup = ({
     return userId || "Unknown";
   };
 
-  const getBookName = (bookCopyId) => {
+  const getBookName = (requestOrBookCopyId) => {
+    const isObject = typeof requestOrBookCopyId === "object" && requestOrBookCopyId !== null;
+    const bookCopyId = isObject ? requestOrBookCopyId.book_id : requestOrBookCopyId;
+
+    if (isObject && requestOrBookCopyId.book_copy?.book?.name) {
+      return requestOrBookCopyId.book_copy.book.name;
+    }
+
     const bookCopy = bookCopies.find(
       (bc) => String(bc.book_copy_id).trim().toLowerCase() === String(bookCopyId).trim().toLowerCase()
     );
@@ -505,8 +522,8 @@ const ViewRequestsPopup = ({
                 data={filteredBookRequests}
                 keyExtractor={(req, idx) => req.transaction_id || idx}
                 columns={[
-                  { header: "User Name", accessor: "user_name", render: (request) => getUserName(request.user_id) },
-                  { header: "Book Name", accessor: "book_name", render: (request) => getBookName(request.book_id) },
+                  { header: "User Name", accessor: "user_name", render: (request) => getUserName(request) },
+                  { header: "Book Name", accessor: "book_name", render: (request) => getBookName(request) },
                   { header: "Due Date", accessor: "due_date", render: (request) => formatDateShort(request.due_date) },
                   { header: "Requested At", accessor: "created_at", render: (request) => formatDate(request.created_at) },
                   { header: "Status", accessor: "status", render: (request) => getBookStatusBadge(request) },
@@ -551,7 +568,7 @@ const ViewRequestsPopup = ({
                 data={filteredFeedbackRequests}
                 keyExtractor={(req, idx) => req.request_id || req.feedback_id || idx}
                 columns={[
-                  { header: "User Name", accessor: "name", render: (request) => getUserName(request.user_id) },
+                  { header: "User Name", accessor: "name", render: (request) => getUserName(request) },
                   { header: "ID User", accessor: "id", render: (request) => request.user_id },
                   { header: "Requested At", accessor: "created_at", render: (request) => formatDate(request.created_at) },
                   { header: "Actions", accessor: "actions", render: (request) => (
