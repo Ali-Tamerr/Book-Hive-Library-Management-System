@@ -279,6 +279,7 @@ const AdminNotifications = ({ className = "" }) => {
           try {
             await rejectRequestMutation.mutateAsync({
               id: request.request_id,
+              requestData: request,
               reason: reason,
             });
           } catch (error) {

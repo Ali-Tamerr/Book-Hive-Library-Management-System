@@ -31,11 +31,11 @@ export const approveUserRequest = async (id) => {
   return await apiPut(`${BASE_ENDPOINT}/${id}`, { status: 'Approved' });
 };
 
-export const rejectUserRequest = async (id, reason = "") => {
+export const rejectUserRequest = async (id, requestData = {}, reason = "") => {
   const url = reason 
     ? `${BASE_ENDPOINT}/${id}?reason=${encodeURIComponent(reason)}`
     : `${BASE_ENDPOINT}/${id}`;
-  return await apiPut(url, { status: 'Rejected' });
+  return await apiPut(url, { ...requestData, status: 'Rejected' });
 };
 
 export const verifyUserRequestOtp = async (email, otp) => {
