@@ -52,11 +52,19 @@ const AdminNotifications = ({ className = "" }) => {
   const updateUserMutation = useUpdateUser(); // Needed if we decide to support edit, or for userForm logic
   const deleteRequestMutation = useDeleteUserRequest();
   const rejectRequestMutation = useRejectUserRequest();
+  const pollOptions = {
+    staleTime: 5000, // Stale after 5s to force automatic refetches
+    refetchInterval: 10000, // Refetch every 10s
+    refetchIntervalInBackground: true, // Keep polling active in background/when closed
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  };
+
   const { data: userRequests = [], isLoading: isLoadingRequests } =
-    useUserRequests();
+    useUserRequests(pollOptions);
 
   const { data: bookTransactions = [], isLoading: isLoadingBookTransactions } =
-    useBookTransactions();
+    useBookTransactions(pollOptions);
   const updateBookTransactionMutation = useUpdateBookTransaction();
   const deleteBookTransactionMutation = useDeleteBookTransaction();
   const { data: books = [] } = useBooks();
@@ -68,7 +76,7 @@ const AdminNotifications = ({ className = "" }) => {
   const EXPIRATION_DAYS = 7;
 
   const { data: feedbackData = [], isLoading: isLoadingFeedback } =
-    useFeedbacks();
+    useFeedbacks(pollOptions);
   const updateFeedbackMutation = useUpdateFeedbackStatus();
 
   // feedbackData might be exactly an array depending on how getAllFeedbacks formats it

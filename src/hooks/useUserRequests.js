@@ -18,11 +18,12 @@ export const userRequestKeys = {
   detail: (id) => [...userRequestKeys.details(), id],
 };
 
-export const useUserRequests = () => {
+export const useUserRequests = (options = {}) => {
   return useQuery({
     queryKey: userRequestKeys.lists(),
     queryFn: getAllUserRequests,
     ...adminQueryOptions,
+    ...options,
   });
 };
 

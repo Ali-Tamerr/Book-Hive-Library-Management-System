@@ -20,13 +20,14 @@ export const bookTransactionKeys = {
   detail: (id) => [...bookTransactionKeys.details(), id],
 };
 
-export const useBookTransactions = () => {
+export const useBookTransactions = (options = {}) => {
   return useQuery({
     queryKey: bookTransactionKeys.lists(),
     queryFn: async () => {
       return await getAllTransactions();
     },
     ...adminQueryOptions,
+    ...options,
   });
 };
 

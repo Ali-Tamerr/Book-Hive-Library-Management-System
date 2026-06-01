@@ -15,11 +15,12 @@ export const feedbackKeys = {
   approved: () => [...feedbackKeys.all, "approved"],
 };
 
-export const useFeedbacks = () => {
+export const useFeedbacks = (options = {}) => {
   return useQuery({
     queryKey: feedbackKeys.lists(),
     queryFn: getAllFeedbacks,
     ...adminQueryOptions,
+    ...options,
   });
 };
 
