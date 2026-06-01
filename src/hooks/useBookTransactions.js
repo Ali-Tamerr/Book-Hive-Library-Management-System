@@ -36,7 +36,13 @@ export const useDashboardTransactions = () => {
     queryFn: async () => {
       return await getDashboardTransactions();
     },
-    ...adminQueryOptions,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchInterval: 30_000, // 30 seconds
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
+    refetchOnMount: false,
+    refetchOnReconnect: true,
+    retry: 1,
   });
 };
 
