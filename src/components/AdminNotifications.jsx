@@ -180,6 +180,13 @@ const AdminNotifications = ({ className = "" }) => {
         branch_id: userBranchId,
       };
 
+      if (selectedRole === "User") {
+        const now = new Date();
+        const oneMonthLater = new Date(now);
+        oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+        apiData.subscription_end_date = oneMonthLater.toISOString();
+      }
+
       await createUserMutation.mutateAsync(apiData);
 
       if (pendingRequestId) {
