@@ -31,6 +31,33 @@ const CommonLayout = ({
   const scrollContainerRef = useRef(null);
   const emphasizedColumnsSet = new Set(emphasizedColumns);
 
+  // ── Custom Tooltip for truncated cells ──────────────────────────────────
+  const [tooltipConfig, setTooltipConfig] = useState(null); // { text, x, y }
+
+  const handleCellClick = (e, text) => {
+    e.stopPropagation();
+    const element = e.currentTarget;
+    if (element.scrollWidth > element.clientWidth) {
+      const rect = element.getBoundingClientRect();
+      setTooltipConfig({
+        text,
+        x: rect.left + rect.width / 2,
+        y: rect.top,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!tooltipConfig) return;
+    const handleClose = () => setTooltipConfig(null);
+    window.addEventListener("click", handleClose);
+    window.addEventListener("scroll", handleClose, true);
+    return () => {
+      window.removeEventListener("click", handleClose);
+      window.removeEventListener("scroll", handleClose, true);
+    };
+  }, [tooltipConfig]);
+
   const isItemUpdating = (item) => {
     if (!updatingId) return false;
     const itemId = item.id || item.user_id || item.book_id || item.category_id || item.branch_id;
@@ -202,10 +229,13 @@ const CommonLayout = ({
                                 <td
                                   key={col.accessor}
                                   title={isFullText ? cellContent : undefined}
-                                  className={`px-3 py-2 md:px-4 md:py-3 text-center text-[0.675rem] md:text-[0.95rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
+                                  className="px-3 py-2 md:px-4 md:py-3 text-center text-[0.675rem] md:text-[0.95rem] dark:text-white"
                                 >
-                                  <div className="relative w-full h-full flex items-center justify-center min-h-[1.75rem]">
-                                    <div className={`w-full ${updating ? "opacity-35 pointer-events-none transition-all duration-300" : ""}`}>
+                                  <div className="relative w-full h-full flex items-center justify-center min-h-[1.75rem] min-w-0 overflow-hidden">
+                                    <div 
+                                      onClick={(e) => !isAction && isFullText && handleCellClick(e, cellContent)}
+                                      className={`w-full min-w-0 ${!isAction && isFullText ? "truncate cursor-pointer hover:underline decoration-dotted" : ""} ${updating ? "opacity-35 pointer-events-none transition-all duration-300" : ""}`}
+                                    >
                                       {cellContent}
                                     </div>
                                     {updating && (
@@ -297,10 +327,13 @@ const CommonLayout = ({
                             <td
                               key={col.accessor}
                               title={isFullText ? cellContent : undefined}
-                              className={`px-4 py-3 max-[48rem]:px-3 max-[48rem]:py-2 text-center text-base max-[48rem]:text-[0.675rem] dark:text-white ${!isAction ? "truncate overflow-hidden whitespace-nowrap" : ""}`}
+                              className="px-4 py-3 max-[48rem]:px-3 max-[48rem]:py-2 text-center text-base max-[48rem]:text-[0.675rem] dark:text-white"
                             >
-                              <div className="relative w-full h-full flex items-center justify-center min-h-[2.5rem]">
-                                <div className={`w-full ${updating ? "opacity-35 pointer-events-none transition-all duration-300" : ""}`}>
+                              <div className="relative w-full h-full flex items-center justify-center min-h-[2.5rem] min-w-0 overflow-hidden">
+                                <div 
+                                  onClick={(e) => !isAction && isFullText && handleCellClick(e, cellContent)}
+                                  className={`w-full min-w-0 ${!isAction && isFullText ? "truncate cursor-pointer hover:underline decoration-dotted" : ""} ${updating ? "opacity-35 pointer-events-none transition-all duration-300" : ""}`}
+                                >
                                   {cellContent}
                                 </div>
                                 {updating && (
@@ -335,6 +368,21 @@ const CommonLayout = ({
         </section>
       )}
 
+      {tooltipConfig && (
+        <div
+          className="animate-in fade-in zoom-in pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-[calc(100%+0.75rem)] rounded-lg border-2 border-[#000035] bg-[#F2F2F2] px-4 py-3 shadow-lg duration-200 dark:border-[#D7D7D7] dark:bg-[#121317]"
+          style={{
+            left: `${tooltipConfig.x}px`,
+            top: `${tooltipConfig.y}px`,
+          }}
+        >
+          <p className="whitespace-nowrap text-sm font-semibold text-[#000035] dark:text-[#D7D7D7]">
+            {tooltipConfig.text}
+          </p>
+          {/* Tooltip Arrow */}
+          <div className="absolute bottom-0 left-1/2 h-3 w-3 -translate-x-1/2 translate-y-1/2 rotate-45 border-b-2 border-r-2 border-[#000035] bg-[#F2F2F2] dark:border-[#D7D7D7] dark:bg-[#121317]" />
+        </div>
+      )}
       {formPopup}
     </div>
   );

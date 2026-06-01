@@ -58,15 +58,45 @@ const AdminDashboardCard = ({
     hoverTimeoutRef.current = setTimeout(() => {
       setHoveredAdmin(admin);
       setTooltipPos({ x, y });
-    }, 1000);
+    }, 200);
   };
 
   const handleMouseLeave = () => {
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
     }
-    setHoveredAdmin(null);
+    const isTouch = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+    if (!isTouch) {
+      setHoveredAdmin(null);
+    }
   };
+
+  const handleRowClick = (e, admin) => {
+    e.stopPropagation();
+    if (hoveredAdmin?.id === admin.id) {
+      setHoveredAdmin(null);
+    } else {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top;
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+      setHoveredAdmin(admin);
+      setTooltipPos({ x, y });
+    }
+  };
+
+  useEffect(() => {
+    if (!hoveredAdmin) return;
+    const handleClose = () => setHoveredAdmin(null);
+    window.addEventListener("click", handleClose);
+    window.addEventListener("scroll", handleClose, true);
+    return () => {
+      window.removeEventListener("click", handleClose);
+      window.removeEventListener("scroll", handleClose, true);
+    };
+  }, [hoveredAdmin]);
 
   const customTitle = (
     <div className="flex items-center justify-center gap-2">
@@ -112,7 +142,8 @@ const AdminDashboardCard = ({
             key={admin.id}
             onMouseEnter={(e) => handleMouseEnter(e, admin)}
             onMouseLeave={handleMouseLeave}
-            className="group relative flex cursor-default items-center gap-3 rounded-2xl border border-[#000035] bg-transparent p-3 py-2.5 dark:border-[#D7D7D7]"
+            onClick={(e) => handleRowClick(e, admin)}
+            className="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-[#000035] bg-transparent p-3 py-2.5 dark:border-[#D7D7D7]"
           >
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
               <svg
@@ -142,7 +173,10 @@ const AdminDashboardCard = ({
 
             <div className="flex flex-col items-center justify-center gap-1 self-stretch max-[81.25rem]:-ml-2 max-[81.25rem]:w-20">
               <RefreshCw
-                onClick={() => handleRefreshAdmins(admin.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRefreshAdmins(admin.id);
+                }}
                 className={`h-8 w-8 cursor-pointer text-[#000035] transition-transform dark:text-[#D7D7D7] max-[78.125rem]:h-6 max-[78.125rem]:w-6 ${
                   loadingAdmins[admin.id] ? "animate-spin" : ""
                 }`}
