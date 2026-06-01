@@ -151,7 +151,7 @@ function Dashboard() {
   const rawOverdue = [...grouped.overdue].sort(sortByDate).slice(0, 5);
   const rawReturned = [...grouped.returned].sort(sortByReturnDate).slice(0, 5);
 
-  const stats = {
+  const computedStats = {
     totalBorrowed: transactions.filter(t => (t.status || "").toLowerCase() !== "pending").length,
     currentlyBorrowed: transactions.filter(t => {
       const status = (t.status || "").toLowerCase();
@@ -184,21 +184,73 @@ function Dashboard() {
     return parsed.toLocaleDateString();
   };
 
-  const borrowedItems = rawBorrowed.map((t) =>
+  const [cachedDashboardData, setCachedDashboardData] = useState(() => {
+    const cached = localStorage.getItem("dashboard_resolved_cache");
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.error("Failed to parse dashboard resolved cache", e);
+      }
+    }
+    return null;
+  });
+
+  const isFullyLoaded =
+    !transactionsLoading &&
+    !usersLoading &&
+    !booksLoading &&
+    !bookCopiesLoading;
+
+  const realBorrowedItems = rawBorrowed.map((t) =>
     buildTransactionItem(t, "borrowed"),
   );
-  const overdueItems = rawOverdue.map((t) =>
+  const realOverdueItems = rawOverdue.map((t) =>
     buildTransactionItem(t, "overdue"),
   );
-  const returnedItems = rawReturned.map((t) =>
+  const realReturnedItems = rawReturned.map((t) =>
     buildTransactionItem(t, "returned"),
   );
 
-  const transactionsLoadingState =
-    transactionsLoading ||
-    usersLoading ||
-    booksLoading ||
-    bookCopiesLoading;
+  useEffect(() => {
+    if (isFullyLoaded && transactions.length > 0) {
+      const newCache = {
+        borrowedItems: realBorrowedItems,
+        overdueItems: realOverdueItems,
+        returnedItems: realReturnedItems,
+        stats: computedStats
+      };
+      localStorage.setItem("dashboard_resolved_cache", JSON.stringify(newCache));
+      setCachedDashboardData(newCache);
+    }
+  }, [
+    isFullyLoaded,
+    transactions.length,
+    realBorrowedItems.length,
+    realOverdueItems.length,
+    realReturnedItems.length,
+    computedStats.totalBorrowed,
+    computedStats.currentlyBorrowed,
+    computedStats.returnedBooks
+  ]);
+
+  const borrowedItems = isFullyLoaded
+    ? realBorrowedItems
+    : (cachedDashboardData?.borrowedItems || []);
+
+  const overdueItems = isFullyLoaded
+    ? realOverdueItems
+    : (cachedDashboardData?.overdueItems || []);
+
+  const returnedItems = isFullyLoaded
+    ? realReturnedItems
+    : (cachedDashboardData?.returnedItems || []);
+
+  const stats = isFullyLoaded
+    ? computedStats
+    : (cachedDashboardData?.stats || { totalBorrowed: 0, currentlyBorrowed: 0, returnedBooks: 0 });
+
+  const transactionsLoadingState = !isFullyLoaded && !cachedDashboardData;
 
   const displayAdmins = Array.isArray(librariansData)
     ? librariansData

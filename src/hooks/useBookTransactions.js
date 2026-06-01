@@ -67,6 +67,7 @@ export const useCreateBookTransaction = () => {
       localStorage.removeItem("borrowed_books_cache");
       localStorage.removeItem("overdue_books_cache");
       localStorage.removeItem("dashboard_books_cache");
+      localStorage.removeItem("dashboard_resolved_cache");
       if (variables?.user_id) {
         queryClient.invalidateQueries({
           queryKey: bookKeys.recommendations(variables.user_id),
@@ -90,6 +91,7 @@ export const useUpdateBookTransaction = () => {
       localStorage.removeItem("borrowed_books_cache");
       localStorage.removeItem("overdue_books_cache");
       localStorage.removeItem("dashboard_books_cache");
+      localStorage.removeItem("dashboard_resolved_cache");
     },
   });
 };
@@ -107,6 +109,7 @@ export const useDeleteBookTransaction = () => {
       localStorage.removeItem("borrowed_books_cache");
       localStorage.removeItem("overdue_books_cache");
       localStorage.removeItem("dashboard_books_cache");
+      localStorage.removeItem("dashboard_resolved_cache");
     },
   });
 };
@@ -124,6 +127,7 @@ export const useReturnBookTransaction = () => {
       localStorage.removeItem("borrowed_books_cache");
       localStorage.removeItem("overdue_books_cache");
       localStorage.removeItem("dashboard_books_cache");
+      localStorage.removeItem("dashboard_resolved_cache");
     },
   });
 };
