@@ -41,3 +41,5 @@ rls_policies.sql
 
 ai_chats/
 .antigravitycli/
+public/splash_screens/
+public/readme.txt

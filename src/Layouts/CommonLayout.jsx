@@ -258,7 +258,7 @@ const CommonLayout = ({
                                 <td
                                   key={col.accessor}
                                   title={isFullText ? cellContent : undefined}
-                                  className="px-3 py-2 md:px-4 md:py-3 text-center text-[0.675rem] md:text-[0.95rem] dark:text-white"
+                                  className="relative px-3 py-2 md:px-4 md:py-3 text-center text-[0.675rem] md:text-[0.95rem] dark:text-white"
                                 >
                                   <div className="relative w-full h-full flex items-center justify-center min-h-[1.75rem] min-w-0 overflow-hidden">
                                     <div 
@@ -270,12 +270,14 @@ const CommonLayout = ({
                                     {updating && (
                                       <div className="absolute inset-0 z-10 bg-white/10 dark:bg-black/10 backdrop-blur-[8px] rounded-sm pointer-events-none" />
                                     )}
-                                    {updating && isCenter && (
-                                      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                                  </div>
+                                  {updating && isCenter && (
+                                    <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                                      <div className="sticky left-1/2 -translate-x-1/2 flex items-center justify-center w-8 h-8 pointer-events-auto bg-white/90 dark:bg-[#121317]/90 rounded-full shadow-md border border-[#D7D7D7]/30">
                                         <LoadingSpinner size="xs" />
                                       </div>
-                                    )}
-                                  </div>
+                                    </div>
+                                  )}
                                 </td>
                               );
                             })}
