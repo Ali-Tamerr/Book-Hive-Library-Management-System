@@ -127,3 +127,13 @@ By deploying BookHive, organizations realize substantial operational improvement
 * **Capital Asset Protection:** Preventing asset loss through real-time tracking directly protects the organization's bottom line by preserving the value of the physical collection.
 * **Informed Capital Expenditure:** Capitalize on dashboard insights to purchase resources that people actually read, ensuring every dollar spent on acquisition yields maximum engagement.
 * **Frictionless Brand Reputation:** Automatic curation of high-quality public testimonials builds community trust and serves as a powerful recruiting tool for new members.
+
+---
+
+## Legal & Licensing
+
+Copyright © 2026 Ali Tamer. All rights reserved.
+
+This software is proprietary and confidential. No part of this codebase may be used, modified, distributed, or sold without the explicit, prior written permission of the copyright owner.
+
+Under GitHub's Terms of Service, viewers are permitted to view and fork this repository within the GitHub platform for personal review and demonstration purposes only. However, this does not grant any legal right or license to use, modify, distribute, or commercialize the code elsewhere.
