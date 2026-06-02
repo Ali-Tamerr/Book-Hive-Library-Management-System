@@ -1,4 +1,4 @@
-# BookHive Premium
+# BookHive
 
 > The ultimate enterprise-grade library operations and asset management suite designed to eliminate operational friction, secure physical assets, and elevate member engagement.
 
@@ -8,7 +8,7 @@
 
 In the modern educational and corporate landscape, information centers are no longer just storage vaults—they are dynamic hubs of community engagement and knowledge circulation. Yet, most organizations are held back by legacy systems that rely on slow, manual processes, suffer from high asset loss rates, and offer zero visibility into user trends. 
 
-**BookHive Premium** transforms library administration from a cost center into an optimized, data-driven operation. By merging seamless physical hardware synchronization with secure identity curation and automated compliance workflows, BookHive enables administrators to focus on what matters most: serving their community and maximizing the utilization of their physical holdings.
+**BookHive** transforms library administration from a cost center into an optimized, data-driven operation. By merging seamless physical hardware synchronization with secure identity curation and automated compliance workflows, BookHive enables administrators to focus on what matters most: serving their community and maximizing the utilization of their physical holdings.
 
 ---
 
@@ -40,7 +40,7 @@ Every feature in BookHive is built to solve a concrete financial or operational 
 
 ## Value Delivery Pipelines (Operational Journeys)
 
-To illustrate how BookHive premium handles workflows, review the business blueprints below:
+To illustrate how BookHive handles workflows, review the business blueprints below:
 
 ### 1. Secure Onboarding & Verification Funnel
 This workflow ensures that only verified, legitimate users are admitted into the library system, reducing administrative gatekeeping time and eliminating database spam.
@@ -93,7 +93,7 @@ graph TD
 
 ## Feature Comparison: BookHive vs. Traditional Systems
 
-| Operational Capability | Traditional Library Systems | BookHive Premium | Direct Business Impact |
+| Operational Capability | Traditional Library Systems | BookHive | Direct Business Impact |
 | :--- | :--- | :--- | :--- |
 | **Physical Tracking** | Manual barcode scanning | Proximity NFC Hardware Synchronization | **90% reduction** in transaction processing times |
 | **Member Verification** | Manual checks or unsecured signups | Automated 2-step verification + Admin approval | **Zero spam accounts**; high-trust user database |
@@ -121,7 +121,7 @@ An organized gatekeeping system for membership requests. Manage signup validatio
 
 ## Strategic Business Benefits & ROI
 
-By deploying BookHive Premium, organizations realize substantial operational improvements:
+By deploying BookHive, organizations realize substantial operational improvements:
 
 * **Lower Total Cost of Ownership (TCO):** Transitioning from manual labor and paper trails to an automated, digital system lowers material costs and minimizes staffing strain.
 * **Capital Asset Protection:** Preventing asset loss through real-time tracking directly protects the organization's bottom line by preserving the value of the physical collection.
