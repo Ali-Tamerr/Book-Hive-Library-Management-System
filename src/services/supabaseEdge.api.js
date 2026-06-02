@@ -33,3 +33,12 @@ export const startRegisterMode = async (deviceId) => {
     device_id: deviceId,
   });
 };
+
+/**
+ * Stops device registration mode by deleting the row.
+ */
+export const stopRegisterMode = async (deviceId) => {
+  return await apiPost("/supabase/stop_register_mode", {
+    device_id: deviceId,
+  });
+};

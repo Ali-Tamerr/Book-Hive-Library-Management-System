@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNFCReader } from "../contexts/NFCReaderContext";
 import { Wifi, Usb, Loader2 } from "lucide-react";
-import { startRegisterMode } from "../services/supabaseEdge.api";
+import { startRegisterMode, stopRegisterMode } from "../services/supabaseEdge.api";
 import ConfirmToast from "./ConfirmToast.jsx";
 
 const NFCReaderButton = ({
@@ -62,7 +62,17 @@ const NFCReaderButton = ({
     if (isConnected || isWireless) {
       try {
         if (isConnected) await handleConnectClick();
-        if (isWireless) toggleWireless();
+        if (isWireless) {
+          const activeDeviceId = deviceId || targetDeviceId;
+          if (activeDeviceId) {
+            try {
+              await stopRegisterMode(activeDeviceId);
+            } catch (err) {
+              console.error("Failed to delete device registration row:", err);
+            }
+          }
+          await toggleWireless();
+        }
       } catch (err) {
         console.error("Failed to stop scanning:", err);
       }
