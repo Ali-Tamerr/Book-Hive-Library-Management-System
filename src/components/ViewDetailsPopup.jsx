@@ -13,6 +13,7 @@ import { getCurrentUser } from "../services/auth.api";
 import BookCopiesViewPopup from "./BookCopiesViewPopup.jsx";
 import { useBranches } from "../hooks/useBranches.js";
 import BookBranchesPopup from "./BookBranchesPopup.jsx";
+import { getImageUrl } from "../services/api.config";
 
 const ViewDetailsPopup = ({
   show,
@@ -446,7 +447,7 @@ const ViewDetailsPopup = ({
                               <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
                                 {review.user_image_url ? (
                                   <img
-                                    src={`data:image/png;base64,${review.user_image_url}`}
+                                    src={getImageUrl(review.user_image_url)}
                                     alt={review.user_name}
                                     className="h-full w-full object-cover"
                                   />
@@ -528,7 +529,7 @@ const ViewDetailsPopup = ({
                                     <div className="flex h-10 w-10 min-w-[2.5rem] shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#D7D7D7]">
                                       {reply.user_image_url ? (
                                         <img
-                                          src={`data:image/png;base64,${reply.user_image_url}`}
+                                          src={getImageUrl(reply.user_image_url)}
                                           alt={reply.user_name}
                                           className="h-full w-full object-cover"
                                         />
