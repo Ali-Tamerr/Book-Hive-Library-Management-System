@@ -200,6 +200,7 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       // Server responded with error
       const message =
+        (typeof error.response.data === "string" && error.response.data.trim() !== "" ? error.response.data : null) ||
         error.response.data?.message ||
         error.response.data?.Message ||
         error.response.data?.error ||
