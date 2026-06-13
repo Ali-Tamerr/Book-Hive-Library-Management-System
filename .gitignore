@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 
 public_schema.sql
+full_public_dump.sql
 .env
 ESP8266_SMART_ID.ino
 .vercel
