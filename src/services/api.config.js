@@ -164,7 +164,7 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
+  withCredentials: false,
   xsrfCookieName: "XSRF-TOKEN",
   xsrfHeaderName: "X-XSRF-TOKEN",
 });
@@ -192,13 +192,17 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // Log the full error for debugging only in development
-    if (import.meta.env.DEV) {
-      console.error("Full error object:", error);
-    }
+    console.error("[API ERROR DEBUG]", {
+      url: error.config?.url,
+      baseURL: error.config?.baseURL,
+      fullURL: `${error.config?.baseURL || ''}${error.config?.url || ''}`,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message
+    });
 
     if (error.response) {
-      // Server responded with error
       const message =
         (typeof error.response.data === "string" && error.response.data.trim() !== "" ? error.response.data : null) ||
         error.response.data?.message ||
@@ -208,34 +212,20 @@ axiosInstance.interceptors.response.use(
           ? JSON.stringify(error.response.data.errors)
           : error.response.data?.errors) ||
         `Request failed with status code ${error.response.status}`;
-      if (import.meta.env.DEV) {
-        console.error(
-          "API Error Response:",
-          error.response.status,
-          error.response.data,
-        );
-      }
 
-      // Preserve the full error object
       const errorWithDetails = new Error(message);
       errorWithDetails.response = error.response;
       errorWithDetails.status = error.response.status;
       return Promise.reject(errorWithDetails);
     } else if (error.request) {
-      // Request made but no response — don't log the URL
-      if (import.meta.env.DEV) {
-        console.error("Network Error - No response received:", error.message);
-      }
+      console.error("[API NETWORK ERROR] No response received from server. Possible CORS block or server down.", error);
       const networkError = new Error(
-        "Network error. Please check your connection.",
+        "Network error. Please check your connection or CORS configuration.",
       );
       networkError.request = error.request;
       return Promise.reject(networkError);
     } else {
-      // Something else happened
-      if (import.meta.env.DEV) {
-        console.error("Error:", error.message);
-      }
+      console.error("[API GENERAL ERROR]", error.message);
       return Promise.reject(error);
     }
   },
